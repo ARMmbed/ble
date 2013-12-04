@@ -13,7 +13,7 @@ class nRF51822 : public BLERadio
         virtual ~nRF51822(void);
 
         /* Functions that mus be implemented from NRFRadio */
-        virtual ble_error_t attach(void (*fptr)(void));
+        //virtual ble_error_t attach(void (*fptr)(void));
         virtual ble_error_t addService(BLEService &);
         virtual ble_error_t updateValue(uint8_t, uint8_t, uint8_t[], uint16_t);
         virtual ble_error_t start(void);

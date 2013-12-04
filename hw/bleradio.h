@@ -20,7 +20,7 @@ class BLERadio
         /* ToDo: Force constructor with event handler callback */
 
         /* These functions must be defined in the sub-class */
-        virtual ble_error_t attach(void (*fptr)(void));
+        //virtual ble_error_t attach(void (*fptr)(void));
         virtual ble_error_t addService(BLEService &) = 0;
         virtual ble_error_t updateValue(uint8_t, uint8_t, uint8_t[], uint16_t) = 0;
         virtual ble_error_t start(void) = 0;

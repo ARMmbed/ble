@@ -22,7 +22,8 @@ void nRF51822::uartCallback(void)
                         event is raised by the radio HW.
 */
 /**************************************************************************/
-nRF51822::nRF51822() : uart(P0_4, P0_0)
+//nRF51822::nRF51822() : uart(P0_4, P0_0) /* LPC812 */
+nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
 {
     /* Setup the nRF UART interface */
     uart.baud(9600);
@@ -31,7 +32,8 @@ nRF51822::nRF51822() : uart(P0_4, P0_0)
     uart.attach(this, &nRF51822::uartCallback);
     
     /* Add flow control for UART (required by the nRF51822) */
-    uart.set_flow_control(Serial::RTSCTS, P0_6, P0_8);
+    //uart.set_flow_control(Serial::RTSCTS, P0_6, P0_8);  /* LPC812 */
+    uart.set_flow_control(Serial::RTSCTS, p30, p29);      /* LPC1768 */
     
     /* Reset the service counter */
     serviceCount = 0;
@@ -51,10 +53,10 @@ nRF51822::~nRF51822(void)
 
 */
 /**************************************************************************/
-ble_error_t nRF51822::attach(void (*fptr)(void))
-{
-    return BLE_ERROR_NONE;
-}
+//ble_error_t nRF51822::attach(void (*fptr)(void))
+//{
+//    return BLE_ERROR_NONE;
+//}
 
 /**************************************************************************/
 /*!
