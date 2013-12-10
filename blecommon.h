@@ -8,6 +8,32 @@ typedef enum ble_error_e
   BLE_ERROR_NONE = 0
 } ble_error_t;
 
+typedef enum ble_gap_adv_flags_e
+{
+    BLE_GAP_ADV_FLAGS_
+} ble_gap_adv_flags_t;
+
+// https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+typedef enum ble_gap_adv_datatype_e
+{
+    BLE_GAP_ADV_DATATYPE_FLAGS                                            = 0x01,
+    BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_16BIT_SERVICE_IDS                = 0x02,
+    BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_16BIT_SERVICE_IDS                  = 0x03,
+    BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_32BIT_SERVICE_IDS                = 0x04,
+    BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_32BIT_SERVICE_IDS                  = 0x05,
+    BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_128BIT_SERVICE_IDS               = 0x06,
+    BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_128BIT_SERVICE_IDS                 = 0x07,
+    BLE_GAP_ADV_DATATYPE_SHORTENED_LOCAL_NAME                             = 0x08,
+    BLE_GAP_ADV_DATATYPE_COMPLETE_LOCAL_NAME                              = 0x09,
+    BLE_GAP_ADV_DATATYPE_TX_POWER_LEVEL                                   = 0x0A,
+    BLE_GAP_ADV_DATATYPE_DEVICE_ID                                        = 0x10,
+    BLE_GAP_ADV_DATATYPE_SLAVE_CONNECTION_INTERVAL_RANGE                  = 0x12,
+    BLE_GAP_ADV_DATATYPE_SERVICE_DATA                                     = 0x16,
+    BLE_GAP_ADV_DATATYPE_APPEARANCE                                       = 0x19,
+    BLE_GAP_ADV_DATATYPE_ADVERTISING_INTERVAL                             = 0x1A,
+    BLE_GAP_ADV_DATATYPE_MANUFACTURER_SPECIFIC_DATA                       = 0xFF
+} ble_gap_adv_datatype_t;
+
 // https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
 typedef enum ble_gap_char_appearance_e
 {
@@ -52,8 +78,8 @@ typedef enum ble_gap_char_appearance_e
   BLE_GAP_CHAR_APPEARANCE_CYCLING_POWER_SENSOR                            = 1156,
   BLE_GAP_CHAR_APPEARANCE_CYCLING_SPEED_AND_CADENCE_SENSOR                = 1157,
   BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETER_GENERIC                          = 3136,
-  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETERFINGERTIP                         = 3137,
-  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETERWRIST_WORN                        = 3138,
+  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETER_FINGERTIP                        = 3137,
+  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETER_WRIST_WORN                       = 3138,
   BLE_GAP_CHAR_APPEARANCE_OUTDOOR_GENERIC                                 = 5184,
   BLE_GAP_CHAR_APPEARANCE_OUTDOOR_LOCATION_DISPLAY_DEVICE                 = 5185,
   BLE_GAP_CHAR_APPEARANCE_OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE  = 5186,
@@ -205,13 +231,13 @@ typedef enum ble_gatt_format_e
   BLE_GATT_FORMAT_DUINT16             = 0x18, /**< IEEE-20601 format. */
   BLE_GATT_FORMAT_UTF8S               = 0x19, /**< UTF-8 string. */
   BLE_GATT_FORMAT_UTF16S              = 0x1A, /**< UTF-16 string. */
-  BLE_GATT_FORMAT_STRUCT              = 0x1B /**< Opaque Structure. */
+  BLE_GATT_FORMAT_STRUCT              = 0x1B  /**< Opaque Structure. */
 } ble_gatt_format_t;
 
 struct UTF8String
 {
   uint16_t  length;         /**< String length. */
-  uint8_t  str[32];         /**< String data. */
+  uint8_t   str[32];        /**< String data. */
 };
 
 struct UTF16String
@@ -227,13 +253,13 @@ struct SecurityMode
 };
 
 // See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-struct PresentationFormat
+typedef struct PresentationFormat
 {
-  uint8_t   format;         /**< Format of the value, see @ref ble_gatt_format_t. */
+  uint8_t   gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
   int8_t    exponent;       /**< Exponent for integer data types. */
-  uint16_t  unit;           /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
-  uint8_t   name_space;     /**< Namespace from Bluetooth Assigned Numbers, see @ref BLE_GATT_CPF_NAMESPACES. */
-  uint16_t  desc;           /**< Namespace description from Bluetooth Assigned Numbers, see @ref BLE_GATT_CPF_NAMESPACES. */
-};
+  uint16_t  gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
+  uint8_t   gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
+  uint16_t  gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
+} presentation_format_t;
 
 #endif

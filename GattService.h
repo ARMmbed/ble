@@ -1,13 +1,13 @@
-#ifndef __BLE_SERVICE_H__
-#define __BLE_SERVICE_H__
+#ifndef __GATT_SERVICE_H__
+#define __GATT_SERVICE_H__
 
 #include "blecommon.h"
 #include "uuid.h"
-#include "blecharacteristic.h"
+#include "GattCharacteristic.h"
 
 #define BLE_SERVICE_MAX_CHARACTERISTICS (5)
 
-class BLEService
+class GattService
 {
 private:
 
@@ -21,16 +21,16 @@ public:
         uint8_t     reserved;
     } serialisedChar_t;
     
-    BLEService(uint8_t[16]);  /* 128-bit Base UUID */
-    BLEService(uint16_t);     /* 16-bit BLE UUID */
-    virtual ~BLEService(void);
+    GattService(uint8_t[16]);  /* 128-bit Base UUID */
+    GattService(uint16_t);     /* 16-bit BLE UUID */
+    virtual ~GattService(void);
 
     UUID                primaryServiceID;
     uint8_t             characteristicCount;
     serialisedChar_t    characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
     uint8_t             index;
 
-    ble_error_t         addCharacteristic(BLECharacteristic &);
+    ble_error_t         addCharacteristic(GattCharacteristic &);
 };
 
 #endif

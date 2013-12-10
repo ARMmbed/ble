@@ -17,9 +17,6 @@ void nRF51822::uartCallback(void)
 /**************************************************************************/
 /*!
     @brief  Constructor
-    
-    @args   fptr[in]    Pointer to the callback function when any radio
-                        event is raised by the radio HW.
 */
 /**************************************************************************/
 //nRF51822::nRF51822() : uart(P0_4, P0_0) /* LPC812 */
@@ -27,14 +24,14 @@ nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
 {
     /* Setup the nRF UART interface */
     uart.baud(9600);
- 
+
     /* Echo data on the debug CDC port */
     uart.attach(this, &nRF51822::uartCallback);
     
     /* Add flow control for UART (required by the nRF51822) */
     //uart.set_flow_control(Serial::RTSCTS, P0_6, P0_8);  /* LPC812 */
     uart.set_flow_control(Serial::RTSCTS, p30, p29);      /* LPC1768 */
-    
+
     /* Reset the service counter */
     serviceCount = 0;
 }
@@ -53,17 +50,40 @@ nRF51822::~nRF51822(void)
 
 */
 /**************************************************************************/
-//ble_error_t nRF51822::attach(void (*fptr)(void))
-//{
-//    return BLE_ERROR_NONE;
-//}
+void nRF51822::test(void)
+{
+    /* Send iBeacon data as a test */
+    uint8_t response[4];
+    uart.printf("10 0a 00 1e 02 01 04 1A FF 4C 00 02 15 E2 0A 39 F4 73 F5 4B C4 A1 2F 17 D1 AD 07 A9 61 00 00 00 00 C8\r\n");
+    response[0] = uart.getc();
+    response[1] = uart.getc();
+    response[2] = uart.getc();
+    response[3] = uart.getc();
+    wait(0.1);
+    /* Start the radio */
+    uart.printf("10 03 00 00\r\n");
+    response[0] = uart.getc();
+    response[1] = uart.getc();
+    response[2] = uart.getc();
+    response[3] = uart.getc();
+}
 
 /**************************************************************************/
 /*!
 
 */
 /**************************************************************************/
-ble_error_t nRF51822::addService(BLEService & service)
+ble_error_t nRF51822::setAdvertising(GapAdvertisingParams &, GapAdvertisingData &)
+{
+    return BLE_ERROR_NONE;
+}
+
+/**************************************************************************/
+/*!
+
+*/
+/**************************************************************************/
+ble_error_t nRF51822::addService(GattService & service)
 {
     /* ToDo: Make sure we don't overflow the array, etc. */
     /* ToDo: Make sure this service UUID doesn't already exist (?) */
@@ -128,13 +148,36 @@ ble_error_t nRF51822::addService(BLEService & service)
 
 /**************************************************************************/
 /*!
+    @brief  Reads the value of a characteristic, based on the service
+            and characteristic index fields
+
+    @param[in]  service
+                The GattService to read from
+    @param[in]  characteristic
+                The GattCharacteristic to read from
+    @param[in]  buffer
+                Buffer to hold the the characteristic's value
+                (raw byte array in LSB format)
+    @param[in]  len
+                The number of bytes read into the buffer
+*/
+/**************************************************************************/
+ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
+{
+    /* ToDo */
+    
+    return BLE_ERROR_NONE;
+}
+
+/**************************************************************************/
+/*!
     @brief  Updates the value of a characteristic, based on the service
             and characteristic index fields
             
-    @param[in]  sIndex  
-                The BLEService's index value (.index)
-    @param[in]  cIndex
-                The BLECharacteristic's index value (.index)
+    @param[in]  service
+                The GattService to write to
+    @param[in]  characteristic
+                The GattCharacteristic to write to
     @param[in]  buffer
                 Data to use when updating the characteristic's value
                 (raw byte array in LSB format)
@@ -142,10 +185,10 @@ ble_error_t nRF51822::addService(BLEService & service)
                 The number of bytes in buffer
 */
 /**************************************************************************/
-ble_error_t nRF51822::updateValue(uint8_t sIndex, uint8_t cIndex, uint8_t buffer[], uint16_t len)
+ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
 {
     /* Command ID = 0x0006, Payload = Service ID, Characteristic ID, Value */
-    uart.printf("10 06 00 %02X %02X %02X", len + 2, cIndex, sIndex);
+    uart.printf("10 06 00 %02X %02X %02X", len + 2, characteristic.index, service.index);
     for (uint16_t i = 0; i<len; i++)
     {
         uart.printf(" %02X", buffer[i]);

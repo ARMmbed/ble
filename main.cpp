@@ -1,8 +1,8 @@
 #include "mbed.h"
 
 #include "uuid.h"
-#include "bleservice.h"
-#include "blecharacteristic.h"
+#include "GattService.h"
+#include "GattCharacteristic.h"
 #include "hw/nrf51822.h"
 
 DigitalOut        myled ( LED1 );
@@ -12,27 +12,30 @@ nRF51822 radio;
 
 /* Battery Level Service */
 /* See --> https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml */
-BLEService        battService   ( 0x180F );
-BLECharacteristic battLevel     ( 0x2A19, 1, 1, 0x10 | 0x02);   /* Read + Notify */
+GattService        battService   ( 0x180F );
+GattCharacteristic battLevel     ( 0x2A19, 1, 1, 0x10 | 0x02);   /* Read + Notify */
 
 /* Heart Rate Monitor Service */
 /* See --> https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml */
-BLEService        hrmService    ( 0x180D );
-BLECharacteristic hrmRate       ( 0x2A37, 2, 3, 0x10 );         /* Notify */
-BLECharacteristic hrmLocation   ( 0x2A39, 1, 1, 0x02 );         /* Read */
+GattService        hrmService    ( 0x180D );
+GattCharacteristic hrmRate       ( 0x2A37, 2, 3, 0x10 );         /* Notify */
+GattCharacteristic hrmLocation   ( 0x2A39, 1, 1, 0x02 );         /* Read */
 
 /* Health Thermometer Service */
 /* See --> https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.health_thermometer.xml */
-BLEService        thermService  ( 0x1809 );
-BLECharacteristic thermTemp     ( 0x2A1C, 5, 13, 0x20 );         /* Indicate */
-BLECharacteristic thermType     ( 0x2A1D, 1, 1, 0x02 );          /* Read */
-BLECharacteristic thermInterval ( 0x2A21, 2, 2, 0x02 );          /* Read */
+GattService        thermService  ( 0x1809 );
+GattCharacteristic thermTemp     ( 0x2A1C, 5, 13, 0x20 );         /* Indicate */
+GattCharacteristic thermType     ( 0x2A1D, 1, 1, 0x02 );          /* Read */
+GattCharacteristic thermInterval ( 0x2A21, 2, 2, 0x02 );          /* Read */
 
 /* Notify   = device (server) sends data when it changes */
 /* Indicate = device (server) sends data when it changes and client confirms reception */ 
  
 int main()
 {
+    radio.test();
+    while(1);
+
     /* Add the battery level characteristic to the battery service          */
     /* Note: This will also update the characteristic's .index field        */
     /* so that we know where it's stored in the BLEService.characteristics  */
@@ -63,20 +66,20 @@ int main()
     /* Set the heart rate monitor location (one time only) */
     /* See --> https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml */
     uint8_t location = 0x01; /* Chest */
-    radio.updateValue(hrmService.index, hrmLocation.index, (uint8_t*)&location, sizeof(location));
+    radio.writeCharacteristic(hrmService, hrmLocation, (uint8_t*)&location, sizeof(location));
 
     /* Update the battery level */
     /* See --> https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml */
     uint8_t batt = 72; /* Percentage (0..100) */
-    radio.updateValue(battService.index, battLevel.index, (uint8_t*)&batt, sizeof(batt));
+    radio.writeCharacteristic(battService, battLevel, (uint8_t*)&batt, sizeof(batt));
 
     /* Update the fixed health thermometer characteristics */
     /* See --> https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_type.xml */
     uint8_t thermLocation = 6; /* Location = mouth */
-    radio.updateValue(thermService.index, thermType.index, (uint8_t*)&thermLocation, sizeof(thermLocation));
+    radio.writeCharacteristic(thermService, thermType, (uint8_t*)&thermLocation, sizeof(thermLocation));
     /* See --> https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.measurement_interval.xml */
     uint16_t thermDelay = 5;
-    radio.updateValue(thermService.index, thermInterval.index, (uint8_t*)&thermDelay, sizeof(thermDelay));
+    radio.writeCharacteristic(thermService, thermInterval, (uint8_t*)&thermDelay, sizeof(thermDelay));
     
     /* Blinky + value updates */
     uint8_t hrmCounter = 100;
@@ -94,7 +97,7 @@ int main()
         hrmCounter++;
         if (hrmCounter == 175) hrmCounter = 100;
         uint8_t bpm[2] = { 0x00, hrmCounter };
-        radio.updateValue(hrmService.index, hrmRate.index, bpm, 2);
+        radio.writeCharacteristic(hrmService, hrmRate, bpm, 2);
         
         /* Update the Health Thermometer measurement */
         
@@ -109,6 +112,6 @@ int main()
         uint8_t temperature[5] = { 0x00, 0x00, 0x00, 0x00, 0xFF };
         // Use the hrm counter to provide a shifting temperature value (175 = 17.5C, etc.)
         memcpy (temperature+1, &hrmCounter, 1);
-        radio.updateValue(thermService.index, thermTemp.index, temperature, 5);
+        radio.writeCharacteristic(thermService, thermTemp, temperature, 5);
     }
 }

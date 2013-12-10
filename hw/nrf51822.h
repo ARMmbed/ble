@@ -3,8 +3,8 @@
 
 #include "mbed.h"
 #include "blecommon.h"
-#include "bleservice.h"
 #include "bleradio.h"
+#include "GattService.h"
 
 class nRF51822 : public BLERadio
 {
@@ -13,18 +13,21 @@ class nRF51822 : public BLERadio
         virtual ~nRF51822(void);
 
         /* Functions that mus be implemented from NRFRadio */
-        //virtual ble_error_t attach(void (*fptr)(void));
-        virtual ble_error_t addService(BLEService &);
-        virtual ble_error_t updateValue(uint8_t, uint8_t, uint8_t[], uint16_t);
+        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &);
+        virtual ble_error_t addService(GattService &);
+        virtual ble_error_t readCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t);
+        virtual ble_error_t writeCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t);
         virtual ble_error_t start(void);
         virtual ble_error_t stop(void);
         virtual ble_error_t reset(void);
         
-        /* nRF51 Functions */
-        void uartCallback(void);
+        void test(void);
 
     private:
-        Serial uart;        
+        Serial uart;
+
+        /* nRF51 Functions */
+        void uartCallback(void);
 };
 
 #endif

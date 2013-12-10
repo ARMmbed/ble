@@ -1,16 +1,16 @@
-#ifndef __BLE_CHARACTERISTIC_H__
-#define __BLE_CHARACTERISTIC_H__
+#ifndef __GATT_CHARACTERISTIC_H__
+#define __GATT_CHARACTERISTIC_H__
 
 #include "blecommon.h"
 #include "uuid.h"
 
-class BLECharacteristic
+class GattCharacteristic
 {
 private:
 
 public:
-    BLECharacteristic(uint16_t uuid, uint16_t minLen, uint16_t maxLen, uint8_t properties);
-    virtual ~BLECharacteristic(void);
+    GattCharacteristic(uint16_t uuid, uint16_t minLen, uint16_t maxLen, uint8_t properties);
+    virtual ~GattCharacteristic(void);
 
     uint16_t uuid;              /* Characteristic UUID */
     uint16_t lenMin;            /* Minimum length of the value */
