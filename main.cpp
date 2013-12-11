@@ -13,26 +13,27 @@ nRF51822 radio;
 /* Battery Level Service */
 /* See --> https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml */
 GattService        battService   ( 0x180F );
-GattCharacteristic battLevel     ( 0x2A19, 1, 1, 0x10 | 0x02);   /* Read + Notify */
+GattCharacteristic battLevel     ( 0x2A19, 1, 1, BLE_GATT_CHAR_PROPERTIES_NOTIFY | BLE_GATT_CHAR_PROPERTIES_READ );
 
 /* Heart Rate Monitor Service */
 /* See --> https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml */
 GattService        hrmService    ( 0x180D );
-GattCharacteristic hrmRate       ( 0x2A37, 2, 3, 0x10 );         /* Notify */
-GattCharacteristic hrmLocation   ( 0x2A39, 1, 1, 0x02 );         /* Read */
+GattCharacteristic hrmRate       ( 0x2A37, 2, 3, BLE_GATT_CHAR_PROPERTIES_NOTIFY );
+GattCharacteristic hrmLocation   ( 0x2A39, 1, 1, BLE_GATT_CHAR_PROPERTIES_READ );
 
 /* Health Thermometer Service */
 /* See --> https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.health_thermometer.xml */
 GattService        thermService  ( 0x1809 );
-GattCharacteristic thermTemp     ( 0x2A1C, 5, 13, 0x20 );         /* Indicate */
-GattCharacteristic thermType     ( 0x2A1D, 1, 1, 0x02 );          /* Read */
-GattCharacteristic thermInterval ( 0x2A21, 2, 2, 0x02 );          /* Read */
+GattCharacteristic thermTemp     ( 0x2A1C, 5, 13, BLE_GATT_CHAR_PROPERTIES_INDICATE );
+GattCharacteristic thermType     ( 0x2A1D, 1, 1, BLE_GATT_CHAR_PROPERTIES_READ );
+GattCharacteristic thermInterval ( 0x2A21, 2, 2, BLE_GATT_CHAR_PROPERTIES_READ );
 
 /* Notify   = device (server) sends data when it changes */
 /* Indicate = device (server) sends data when it changes and client confirms reception */ 
  
 int main()
 {
+    wait(2);
     radio.test();
     while(1);
 

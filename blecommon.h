@@ -5,33 +5,40 @@
 
 typedef enum ble_error_e
 {
-  BLE_ERROR_NONE = 0
+  BLE_ERROR_NONE                    = 0,
+  BLE_ERROR_BUFFER_OVERFLOW         = 1
 } ble_error_t;
 
+/* Bluetooth Specification 4.0 (Vol. 3) Section 18.1 */
 typedef enum ble_gap_adv_flags_e
 {
-    BLE_GAP_ADV_FLAGS_
+  BLE_GAP_ADV_FLAGS_LE_LIMITED_DISCOVERABLE                               = 0x01,
+  BLE_GAP_ADV_FLAGS_LE_GENERAL_DISCOVERABLE                               = 0x02,
+  BLE_GAP_ADV_FLAGS_BREDR_NOT_SUPPORTED                                   = 0x04,
+  BLE_GAP_ADV_FLAGS_SIMULTANEOUS_LE_BREDR_C                               = 0x08,
+  BLE_GAP_ADV_FLAGS_SIMULTANEOUS_LE_BREDR_H                               = 0x10
 } ble_gap_adv_flags_t;
 
-// https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+/* https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile */
+/* Bluetooth Specification 4.0 (Vol. 3) Section 11, 18 */
 typedef enum ble_gap_adv_datatype_e
 {
-    BLE_GAP_ADV_DATATYPE_FLAGS                                            = 0x01,
-    BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_16BIT_SERVICE_IDS                = 0x02,
-    BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_16BIT_SERVICE_IDS                  = 0x03,
-    BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_32BIT_SERVICE_IDS                = 0x04,
-    BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_32BIT_SERVICE_IDS                  = 0x05,
-    BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_128BIT_SERVICE_IDS               = 0x06,
-    BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_128BIT_SERVICE_IDS                 = 0x07,
-    BLE_GAP_ADV_DATATYPE_SHORTENED_LOCAL_NAME                             = 0x08,
-    BLE_GAP_ADV_DATATYPE_COMPLETE_LOCAL_NAME                              = 0x09,
-    BLE_GAP_ADV_DATATYPE_TX_POWER_LEVEL                                   = 0x0A,
-    BLE_GAP_ADV_DATATYPE_DEVICE_ID                                        = 0x10,
-    BLE_GAP_ADV_DATATYPE_SLAVE_CONNECTION_INTERVAL_RANGE                  = 0x12,
-    BLE_GAP_ADV_DATATYPE_SERVICE_DATA                                     = 0x16,
-    BLE_GAP_ADV_DATATYPE_APPEARANCE                                       = 0x19,
-    BLE_GAP_ADV_DATATYPE_ADVERTISING_INTERVAL                             = 0x1A,
-    BLE_GAP_ADV_DATATYPE_MANUFACTURER_SPECIFIC_DATA                       = 0xFF
+  BLE_GAP_ADV_DATATYPE_FLAGS                                              = 0x01,
+  BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_16BIT_SERVICE_IDS                  = 0x02,
+  BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_16BIT_SERVICE_IDS                    = 0x03,
+  BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_32BIT_SERVICE_IDS                  = 0x04,
+  BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_32BIT_SERVICE_IDS                    = 0x05,
+  BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_128BIT_SERVICE_IDS                 = 0x06,
+  BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_128BIT_SERVICE_IDS                   = 0x07,
+  BLE_GAP_ADV_DATATYPE_SHORTENED_LOCAL_NAME                               = 0x08,
+  BLE_GAP_ADV_DATATYPE_COMPLETE_LOCAL_NAME                                = 0x09,
+  BLE_GAP_ADV_DATATYPE_TX_POWER_LEVEL                                     = 0x0A,
+  BLE_GAP_ADV_DATATYPE_DEVICE_ID                                          = 0x10,
+  BLE_GAP_ADV_DATATYPE_SLAVE_CONNECTION_INTERVAL_RANGE                    = 0x12,
+  BLE_GAP_ADV_DATATYPE_SERVICE_DATA                                       = 0x16,
+  BLE_GAP_ADV_DATATYPE_APPEARANCE                                         = 0x19,
+  BLE_GAP_ADV_DATATYPE_ADVERTISING_INTERVAL                               = 0x1A,
+  BLE_GAP_ADV_DATATYPE_MANUFACTURER_SPECIFIC_DATA                         = 0xFF
 } ble_gap_adv_datatype_t;
 
 // https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
@@ -56,7 +63,7 @@ typedef enum ble_gap_char_appearance_e
   BLE_GAP_CHAR_APPEARANCE_HEART_RATE_SENSOR_HEART_RATE_BELT               = 833,
   BLE_GAP_CHAR_APPEARANCE_GENERIC_BLOOD_PRESSURE                          = 896,
   BLE_GAP_CHAR_APPEARANCE_BLOOD_PRESSURE_ARM                              = 897,
-  BLE_GAP_CHAR_APPEARANCE_BLOD_PRESSURE_WRIST                             = 898,
+  BLE_GAP_CHAR_APPEARANCE_BLOOD_PRESSURE_WRIST                            = 898,
   BLE_GAP_CHAR_APPEARANCE_HUMAN_INTERFACE_DEVICE_HID                      = 960,
   BLE_GAP_CHAR_APPEARANCE_KEYBOARD                                        = 961,
   BLE_GAP_CHAR_APPEARANCE_MOUSE                                           = 962,
@@ -233,6 +240,18 @@ typedef enum ble_gatt_format_e
   BLE_GATT_FORMAT_UTF16S              = 0x1A, /**< UTF-16 string. */
   BLE_GATT_FORMAT_STRUCT              = 0x1B  /**< Opaque Structure. */
 } ble_gatt_format_t;
+
+typedef enum ble_gatt_char_properties_e
+{
+  BLE_GATT_CHAR_PROPERTIES_BROADCAST                    = 0x01, /**< Permits broadcasts of the Characteristic Value using Server Characteristic Configuration Descriptor. */
+  BLE_GATT_CHAR_PROPERTIES_READ                         = 0x02, /**< Permits reads of the Characteristic Value. */
+  BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE       = 0x04, /**< Permits writes of the Characteristic Value without response. */
+  BLE_GATT_CHAR_PROPERTIES_WRITE                        = 0x08, /**< Permits writes of the Characteristic Value with response. */
+  BLE_GATT_CHAR_PROPERTIES_NOTIFY                       = 0x10, /**< Permits notifications of a Characteristic Value without acknowledgement. */
+  BLE_GATT_CHAR_PROPERTIES_INDICATE                     = 0x20, /**< Permits indications of a Characteristic Value with acknowledgement. */
+  BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES  = 0x40, /**< Permits signed writes to the Characteristic Value. */
+  BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES          = 0x80  /**< Additional characteristic properties are defined in the Characteristic Extended Properties Descriptor */
+} ble_gatt_char_properties_t;
 
 struct UTF8String
 {

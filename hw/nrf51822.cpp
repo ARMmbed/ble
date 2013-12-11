@@ -19,6 +19,7 @@ void nRF51822::uartCallback(void)
     @brief  Constructor
 */
 /**************************************************************************/
+
 //nRF51822::nRF51822() : uart(P0_4, P0_0) /* LPC812 */
 nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
 {
@@ -53,19 +54,14 @@ nRF51822::~nRF51822(void)
 void nRF51822::test(void)
 {
     /* Send iBeacon data as a test */
-    uint8_t response[4];
     uart.printf("10 0a 00 1e 02 01 04 1A FF 4C 00 02 15 E2 0A 39 F4 73 F5 4B C4 A1 2F 17 D1 AD 07 A9 61 00 00 00 00 C8\r\n");
-    response[0] = uart.getc();
-    response[1] = uart.getc();
-    response[2] = uart.getc();
-    response[3] = uart.getc();
+    /* ToDo: Check response */
     wait(0.1);
+    
     /* Start the radio */
     uart.printf("10 03 00 00\r\n");
-    response[0] = uart.getc();
-    response[1] = uart.getc();
-    response[2] = uart.getc();
-    response[3] = uart.getc();
+    /* ToDo: Check response */
+    wait(0.1);
 }
 
 /**************************************************************************/
