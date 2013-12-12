@@ -25,7 +25,7 @@
     @code
 
     // UUID = 0x2A19, Min length 2, Max len = 2, Properties = write
-    GattCharacteristic c = GattCharacteristic( 0x2A19, 2, 2, 0x08 );
+    GattCharacteristic c = GattCharacteristic( 0x2A19, 2, 2, BLE_GATT_CHAR_PROPERTIES_WRITE );
    
     @endcode
 */

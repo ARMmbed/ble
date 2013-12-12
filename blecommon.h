@@ -1,6 +1,10 @@
 #ifndef __BLE_COMMON_H__
 #define __BLE_COMMON_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 typedef enum ble_error_e
@@ -9,92 +13,7 @@ typedef enum ble_error_e
   BLE_ERROR_BUFFER_OVERFLOW         = 1
 } ble_error_t;
 
-/* Bluetooth Specification 4.0 (Vol. 3) Section 18.1 */
-typedef enum ble_gap_adv_flags_e
-{
-  BLE_GAP_ADV_FLAGS_LE_LIMITED_DISCOVERABLE                               = 0x01,
-  BLE_GAP_ADV_FLAGS_LE_GENERAL_DISCOVERABLE                               = 0x02,
-  BLE_GAP_ADV_FLAGS_BREDR_NOT_SUPPORTED                                   = 0x04,
-  BLE_GAP_ADV_FLAGS_SIMULTANEOUS_LE_BREDR_C                               = 0x08,
-  BLE_GAP_ADV_FLAGS_SIMULTANEOUS_LE_BREDR_H                               = 0x10
-} ble_gap_adv_flags_t;
-
-/* https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile */
-/* Bluetooth Specification 4.0 (Vol. 3) Section 11, 18 */
-typedef enum ble_gap_adv_datatype_e
-{
-  BLE_GAP_ADV_DATATYPE_FLAGS                                              = 0x01,
-  BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_16BIT_SERVICE_IDS                  = 0x02,
-  BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_16BIT_SERVICE_IDS                    = 0x03,
-  BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_32BIT_SERVICE_IDS                  = 0x04,
-  BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_32BIT_SERVICE_IDS                    = 0x05,
-  BLE_GAP_ADV_DATATYPE_INCOMPLETE_LIST_128BIT_SERVICE_IDS                 = 0x06,
-  BLE_GAP_ADV_DATATYPE_COMPLETE_LIST_128BIT_SERVICE_IDS                   = 0x07,
-  BLE_GAP_ADV_DATATYPE_SHORTENED_LOCAL_NAME                               = 0x08,
-  BLE_GAP_ADV_DATATYPE_COMPLETE_LOCAL_NAME                                = 0x09,
-  BLE_GAP_ADV_DATATYPE_TX_POWER_LEVEL                                     = 0x0A,
-  BLE_GAP_ADV_DATATYPE_DEVICE_ID                                          = 0x10,
-  BLE_GAP_ADV_DATATYPE_SLAVE_CONNECTION_INTERVAL_RANGE                    = 0x12,
-  BLE_GAP_ADV_DATATYPE_SERVICE_DATA                                       = 0x16,
-  BLE_GAP_ADV_DATATYPE_APPEARANCE                                         = 0x19,
-  BLE_GAP_ADV_DATATYPE_ADVERTISING_INTERVAL                               = 0x1A,
-  BLE_GAP_ADV_DATATYPE_MANUFACTURER_SPECIFIC_DATA                         = 0xFF
-} ble_gap_adv_datatype_t;
-
-// https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
-typedef enum ble_gap_char_appearance_e
-{
-  BLE_GAP_CHAR_APPEARANCE_UNKNOWN                                         = 0,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_PHONE                                   = 64,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_COMPUTER                                = 128,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_WATCH                                   = 192,
-  BLE_GAP_CHAR_APPEARANCE_WATCH_SPORTS_WATCH                              = 193,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_CLOCK                                   = 256,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_DISPLAY                                 = 320,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_REMOTE_CONTROL                          = 384,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_EYE_GLASSES                             = 448,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_TAG                                     = 512,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_KEYRING                                 = 576,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_MEDIA_PLAYER                            = 640,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_BARCODE_SCANNER                         = 704,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_THERMOMETER                             = 768,
-  BLE_GAP_CHAR_APPEARANCE_THERMOMETER_EAR                                 = 769,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_HEART_RATE_SENSOR                       = 832,
-  BLE_GAP_CHAR_APPEARANCE_HEART_RATE_SENSOR_HEART_RATE_BELT               = 833,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_BLOOD_PRESSURE                          = 896,
-  BLE_GAP_CHAR_APPEARANCE_BLOOD_PRESSURE_ARM                              = 897,
-  BLE_GAP_CHAR_APPEARANCE_BLOOD_PRESSURE_WRIST                            = 898,
-  BLE_GAP_CHAR_APPEARANCE_HUMAN_INTERFACE_DEVICE_HID                      = 960,
-  BLE_GAP_CHAR_APPEARANCE_KEYBOARD                                        = 961,
-  BLE_GAP_CHAR_APPEARANCE_MOUSE                                           = 962,
-  BLE_GAP_CHAR_APPEARANCE_JOYSTICK                                        = 963,
-  BLE_GAP_CHAR_APPEARANCE_GAMEPAD                                         = 964,
-  BLE_GAP_CHAR_APPEARANCE_DIGITIZER_TABLET                                = 965,
-  BLE_GAP_CHAR_APPEARANCE_CARD_READER                                     = 966,
-  BLE_GAP_CHAR_APPEARANCE_DIGITAL_PEN                                     = 967,
-  BLE_GAP_CHAR_APPEARANCE_BARCODE_SCANNER                                 = 968,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_GLUCOSE_METER                           = 1024,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_RUNNING_WALKING_SENSOR                  = 1088,
-  BLE_GAP_CHAR_APPEARANCE_RUNNING_WALKING_SENSOR_IN_SHOE                  = 1089,
-  BLE_GAP_CHAR_APPEARANCE_RUNNING_WALKING_SENSOR_ON_SHOE                  = 1090,
-  BLE_GAP_CHAR_APPEARANCE_RUNNING_WALKING_SENSOR_ON_HIP                   = 1091,
-  BLE_GAP_CHAR_APPEARANCE_GENERIC_CYCLING                                 = 1152,
-  BLE_GAP_CHAR_APPEARANCE_CYCLING_CYCLING_COMPUTER                        = 1153,
-  BLE_GAP_CHAR_APPEARANCE_CYCLING_SPEED_SENSOR                            = 1154,
-  BLE_GAP_CHAR_APPEARANCE_CYCLING_CADENCE_SENSOR                          = 1155,
-  BLE_GAP_CHAR_APPEARANCE_CYCLING_POWER_SENSOR                            = 1156,
-  BLE_GAP_CHAR_APPEARANCE_CYCLING_SPEED_AND_CADENCE_SENSOR                = 1157,
-  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETER_GENERIC                          = 3136,
-  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETER_FINGERTIP                        = 3137,
-  BLE_GAP_CHAR_APPEARANCE_PULSE_OXIMETER_WRIST_WORN                       = 3138,
-  BLE_GAP_CHAR_APPEARANCE_OUTDOOR_GENERIC                                 = 5184,
-  BLE_GAP_CHAR_APPEARANCE_OUTDOOR_LOCATION_DISPLAY_DEVICE                 = 5185,
-  BLE_GAP_CHAR_APPEARANCE_OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE  = 5186,
-  BLE_GAP_CHAR_APPEARANCE_OUTDOOR_LOCATION_POD                            = 5187,
-  BLE_GAP_CHAR_APPEARANCE_OUTDOOR_LOCATION_AND_NAVIGATION_POD             = 5188
-} ble_gap_char_appearance_t;
-
-// https://developer.bluetooth.org/gatt/units/Pages/default.aspx
+/* https://developer.bluetooth.org/gatt/units/Pages/default.aspx */
 typedef enum ble_gatt_unit_e
 {
   BLE_GATT_UNIT_NONE                                                   = 0x2700,
@@ -208,7 +127,8 @@ typedef enum ble_gatt_unit_e
   BLE_GATT_UNIT_IRRADIANCE_WATT_PER_SQUARE_METRE                       = 0x27B6
 } ble_gatt_unit_t;
 
-// http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
+/* Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.2 */
+/* http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml */
 typedef enum ble_gatt_format_e
 {
   BLE_GATT_FORMAT_RFU                 = 0x00, /**< Reserved For Future Use. */
@@ -241,6 +161,8 @@ typedef enum ble_gatt_format_e
   BLE_GATT_FORMAT_STRUCT              = 0x1B  /**< Opaque Structure. */
 } ble_gatt_format_t;
 
+/* Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.1.1 */
+/* See Section 3.3.3.1 for Extended Properties */
 typedef enum ble_gatt_char_properties_e
 {
   BLE_GATT_CHAR_PROPERTIES_BROADCAST                    = 0x01, /**< Permits broadcasts of the Characteristic Value using Server Characteristic Configuration Descriptor. */
@@ -252,6 +174,17 @@ typedef enum ble_gatt_char_properties_e
   BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES  = 0x40, /**< Permits signed writes to the Characteristic Value. */
   BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES          = 0x80  /**< Additional characteristic properties are defined in the Characteristic Extended Properties Descriptor */
 } ble_gatt_char_properties_t;
+
+/* Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5 */
+/* See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml */
+typedef struct PresentationFormat
+{
+  uint8_t   gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
+  int8_t    exponent;       /**< Exponent for integer data types. Ex. if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
+  uint16_t  gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
+  uint8_t   gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
+  uint16_t  gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
+} presentation_format_t;
 
 struct UTF8String
 {
@@ -271,14 +204,8 @@ struct SecurityMode
   uint8_t  level;           /**< Level (1, 2 or 3), 0 for no permissions at all. */
 };
 
-// See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-typedef struct PresentationFormat
-{
-  uint8_t   gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
-  int8_t    exponent;       /**< Exponent for integer data types. */
-  uint16_t  gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
-  uint8_t   gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
-  uint16_t  gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
-} presentation_format_t;
+#ifdef __cplusplus
+}
+#endif
 
 #endif
