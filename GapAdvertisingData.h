@@ -28,7 +28,7 @@
     
     @para
     For convenience sake, all appropriate AD types have been encapsulated
-    into an enum at \ref DataType.
+    into \ref DataType.
     
     @para
     Before the AD Types and their payload (if any) can be inserted into
@@ -38,29 +38,20 @@
     - Record length (1 byte)
     - AD Type (1 byte)
     - AD payload (optional, only present if record length > 1)
-
+    
     @para
-    When multiple AD records are present, the individual records are
-    appended one after the other, up to the maximum payload length of 31
-    bytes, as can be seen in the example payload below.
+    This class takes care of properly formatting the payload, performs
+    some basic checks on the payload length, and tries to avoid common
+    errors like adding an exclusive AD field twice in the Advertising
+    or Scan Response payload.
     
-    @section Sample Raw Advertising Payload
+    @section EXAMPLE
     
-    // Two record payload containing BLE_GAP_ADV_DATATYPE_FLAGS (0x01) and 
-    // BLE_GAP_ADV_DATATYPE_COMPLETE_LOCAL_NAME (0x09) fields
-    02 01 01 0A 09 50 65 64 6F 6D 65 74 65 72
-
-    // Record 1 (FLAGS)
-    02 01 01
-    02 = record length (2 bytes)
-    01 = BLE_GAP_ADV_DATATYPE_FLAGS
-    01 = BLE_GAP_ADV_FLAGS_LE_LIMITED_DISCOVERABLE
+    @code
     
-    // Record 2 (COMPLETE LOCAL NAME)
-    0A 09 50 65 64 6F 6D 65 74 65 72
-    0A = record length (10 bytes)
-    09 = BLE_GAP_ADV_DATATYPE_COMPLETE_LOCAL_NAME
-    50 65 64 6F 6D 65 74 65 72 = "Pedometer"
+    // ToDo
+    
+    @endcode
 */
 /**************************************************************************/
 class GapAdvertisingData

@@ -111,6 +111,10 @@ ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
                 @para
                 \ref LE_GENERAL_DISCOVERABLE - The peripheral is
                 permanently discoverable
+                
+                @para
+                \ref BREDR_NOT_SUPPORTED - This peripheral is a
+                Bluetooth Low Energy only device (no EDR support)
 
     @returns    ble_error_t
     
