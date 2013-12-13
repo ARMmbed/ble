@@ -10,21 +10,23 @@
 class GapAdvertisingParams
 {
   public:
+    /* See Bluetooth Core Specification 4.0 (Vol. 6), Part B, Section 2.3.1 */
     /* See Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 9.3 */
-    enum ConnectionMode
+    enum AdvertisingType
     {
-      NON_CONNECTABLE,          /**< Section 9.3.2 */
-      DIRECTED_CONNECTABLE,     /**< Section 9.3.3 */
-      UNDIRECTED_CONNECTABLE    /**< Section 9.3.4 */
+      ADV_CONNECTABLE_UNDIRECTED,       /**< Vol 3, Part C, Section 9.3.4 and Vol 6, Part B, Section 2.3.1.1 */
+      ADV_CONNECTABLE_DIRECTED,         /**< Vol 3, Part C, Section 9.3.3 and Vol 6, Part B, Section 2.3.1.2 */
+      ADV_NON_CONNECTABLE_UNDIRECTED,   /**< Vol 3, Part C, Section 9.3.2 and Vol 6, Part B, Section 2.3.1.3 */
+      ADV_SCANNABLE_UNDIRECTED          /**< Include support for Scan Response payloads, see Vol 6, Part B, Section 2.3.1.4 */
     };
   
-    GapAdvertisingParams(ConnectionMode connectionMode = GapAdvertisingParams::UNDIRECTED_CONNECTABLE,
-                         uint16_t interval = GAP_ADV_PARAMS_INTERVAL_MIN, 
+    GapAdvertisingParams(AdvertisingType advType = GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
+                         uint16_t interval = GAP_ADV_PARAMS_INTERVAL_MIN,
                          uint16_t timeout = 0);
     virtual ~GapAdvertisingParams(void);
 
   private:
-    ConnectionMode  _connectionMode;
+    AdvertisingType  _advType;
     uint16_t _interval;
     uint16_t _timeout;
 };
