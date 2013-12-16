@@ -13,7 +13,7 @@ class nRF51822 : public BLERadio
         virtual ~nRF51822(void);
 
         /* Functions that mus be implemented from NRFRadio */
-        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &);
+        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &, GapAdvertisingData &);
         virtual ble_error_t addService(GattService &);
         virtual ble_error_t readCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t);
         virtual ble_error_t writeCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t);

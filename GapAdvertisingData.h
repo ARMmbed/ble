@@ -152,6 +152,7 @@ class GapAdvertisingData
     ble_error_t addFlags(Flags flag = LE_GENERAL_DISCOVERABLE);
     ble_error_t addTxPower(int8_t txPower);
     void        clear(void);
+    uint8_t *   getPayload(void);
     uint8_t     getPayloadLen(void);
 
   private:

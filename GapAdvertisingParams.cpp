@@ -101,3 +101,13 @@ GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType, uint16_t int
 GapAdvertisingParams::~GapAdvertisingParams(void)
 {
 }
+
+/**************************************************************************/
+/*!
+    @brief returns the current Advertising Type value
+*/
+/**************************************************************************/
+GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(void)
+{
+    return _advType;
+}

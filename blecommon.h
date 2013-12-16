@@ -10,7 +10,8 @@ extern "C" {
 typedef enum ble_error_e
 {
   BLE_ERROR_NONE                    = 0,
-  BLE_ERROR_BUFFER_OVERFLOW         = 1
+  BLE_ERROR_BUFFER_OVERFLOW         = 1,
+  BLE_ERROR_BUFFER_INVALID_PARAM    = 2
 } ble_error_t;
 
 /* https://developer.bluetooth.org/gatt/units/Pages/default.aspx */

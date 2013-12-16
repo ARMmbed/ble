@@ -25,7 +25,7 @@ class BLERadio
         /* ToDo: Force constructor with event handler callback */
 
         /* These functions must be defined in the sub-class */
-        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &) = 0;
+        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &, GapAdvertisingData &) = 0;
         virtual ble_error_t addService(GattService &) = 0;
         virtual ble_error_t readCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t) = 0;
         virtual ble_error_t writeCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t) = 0;

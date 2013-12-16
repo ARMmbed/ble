@@ -19,8 +19,6 @@ void nRF51822::uartCallback(void)
     @brief  Constructor
 */
 /**************************************************************************/
-
-//nRF51822::nRF51822() : uart(P0_4, P0_0) /* LPC812 */
 nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
 {
     /* Setup the nRF UART interface */
@@ -30,7 +28,6 @@ nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
     uart.attach(this, &nRF51822::uartCallback);
     
     /* Add flow control for UART (required by the nRF51822) */
-    //uart.set_flow_control(Serial::RTSCTS, P0_6, P0_8);  /* LPC812 */
     uart.set_flow_control(Serial::RTSCTS, p30, p29);      /* LPC1768 */
 
     /* Reset the service counter */
@@ -66,17 +63,99 @@ void nRF51822::test(void)
 
 /**************************************************************************/
 /*!
+    @brief  Sets the advertising parameters and payload for the device
 
+    @param[in]  params
+                Basic advertising details, including the advertising
+                delay, timeout and how the device should be advertised
+    @params[in] advData
+                The primary advertising data payload
+    @params[in] scanResponse
+                The optional Scan Response payload if the advertising
+                type is set to \ref GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED
+                in \ref GapAdveritinngParams
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+
+    @retval     BLE_ERROR_BUFFER_OVERFLOW
+                The proposed action would cause a buffer overflow.  All
+                advertising payloads must be <= 31 bytes.
+                
+    @section EXAMPLE
+
+    @code
+
+    @endcode
 */
 /**************************************************************************/
-ble_error_t nRF51822::setAdvertising(GapAdvertisingParams &, GapAdvertisingData &)
+ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisingData & advData, GapAdvertisingData & scanResponse)
 {
+    uint8_t len = 0;
+    uint8_t *buffer;
+
+    /* ToDo: Send advertising params, Command ID = 0x000x */
+
+    /* Send advertising data, Command ID = 0x000A */
+    len = advData.getPayloadLen();
+    buffer = advData.getPayload(); 
+       
+    if (len > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
+    {
+        return BLE_ERROR_BUFFER_OVERFLOW;
+    }
+    
+    uart.printf("10 0A 00 %02X ", len);
+    for (uint16_t i = 0; i < len; i++)
+    {
+        uart.printf(" %02X", buffer[i]);
+    }    
+    uart.printf("\r\n");
+    
+    /* ToDo: Check response */
+    wait(0.1);
+
+    /* Send scan response data, Command ID = 0x000x */
+    if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED))
+    {
+        len = advData.getPayloadLen();
+        buffer = advData.getPayload();
+        
+        if (len > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
+        {
+            return BLE_ERROR_BUFFER_OVERFLOW;
+        }
+    
+        uart.printf("10 0A 00 %02X ", len);
+        for (uint16_t i = 0; i < len; i++)
+        {
+            uart.printf(" %02X", buffer[i]);
+        }
+        uart.printf("\r\n");
+        
+        /* ToDo: Check response */
+        wait(0.1);
+    }
+    
     return BLE_ERROR_NONE;
 }
 
 /**************************************************************************/
 /*!
+    @brief  Adds a new service to the GATT table on the peripheral
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+                
+    @section EXAMPLE
 
+    @code
+
+    @endcode
 */
 /**************************************************************************/
 ble_error_t nRF51822::addService(GattService & service)
@@ -156,6 +235,17 @@ ble_error_t nRF51822::addService(GattService & service)
                 (raw byte array in LSB format)
     @param[in]  len
                 The number of bytes read into the buffer
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+                
+    @section EXAMPLE
+
+    @code
+
+    @endcode
 */
 /**************************************************************************/
 ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
@@ -179,6 +269,17 @@ ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristi
                 (raw byte array in LSB format)
     @param[in]  len
                 The number of bytes in buffer
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+                
+    @section EXAMPLE
+
+    @code
+
+    @endcode
 */
 /**************************************************************************/
 ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
@@ -203,6 +304,17 @@ ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacterist
             added before this function was called.
             
     @note   All services must be added before calling this function!
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+                
+    @section EXAMPLE
+
+    @code
+
+    @endcode
 */
 /**************************************************************************/
 ble_error_t nRF51822::start(void)
@@ -219,6 +331,17 @@ ble_error_t nRF51822::start(void)
 /**************************************************************************/
 /*!
     @brief  Stops the BLE HW and disconnects from any devices
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+                
+    @section EXAMPLE
+
+    @code
+
+    @endcode
 */
 /**************************************************************************/
 ble_error_t nRF51822::stop(void)
@@ -236,6 +359,17 @@ ble_error_t nRF51822::stop(void)
 /*!
     @brief  Resets the BLE HW, removing any existing services and
             characteristics
+            
+    @returns    ble_error_t
+    
+    @retval     BLE_ERROR_NONE
+                Everything executed properly
+                
+    @section EXAMPLE
+
+    @code
+
+    @endcode
 */
 /**************************************************************************/
 ble_error_t nRF51822::reset(void)

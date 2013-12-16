@@ -179,7 +179,21 @@ void GapAdvertisingData::clear(void)
 
 /**************************************************************************/
 /*!
+    @brief Returns a pointer to the the current payload
+    
+    @returns    A pointer to the payload
+*/
+/**************************************************************************/
+uint8_t * GapAdvertisingData::getPayload(void)
+{
+    return _payload;
+}
+
+/**************************************************************************/
+/*!
     @brief Returns the current payload length (0..31 bytes)
+    
+    @returns    The payload length in bytes
 */
 /**************************************************************************/
 uint8_t GapAdvertisingData::getPayloadLen(void)

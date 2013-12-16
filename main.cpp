@@ -34,6 +34,7 @@ GattCharacteristic thermInterval ( 0x2A21, 2, 2, BLE_GATT_CHAR_PROPERTIES_READ )
 /* GAP Advertising Example (iBeacon) */
 GapAdvertisingParams advParams ( GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED );
 GapAdvertisingData   advData;
+GapAdvertisingData   scanResponse;
 
 uint8_t iBeaconPayload[25] = { 0x4C, 0x00, 0x02, 0x15, 0xE2, 0x0A, 0x39, 0xF4, 0x73, 0xF5, 0x4B, 0xC4, 0xA1, 0x2F, 0x17, 0xD1, 0xAD, 0x07, 0xA9, 0x61, 0x00, 0x00, 0x00, 0x00, 0xC8 };
 
@@ -45,7 +46,7 @@ void startBeacon(void)
     
     wait(2);
     radio.reset();
-    radio.setAdvertising(advParams, advData);
+    radio.setAdvertising(advParams, advData, scanResponse);
     radio.start();
 }
 
