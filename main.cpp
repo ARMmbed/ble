@@ -53,7 +53,6 @@ void startBeacon(void)
 int main()
 {
     wait(2);
-    // radio.test();
     startBeacon();
     while(1);
 

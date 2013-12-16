@@ -19,7 +19,7 @@ void nRF51822::uartCallback(void)
     @brief  Constructor
 */
 /**************************************************************************/
-nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
+nRF51822::nRF51822() : uart(p9, p10)
 {
     /* Setup the nRF UART interface */
     uart.baud(9600);
@@ -28,7 +28,7 @@ nRF51822::nRF51822() : uart(p9, p10)      /* LPC1768 using apps board */
     uart.attach(this, &nRF51822::uartCallback);
     
     /* Add flow control for UART (required by the nRF51822) */
-    uart.set_flow_control(Serial::RTSCTS, p30, p29);      /* LPC1768 */
+    uart.set_flow_control(Serial::RTSCTS, p30, p29);
 
     /* Reset the service counter */
     serviceCount = 0;
@@ -45,24 +45,6 @@ nRF51822::~nRF51822(void)
 
 /**************************************************************************/
 /*!
-
-*/
-/**************************************************************************/
-void nRF51822::test(void)
-{
-    /* Send iBeacon data as a test */
-    uart.printf("10 0a 00 1e 02 01 04 1A FF 4C 00 02 15 E2 0A 39 F4 73 F5 4B C4 A1 2F 17 D1 AD 07 A9 61 00 00 00 00 C8\r\n");
-    /* ToDo: Check response */
-    wait(0.1);
-    
-    /* Start the radio */
-    uart.printf("10 03 00 00\r\n");
-    /* ToDo: Check response */
-    wait(0.1);
-}
-
-/**************************************************************************/
-/*!
     @brief  Sets the advertising parameters and payload for the device
 
     @param[in]  params
@@ -75,15 +57,22 @@ void nRF51822::test(void)
                 type is set to \ref GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED
                 in \ref GapAdveritinngParams
             
-    @returns    ble_error_t
+    @returns    \ref ble_error_t
     
     @retval     BLE_ERROR_NONE
                 Everything executed properly
 
     @retval     BLE_ERROR_BUFFER_OVERFLOW
                 The proposed action would cause a buffer overflow.  All
-                advertising payloads must be <= 31 bytes.
+                advertising payloads must be <= 31 bytes, for example.
                 
+    @retval     BLE_ERROR_NOT_IMPLEMENTED
+                A feature was requested that is not yet supported in the
+                nRF51 firmware or hardware.
+
+    @retval     BLE_ERROR_PARAM_OUT_OF_RANGE
+                One of the proposed values is outside the valid range.
+
     @section EXAMPLE
 
     @code
@@ -95,18 +84,77 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
 {
     uint8_t len = 0;
     uint8_t *buffer;
+    
+    /* Make sure we support the advertising type */
+    if (params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED)
+    {
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+    
+    /* Check interval range */
+    if ((params.getInterval() < GAP_ADV_PARAMS_INTERVAL_MIN) ||
+        (params.getInterval() > GAP_ADV_PARAMS_INTERVAL_MAX))
+    {
+        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+    }
+    
+    /* Check timeout is zero for Connectable Directed */
+    if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) ||
+        (params.getTimeout() != 0))
+    {
+        /* Timeout must be 0 with this type, although we'll never get here */
+        /* since this isn't implemented yet anyway */
+        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+    }
+    
+    /* Check timeout for other advertising types */
+    if ((params.getAdvertisingType() != GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) ||
+        (params.getTimeout() == 0))
+    {
+        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+    }
 
-    /* ToDo: Send advertising params, Command ID = 0x000x */
-
-    /* Send advertising data, Command ID = 0x000A */
-    len = advData.getPayloadLen();
-    buffer = advData.getPayload(); 
-       
-    if (len > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
+    /* Make sure we don't exceed the advertising payload length */
+    if (advData.getPayloadLen() > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
     {
         return BLE_ERROR_BUFFER_OVERFLOW;
     }
     
+    /* Make sure we don't exceed the scan response payload length */
+    if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED))
+    {
+        if (advData.getPayloadLen() > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
+        {
+            return BLE_ERROR_BUFFER_OVERFLOW;
+        }
+    }
+    
+    /* ToDo: Perform some checks on the payload, for example the Scan Response can't */
+    /* contains a flags AD type, etc. */
+
+    /* ToDo: Refactor these actions into separate private functions */
+
+    /* 1.) Send advertising params, Command IDs = 0x000C, 0x000D, 0x000E */
+    /* A.) Command ID = 0x000C, Advertising Interval, uint16_t */
+    uart.printf("10 0C 00 02 %02X %02X\r\n", (uint8_t)(params.getInterval() & 0xFF),
+                                             (uint8_t)(params.getInterval() >> 8));
+    /* ToDo: Check response */
+    wait(0.5);
+    
+    /* B.) Command ID = 0x000D, Advertising Timeout, uint16_t */
+    uart.printf("10 0D 00 02 %02X %02X\r\n", (uint8_t)(params.getTimeout() & 0xFF),
+                                             (uint8_t)(params.getTimeout() >> 8));
+    /* ToDo: Check response */
+    wait(0.5);
+    
+    /* C.) Command ID = 0x000E, Advertising Type, uint8_t */
+    uart.printf("10 0E 00 01 %02X\r\n", (uint8_t)(params.getAdvertisingType()));
+    /* ToDo: Check response */
+    wait(0.5);    
+
+    /* 2.) Send advertising data, Command ID = 0x000A */
+    len = advData.getPayloadLen();
+    buffer = advData.getPayload();     
     uart.printf("10 0A 00 %02X ", len);
     for (uint16_t i = 0; i < len; i++)
     {
@@ -117,17 +165,11 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     /* ToDo: Check response */
     wait(0.1);
 
-    /* Send scan response data, Command ID = 0x000x */
+    /* 3.) Send scan response data, Command ID = 0x000x */
     if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED))
     {
         len = advData.getPayloadLen();
         buffer = advData.getPayload();
-        
-        if (len > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
-        {
-            return BLE_ERROR_BUFFER_OVERFLOW;
-        }
-    
         uart.printf("10 0A 00 %02X ", len);
         for (uint16_t i = 0; i < len; i++)
         {

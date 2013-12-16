@@ -26,6 +26,8 @@ class GapAdvertisingParams
     virtual ~GapAdvertisingParams(void);
     
     virtual AdvertisingType getAdvertisingType(void);
+    virtual uint16_t        getInterval(void);
+    virtual uint16_t        getTimeout(void);
 
   private:
     AdvertisingType  _advType;

@@ -111,3 +111,23 @@ GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(v
 {
     return _advType;
 }
+
+/**************************************************************************/
+/*!
+    @brief returns the current Advertising Delay (in units of 0.625ms)
+*/
+/**************************************************************************/
+uint16_t GapAdvertisingParams::getInterval(void)
+{
+    return _interval;
+}
+
+/**************************************************************************/
+/*!
+    @brief returns the current Advertising Timeout (in seconds)
+*/
+/**************************************************************************/
+uint16_t GapAdvertisingParams::getTimeout(void)
+{
+    return _timeout;
+}
