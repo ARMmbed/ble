@@ -16,8 +16,8 @@ class GapAdvertisingParams
     {
       ADV_CONNECTABLE_UNDIRECTED,       /**< Vol 3, Part C, Section 9.3.4 and Vol 6, Part B, Section 2.3.1.1 */
       ADV_CONNECTABLE_DIRECTED,         /**< Vol 3, Part C, Section 9.3.3 and Vol 6, Part B, Section 2.3.1.2 */
-      ADV_NON_CONNECTABLE_UNDIRECTED,   /**< Vol 3, Part C, Section 9.3.2 and Vol 6, Part B, Section 2.3.1.3 */
-      ADV_SCANNABLE_UNDIRECTED          /**< Include support for Scan Response payloads, see Vol 6, Part B, Section 2.3.1.4 */
+      ADV_SCANNABLE_UNDIRECTED,         /**< Include support for Scan Response payloads, see Vol 6, Part B, Section 2.3.1.4 */
+      ADV_NON_CONNECTABLE_UNDIRECTED    /**< Vol 3, Part C, Section 9.3.2 and Vol 6, Part B, Section 2.3.1.3 */
     };
   
     GapAdvertisingParams(AdvertisingType advType = GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
