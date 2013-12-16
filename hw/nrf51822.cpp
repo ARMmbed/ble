@@ -165,18 +165,18 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     /* ToDo: Check response */
     wait(0.1);
 
-    /* 3.) Send scan response data, Command ID = 0x000x */
+    /* 3.) Send scan response data, Command ID = 0x000B */
     if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED))
     {
         len = advData.getPayloadLen();
         buffer = advData.getPayload();
-        uart.printf("10 0A 00 %02X ", len);
+        uart.printf("10 0B 00 %02X ", len);
         for (uint16_t i = 0; i < len; i++)
         {
             uart.printf(" %02X", buffer[i]);
         }
         uart.printf("\r\n");
-        
+
         /* ToDo: Check response */
         wait(0.1);
     }
