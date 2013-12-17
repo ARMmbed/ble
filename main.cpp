@@ -40,14 +40,15 @@ uint8_t iBeaconPayload[25] = { 0x4C, 0x00, 0x02, 0x15, 0xE2, 0x0A, 0x39, 0xF4, 0
 
 void startBeacon(void)
 {
+    ble_error_t error;
+    
     /* iBeacon includes the FLAG and MSD fields */
     advData.addFlags(GapAdvertisingData::BREDR_NOT_SUPPORTED);
     advData.addData(GapAdvertisingData::MANUFACTURER_SPECIFIC_DATA, iBeaconPayload, 25);
     
-    wait(2);
-    radio.reset();
-    radio.setAdvertising(advParams, advData, scanResponse);
-    radio.start();
+    error = radio.reset();
+    error = radio.setAdvertising(advParams, advData, scanResponse);
+    error = radio.start();
 }
 
 int main()

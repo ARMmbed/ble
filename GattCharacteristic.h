@@ -15,7 +15,7 @@ public:
     uint16_t uuid;              /* Characteristic UUID */
     uint16_t lenMin;            /* Minimum length of the value */
     uint16_t lenMax;            /* Maximum length of the value */
-    uint8_t  index;
+    uint8_t  handle;
     uint8_t  properties;
 };
 

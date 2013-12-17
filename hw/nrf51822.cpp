@@ -1,6 +1,8 @@
 #include "nrf51822.h"
 #include "mbed.h"
 
+#define NRF51822_DEBUG_MODE (1)
+
 /**************************************************************************/
 /*!
     @brief  UART callback function
@@ -11,7 +13,11 @@ void nRF51822::uartCallback(void)
     /* ToDo: Check responses and set a flag for success/error/etc. */
     
     /* Read serial to clear the RX interrupt */
+    #if NRF51822_DEBUG_MODE
+    printf("%c", uart.getc());
+    #else
     uart.getc();
+    #endif
 }
 
 /**************************************************************************/
@@ -85,9 +91,16 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     uint8_t len = 0;
     uint8_t *buffer;
     
+    #if NRF51822_DEBUG_MODE
+    printf("Configuring Advertising ... ");
+    #endif
+    
     /* Make sure we support the advertising type */
     if (params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED)
     {
+        #if NRF51822_DEBUG_MODE
+        printf("ADV_CONNECTABLE_DIRECTED not supported (BLE_ERROR = 0x%04X)\r\n", (uint16_t)BLE_ERROR_NOT_IMPLEMENTED);
+        #endif
         return BLE_ERROR_NOT_IMPLEMENTED;
     }
     
@@ -95,6 +108,9 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     if ((params.getInterval() < GAP_ADV_PARAMS_INTERVAL_MIN) ||
         (params.getInterval() > GAP_ADV_PARAMS_INTERVAL_MAX))
     {
+        #if NRF51822_DEBUG_MODE
+        printf("Advertising interval out of range (BLE_ERROR = 0x%04X)\r\n", (uint16_t)BLE_ERROR_PARAM_OUT_OF_RANGE);
+        #endif
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
     }
     
@@ -102,6 +118,9 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) ||
         (params.getTimeout() != 0))
     {
+        #if NRF51822_DEBUG_MODE
+        printf("Timeout must be 0 with ADV_CONNECTABLE_DIRECTED (BLE_ERROR = 0x%04X)\r\n", (uint16_t)BLE_ERROR_PARAM_OUT_OF_RANGE);
+        #endif
         /* Timeout must be 0 with this type, although we'll never get here */
         /* since this isn't implemented yet anyway */
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
@@ -109,14 +128,20 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     
     /* Check timeout for other advertising types */
     if ((params.getAdvertisingType() != GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) ||
-        (params.getTimeout() == 0))
+        (params.getTimeout() > GAP_ADV_PARAMS_TIMEOUT_MAX))
     {
+        #if NRF51822_DEBUG_MODE
+        printf("Timeout out of range (BLE_ERROR = 0x%04X)\r\n", (uint16_t)BLE_ERROR_PARAM_OUT_OF_RANGE);
+        #endif
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
     }
 
     /* Make sure we don't exceed the advertising payload length */
     if (advData.getPayloadLen() > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
     {
+        #if NRF51822_DEBUG_MODE
+        printf("Advertising payload > 31 bytes (BLE_ERROR = 0x%04X)\r\n", (uint16_t)BLE_ERROR_BUFFER_OVERFLOW);
+        #endif
         return BLE_ERROR_BUFFER_OVERFLOW;
     }
     
@@ -125,6 +150,9 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     {
         if (advData.getPayloadLen() > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
         {
+            #if NRF51822_DEBUG_MODE
+            printf("Scan response payload > 31 bytes (BLE_ERROR = 0x%04X)\r\n", (uint16_t)BLE_ERROR_BUFFER_OVERFLOW);
+            #endif
             return BLE_ERROR_BUFFER_OVERFLOW;
         }
     }
@@ -181,6 +209,9 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
         wait(0.1);
     }
     
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }
 
@@ -202,6 +233,10 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
 /**************************************************************************/
 ble_error_t nRF51822::addService(GattService & service)
 {
+    #if NRF51822_DEBUG_MODE
+    printf("Adding a service ... ");
+    #endif
+    
     /* ToDo: Make sure we don't overflow the array, etc. */
     /* ToDo: Make sure this service UUID doesn't already exist (?) */
     /* ToDo: Basic validation */
@@ -257,9 +292,12 @@ ble_error_t nRF51822::addService(GattService & service)
     }    
 
     /* Update the service index value */
-    service.index = serviceCount;
+    service.handle = serviceCount;
     serviceCount++;
     
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }
 
@@ -292,8 +330,15 @@ ble_error_t nRF51822::addService(GattService & service)
 /**************************************************************************/
 ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
 {
+    #if NRF51822_DEBUG_MODE
+    printf("Reading characteristic (handle = %d) ... ", characteristic.handle);
+    #endif
+
     /* ToDo */
     
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }
 
@@ -326,8 +371,12 @@ ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristi
 /**************************************************************************/
 ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
 {
+    #if NRF51822_DEBUG_MODE
+    printf("Writing characteristic (handle = %d) ... ", characteristic.handle);
+    #endif
+        
     /* Command ID = 0x0006, Payload = Service ID, Characteristic ID, Value */
-    uart.printf("10 06 00 %02X %02X %02X", len + 2, characteristic.index, service.index);
+    uart.printf("10 06 00 %02X %02X %02X", len + 2, characteristic.handle, service.handle);
     for (uint16_t i = 0; i<len; i++)
     {
         uart.printf(" %02X", buffer[i]);
@@ -337,6 +386,9 @@ ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacterist
     /* ToDo: Check response */
     wait(0.1);
     
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }
 
@@ -361,12 +413,19 @@ ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacterist
 /**************************************************************************/
 ble_error_t nRF51822::start(void)
 {
+    #if NRF51822_DEBUG_MODE
+    printf("Initialising the radio ... ");
+    #endif
+    
     /* Command ID = 0x0003, No payload */
     uart.printf("10 03 00 00\r\n");
 
     /* ToDo: Check response */
     wait(0.5);
 
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }
 
@@ -388,12 +447,19 @@ ble_error_t nRF51822::start(void)
 /**************************************************************************/
 ble_error_t nRF51822::stop(void)
 {
+    #if NRF51822_DEBUG_MODE
+    printf("Stopping the radio ... ");
+    #endif
+    
     /* Command ID = 0x0004, No payload */
     uart.printf("10 04 00 00\r\n");
 
     /* ToDo: Check response */
     wait(0.1);
 
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }
 
@@ -416,6 +482,10 @@ ble_error_t nRF51822::stop(void)
 /**************************************************************************/
 ble_error_t nRF51822::reset(void)
 {
+    #if NRF51822_DEBUG_MODE
+    printf("Restting the radio ... ");
+    #endif
+    
     /* Command ID = 0x0005, No payload */
     uart.printf("10 05 00 00\r\n");
 
@@ -425,5 +495,8 @@ ble_error_t nRF51822::reset(void)
     /* Wait for the radio to come back up */    
     wait(1);
     
+    #if NRF51822_DEBUG_MODE
+    printf("OK!\r\n");
+    #endif
     return BLE_ERROR_NONE;
 }

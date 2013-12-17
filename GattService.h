@@ -28,7 +28,7 @@ public:
     UUID                primaryServiceID;
     uint8_t             characteristicCount;
     serialisedChar_t    characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
-    uint8_t             index;
+    uint8_t             handle;
 
     ble_error_t         addCharacteristic(GattCharacteristic &);
 };

@@ -24,7 +24,7 @@ GattService::GattService(uint8_t base_uuid[16])
     primaryServiceID.update(base_uuid);
     characteristicCount = 0;
     memset(&characteristics, 0, sizeof(serialisedChar_t) * BLE_SERVICE_MAX_CHARACTERISTICS);
-    index = 0;
+    handle = 0;
 }
 
 /**************************************************************************/
@@ -47,7 +47,7 @@ GattService::GattService(uint16_t ble_uuid)
     primaryServiceID.update( ble_uuid );
     characteristicCount = 0;
     memset(&characteristics, 0, sizeof(serialisedChar_t) * BLE_SERVICE_MAX_CHARACTERISTICS);
-    index = 0;
+    handle = 0;
 }
 
 /**************************************************************************/
@@ -69,7 +69,7 @@ GattService::~GattService(void)
             properties required to create the characteristic on the
             target radio board.
             
-    @note   This function will update the .index field in the
+    @note   This function will update the .handle field in the
             GattCharacteristic to indicate where this characteristic was
             stored in the GattService's characteristic array.
 
@@ -107,8 +107,8 @@ ble_error_t GattService::addCharacteristic(GattCharacteristic & characteristic)
     /* Insert the serialised object into the buffer */
     memcpy(&characteristics[characteristicCount], &c, sizeof(serialisedChar_t));
     
-    /* Update the index value */
-    characteristic.index = characteristicCount;
+    /* Update the handle value */
+    characteristic.handle = characteristicCount;
     
     characteristicCount++;
     
