@@ -22,7 +22,7 @@ class nRF51822 : public BLERadio
         virtual ble_error_t reset(void);
         
     private:
-        Serial uart;
+        RawSerial uart;
 
         /* nRF51 Functions */
         void uartCallback(void);

@@ -28,7 +28,7 @@ nRF51822::nRF51822() : uart(p9, p10)
     uart.attach(this, &nRF51822::uartCallback);
     
     /* Add flow control for UART (required by the nRF51822) */
-    uart.set_flow_control(Serial::RTSCTS, p30, p29);
+    uart.set_flow_control(RawSerial::RTSCTS, p30, p29);
 
     /* Reset the service counter */
     serviceCount = 0;
