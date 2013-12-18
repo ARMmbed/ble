@@ -11,7 +11,7 @@ void nRF51822::uartCallback(void)
     /* ToDo: Check responses and set a flag for success/error/etc. */
     
     /* Read serial to clear the RX interrupt */
-    uart.getc();
+    printf("%c", uart.getc());
 }
 
 /**************************************************************************/
@@ -88,6 +88,7 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     /* Make sure we support the advertising type */
     if (params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED)
     {
+        /* ToDo: This requires a propery security implementation, etc. */
         return BLE_ERROR_NOT_IMPLEMENTED;
     }
     
@@ -132,12 +133,18 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
         return BLE_ERROR_BUFFER_OVERFLOW;
     }
     
-    /* Make sure we don't exceed the scan response payload length */
+    /* Check the scan response payload limits */
     if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED))
     {
+        /* Check if we're within the upper limit */
         if (advData.getPayloadLen() > GAP_ADVERTISING_DATA_MAX_PAYLOAD)
         {
             return BLE_ERROR_BUFFER_OVERFLOW;
+        }
+        /* Make sure we have a payload! */
+        if (advData.getPayloadLen() == 0)
+        {
+            return BLE_ERROR_PARAM_OUT_OF_RANGE;
         }
     }
     
@@ -148,23 +155,18 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
 
     /* 1.) Send advertising params, Command IDs = 0x000C, 0x000D, 0x000E */
     /* A.) Command ID = 0x000C, Advertising Interval, uint16_t */
-    printf("10 0C 00 02 %02X %02X\r\n", (uint8_t)(params.getInterval() & 0xFF),
-                                             (uint8_t)(params.getInterval() >> 8));
     uart.printf("10 0C 00 02 %02X %02X\r\n", (uint8_t)(params.getInterval() & 0xFF),
                                              (uint8_t)(params.getInterval() >> 8));
     /* ToDo: Check response */
     wait(0.5);
     
     /* B.) Command ID = 0x000D, Advertising Timeout, uint16_t */
-    printf("10 0D 00 02 %02X %02X\r\n", (uint8_t)(params.getTimeout() & 0xFF),
-                                             (uint8_t)(params.getTimeout() >> 8));
     uart.printf("10 0D 00 02 %02X %02X\r\n", (uint8_t)(params.getTimeout() & 0xFF),
                                              (uint8_t)(params.getTimeout() >> 8));
     /* ToDo: Check response */
     wait(0.5);
     
     /* C.) Command ID = 0x000E, Advertising Type, uint8_t */
-    printf("10 0E 00 01 %02X\r\n", (uint8_t)(params.getAdvertisingType()));
     uart.printf("10 0E 00 01 %02X\r\n", (uint8_t)(params.getAdvertisingType()));
     /* ToDo: Check response */
     wait(0.5);    
@@ -188,8 +190,8 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     /* 3.) Send scan response data, Command ID = 0x000B */
     if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED))
     {
-        len = advData.getPayloadLen();
-        buffer = advData.getPayload();
+        len = scanResponse.getPayloadLen();
+        buffer = scanResponse.getPayload();
         printf("10 0B 00 %02X", len);
         uart.printf("10 0B 00 %02X", len);
         for (uint16_t i = 0; i < len; i++)
