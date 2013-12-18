@@ -5,13 +5,13 @@
 
 /**************************************************************************/
 /*!
-    @brief  Creates a new GapAdvertisingData instance
+    \brief  Creates a new GapAdvertisingData instance
 
-    @section EXAMPLE
+    \par EXAMPLE
 
-    @code
+    \code
 
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 GapAdvertisingData::GapAdvertisingData(void)
@@ -31,27 +31,27 @@ GapAdvertisingData::~GapAdvertisingData(void)
 
 /**************************************************************************/
 /*!
-    @brief  Adds advertising data based on the specified AD type (see
-            \ref DataType)
+    \brief  Adds advertising data based on the specified AD type (see
+            DataType)
 
-    @args[in]   advDataType The Advertising \ref DataType to add
-    @args[in]   payload     Pointer to the payload contents
-    @args[in]   len         Size of the payload in bytes
+    \args[in]   advDataType The Advertising 'DataType' to add
+    \args[in]   payload     Pointer to the payload contents
+    \args[in]   len         Size of the payload in bytes
     
-    @returns    ble_error_t
+    \returns    ble_error_t
     
-    @retval     BLE_ERROR_NONE
+    \retval     BLE_ERROR_NONE
                 Everything executed properly
                 
-    @retval     BLE_ERROR_BUFFER_OVERFLOW
+    \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
     
-    @section EXAMPLE
+    \par EXAMPLE
 
-    @code
+    \code
 
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload, uint8_t len)
@@ -80,25 +80,25 @@ ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload,
 
 /**************************************************************************/
 /*!
-    @brief  Helper function to add \ref APPEARANCE data to the advertising
+    \brief  Helper function to add APPEARANCE data to the advertising
             payload
 
-    @args[in]   appearance  The \ref APPEARANCE value to add
+    \args[in]   appearance  The APPEARANCE value to add
     
-    @returns    ble_error_t
+    \returns    ble_error_t
     
-    @retval     BLE_ERROR_NONE
+    \retval     BLE_ERROR_NONE
                 Everything executed properly
                 
-    @retval     BLE_ERROR_BUFFER_OVERFLOW
+    \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
     
-    @section EXAMPLE
+    \par EXAMPLE
 
-    @code
+    \code
 
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
@@ -108,37 +108,36 @@ ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
 
 /**************************************************************************/
 /*!
-    @brief  Helper function to add \ref FLAGS data to the advertising
+    \brief  Helper function to add FLAGS data to the advertising
             payload
 
-    @args[in]   flag  The \ref FLAGS value to add
+    \args[in]   flag  The FLAGS value to add
 
-                @para
-                \ref LE_LIMITED_DISCOVERABLE - The peripheral is
-                discoverable for a limited period of time
+                \par LE_LIMITED_DISCOVERABLE
+                The peripheral is discoverable for a limited period of
+                time
 
-                @para
-                \ref LE_GENERAL_DISCOVERABLE - The peripheral is
-                permanently discoverable
+                \par LE_GENERAL_DISCOVERABLE
+                The peripheral is permanently discoverable
                 
-                @para
-                \ref BREDR_NOT_SUPPORTED - This peripheral is a
-                Bluetooth Low Energy only device (no EDR support)
+                \par BREDR_NOT_SUPPORTED
+                This peripheral is a Bluetooth Low Energy only device
+                (no EDR support)
 
-    @returns    ble_error_t
+    \returns    ble_error_t
     
-    @retval     BLE_ERROR_NONE
+    \retval     BLE_ERROR_NONE
                 Everything executed properly
                 
-    @retval     BLE_ERROR_BUFFER_OVERFLOW
+    \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
     
-    @section EXAMPLE
+    \par EXAMPLE
 
-    @code
+    \code
 
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 ble_error_t GapAdvertisingData::addFlags(Flags flag)
@@ -148,25 +147,25 @@ ble_error_t GapAdvertisingData::addFlags(Flags flag)
 
 /**************************************************************************/
 /*!
-    @brief  Helper function to add \ref TX_POWER_LEVEL data to the
+    \brief  Helper function to add TX_POWER_LEVEL data to the
             advertising payload
 
-    @args[in]   flag  The \ref TX_POWER_LEVEL value to add
+    \args[in]   flag  The TX_POWER_LEVEL value to add
     
-    @returns    ble_error_t
+    \returns    ble_error_t
     
-    @retval     BLE_ERROR_NONE
+    \retval     BLE_ERROR_NONE
                 Everything executed properly
                 
-    @retval     BLE_ERROR_BUFFER_OVERFLOW
+    \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
     
-    @section EXAMPLE
+    \par EXAMPLE
 
-    @code
+    \code
 
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 ble_error_t GapAdvertisingData::addTxPower(int8_t txPower)
@@ -177,7 +176,7 @@ ble_error_t GapAdvertisingData::addTxPower(int8_t txPower)
 
 /**************************************************************************/
 /*!
-    @brief Clears the payload and resets the payload length counter
+    \brief Clears the payload and resets the payload length counter
 */
 /**************************************************************************/
 void GapAdvertisingData::clear(void)
@@ -188,9 +187,9 @@ void GapAdvertisingData::clear(void)
 
 /**************************************************************************/
 /*!
-    @brief Returns a pointer to the the current payload
+    \brief Returns a pointer to the the current payload
     
-    @returns    A pointer to the payload
+    \returns    A pointer to the payload
 */
 /**************************************************************************/
 uint8_t * GapAdvertisingData::getPayload(void)
@@ -200,9 +199,9 @@ uint8_t * GapAdvertisingData::getPayload(void)
 
 /**************************************************************************/
 /*!
-    @brief Returns the current payload length (0..31 bytes)
+    \brief Returns the current payload length (0..31 bytes)
     
-    @returns    The payload length in bytes
+    \returns    The payload length in bytes
 */
 /**************************************************************************/
 uint8_t GapAdvertisingData::getPayloadLen(void)

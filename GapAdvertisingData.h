@@ -7,51 +7,50 @@
 
 /**************************************************************************/
 /*!
-    @brief
+    \brief
     This class provides several helper functions to generate properly
     formatted GAP Advertising and Scan Response data payloads
 
-    @note See Bluetooth Specification 4.0 (Vol. 3), Part C, Section 11 and 18
+    \note 
+    See Bluetooth Specification 4.0 (Vol. 3), Part C, Section 11 and 18
     for further information on Advertising and Scan Response data.
         
-    @section Advertising and Scan Response Payloads
-    
-    @para
+    \par Advertising and Scan Response Payloads
     Advertising data and Scan Response data are organized around a set of
     data types called 'AD types' in Bluetooth 4.0 (see the Bluetooth Core
     Specification v4.0, Vol. 3, Part C, Sections 11 and 18).
 
-    @para
+    \par
     Each AD type has it's own standardized 'assigned number', as defined
     by the Bluetooth SIG:
     https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
     
-    @para
+    \par
     For convenience sake, all appropriate AD types have been encapsulated
-    into \ref DataType.
+    into GapAdvertisingData::DataType.
     
-    @para
+    \par
     Before the AD Types and their payload (if any) can be inserted into
     the Advertising or Scan Response frames, they need to be formatted as
     follows:
     
-    - Record length (1 byte)
-    - AD Type (1 byte)
-    - AD payload (optional, only present if record length > 1)
+    \li \c Record length (1 byte)
+    \li \c AD Type (1 byte)
+    \li \c AD payload (optional, only present if record length > 1)
     
-    @para
+    \par
     This class takes care of properly formatting the payload, performs
     some basic checks on the payload length, and tries to avoid common
     errors like adding an exclusive AD field twice in the Advertising
     or Scan Response payload.
     
-    @section EXAMPLE
+    \par EXAMPLE
     
-    @code
+    \code
     
     // ToDo
     
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 class GapAdvertisingData

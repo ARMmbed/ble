@@ -6,60 +6,63 @@
 
 /**************************************************************************/
 /*!
-    @brief  Instantiates a new GapAdvertisingParams instance
+    \brief
+    Instantiates a new GapAdvertisingParams instance
 
-    @param[in]  advType
+    \param[in]  advType
                 The GAP advertising mode to use for this device. Valid
-                values are defined in \ref AdvertisingType
+                values are defined in AdvertisingType
 
-                @para
-                ADV_NON_CONNECTABLE_UNDIRECTED - All connections to the
-                peripheral device will be refused.
+                \par ADV_NON_CONNECTABLE_UNDIRECTED
+                All connections to the peripheral device will be refused.
                 
-                @para
-                ADV_CONNECTABLE_DIRECTED - Only connections from a
-                pre-defined central device will be accepted.
+                \par ADV_CONNECTABLE_DIRECTED
+                Only connections from a pre-defined central device will be
+                accepted.
                 
-                @para
-                ADV_CONNECTABLE_UNDIRECTED - Any central device can connect
-                to this peripheral.
+                \par ADV_CONNECTABLE_UNDIRECTED
+                Any central device can connect to this peripheral.
 
-                @para
-                ADV_SCANNABLE_UNDIRECTED - Any central device can connect
-                to this peripheral, and the secondary Scan Response
-                payload will be included or available to central devices.
+                \par ADV_SCANNABLE_UNDIRECTED
+                Any central device can connect to this peripheral, and
+                the secondary Scan Response payload will be included or
+                available to central devices.
                 
-                @note See Bluetooth Core Specification 4.0 (Vol. 3),
-                Part C, Section 9.3 and Core Specification 4.0 (Vol. 6),
-                Part B, Section 2.3.1 for further information on GAP
-                connection modes
+                \note 
+                
+                See Bluetooth Core Specification 4.0 (Vol. 3), Part C,
+                Section 9.3 and Core Specification 4.0 (Vol. 6), Part B,
+                Section 2.3.1 for further information on GAP connection
+                modes
 
-    @param[in]  interval
+    \param[in]  interval
                 Advertising interval between 0x0020 and 0x4000 in 0.625ms
                 units (20ms to 10.24s).  If using non-connectable mode
-                (\ref ADV_NON_CONNECTABLE_UNDIRECTED) this min value is
+                (ADV_NON_CONNECTABLE_UNDIRECTED) this min value is
                 0x00A0 (100ms).
 
-                @para
+                \par
                 Increasing this value will allow central devices to detect
                 your peripheral faster at the expense of more power being
                 used by the radio due to the higher data transmit rate.
                 
-                @note This field must be set to 0 if connectionMode is equal
-                to \ref ADV_CONNECTABLE_DIRECTED
+                \note
+                This field must be set to 0 if connectionMode is equal
+                to ADV_CONNECTABLE_DIRECTED
                 
-                @note See Bluetooth Core Specification, Vol 3., Part C,
+                \note
+                See Bluetooth Core Specification, Vol 3., Part C,
                 Appendix A for suggested advertising intervals:
                 
-    @param[in]  timeout
+    \param[in]  timeout
                 Advertising timeout between 0x1 and 0x3FFF (1 and 16383)
                 in seconds.  Enter 0 to disable the advertising timeout.
                 
-    @section EXAMPLE
+    \par EXAMPLE
 
-    @code
+    \code
 
-    @endcode
+    \endcode
 */
 /**************************************************************************/
 GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType, uint16_t interval, uint16_t timeout)
@@ -121,7 +124,7 @@ GapAdvertisingParams::~GapAdvertisingParams(void)
 
 /**************************************************************************/
 /*!
-    @brief returns the current Advertising Type value
+    \brief returns the current Advertising Type value
 */
 /**************************************************************************/
 GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(void)
@@ -131,7 +134,7 @@ GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(v
 
 /**************************************************************************/
 /*!
-    @brief returns the current Advertising Delay (in units of 0.625ms)
+    \brief returns the current Advertising Delay (in units of 0.625ms)
 */
 /**************************************************************************/
 uint16_t GapAdvertisingParams::getInterval(void)
@@ -141,7 +144,7 @@ uint16_t GapAdvertisingParams::getInterval(void)
 
 /**************************************************************************/
 /*!
-    @brief returns the current Advertising Timeout (in seconds)
+    \brief returns the current Advertising Timeout (in seconds)
 */
 /**************************************************************************/
 uint16_t GapAdvertisingParams::getTimeout(void)
