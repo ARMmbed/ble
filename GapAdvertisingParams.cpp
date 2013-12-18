@@ -11,7 +11,7 @@
 
     \param[in]  advType
                 The GAP advertising mode to use for this device. Valid
-                values are defined in AdvertisingType
+                values are defined in AdvertisingType:
 
                 \par ADV_NON_CONNECTABLE_UNDIRECTED
                 All connections to the peripheral device will be refused.
@@ -28,8 +28,7 @@
                 the secondary Scan Response payload will be included or
                 available to central devices.
                 
-                \note 
-                
+                \par
                 See Bluetooth Core Specification 4.0 (Vol. 3), Part C,
                 Section 9.3 and Core Specification 4.0 (Vol. 6), Part B,
                 Section 2.3.1 for further information on GAP connection
@@ -46,13 +45,13 @@
                 your peripheral faster at the expense of more power being
                 used by the radio due to the higher data transmit rate.
                 
-                \note
+                \par
                 This field must be set to 0 if connectionMode is equal
                 to ADV_CONNECTABLE_DIRECTED
                 
-                \note
+                \par
                 See Bluetooth Core Specification, Vol 3., Part C,
-                Appendix A for suggested advertising intervals:
+                Appendix A for suggested advertising intervals.
                 
     \param[in]  timeout
                 Advertising timeout between 0x1 and 0x3FFF (1 and 16383)

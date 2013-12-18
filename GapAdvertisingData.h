@@ -56,8 +56,19 @@
 class GapAdvertisingData
 {
   public:
-    /* Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 11, 18 */
-    /* https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile */
+    /**********************************************************************/
+    /*!
+        \brief
+        A list of Advertising Data types commonly used by peripherals.
+        These AD types are used to describe the capabilities of the
+        peripheral, and get inserted inside the advertising or scan
+        response payloads.
+        
+        \par Source
+        \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 11, 18
+        \li \c https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+    */
+    /**********************************************************************/
     enum DataType
     {
       FLAGS                                             = 0x01,
@@ -78,19 +89,40 @@ class GapAdvertisingData
       MANUFACTURER_SPECIFIC_DATA                        = 0xFF
     };
     
-    /* Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 18.1 */
+    /**********************************************************************/
+    /*!
+        \brief
+        A list of values for the FLAGS AD Type
+        
+        \note
+        You can use more than one value in the FLAGS AD Type (ex.
+        LE_GENERAL_DISCOVERABLE and BREDR_NOT_SUPPORTED).
+        
+        \par Source
+        \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 18.1
+    */
+    /**********************************************************************/
     enum Flags
     {
-      LE_LIMITED_DISCOVERABLE                           = 0x01,
-      LE_GENERAL_DISCOVERABLE                           = 0x02,
-      BREDR_NOT_SUPPORTED                               = 0x04,
-      SIMULTANEOUS_LE_BREDR_C                           = 0x08,
-      SIMULTANEOUS_LE_BREDR_H                           = 0x10
+      LE_LIMITED_DISCOVERABLE                           = 0x01, /**< Peripheral device is discoverable for a limited period of time */
+      LE_GENERAL_DISCOVERABLE                           = 0x02, /**< Peripheral device is discoverable at any moment */
+      BREDR_NOT_SUPPORTED                               = 0x04, /**< Peripheral device is LE only */
+      SIMULTANEOUS_LE_BREDR_C                           = 0x08, /**< Not relevant - central mode only */
+      SIMULTANEOUS_LE_BREDR_H                           = 0x10  /**< Not relevant - central mode only */
     };
 
-    /* Bluetooth Core Specification Supplement, Part A, Section 1.12 */
-    /* Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 12.2 */
-    /* https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml */
+    /**********************************************************************/
+    /*!
+        \brief
+        A list of values for the APPEARANCE AD Type, which describes the
+        physical shape or appearance of the device
+        
+        \par Source
+        \li \c Bluetooth Core Specification Supplement, Part A, Section 1.12
+        \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 12.2
+        \li \c https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
+    */
+    /**********************************************************************/
     enum Appearance
     {
       UNKNOWN                                           = 0,
