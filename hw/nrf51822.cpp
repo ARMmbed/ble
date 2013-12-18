@@ -1,6 +1,7 @@
 #include "nrf51822.h"
 #include "mbed.h"
 
+/* Enables debug output over USB CDC at 9600 bps */
 #define NRF51822_DEBUG_MODE (1)
 
 /**************************************************************************/
@@ -170,30 +171,38 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
 
     /* 1.) Send advertising params, Command IDs = 0x000C, 0x000D, 0x000E */
     /* A.) Command ID = 0x000C, Advertising Interval, uint16_t */
+    printf("10 0C 00 02 %02X %02X\r\n", (uint8_t)(params.getInterval() & 0xFF),
+                                             (uint8_t)(params.getInterval() >> 8));
     uart.printf("10 0C 00 02 %02X %02X\r\n", (uint8_t)(params.getInterval() & 0xFF),
                                              (uint8_t)(params.getInterval() >> 8));
     /* ToDo: Check response */
     wait(0.5);
     
     /* B.) Command ID = 0x000D, Advertising Timeout, uint16_t */
+    printf("10 0D 00 02 %02X %02X\r\n", (uint8_t)(params.getTimeout() & 0xFF),
+                                             (uint8_t)(params.getTimeout() >> 8));
     uart.printf("10 0D 00 02 %02X %02X\r\n", (uint8_t)(params.getTimeout() & 0xFF),
                                              (uint8_t)(params.getTimeout() >> 8));
     /* ToDo: Check response */
     wait(0.5);
     
     /* C.) Command ID = 0x000E, Advertising Type, uint8_t */
+    printf("10 0E 00 01 %02X\r\n", (uint8_t)(params.getAdvertisingType()));
     uart.printf("10 0E 00 01 %02X\r\n", (uint8_t)(params.getAdvertisingType()));
     /* ToDo: Check response */
     wait(0.5);    
 
     /* 2.) Send advertising data, Command ID = 0x000A */
     len = advData.getPayloadLen();
-    buffer = advData.getPayload();     
-    uart.printf("10 0A 00 %02X ", len);
+    buffer = advData.getPayload();
+    printf("10 0A 00 %02X", len);
+    uart.printf("10 0A 00 %02X", len);
     for (uint16_t i = 0; i < len; i++)
     {
+        printf(" %02X", buffer[i]);
         uart.printf(" %02X", buffer[i]);
     }
+    printf("\r\n");
     uart.printf("\r\n");
     
     /* ToDo: Check response */
@@ -204,11 +213,14 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     {
         len = advData.getPayloadLen();
         buffer = advData.getPayload();
-        uart.printf("10 0B 00 %02X ", len);
+        printf("10 0B 00 %02X", len);
+        uart.printf("10 0B 00 %02X", len);
         for (uint16_t i = 0; i < len; i++)
         {
+            printf(" %02X", buffer[i]);
             uart.printf(" %02X", buffer[i]);
         }
+        printf("\r\n");
         uart.printf("\r\n");
 
         /* ToDo: Check response */

@@ -35,8 +35,10 @@
                 connection modes
 
     @param[in]  interval
-                Advertising interval between 0x20 and 0x4000 (32 and 16384)
-                in 0.625ms intervals (20ms to 10.24s).
+                Advertising interval between 0x0020 and 0x4000 in 0.625ms
+                units (20ms to 10.24s).  If using non-connectable mode
+                (\ref ADV_NON_CONNECTABLE_UNDIRECTED) this min value is
+                0x00A0 (100ms).
 
                 @para
                 Increasing this value will allow central devices to detect
@@ -45,7 +47,10 @@
                 
                 @note This field must be set to 0 if connectionMode is equal
                 to \ref ADV_CONNECTABLE_DIRECTED
-
+                
+                @note See Bluetooth Core Specification, Vol 3., Part C,
+                Appendix A for suggested advertising intervals:
+                
     @param[in]  timeout
                 Advertising timeout between 0x1 and 0x3FFF (1 and 16383)
                 in seconds.  Enter 0 to disable the advertising timeout.
@@ -68,6 +73,18 @@ GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType, uint16_t int
     {
         /* Interval must be 0 in directed connectable mode */
         _interval = 0;
+    }
+    else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED)
+    {
+        /* Min interval is slightly larger than in other modes */
+        if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON)
+        {
+            _interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON;
+        }
+        if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX)
+        {
+            _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
+        }
     }
     else
     {

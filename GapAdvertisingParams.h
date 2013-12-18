@@ -3,9 +3,10 @@
 
 #include "blecommon.h"
 
-#define GAP_ADV_PARAMS_INTERVAL_MIN     (0x0020)
-#define GAP_ADV_PARAMS_INTERVAL_MAX     (0x4000)
-#define GAP_ADV_PARAMS_TIMEOUT_MAX      (0x3FFF)
+#define GAP_ADV_PARAMS_INTERVAL_MIN        (0x0020)
+#define GAP_ADV_PARAMS_INTERVAL_MIN_NONCON (0x00A0)
+#define GAP_ADV_PARAMS_INTERVAL_MAX        (0x1000)
+#define GAP_ADV_PARAMS_TIMEOUT_MAX         (0x3FFF)
 
 class GapAdvertisingParams
 {
@@ -21,7 +22,7 @@ class GapAdvertisingParams
     };
   
     GapAdvertisingParams(AdvertisingType advType = GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
-                         uint16_t interval = GAP_ADV_PARAMS_INTERVAL_MIN,
+                         uint16_t interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
                          uint16_t timeout = 0);
     virtual ~GapAdvertisingParams(void);
     

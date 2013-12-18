@@ -60,9 +60,18 @@ ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload,
     /*       value is exclusive or not (flags, etc.) */
     
     /* Make sure we don't exceed the 31 byte payload limit */
-    if (_payloadLen + len >= GAP_ADVERTISING_DATA_MAX_PAYLOAD)
+    if (_payloadLen + len + 2 >= GAP_ADVERTISING_DATA_MAX_PAYLOAD)
         return BLE_ERROR_BUFFER_OVERFLOW;
+
+    /* Field length */
+    memset(&_payload[_payloadLen], len+1, 1);
+    _payloadLen++;
     
+    /* Field ID */
+    memset(&_payload[_payloadLen], (uint8_t)advDataType, 1); 
+    _payloadLen++;
+       
+    /* Payload */
     memcpy(&_payload[_payloadLen], payload, len);
     _payloadLen += len;
     
