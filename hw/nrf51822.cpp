@@ -115,7 +115,7 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     }
     
     /* Check timeout is zero for Connectable Directed */
-    if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) ||
+    if ((params.getAdvertisingType() == GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) &&
         (params.getTimeout() != 0))
     {
         #if NRF51822_DEBUG_MODE
@@ -127,7 +127,7 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     }
     
     /* Check timeout for other advertising types */
-    if ((params.getAdvertisingType() != GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) ||
+    if ((params.getAdvertisingType() != GapAdvertisingParams::ADV_CONNECTABLE_DIRECTED) &&
         (params.getTimeout() > GAP_ADV_PARAMS_TIMEOUT_MAX))
     {
         #if NRF51822_DEBUG_MODE
@@ -483,7 +483,7 @@ ble_error_t nRF51822::stop(void)
 ble_error_t nRF51822::reset(void)
 {
     #if NRF51822_DEBUG_MODE
-    printf("Restting the radio ... ");
+    printf("Resetting the radio ... ");
     #endif
     
     /* Command ID = 0x0005, No payload */
