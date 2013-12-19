@@ -11,7 +11,7 @@ void nRF51822::uartCallback(void)
     /* ToDo: Check responses and set a flag for success/error/etc. */
     
     /* Read serial to clear the RX interrupt */
-    printf("%c", uart.getc());
+    uart.getc();
 }
 
 /**************************************************************************/
@@ -174,14 +174,11 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     /* 2.) Send advertising data, Command ID = 0x000A */
     len = advData.getPayloadLen();
     buffer = advData.getPayload();
-    printf("10 0A 00 %02X", len);
     uart.printf("10 0A 00 %02X", len);
     for (uint16_t i = 0; i < len; i++)
     {
-        printf(" %02X", buffer[i]);
         uart.printf(" %02X", buffer[i]);
     }
-    printf("\r\n");
     uart.printf("\r\n");
     
     /* ToDo: Check response */
@@ -192,14 +189,11 @@ ble_error_t nRF51822::setAdvertising(GapAdvertisingParams & params, GapAdvertisi
     {
         len = scanResponse.getPayloadLen();
         buffer = scanResponse.getPayload();
-        printf("10 0B 00 %02X", len);
         uart.printf("10 0B 00 %02X", len);
         for (uint16_t i = 0; i < len; i++)
         {
-            printf(" %02X", buffer[i]);
             uart.printf(" %02X", buffer[i]);
         }
-        printf("\r\n");
         uart.printf("\r\n");
 
         /* ToDo: Check response */
