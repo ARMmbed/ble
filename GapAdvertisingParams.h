@@ -34,8 +34,19 @@
 class GapAdvertisingParams
 {
   public:
-    /* See Bluetooth Core Specification 4.0 (Vol. 6), Part B, Section 2.3.1 */
-    /* See Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 9.3 */
+    /**************************************************************************/
+    /*!
+        \brief
+        Encapsulates the peripheral advertising modes, which determine how
+        the device appears to other central devices in hearing range
+
+        \par
+        See the following for more information on advertising types:
+        
+        \li \c Bluetooth Core Specification 4.0 (Vol. 6), Part B, Section 2.3.1
+        \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 9.3
+    */
+    /**************************************************************************/
     enum AdvertisingType
     {
       ADV_CONNECTABLE_UNDIRECTED,       /**< Vol 3, Part C, Section 9.3.4 and Vol 6, Part B, Section 2.3.1.1 */

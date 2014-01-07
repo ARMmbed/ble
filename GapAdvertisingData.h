@@ -71,22 +71,22 @@ class GapAdvertisingData
     /**********************************************************************/
     enum DataType
     {
-      FLAGS                                             = 0x01,
-      INCOMPLETE_LIST_16BIT_SERVICE_IDS                 = 0x02,
-      COMPLETE_LIST_16BIT_SERVICE_IDS                   = 0x03,
-      INCOMPLETE_LIST_32BIT_SERVICE_IDS                 = 0x04,
-      COMPLETE_LIST_32BIT_SERVICE_IDS                   = 0x05,
-      INCOMPLETE_LIST_128BIT_SERVICE_IDS                = 0x06,
-      COMPLETE_LIST_128BIT_SERVICE_IDS                  = 0x07,
-      SHORTENED_LOCAL_NAME                              = 0x08,
-      COMPLETE_LOCAL_NAME                               = 0x09,
-      TX_POWER_LEVEL                                    = 0x0A,
-      DEVICE_ID                                         = 0x10,
-      SLAVE_CONNECTION_INTERVAL_RANGE                   = 0x12,
-      SERVICE_DATA                                      = 0x16,
-      APPEARANCE                                        = 0x19,
-      ADVERTISING_INTERVAL                              = 0x1A,
-      MANUFACTURER_SPECIFIC_DATA                        = 0xFF
+      FLAGS                                             = 0x01, /**< \ref Flags */
+      INCOMPLETE_LIST_16BIT_SERVICE_IDS                 = 0x02, /**< Incomplete list of 16-bit Service IDs */
+      COMPLETE_LIST_16BIT_SERVICE_IDS                   = 0x03, /**< Complete list of 16-bit Service IDs */
+      INCOMPLETE_LIST_32BIT_SERVICE_IDS                 = 0x04, /**< Incomplete list of 32-bit Service IDs (not relevant for Bluetooth 4.0) */
+      COMPLETE_LIST_32BIT_SERVICE_IDS                   = 0x05, /**< Complete list of 32-bit Service IDs (not relevant for Bluetooth 4.0) */
+      INCOMPLETE_LIST_128BIT_SERVICE_IDS                = 0x06, /**< Incomplete list of 128-bit Service IDs */
+      COMPLETE_LIST_128BIT_SERVICE_IDS                  = 0x07, /**< Complete list of 128-bit Service IDs */
+      SHORTENED_LOCAL_NAME                              = 0x08, /**< Shortened Local Name */
+      COMPLETE_LOCAL_NAME                               = 0x09, /**< Complete Local Name */
+      TX_POWER_LEVEL                                    = 0x0A, /**< TX Power Level (in dBm) */
+      DEVICE_ID                                         = 0x10, /**< Device ID */
+      SLAVE_CONNECTION_INTERVAL_RANGE                   = 0x12, /**< Slave Connection Interval Range */
+      SERVICE_DATA                                      = 0x16, /**< Service Data */
+      APPEARANCE                                        = 0x19, /**< \ref Appearance */
+      ADVERTISING_INTERVAL                              = 0x1A, /**< Advertising Interval */
+      MANUFACTURER_SPECIFIC_DATA                        = 0xFF  /**< Manufacturer Specific Data */
     };
     
     /**********************************************************************/
@@ -125,54 +125,54 @@ class GapAdvertisingData
     /**********************************************************************/
     enum Appearance
     {
-      UNKNOWN                                           = 0,
-      GENERIC_PHONE                                     = 64,
-      GENERIC_COMPUTER                                  = 128,
-      GENERIC_WATCH                                     = 192,
-      WATCH_SPORTS_WATCH                                = 193,
-      GENERIC_CLOCK                                     = 256,
-      GENERIC_DISPLAY                                   = 320,
-      GENERIC_REMOTE_CONTROL                            = 384,
-      GENERIC_EYE_GLASSES                               = 448,
-      GENERIC_TAG                                       = 512,
-      GENERIC_KEYRING                                   = 576,
-      GENERIC_MEDIA_PLAYER                              = 640,
-      GENERIC_BARCODE_SCANNER                           = 704,
-      GENERIC_THERMOMETER                               = 768,
-      THERMOMETER_EAR                                   = 769,
-      GENERIC_HEART_RATE_SENSOR                         = 832,
-      HEART_RATE_SENSOR_HEART_RATE_BELT                 = 833,
-      GENERIC_BLOOD_PRESSURE                            = 896,
-      BLOOD_PRESSURE_ARM                                = 897,
-      BLOOD_PRESSURE_WRIST                              = 898,
-      HUMAN_INTERFACE_DEVICE_HID                        = 960,
-      KEYBOARD                                          = 961,
-      MOUSE                                             = 962,
-      JOYSTICK                                          = 963,
-      GAMEPAD                                           = 964,
-      DIGITIZER_TABLET                                  = 965,
-      CARD_READER                                       = 966,
-      DIGITAL_PEN                                       = 967,
-      BARCODE_SCANNER                                   = 968,
-      GENERIC_GLUCOSE_METER                             = 1024,
-      GENERIC_RUNNING_WALKING_SENSOR                    = 1088,
-      RUNNING_WALKING_SENSOR_IN_SHOE                    = 1089,
-      RUNNING_WALKING_SENSOR_ON_SHOE                    = 1090,
-      RUNNING_WALKING_SENSOR_ON_HIP                     = 1091,
-      GENERIC_CYCLING                                   = 1152,
-      CYCLING_CYCLING_COMPUTER                          = 1153,
-      CYCLING_SPEED_SENSOR                              = 1154,
-      CYCLING_CADENCE_SENSOR                            = 1155,
-      CYCLING_POWER_SENSOR                              = 1156,
-      CYCLING_SPEED_AND_CADENCE_SENSOR                  = 1157,
-      PULSE_OXIMETER_GENERIC                            = 3136,
-      PULSE_OXIMETER_FINGERTIP                          = 3137,
-      PULSE_OXIMETER_WRIST_WORN                         = 3138,
-      OUTDOOR_GENERIC                                   = 5184,
-      OUTDOOR_LOCATION_DISPLAY_DEVICE                   = 5185,
-      OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE    = 5186,
-      OUTDOOR_LOCATION_POD                              = 5187,
-      OUTDOOR_LOCATION_AND_NAVIGATION_POD               = 5188
+      UNKNOWN                                           = 0,    /**< Unknown of unspecified appearance type */
+      GENERIC_PHONE                                     = 64,   /**< Generic Phone */
+      GENERIC_COMPUTER                                  = 128,  /**< Generic Computer */
+      GENERIC_WATCH                                     = 192,  /**< Generic Watch */
+      WATCH_SPORTS_WATCH                                = 193,  /**< Sports Watch */
+      GENERIC_CLOCK                                     = 256,  /**< Generic Clock */
+      GENERIC_DISPLAY                                   = 320,  /**< Generic Display */
+      GENERIC_REMOTE_CONTROL                            = 384,  /**< Generic Remote Control */
+      GENERIC_EYE_GLASSES                               = 448,  /**< Generic Eye Glasses */
+      GENERIC_TAG                                       = 512,  /**< Generic Tag */
+      GENERIC_KEYRING                                   = 576,  /**< Generic Keyring */
+      GENERIC_MEDIA_PLAYER                              = 640,  /**< Generic Media Player */
+      GENERIC_BARCODE_SCANNER                           = 704,  /**< Generic Barcode Scanner */
+      GENERIC_THERMOMETER                               = 768,  /**< Generic Thermometer */
+      THERMOMETER_EAR                                   = 769,  /**< Ear Thermometer */
+      GENERIC_HEART_RATE_SENSOR                         = 832,  /**< Generic Heart Rate Sensor */
+      HEART_RATE_SENSOR_HEART_RATE_BELT                 = 833,  /**< Belt Heart Rate Sensor */
+      GENERIC_BLOOD_PRESSURE                            = 896,  /**< Generic Blood Pressure */
+      BLOOD_PRESSURE_ARM                                = 897,  /**< Arm Blood Pressure */
+      BLOOD_PRESSURE_WRIST                              = 898,  /**< Wrist Blood Pressure */
+      HUMAN_INTERFACE_DEVICE_HID                        = 960,  /**< Human Interface Device (HID) */
+      KEYBOARD                                          = 961,  /**< Keyboard */
+      MOUSE                                             = 962,  /**< Mouse */
+      JOYSTICK                                          = 963,  /**< Joystick */
+      GAMEPAD                                           = 964,  /**< Gamepad */
+      DIGITIZER_TABLET                                  = 965,  /**< Digitizer Tablet */
+      CARD_READER                                       = 966,  /**< Card Read */
+      DIGITAL_PEN                                       = 967,  /**< Digital Pen */
+      BARCODE_SCANNER                                   = 968,  /**< Barcode Scanner */
+      GENERIC_GLUCOSE_METER                             = 1024, /**< Generic Glucose Meter */
+      GENERIC_RUNNING_WALKING_SENSOR                    = 1088, /**< Generic Running/Walking Sensor */
+      RUNNING_WALKING_SENSOR_IN_SHOE                    = 1089, /**< In Shoe Running/Walking Sensor */
+      RUNNING_WALKING_SENSOR_ON_SHOE                    = 1090, /**< On Shoe Running/Walking Sensor */
+      RUNNING_WALKING_SENSOR_ON_HIP                     = 1091, /**< On Hip Running/Walking Sensor */
+      GENERIC_CYCLING                                   = 1152, /**< Generic Cycling */
+      CYCLING_CYCLING_COMPUTER                          = 1153, /**< Cycling Computer */
+      CYCLING_SPEED_SENSOR                              = 1154, /**< Cycling Speed Senspr */
+      CYCLING_CADENCE_SENSOR                            = 1155, /**< Cycling Cadence Sensor */
+      CYCLING_POWER_SENSOR                              = 1156, /**< Cycling Power Sensor */
+      CYCLING_SPEED_AND_CADENCE_SENSOR                  = 1157, /**< Cycling Speed and Cadence Sensor */
+      PULSE_OXIMETER_GENERIC                            = 3136, /**< Generic Pulse Oximeter */
+      PULSE_OXIMETER_FINGERTIP                          = 3137, /**< Fingertip Pulse Oximeter */
+      PULSE_OXIMETER_WRIST_WORN                         = 3138, /**< Wrist Worn Pulse Oximeter */
+      OUTDOOR_GENERIC                                   = 5184, /**< Generic Outdoor */
+      OUTDOOR_LOCATION_DISPLAY_DEVICE                   = 5185, /**< Outdoor Location Display Device */
+      OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE    = 5186, /**< Outdoor Location and Navigation Display Device */
+      OUTDOOR_LOCATION_POD                              = 5187, /**< Outdoor Location Pod */
+      OUTDOOR_LOCATION_AND_NAVIGATION_POD               = 5188  /**< Outdoor Location and Navigation Pod */
     };
 
     GapAdvertisingData(void);
