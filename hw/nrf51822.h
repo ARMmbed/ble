@@ -6,6 +6,13 @@
 #include "bleradio.h"
 #include "GattService.h"
 
+/**************************************************************************/
+/*!
+    \brief
+    Driver for the nRF51822 in connectivity mode using custom serialization
+    firmware.
+*/
+/**************************************************************************/
 class nRF51822 : public BLERadio
 {
     public:
