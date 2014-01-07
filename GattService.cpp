@@ -23,7 +23,6 @@ GattService::GattService(uint8_t base_uuid[16])
 {
     primaryServiceID.update(base_uuid);
     characteristicCount = 0;
-    memset(&characteristics, 0, sizeof(serialisedChar_t) * BLE_SERVICE_MAX_CHARACTERISTICS);
     handle = 0;
 }
 
@@ -46,7 +45,6 @@ GattService::GattService(uint16_t ble_uuid)
 {
     primaryServiceID.update( ble_uuid );
     characteristicCount = 0;
-    memset(&characteristics, 0, sizeof(serialisedChar_t) * BLE_SERVICE_MAX_CHARACTERISTICS);
     handle = 0;
 }
 
@@ -61,17 +59,11 @@ GattService::~GattService(void)
 
 /**************************************************************************/
 /*!
-    @brief  Adds a GattCharacterisic to the service, serialising the
-            essential data for the characteristic.
+    @brief  Adds a GattCharacterisic to the service.
             
-    @note   The GattService does not store a reference to the source
-            GattCharacteristic, only a serialised version of the key
-            properties required to create the characteristic on the
-            target radio board.
-            
-    @note   This function will update the .handle field in the
-            GattCharacteristic to indicate where this characteristic was
-            stored in the GattService's characteristic array.
+    @note   This function will not update the .handle field in the
+            GattCharacteristic. This value is updated when the parent
+            service is added via the radio driver. 
 
     @param[in]  characteristic
                 The GattCharacteristic object describing the characteristic
@@ -94,22 +86,8 @@ ble_error_t GattService::addCharacteristic(GattCharacteristic & characteristic)
     /* ToDo: Make sure we don't overflow the array, etc. */
     /* ToDo: Make sure this characteristic UUID doesn't already exist */
     /* ToDo: Basic validation */
-    
-    serialisedChar_t c;
-    
-    /* Serialise the source GattCharacteristic */
-    memcpy(&c.id, &characteristic.uuid, 2);
-    memcpy(&c.lenMin, &characteristic.lenMin, 2);
-    memcpy(&c.lenMax, &characteristic.lenMax, 2);
-    memcpy(&c.properties, &characteristic.properties, 2);
-    memset(&c.reserved, 0, 1);
-    
-    /* Insert the serialised object into the buffer */
-    memcpy(&characteristics[characteristicCount], &c, sizeof(serialisedChar_t));
-    
-    /* Update the handle value */
-    characteristic.handle = characteristicCount;
-    
+
+    characteristics[characteristicCount] = characteristic;
     characteristicCount++;
     
     return BLE_ERROR_NONE;

@@ -30,8 +30,9 @@ nRF51822::nRF51822() : uart(p9, p10)
     /* Add flow control for UART (required by the nRF51822) */
     uart.set_flow_control(RawSerial::RTSCTS, p30, p29);
 
-    /* Reset the service counter */
+    /* Reset the service and characteristic counters */
     serviceCount = 0;
+    characteristicCount = 0;
 }
 
 /**************************************************************************/
@@ -263,8 +264,8 @@ ble_error_t nRF51822::addService(GattService & service)
     {
         /* Command ID = 0x0002 */
         uart.printf("10 02 00 0F 01 02 %02X %02X 04 02 %02X %02X 05 02 %02X %02X 03 01 %02X\r\n",
-                    service.characteristics[i].id & 0xFF, 
-                    service.characteristics[i].id >> 8,
+                    service.characteristics[i].uuid & 0xFF, 
+                    service.characteristics[i].uuid >> 8,
                     service.characteristics[i].lenMin & 0xFF,
                     service.characteristics[i].lenMin >> 8,
                     service.characteristics[i].lenMax & 0xFF,
@@ -273,9 +274,13 @@ ble_error_t nRF51822::addService(GattService & service)
                     
         /* ToDo: Check response */
         wait(0.1);
-    }    
+        
+        /* Update the characteristic handle */
+        service.characteristics[i].handle = characteristicCount;
+        characteristicCount++;
+    }
 
-    /* Update the service index value */
+    /* Update the service handle */
     service.handle = serviceCount;
     serviceCount++;
     
@@ -287,10 +292,8 @@ ble_error_t nRF51822::addService(GattService & service)
     @brief  Reads the value of a characteristic, based on the service
             and characteristic index fields
 
-    @param[in]  service
-                The GattService to read from
-    @param[in]  characteristic
-                The GattCharacteristic to read from
+    @param[in]  charHandle
+                The handle of the GattCharacteristic to read from
     @param[in]  buffer
                 Buffer to hold the the characteristic's value
                 (raw byte array in LSB format)
@@ -309,7 +312,7 @@ ble_error_t nRF51822::addService(GattService & service)
     @endcode
 */
 /**************************************************************************/
-ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
+ble_error_t nRF51822::readCharacteristic(uint8_t charHandle, uint8_t buffer[], uint16_t len)
 {
     /* ToDo */
     
@@ -320,11 +323,9 @@ ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristi
 /*!
     @brief  Updates the value of a characteristic, based on the service
             and characteristic index fields
-            
-    @param[in]  service
-                The GattService to write to
-    @param[in]  characteristic
-                The GattCharacteristic to write to
+
+    @param[in]  charHandle
+                The handle of the GattCharacteristic to write to
     @param[in]  buffer
                 Data to use when updating the characteristic's value
                 (raw byte array in LSB format)
@@ -343,10 +344,10 @@ ble_error_t nRF51822::readCharacteristic(GattService &service, GattCharacteristi
     @endcode
 */
 /**************************************************************************/
-ble_error_t nRF51822::writeCharacteristic(GattService &service, GattCharacteristic &characteristic, uint8_t buffer[], uint16_t len)
+ble_error_t nRF51822::writeCharacteristic(uint8_t charHandle, uint8_t buffer[], uint16_t len)
 {
-    /* Command ID = 0x0006, Payload = Service ID, Characteristic ID, Value */
-    uart.printf("10 06 00 %02X %02X %02X", len + 2, characteristic.handle, service.handle);
+    /* Command ID = 0x0006, Payload = Characteristic ID, Value */
+    uart.printf("10 06 00 %02X %02X", len + 1, charHandle);
     for (uint16_t i = 0; i<len; i++)
     {
         uart.printf(" %02X", buffer[i]);
@@ -438,8 +439,9 @@ ble_error_t nRF51822::reset(void)
     /* Command ID = 0x0005, No payload */
     uart.printf("10 05 00 00\r\n");
 
-    /* Reset the service counter */
+    /* Reset the service and characteristic counters */
     serviceCount = 0;
+    characteristicCount = 0;
 
     /* Wait for the radio to come back up */    
     wait(1);

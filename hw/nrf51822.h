@@ -22,8 +22,8 @@ class nRF51822 : public BLERadio
         /* Functions that mus be implemented from BLERadio */
         virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &, GapAdvertisingData &);
         virtual ble_error_t addService(GattService &);
-        virtual ble_error_t readCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t);
-        virtual ble_error_t writeCharacteristic(GattService &, GattCharacteristic &, uint8_t[], uint16_t);
+        virtual ble_error_t readCharacteristic(uint8_t, uint8_t[], uint16_t);
+        virtual ble_error_t writeCharacteristic(uint8_t, uint8_t[], uint16_t);
         virtual ble_error_t start(void);
         virtual ble_error_t stop(void);
         virtual ble_error_t reset(void);

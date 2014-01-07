@@ -36,6 +36,7 @@ GattCharacteristic::GattCharacteristic(uint16_t id, uint16_t minLen, uint16_t ma
     memcpy(&properties, &props, 1);
     lenMin = minLen;
     lenMax = maxLen;
+    handle = 0;
 }
 
 /**************************************************************************/

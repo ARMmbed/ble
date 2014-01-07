@@ -9,7 +9,7 @@ class GattCharacteristic
 private:
 
 public:
-    GattCharacteristic(uint16_t uuid, uint16_t minLen, uint16_t maxLen, uint8_t properties);
+    GattCharacteristic(uint16_t uuid=0, uint16_t minLen=1, uint16_t maxLen=1, uint8_t properties=0);
     virtual ~GattCharacteristic(void);
 
     uint16_t uuid;              /* Characteristic UUID */

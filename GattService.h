@@ -12,22 +12,13 @@ class GattService
 private:
 
 public:
-    typedef struct
-    {
-        uint16_t    id;
-        uint16_t    lenMin;
-        uint16_t    lenMax;
-        uint8_t     properties;
-        uint8_t     reserved;
-    } serialisedChar_t;
-    
     GattService(uint8_t[16]);  /* 128-bit Base UUID */
     GattService(uint16_t);     /* 16-bit BLE UUID */
     virtual ~GattService(void);
 
     UUID                primaryServiceID;
     uint8_t             characteristicCount;
-    serialisedChar_t    characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
+    GattCharacteristic  characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
     uint8_t             handle;
 
     ble_error_t         addCharacteristic(GattCharacteristic &);
