@@ -219,18 +219,6 @@ typedef struct PresentationFormat
   uint16_t  gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
 } presentation_format_t;
 
-struct UTF8String
-{
-  uint16_t  length;         /**< String length. */
-  uint8_t   str[32];        /**< String data. */
-};
-
-struct UTF16String
-{
-  uint16_t  length;         /**< String length. */
-  uint16_t  str[32];        /**< String data. */
-};
-
 struct SecurityMode
 {
   uint8_t  mode;            /**< Security Mode (1 or 2), 0 for no permissions at all. */
