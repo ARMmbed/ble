@@ -15,25 +15,33 @@
  */
   
 
-#ifndef __GATT_CHARACTERISTIC_H__
-#define __GATT_CHARACTERISTIC_H__
+#ifndef __UUID_H__
+#define __UUID_H__
 
 #include "blecommon.h"
-#include "UUID.h"
 
-class GattCharacteristic
+class UUID
 {
 private:
-
+    
 public:
-    GattCharacteristic(uint16_t uuid=0, uint16_t minLen=1, uint16_t maxLen=1, uint8_t properties=0);
-    virtual ~GattCharacteristic(void);
-
-    uint16_t uuid;              /* Characteristic UUID */
-    uint16_t lenMin;            /* Minimum length of the value */
-    uint16_t lenMax;            /* Maximum length of the value */
-    uint8_t  handle;
-    uint8_t  properties;
+    enum
+    {
+        UUID_TYPE_SHORT = 0,    // Short BLE UUID
+        UUID_TYPE_LONG  = 1     // Full 128-bit UUID
+    };
+    
+    UUID(void);
+    UUID(uint8_t const[16]);
+    UUID(uint16_t const);
+    virtual ~UUID(void);
+    
+    uint8_t   type;        // UUID_TYPE_SHORT or UUID_TYPE_LONG
+    uint8_t   base[16];    // in case of custom
+    uint16_t  value;       // 16 bit uuid (byte 2-3 using with base)
+    
+    ble_error_t update(uint8_t const[16]);
+    ble_error_t update(uint16_t const);
 };
 
 #endif
