@@ -32,7 +32,7 @@
 class nRF51822 : public BLERadio
 {
     public:
-        nRF51822();
+        nRF51822(PinName tx, PinName rx, PinName rts, PinName cts);
         virtual ~nRF51822(void);
 
         /* Functions that mus be implemented from BLERadio */

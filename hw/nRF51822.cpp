@@ -35,7 +35,7 @@ void nRF51822::uartCallback(void)
     @brief  Constructor
 */
 /**************************************************************************/
-nRF51822::nRF51822() : uart(p9, p10)
+nRF51822::nRF51822(PinName tx, PinName rx, PinName rts, PinName cts) : uart(tx, rx)
 {
     /* Setup the nRF UART interface */
     uart.baud(9600);
@@ -44,7 +44,7 @@ nRF51822::nRF51822() : uart(p9, p10)
     uart.attach(this, &nRF51822::uartCallback);
     
     /* Add flow control for UART (required by the nRF51822) */
-    uart.set_flow_control(RawSerial::RTSCTS, p30, p29);
+    uart.set_flow_control(RawSerial::RTSCTS, rts, cts);
 
     /* Reset the service and characteristic counters */
     serviceCount = 0;
