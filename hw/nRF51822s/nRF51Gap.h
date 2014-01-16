@@ -12,38 +12,36 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
   
+#ifndef __NRF51822_GAP_H__
+#define __NRF51822_GAP_H__
 
-#ifndef __GATT_SERVICE_H__
-#define __GATT_SERVICE_H__
-
+#include "mbed.h"
 #include "blecommon.h"
-#include "UUID.h"
-#include "GattCharacteristic.h"
-
-#define BLE_SERVICE_MAX_CHARACTERISTICS (5)
+#include "GapAdvertisingParams.h"
+#include "GapAdvertisingData.h"
+#include "hw/Gap.h"
 
 /**************************************************************************/
 /*!
-    \brief  GATT service
+    \brief
+
 */
 /**************************************************************************/
-class GattService
+class nRF51Gap : public Gap
 {
-    private:
-    
     public:
-        GattService(uint8_t[16]);  /* 128-bit Base UUID */
-        GattService(uint16_t);     /* 16-bit BLE UUID */
-        virtual ~GattService(void);
-    
-        UUID                primaryServiceID;
-        uint8_t             characteristicCount;
-        GattCharacteristic  characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
-        uint8_t             handle;
-    
-        ble_error_t         addCharacteristic(GattCharacteristic &);
+        nRF51Gap(RawSerial &);
+        virtual ~nRF51Gap(void);
+
+        /* Functions that must be implemented from Gap */
+        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &, GapAdvertisingData &);
+        virtual ble_error_t startAdvertising(void);
+        virtual ble_error_t stopAdvertising(void);
+        
+    private:
+        RawSerial& uart;
 };
 
 #endif

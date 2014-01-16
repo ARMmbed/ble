@@ -12,38 +12,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
   
+#ifndef __BLE_DEVICE_H__
+#define __BLE_DEVICE_H__
 
-#ifndef __GATT_SERVICE_H__
-#define __GATT_SERVICE_H__
-
+#include "mbed.h"
 #include "blecommon.h"
-#include "UUID.h"
-#include "GattCharacteristic.h"
-
-#define BLE_SERVICE_MAX_CHARACTERISTICS (5)
+#include "hw/Gap.h"
+#include "hw/GattServer.h"
 
 /**************************************************************************/
 /*!
-    \brief  GATT service
+    \brief
+    The base class used to abstract away BLE capable radio transceivers
+    or SOCs, to enable this BLE API to work with any radio transparently.
 */
 /**************************************************************************/
-class GattService
+class BLEDevice
 {
-    private:
-    
     public:
-        GattService(uint8_t[16]);  /* 128-bit Base UUID */
-        GattService(uint16_t);     /* 16-bit BLE UUID */
-        virtual ~GattService(void);
-    
-        UUID                primaryServiceID;
-        uint8_t             characteristicCount;
-        GattCharacteristic  characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
-        uint8_t             handle;
-    
-        ble_error_t         addCharacteristic(GattCharacteristic &);
+        virtual Gap&          getGap() = 0;
+        virtual GattServer&   getGattServer() = 0;
+        virtual ble_error_t   reset(void) = 0;
 };
 
 #endif

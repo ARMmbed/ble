@@ -14,41 +14,36 @@
  * limitations under the License.
  */
   
-#ifndef __NRF51822_H__
-#define __NRF51822_H__
+#ifndef __NRF51822_GATT_SERVER_H__
+#define __NRF51822_GATT_SERVER_H__
 
 #include "mbed.h"
 #include "blecommon.h"
-#include "BLERadio.h"
 #include "GattService.h"
+#include "hw/GattServer.h"
 
 /**************************************************************************/
 /*!
     \brief
-    Driver for the nRF51822 in connectivity mode using custom serialization
-    firmware.
+
 */
 /**************************************************************************/
-class nRF51822 : public BLERadio
-{
+class nRF51GattServer : public GattServer
+{        
     public:
-        nRF51822(PinName tx, PinName rx, PinName rts, PinName cts);
-        virtual ~nRF51822(void);
+        nRF51GattServer(RawSerial &);
+        virtual ~nRF51GattServer(void);
 
-        /* Functions that mus be implemented from BLERadio */
-        virtual ble_error_t setAdvertising(GapAdvertisingParams &, GapAdvertisingData &, GapAdvertisingData &);
+        /* Functions that must be implemented from GattServer */
         virtual ble_error_t addService(GattService &);
-        virtual ble_error_t readCharacteristic(uint8_t, uint8_t[], uint16_t);
-        virtual ble_error_t writeCharacteristic(uint8_t, uint8_t[], uint16_t);
-        virtual ble_error_t start(void);
-        virtual ble_error_t stop(void);
-        virtual ble_error_t reset(void);
+        virtual ble_error_t readValue(uint8_t, uint8_t[], uint16_t);
+        virtual ble_error_t updateValue(uint8_t, uint8_t[], uint16_t);
         
-    private:
-        RawSerial uart;
-
         /* nRF51 Functions */
         void uartCallback(void);
+        
+    private:
+        RawSerial& uart;
 };
 
 #endif

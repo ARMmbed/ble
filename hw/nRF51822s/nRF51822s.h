@@ -12,38 +12,40 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
   
+#ifndef __NRF51822_H__
+#define __NRF51822_H__
 
-#ifndef __GATT_SERVICE_H__
-#define __GATT_SERVICE_H__
-
+#include "mbed.h"
 #include "blecommon.h"
-#include "UUID.h"
-#include "GattCharacteristic.h"
-
-#define BLE_SERVICE_MAX_CHARACTERISTICS (5)
+#include "hw/BLEDevice.h"
+#include "hw/nRF51822s/nRF51Gap.h"
+#include "hw/nRF51822s/nRF51GattServer.h"
 
 /**************************************************************************/
 /*!
-    \brief  GATT service
+    \brief
+
 */
 /**************************************************************************/
-class GattService
+class nRF51822s : public BLEDevice
 {
-    private:
+    protected:
+        RawSerial       uart;
+        nRF51Gap        gap;
+        nRF51GattServer gattServer;
     
     public:
-        GattService(uint8_t[16]);  /* 128-bit Base UUID */
-        GattService(uint16_t);     /* 16-bit BLE UUID */
-        virtual ~GattService(void);
-    
-        UUID                primaryServiceID;
-        uint8_t             characteristicCount;
-        GattCharacteristic  characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
-        uint8_t             handle;
-    
-        ble_error_t         addCharacteristic(GattCharacteristic &);
+        nRF51822s(PinName, PinName, PinName, PinName);
+        virtual ~nRF51822s(void);
+
+        virtual Gap&        getGap()        { return gap; };
+        virtual GattServer& getGattServer() { return gattServer; };
+        virtual ble_error_t reset(void);
+
+    private:
+        void uartCallback(void);
 };
 
 #endif
