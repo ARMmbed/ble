@@ -44,13 +44,22 @@ class GattServer
         /******************************************************************/
         typedef enum gatt_event_e
         {
-          GATT_EVENT_TODO     = 0x01 /**< ... */
+          GATT_EVENT_DATA_SENT              = 1,    /* Fired when a msg was successfully sent out */
+          GATT_EVENT_DATA_WRITTEN           = 2,    /* Client wrote data to Server (separate into char and descriptor writes?) */     
+          GATT_EVENT_UPDATES_ENABLED        = 3,    /* Notify/Indicate Enabled in CCCD */
+          GATT_EVENT_UPDATES_DISABLED       = 4,    /* Notify/Indicate Disnabled in CCCD */
+          GATT_EVENT_CONFIRMATION_RECEIVED  = 5     /* Response received from Indicate message */
         } gattEvent_t;
 
         /* These functions must be defined in the sub-class */
         virtual ble_error_t addService(GattService &) = 0;
         virtual ble_error_t readValue(uint8_t, uint8_t[], uint16_t) = 0;
         virtual ble_error_t updateValue(uint8_t, uint8_t[], uint16_t) = 0;
+        
+        // ToDo: For updateValue, check the CCCD to see if the value we are
+        // updating has the notify or indicate bits sent, and if BOTH are set
+        // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
+        // Strange use case, but valid and must be covered!
 
         uint8_t serviceCount;
         uint8_t characteristicCount;

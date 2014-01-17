@@ -24,8 +24,8 @@
 /**************************************************************************/
 nRF51Gap::nRF51Gap(RawSerial &serial) : Gap(), uart(serial)
 {
-    /* Reset the service and characteristic counters */
-    connected = 0;
+    /* ToDo: Reset the service and characteristic counters */
+    /* ToDo: Set state variable to an appropriate value */
 }
 
 /**************************************************************************/

@@ -44,7 +44,9 @@ class Gap
         /******************************************************************/
         typedef enum gap_event_e
         {
-            GAP_EVENT_TODO     = 0x01 /**< ... */
+            GAP_EVENT_ADVERTISING_STARTED   = 1,
+            GAP_EVENT_CONNECTED             = 2,
+            GAP_EVENT_DISCONNECTED          = 3
         } gapEvent_t;
 
         /* These functions must be defined in the sub-class */
@@ -52,8 +54,7 @@ class Gap
         virtual ble_error_t startAdvertising(void) = 0;
         virtual ble_error_t stopAdvertising(void) = 0;
 
-        uint8_t advertising;
-        uint8_t connected;
+        uint16_t state; /* Initialising, Advertising, Scanning, Connected, etc. ... more than one bit can be set at a time! */
 
         /* Event callback */
         void attach(void (*function)(void)) { 
