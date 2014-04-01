@@ -34,6 +34,7 @@ class BLEDevice
     public:
         virtual Gap&          getGap() = 0;
         virtual GattServer&   getGattServer() = 0;
+        virtual ble_error_t   init() = 0;
         virtual ble_error_t   reset(void) = 0;
 };
 

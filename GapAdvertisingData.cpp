@@ -34,6 +34,7 @@ GapAdvertisingData::GapAdvertisingData(void)
 {
     memset(_payload, 0, GAP_ADVERTISING_DATA_MAX_PAYLOAD);
     _payloadLen = 0;
+    _appearance = GENERIC_TAG;
 }
 
 /**************************************************************************/
@@ -119,6 +120,7 @@ ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload,
 /**************************************************************************/
 ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
 {
+    _appearance = appearance;
     return addData(GapAdvertisingData::APPEARANCE, (uint8_t*)&appearance, 2);
 }
 
@@ -210,7 +212,7 @@ void GapAdvertisingData::clear(void)
 /**************************************************************************/
 uint8_t * GapAdvertisingData::getPayload(void)
 {
-    return _payload;
+    return (_payloadLen > 0) ? _payload : NULL;
 }
 
 /**************************************************************************/
@@ -223,4 +225,16 @@ uint8_t * GapAdvertisingData::getPayload(void)
 uint8_t GapAdvertisingData::getPayloadLen(void)
 {
     return _payloadLen;
+}
+
+/**************************************************************************/
+/*!
+    \brief Returns the 16-bit appearance value for this device
+    
+    \returns    The 16-bit appearance value
+*/
+/**************************************************************************/
+uint16_t GapAdvertisingData::getAppearance(void)
+{
+    return (uint16_t)_appearance;
 }

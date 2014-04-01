@@ -104,7 +104,7 @@ ble_error_t GattService::addCharacteristic(GattCharacteristic & characteristic)
     /* ToDo: Make sure this characteristic UUID doesn't already exist */
     /* ToDo: Basic validation */
 
-    characteristics[characteristicCount] = characteristic;
+    characteristics[characteristicCount] = &characteristic;
     characteristicCount++;
     
     return BLE_ERROR_NONE;

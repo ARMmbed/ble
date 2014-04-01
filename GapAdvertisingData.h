@@ -195,16 +195,18 @@ class GapAdvertisingData
     virtual ~GapAdvertisingData(void);
 
     ble_error_t addData(DataType, uint8_t *, uint8_t);
-    ble_error_t addAppearance(Appearance appearance = UNKNOWN);
+    ble_error_t addAppearance(Appearance appearance = GENERIC_TAG);
     ble_error_t addFlags(Flags flag = LE_GENERAL_DISCOVERABLE);
     ble_error_t addTxPower(int8_t txPower);
     void        clear(void);
     uint8_t *   getPayload(void);
     uint8_t     getPayloadLen(void);
+    uint16_t    getAppearance(void);
 
   private:
-    uint8_t _payload[GAP_ADVERTISING_DATA_MAX_PAYLOAD];
-    uint8_t _payloadLen;
+    uint8_t  _payload[GAP_ADVERTISING_DATA_MAX_PAYLOAD];
+    uint8_t  _payloadLen;
+    uint16_t _appearance;
 };
 
 #endif

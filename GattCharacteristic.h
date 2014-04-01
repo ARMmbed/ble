@@ -21,6 +21,7 @@
 #include "blecommon.h"
 #include "UUID.h"
 
+#include "ble_gatts.h"
 /* ToDo: Update to use 16-bit or 128-bit UUIDs! */
 
 /**************************************************************************/
@@ -31,6 +32,78 @@
 class GattCharacteristic
 {
     public:
+        enum
+        {
+          UUID_BATTERY_LEVEL_STATE_CHAR                     = 0x2A1B,
+          UUID_BATTERY_POWER_STATE_CHAR                     = 0x2A1A,
+          UUID_REMOVABLE_CHAR                               = 0x2A3A,
+          UUID_SERVICE_REQUIRED_CHAR                        = 0x2A3B,
+          UUID_ALERT_CATEGORY_ID_CHAR                       = 0x2A43,
+          UUID_ALERT_CATEGORY_ID_BIT_MASK_CHAR              = 0x2A42,
+          UUID_ALERT_LEVEL_CHAR                             = 0x2A06,
+          UUID_ALERT_NOTIFICATION_CONTROL_POINT_CHAR        = 0x2A44,
+          UUID_ALERT_STATUS_CHAR                            = 0x2A3F,
+          UUID_BATTERY_LEVEL_CHAR                           = 0x2A19,
+          UUID_BLOOD_PRESSURE_FEATURE_CHAR                  = 0x2A49,
+          UUID_BLOOD_PRESSURE_MEASUREMENT_CHAR              = 0x2A35,
+          UUID_BODY_SENSOR_LOCATION_CHAR                    = 0x2A38,
+          UUID_BOOT_KEYBOARD_INPUT_REPORT_CHAR              = 0x2A22,
+          UUID_BOOT_KEYBOARD_OUTPUT_REPORT_CHAR             = 0x2A32,
+          UUID_BOOT_MOUSE_INPUT_REPORT_CHAR                 = 0x2A33,
+          UUID_CURRENT_TIME_CHAR                            = 0x2A2B,
+          UUID_DATE_TIME_CHAR                               = 0x2A08,
+          UUID_DAY_DATE_TIME_CHAR                           = 0x2A0A,
+          UUID_DAY_OF_WEEK_CHAR                             = 0x2A09,
+          UUID_DST_OFFSET_CHAR                              = 0x2A0D,
+          UUID_EXACT_TIME_256_CHAR                          = 0x2A0C,
+          UUID_FIRMWARE_REVISION_STRING_CHAR                = 0x2A26,
+          UUID_GLUCOSE_FEATURE_CHAR                         = 0x2A51,
+          UUID_GLUCOSE_MEASUREMENT_CHAR                     = 0x2A18,
+          UUID_GLUCOSE_MEASUREMENT_CONTEXT_CHAR             = 0x2A34,
+          UUID_HARDWARE_REVISION_STRING_CHAR                = 0x2A27,
+          UUID_HEART_RATE_CONTROL_POINT_CHAR                = 0x2A39,
+          UUID_HEART_RATE_MEASUREMENT_CHAR                  = 0x2A37,
+          UUID_HID_CONTROL_POINT_CHAR                       = 0x2A4C,
+          UUID_HID_INFORMATION_CHAR                         = 0x2A4A,
+          UUID_IEEE_REGULATORY_CERTIFICATION_DATA_LIST_CHAR = 0x2A2A,
+          UUID_INTERMEDIATE_CUFF_PRESSURE_CHAR              = 0x2A36,
+          UUID_INTERMEDIATE_TEMPERATURE_CHAR                = 0x2A1E,
+          UUID_LOCAL_TIME_INFORMATION_CHAR                  = 0x2A0F,
+          UUID_MANUFACTURER_NAME_STRING_CHAR                = 0x2A29,
+          UUID_MEASUREMENT_INTERVAL_CHAR                    = 0x2A21,
+          UUID_MODEL_NUMBER_STRING_CHAR                     = 0x2A24,
+          UUID_UNREAD_ALERT_CHAR                            = 0x2A45,
+          UUID_NEW_ALERT_CHAR                               = 0x2A46,
+          UUID_PNP_ID_CHAR                                  = 0x2A50,
+          UUID_PROTOCOL_MODE_CHAR                           = 0x2A4E,
+          UUID_RECORD_ACCESS_CONTROL_POINT_CHAR             = 0x2A52,
+          UUID_REFERENCE_TIME_INFORMATION_CHAR              = 0x2A14,
+          UUID_REPORT_CHAR                                  = 0x2A4D,
+          UUID_REPORT_MAP_CHAR                              = 0x2A4B,
+          UUID_RINGER_CONTROL_POINT_CHAR                    = 0x2A40,
+          UUID_RINGER_SETTING_CHAR                          = 0x2A41,
+          UUID_SCAN_INTERVAL_WINDOW_CHAR                    = 0x2A4F,
+          UUID_SCAN_REFRESH_CHAR                            = 0x2A31,
+          UUID_SERIAL_NUMBER_STRING_CHAR                    = 0x2A25,
+          UUID_SOFTWARE_REVISION_STRING_CHAR                = 0x2A28,
+          UUID_SUPPORTED_NEW_ALERT_CATEGORY_CHAR            = 0x2A47,
+          UUID_SUPPORTED_UNREAD_ALERT_CATEGORY_CHAR         = 0x2A48,
+          UUID_SYSTEM_ID_CHAR                               = 0x2A23,
+          UUID_TEMPERATURE_MEASUREMENT_CHAR                 = 0x2A1C,
+          UUID_TEMPERATURE_TYPE_CHAR                        = 0x2A1D,
+          UUID_TIME_ACCURACY_CHAR                           = 0x2A12,
+          UUID_TIME_SOURCE_CHAR                             = 0x2A13,
+          UUID_TIME_UPDATE_CONTROL_POINT_CHAR               = 0x2A16,
+          UUID_TIME_UPDATE_STATE_CHAR                       = 0x2A17,
+          UUID_TIME_WITH_DST_CHAR                           = 0x2A11,
+          UUID_TIME_ZONE_CHAR                               = 0x2A0E,
+          UUID_TX_POWER_LEVEL_CHAR                          = 0x2A07,
+          UUID_CSC_FEATURE_CHAR                             = 0x2A5C,
+          UUID_CSC_MEASUREMENT_CHAR                         = 0x2A5B,
+          UUID_RSC_FEATURE_CHAR                             = 0x2A54,
+          UUID_RSC_MEASUREMENT_CHAR                         = 0x2A53,
+        };
+
         /**************************************************************************/
         /*!
             \brief  Standard GATT characteristic presentation format unit types.
@@ -236,7 +309,7 @@ class GattCharacteristic
         uint16_t uuid;              /* Characteristic UUID */
         uint16_t lenMin;            /* Minimum length of the value */
         uint16_t lenMax;            /* Maximum length of the value */
-        uint8_t  handle;
+        uint16_t handle;
         uint8_t  properties;
         
     private:    
