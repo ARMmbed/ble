@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 #include <stdio.h>
 #include <string.h>
 
@@ -31,11 +31,11 @@
 
                 \par ADV_NON_CONNECTABLE_UNDIRECTED
                 All connections to the peripheral device will be refused.
-                
+
                 \par ADV_CONNECTABLE_DIRECTED
                 Only connections from a pre-defined central device will be
                 accepted.
-                
+
                 \par ADV_CONNECTABLE_UNDIRECTED
                 Any central device can connect to this peripheral.
 
@@ -43,7 +43,7 @@
                 Any central device can connect to this peripheral, and
                 the secondary Scan Response payload will be included or
                 available to central devices.
-                
+
                 \par
                 See Bluetooth Core Specification 4.0 (Vol. 3), Part C,
                 Section 9.3 and Core Specification 4.0 (Vol. 6), Part B,
@@ -60,19 +60,19 @@
                 Increasing this value will allow central devices to detect
                 your peripheral faster at the expense of more power being
                 used by the radio due to the higher data transmit rate.
-                
+
                 \par
                 This field must be set to 0 if connectionMode is equal
                 to ADV_CONNECTABLE_DIRECTED
-                
+
                 \par
                 See Bluetooth Core Specification, Vol 3., Part C,
                 Appendix A for suggested advertising intervals.
-                
+
     \param[in]  timeout
                 Advertising timeout between 0x1 and 0x3FFF (1 and 16383)
                 in seconds.  Enter 0 to disable the advertising timeout.
-                
+
     \par EXAMPLE
 
     \code
@@ -80,49 +80,40 @@
     \endcode
 */
 /**************************************************************************/
-GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType, uint16_t interval, uint16_t timeout)
+GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType,
+                                           uint16_t        interval,
+                                           uint16_t        timeout)
 {
-    _advType = advType;
+    _advType  = advType;
     _interval = interval;
-    _timeout = timeout;
+    _timeout  = timeout;
 
     /* Interval checks */
-    if (_advType == ADV_CONNECTABLE_DIRECTED)
-    {
+    if (_advType == ADV_CONNECTABLE_DIRECTED) {
         /* Interval must be 0 in directed connectable mode */
         _interval = 0;
-    }
-    else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED)
-    {
+    } else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED)   {
         /* Min interval is slightly larger than in other modes */
-        if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON)
-        {
+        if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON;
         }
-        if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX)
-        {
+        if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
         }
-    }
-    else
-    {
+    } else   {
         /* Stay within interval limits */
-        if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN)
-        {
+        if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MIN;
         }
-        if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX)
-        {
+        if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
         }
     }
 
     /* Timeout checks */
-    if (timeout)
-    {
+    if (timeout) {
         /* Stay within timeout limits */
-        if (_timeout > GAP_ADV_PARAMS_TIMEOUT_MAX)
-        {
+        if (_timeout > GAP_ADV_PARAMS_TIMEOUT_MAX) {
             _timeout = GAP_ADV_PARAMS_TIMEOUT_MAX;
         }
     }

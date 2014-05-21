@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 #include <stdio.h>
 #include <string.h>
 
@@ -54,16 +54,16 @@ GapAdvertisingData::~GapAdvertisingData(void)
     \args[in]   advDataType The Advertising 'DataType' to add
     \args[in]   payload     Pointer to the payload contents
     \args[in]   len         Size of the payload in bytes
-    
+
     \returns    ble_error_t
-    
+
     \retval     BLE_ERROR_NONE
                 Everything executed properly
-                
+
     \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
-    
+
     \par EXAMPLE
 
     \code
@@ -71,27 +71,30 @@ GapAdvertisingData::~GapAdvertisingData(void)
     \endcode
 */
 /**************************************************************************/
-ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload, uint8_t len)
+ble_error_t GapAdvertisingData::addData(DataType advDataType,
+                                        uint8_t *payload,
+                                        uint8_t  len)
 {
     /* ToDo: Check if an AD type already exists and if the existing */
     /*       value is exclusive or not (flags, etc.) */
-    
+
     /* Make sure we don't exceed the 31 byte payload limit */
-    if (_payloadLen + len + 2 >= GAP_ADVERTISING_DATA_MAX_PAYLOAD)
+    if (_payloadLen + len + 2 >= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
         return BLE_ERROR_BUFFER_OVERFLOW;
+    }
 
     /* Field length */
-    memset(&_payload[_payloadLen], len+1, 1);
+    memset(&_payload[_payloadLen], len + 1, 1);
     _payloadLen++;
-    
+
     /* Field ID */
-    memset(&_payload[_payloadLen], (uint8_t)advDataType, 1); 
+    memset(&_payload[_payloadLen], (uint8_t)advDataType, 1);
     _payloadLen++;
-       
+
     /* Payload */
     memcpy(&_payload[_payloadLen], payload, len);
     _payloadLen += len;
-    
+
     return BLE_ERROR_NONE;
 }
 
@@ -101,16 +104,16 @@ ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload,
             payload
 
     \args[in]   appearance  The APPEARANCE value to add
-    
+
     \returns    ble_error_t
-    
+
     \retval     BLE_ERROR_NONE
                 Everything executed properly
-                
+
     \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
-    
+
     \par EXAMPLE
 
     \code
@@ -121,7 +124,7 @@ ble_error_t GapAdvertisingData::addData(DataType advDataType, uint8_t * payload,
 ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
 {
     _appearance = appearance;
-    return addData(GapAdvertisingData::APPEARANCE, (uint8_t*)&appearance, 2);
+    return addData(GapAdvertisingData::APPEARANCE, (uint8_t *)&appearance, 2);
 }
 
 /**************************************************************************/
@@ -137,20 +140,20 @@ ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
 
                 \par LE_GENERAL_DISCOVERABLE
                 The peripheral is permanently discoverable
-                
+
                 \par BREDR_NOT_SUPPORTED
                 This peripheral is a Bluetooth Low Energy only device
                 (no EDR support)
 
     \returns    ble_error_t
-    
+
     \retval     BLE_ERROR_NONE
                 Everything executed properly
-                
+
     \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
-    
+
     \par EXAMPLE
 
     \code
@@ -160,7 +163,7 @@ ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
 /**************************************************************************/
 ble_error_t GapAdvertisingData::addFlags(Flags flag)
 {
-    return addData(GapAdvertisingData::FLAGS, (uint8_t*)&flag, 1);
+    return addData(GapAdvertisingData::FLAGS, (uint8_t *)&flag, 1);
 }
 
 /**************************************************************************/
@@ -169,16 +172,16 @@ ble_error_t GapAdvertisingData::addFlags(Flags flag)
             advertising payload
 
     \args[in]   flag  The TX_POWER_LEVEL value to add
-    
+
     \returns    ble_error_t
-    
+
     \retval     BLE_ERROR_NONE
                 Everything executed properly
-                
+
     \retval     BLE_ERROR_BUFFER_OVERFLOW
                 The specified data would cause the advertising buffer
                 to overflow
-    
+
     \par EXAMPLE
 
     \code
@@ -189,7 +192,7 @@ ble_error_t GapAdvertisingData::addFlags(Flags flag)
 ble_error_t GapAdvertisingData::addTxPower(int8_t txPower)
 {
     /* ToDo: Basic error checking to make sure txPower is in range */
-    return addData(GapAdvertisingData::TX_POWER_LEVEL, (uint8_t*)&txPower, 1);
+    return addData(GapAdvertisingData::TX_POWER_LEVEL, (uint8_t *)&txPower, 1);
 }
 
 /**************************************************************************/
@@ -206,11 +209,11 @@ void GapAdvertisingData::clear(void)
 /**************************************************************************/
 /*!
     \brief Returns a pointer to the the current payload
-    
+
     \returns    A pointer to the payload
 */
 /**************************************************************************/
-uint8_t * GapAdvertisingData::getPayload(void)
+uint8_t *GapAdvertisingData::getPayload(void)
 {
     return (_payloadLen > 0) ? _payload : NULL;
 }
@@ -218,7 +221,7 @@ uint8_t * GapAdvertisingData::getPayload(void)
 /**************************************************************************/
 /*!
     \brief Returns the current payload length (0..31 bytes)
-    
+
     \returns    The payload length in bytes
 */
 /**************************************************************************/
@@ -230,7 +233,7 @@ uint8_t GapAdvertisingData::getPayloadLen(void)
 /**************************************************************************/
 /*!
     \brief Returns the 16-bit appearance value for this device
-    
+
     \returns    The 16-bit appearance value
 */
 /**************************************************************************/

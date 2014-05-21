@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 #ifndef __BLE_DEVICE_H__
 #define __BLE_DEVICE_H__
 
@@ -31,11 +31,11 @@
 /**************************************************************************/
 class BLEDevice
 {
-    public:
-        virtual Gap&          getGap() = 0;
-        virtual GattServer&   getGattServer() = 0;
-        virtual ble_error_t   init() = 0;
-        virtual ble_error_t   reset(void) = 0;
+public:
+    virtual Gap&        getGap()        = 0;
+    virtual GattServer& getGattServer() = 0;
+    virtual ble_error_t   init()        = 0;
+    virtual ble_error_t   reset(void)   = 0;
 };
 
-#endif
+#endif // ifndef __BLE_DEVICE_H__

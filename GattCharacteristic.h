@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 
 #ifndef __GATT_CHARACTERISTIC_H__
 #define __GATT_CHARACTERISTIC_H__
@@ -31,90 +31,90 @@
 /**************************************************************************/
 class GattCharacteristic
 {
-    public:
-        enum
-        {
-          UUID_BATTERY_LEVEL_STATE_CHAR                     = 0x2A1B,
-          UUID_BATTERY_POWER_STATE_CHAR                     = 0x2A1A,
-          UUID_REMOVABLE_CHAR                               = 0x2A3A,
-          UUID_SERVICE_REQUIRED_CHAR                        = 0x2A3B,
-          UUID_ALERT_CATEGORY_ID_CHAR                       = 0x2A43,
-          UUID_ALERT_CATEGORY_ID_BIT_MASK_CHAR              = 0x2A42,
-          UUID_ALERT_LEVEL_CHAR                             = 0x2A06,
-          UUID_ALERT_NOTIFICATION_CONTROL_POINT_CHAR        = 0x2A44,
-          UUID_ALERT_STATUS_CHAR                            = 0x2A3F,
-          UUID_BATTERY_LEVEL_CHAR                           = 0x2A19,
-          UUID_BLOOD_PRESSURE_FEATURE_CHAR                  = 0x2A49,
-          UUID_BLOOD_PRESSURE_MEASUREMENT_CHAR              = 0x2A35,
-          UUID_BODY_SENSOR_LOCATION_CHAR                    = 0x2A38,
-          UUID_BOOT_KEYBOARD_INPUT_REPORT_CHAR              = 0x2A22,
-          UUID_BOOT_KEYBOARD_OUTPUT_REPORT_CHAR             = 0x2A32,
-          UUID_BOOT_MOUSE_INPUT_REPORT_CHAR                 = 0x2A33,
-          UUID_CURRENT_TIME_CHAR                            = 0x2A2B,
-          UUID_DATE_TIME_CHAR                               = 0x2A08,
-          UUID_DAY_DATE_TIME_CHAR                           = 0x2A0A,
-          UUID_DAY_OF_WEEK_CHAR                             = 0x2A09,
-          UUID_DST_OFFSET_CHAR                              = 0x2A0D,
-          UUID_EXACT_TIME_256_CHAR                          = 0x2A0C,
-          UUID_FIRMWARE_REVISION_STRING_CHAR                = 0x2A26,
-          UUID_GLUCOSE_FEATURE_CHAR                         = 0x2A51,
-          UUID_GLUCOSE_MEASUREMENT_CHAR                     = 0x2A18,
-          UUID_GLUCOSE_MEASUREMENT_CONTEXT_CHAR             = 0x2A34,
-          UUID_HARDWARE_REVISION_STRING_CHAR                = 0x2A27,
-          UUID_HEART_RATE_CONTROL_POINT_CHAR                = 0x2A39,
-          UUID_HEART_RATE_MEASUREMENT_CHAR                  = 0x2A37,
-          UUID_HID_CONTROL_POINT_CHAR                       = 0x2A4C,
-          UUID_HID_INFORMATION_CHAR                         = 0x2A4A,
-          UUID_IEEE_REGULATORY_CERTIFICATION_DATA_LIST_CHAR = 0x2A2A,
-          UUID_INTERMEDIATE_CUFF_PRESSURE_CHAR              = 0x2A36,
-          UUID_INTERMEDIATE_TEMPERATURE_CHAR                = 0x2A1E,
-          UUID_LOCAL_TIME_INFORMATION_CHAR                  = 0x2A0F,
-          UUID_MANUFACTURER_NAME_STRING_CHAR                = 0x2A29,
-          UUID_MEASUREMENT_INTERVAL_CHAR                    = 0x2A21,
-          UUID_MODEL_NUMBER_STRING_CHAR                     = 0x2A24,
-          UUID_UNREAD_ALERT_CHAR                            = 0x2A45,
-          UUID_NEW_ALERT_CHAR                               = 0x2A46,
-          UUID_PNP_ID_CHAR                                  = 0x2A50,
-          UUID_PROTOCOL_MODE_CHAR                           = 0x2A4E,
-          UUID_RECORD_ACCESS_CONTROL_POINT_CHAR             = 0x2A52,
-          UUID_REFERENCE_TIME_INFORMATION_CHAR              = 0x2A14,
-          UUID_REPORT_CHAR                                  = 0x2A4D,
-          UUID_REPORT_MAP_CHAR                              = 0x2A4B,
-          UUID_RINGER_CONTROL_POINT_CHAR                    = 0x2A40,
-          UUID_RINGER_SETTING_CHAR                          = 0x2A41,
-          UUID_SCAN_INTERVAL_WINDOW_CHAR                    = 0x2A4F,
-          UUID_SCAN_REFRESH_CHAR                            = 0x2A31,
-          UUID_SERIAL_NUMBER_STRING_CHAR                    = 0x2A25,
-          UUID_SOFTWARE_REVISION_STRING_CHAR                = 0x2A28,
-          UUID_SUPPORTED_NEW_ALERT_CATEGORY_CHAR            = 0x2A47,
-          UUID_SUPPORTED_UNREAD_ALERT_CATEGORY_CHAR         = 0x2A48,
-          UUID_SYSTEM_ID_CHAR                               = 0x2A23,
-          UUID_TEMPERATURE_MEASUREMENT_CHAR                 = 0x2A1C,
-          UUID_TEMPERATURE_TYPE_CHAR                        = 0x2A1D,
-          UUID_TIME_ACCURACY_CHAR                           = 0x2A12,
-          UUID_TIME_SOURCE_CHAR                             = 0x2A13,
-          UUID_TIME_UPDATE_CONTROL_POINT_CHAR               = 0x2A16,
-          UUID_TIME_UPDATE_STATE_CHAR                       = 0x2A17,
-          UUID_TIME_WITH_DST_CHAR                           = 0x2A11,
-          UUID_TIME_ZONE_CHAR                               = 0x2A0E,
-          UUID_TX_POWER_LEVEL_CHAR                          = 0x2A07,
-          UUID_CSC_FEATURE_CHAR                             = 0x2A5C,
-          UUID_CSC_MEASUREMENT_CHAR                         = 0x2A5B,
-          UUID_RSC_FEATURE_CHAR                             = 0x2A54,
-          UUID_RSC_MEASUREMENT_CHAR                         = 0x2A53,
-        };
+public:
+    enum
+    {
+        UUID_BATTERY_LEVEL_STATE_CHAR                     = 0x2A1B,
+        UUID_BATTERY_POWER_STATE_CHAR                     = 0x2A1A,
+        UUID_REMOVABLE_CHAR                               = 0x2A3A,
+        UUID_SERVICE_REQUIRED_CHAR                        = 0x2A3B,
+        UUID_ALERT_CATEGORY_ID_CHAR                       = 0x2A43,
+        UUID_ALERT_CATEGORY_ID_BIT_MASK_CHAR              = 0x2A42,
+        UUID_ALERT_LEVEL_CHAR                             = 0x2A06,
+        UUID_ALERT_NOTIFICATION_CONTROL_POINT_CHAR        = 0x2A44,
+        UUID_ALERT_STATUS_CHAR                            = 0x2A3F,
+        UUID_BATTERY_LEVEL_CHAR                           = 0x2A19,
+        UUID_BLOOD_PRESSURE_FEATURE_CHAR                  = 0x2A49,
+        UUID_BLOOD_PRESSURE_MEASUREMENT_CHAR              = 0x2A35,
+        UUID_BODY_SENSOR_LOCATION_CHAR                    = 0x2A38,
+        UUID_BOOT_KEYBOARD_INPUT_REPORT_CHAR              = 0x2A22,
+        UUID_BOOT_KEYBOARD_OUTPUT_REPORT_CHAR             = 0x2A32,
+        UUID_BOOT_MOUSE_INPUT_REPORT_CHAR                 = 0x2A33,
+        UUID_CURRENT_TIME_CHAR                            = 0x2A2B,
+        UUID_DATE_TIME_CHAR                               = 0x2A08,
+        UUID_DAY_DATE_TIME_CHAR                           = 0x2A0A,
+        UUID_DAY_OF_WEEK_CHAR                             = 0x2A09,
+        UUID_DST_OFFSET_CHAR                              = 0x2A0D,
+        UUID_EXACT_TIME_256_CHAR                          = 0x2A0C,
+        UUID_FIRMWARE_REVISION_STRING_CHAR                = 0x2A26,
+        UUID_GLUCOSE_FEATURE_CHAR                         = 0x2A51,
+        UUID_GLUCOSE_MEASUREMENT_CHAR                     = 0x2A18,
+        UUID_GLUCOSE_MEASUREMENT_CONTEXT_CHAR             = 0x2A34,
+        UUID_HARDWARE_REVISION_STRING_CHAR                = 0x2A27,
+        UUID_HEART_RATE_CONTROL_POINT_CHAR                = 0x2A39,
+        UUID_HEART_RATE_MEASUREMENT_CHAR                  = 0x2A37,
+        UUID_HID_CONTROL_POINT_CHAR                       = 0x2A4C,
+        UUID_HID_INFORMATION_CHAR                         = 0x2A4A,
+        UUID_IEEE_REGULATORY_CERTIFICATION_DATA_LIST_CHAR = 0x2A2A,
+        UUID_INTERMEDIATE_CUFF_PRESSURE_CHAR              = 0x2A36,
+        UUID_INTERMEDIATE_TEMPERATURE_CHAR                = 0x2A1E,
+        UUID_LOCAL_TIME_INFORMATION_CHAR                  = 0x2A0F,
+        UUID_MANUFACTURER_NAME_STRING_CHAR                = 0x2A29,
+        UUID_MEASUREMENT_INTERVAL_CHAR                    = 0x2A21,
+        UUID_MODEL_NUMBER_STRING_CHAR                     = 0x2A24,
+        UUID_UNREAD_ALERT_CHAR                            = 0x2A45,
+        UUID_NEW_ALERT_CHAR                               = 0x2A46,
+        UUID_PNP_ID_CHAR                                  = 0x2A50,
+        UUID_PROTOCOL_MODE_CHAR                           = 0x2A4E,
+        UUID_RECORD_ACCESS_CONTROL_POINT_CHAR             = 0x2A52,
+        UUID_REFERENCE_TIME_INFORMATION_CHAR              = 0x2A14,
+        UUID_REPORT_CHAR                                  = 0x2A4D,
+        UUID_REPORT_MAP_CHAR                              = 0x2A4B,
+        UUID_RINGER_CONTROL_POINT_CHAR                    = 0x2A40,
+        UUID_RINGER_SETTING_CHAR                          = 0x2A41,
+        UUID_SCAN_INTERVAL_WINDOW_CHAR                    = 0x2A4F,
+        UUID_SCAN_REFRESH_CHAR                            = 0x2A31,
+        UUID_SERIAL_NUMBER_STRING_CHAR                    = 0x2A25,
+        UUID_SOFTWARE_REVISION_STRING_CHAR                = 0x2A28,
+        UUID_SUPPORTED_NEW_ALERT_CATEGORY_CHAR            = 0x2A47,
+        UUID_SUPPORTED_UNREAD_ALERT_CATEGORY_CHAR         = 0x2A48,
+        UUID_SYSTEM_ID_CHAR                               = 0x2A23,
+        UUID_TEMPERATURE_MEASUREMENT_CHAR                 = 0x2A1C,
+        UUID_TEMPERATURE_TYPE_CHAR                        = 0x2A1D,
+        UUID_TIME_ACCURACY_CHAR                           = 0x2A12,
+        UUID_TIME_SOURCE_CHAR                             = 0x2A13,
+        UUID_TIME_UPDATE_CONTROL_POINT_CHAR               = 0x2A16,
+        UUID_TIME_UPDATE_STATE_CHAR                       = 0x2A17,
+        UUID_TIME_WITH_DST_CHAR                           = 0x2A11,
+        UUID_TIME_ZONE_CHAR                               = 0x2A0E,
+        UUID_TX_POWER_LEVEL_CHAR                          = 0x2A07,
+        UUID_CSC_FEATURE_CHAR                             = 0x2A5C,
+        UUID_CSC_MEASUREMENT_CHAR                         = 0x2A5B,
+        UUID_RSC_FEATURE_CHAR                             = 0x2A54,
+        UUID_RSC_MEASUREMENT_CHAR                         = 0x2A53,
+    };
 
-        /**************************************************************************/
-        /*!
-            \brief  Standard GATT characteristic presentation format unit types.
-                    These unit types are used to decribe what the raw numeric
-                    data in a characteristic actually represents.
-            
-            \note   See https://developer.bluetooth.org/gatt/units/Pages/default.aspx
-        */
-        /**************************************************************************/
-        typedef enum ble_gatt_unit_e
-        {
+    /**************************************************************************/
+    /*!
+        \brief  Standard GATT characteristic presentation format unit types.
+                These unit types are used to decribe what the raw numeric
+                data in a characteristic actually represents.
+
+        \note   See https://developer.bluetooth.org/gatt/units/Pages/default.aspx
+    */
+    /**************************************************************************/
+    typedef enum ble_gatt_unit_e
+    {
           BLE_GATT_UNIT_NONE                                                   = 0x2700,    /**< No specified unit type */
           BLE_GATT_UNIT_LENGTH_METRE                                           = 0x2701,    /**< Length, Metre */
           BLE_GATT_UNIT_MASS_KILOGRAM                                          = 0x2702,    /**< Mass, Kilogram */
@@ -224,95 +224,204 @@ class GattCharacteristic
           BLE_GATT_UNIT_TIME_MONTH                                             = 0x27B4,    /**< Time, Month */
           BLE_GATT_UNIT_CONCENTRATION_COUNT_PER_CUBIC_METRE                    = 0x27B5,    /**<  */
           BLE_GATT_UNIT_IRRADIANCE_WATT_PER_SQUARE_METRE                       = 0x27B6     /**<  */
-        } ble_gatt_unit_t;
-        
-        /**************************************************************************/
-        /*!
-            \brief  Standard GATT number types
-            
-            \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.2
-            \note   See http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-        */
-        /**************************************************************************/
-        typedef enum ble_gatt_format_e
-        {
-          BLE_GATT_FORMAT_RFU                 = 0x00, /**< Reserved For Future Use. */
-          BLE_GATT_FORMAT_BOOLEAN             = 0x01, /**< Boolean. */
-          BLE_GATT_FORMAT_2BIT                = 0x02, /**< Unsigned 2-bit integer. */
-          BLE_GATT_FORMAT_NIBBLE              = 0x03, /**< Unsigned 4-bit integer. */
-          BLE_GATT_FORMAT_UINT8               = 0x04, /**< Unsigned 8-bit integer. */
-          BLE_GATT_FORMAT_UINT12              = 0x05, /**< Unsigned 12-bit integer. */
-          BLE_GATT_FORMAT_UINT16              = 0x06, /**< Unsigned 16-bit integer. */
-          BLE_GATT_FORMAT_UINT24              = 0x07, /**< Unsigned 24-bit integer. */
-          BLE_GATT_FORMAT_UINT32              = 0x08, /**< Unsigned 32-bit integer. */
-          BLE_GATT_FORMAT_UINT48              = 0x09, /**< Unsigned 48-bit integer. */
-          BLE_GATT_FORMAT_UINT64              = 0x0A, /**< Unsigned 64-bit integer. */
-          BLE_GATT_FORMAT_UINT128             = 0x0B, /**< Unsigned 128-bit integer. */
-          BLE_GATT_FORMAT_SINT8               = 0x0C, /**< Signed 2-bit integer. */
-          BLE_GATT_FORMAT_SINT12              = 0x0D, /**< Signed 12-bit integer. */
-          BLE_GATT_FORMAT_SINT16              = 0x0E, /**< Signed 16-bit integer. */
-          BLE_GATT_FORMAT_SINT24              = 0x0F, /**< Signed 24-bit integer. */
-          BLE_GATT_FORMAT_SINT32              = 0x10, /**< Signed 32-bit integer. */
-          BLE_GATT_FORMAT_SINT48              = 0x11, /**< Signed 48-bit integer. */
-          BLE_GATT_FORMAT_SINT64              = 0x12, /**< Signed 64-bit integer. */
-          BLE_GATT_FORMAT_SINT128             = 0x13, /**< Signed 128-bit integer. */
-          BLE_GATT_FORMAT_FLOAT32             = 0x14, /**< IEEE-754 32-bit floating point. */
-          BLE_GATT_FORMAT_FLOAT64             = 0x15, /**< IEEE-754 64-bit floating point. */
-          BLE_GATT_FORMAT_SFLOAT              = 0x16, /**< IEEE-11073 16-bit SFLOAT. */
-          BLE_GATT_FORMAT_FLOAT               = 0x17, /**< IEEE-11073 32-bit FLOAT. */
-          BLE_GATT_FORMAT_DUINT16             = 0x18, /**< IEEE-20601 format. */
-          BLE_GATT_FORMAT_UTF8S               = 0x19, /**< UTF-8 string. */
-          BLE_GATT_FORMAT_UTF16S              = 0x1A, /**< UTF-16 string. */
-          BLE_GATT_FORMAT_STRUCT              = 0x1B  /**< Opaque Structure. */
-        } ble_gatt_format_t;
-        
-        /**************************************************************************/
-        /*!
-            \brief  Standard GATT characteritic properties
-            
-            \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.1.1
-                    and Section 3.3.3.1 for Extended Properties
-        */
-        /**************************************************************************/
-        typedef enum ble_gatt_char_properties_e
-        {
-          BLE_GATT_CHAR_PROPERTIES_BROADCAST                    = 0x01, /**< Permits broadcasts of the Characteristic Value using Server Characteristic Configuration Descriptor. */
-          BLE_GATT_CHAR_PROPERTIES_READ                         = 0x02, /**< Permits reads of the Characteristic Value. */
-          BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE       = 0x04, /**< Permits writes of the Characteristic Value without response. */
-          BLE_GATT_CHAR_PROPERTIES_WRITE                        = 0x08, /**< Permits writes of the Characteristic Value with response. */
-          BLE_GATT_CHAR_PROPERTIES_NOTIFY                       = 0x10, /**< Permits notifications of a Characteristic Value without acknowledgement. */
-          BLE_GATT_CHAR_PROPERTIES_INDICATE                     = 0x20, /**< Permits indications of a Characteristic Value with acknowledgement. */
-          BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES  = 0x40, /**< Permits signed writes to the Characteristic Value. */
-          BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES          = 0x80  /**< Additional characteristic properties are defined in the Characteristic Extended Properties Descriptor */
-        } ble_gatt_char_properties_t;
-        
-        /**************************************************************************/
-        /*!
-            \brief  GATT presentation format wrapper
-            
-            \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5
-            \note   See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-        */
-        /**************************************************************************/
-        typedef struct PresentationFormat
-        {
-          uint8_t   gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
-          int8_t    exponent;       /**< Exponent for integer data types. Ex. if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
-          uint16_t  gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
-          uint8_t   gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
-          uint16_t  gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
-        } presentation_format_t;
-    
-        GattCharacteristic(uint16_t uuid=0, uint16_t minLen=1, uint16_t maxLen=1, uint8_t properties=0);
-        virtual ~GattCharacteristic(void);
-    
-        uint16_t uuid;              /* Characteristic UUID */
-        uint16_t lenMin;            /* Minimum length of the value */
-        uint16_t lenMax;            /* Maximum length of the value */
-        uint16_t handle;
-        uint8_t  properties;
-        
-    private:    
+    } ble_gatt_unit_t;
+
+    /**************************************************************************/
+    /*!
+        \brief  Standard GATT number types
+
+        \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.2
+        \note   See http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
+    */
+    /**************************************************************************/
+    typedef enum ble_gatt_format_e
+    {
+        BLE_GATT_FORMAT_RFU     = 0x00,               /**< Reserved For Future
+                                                       *Use. */
+        BLE_GATT_FORMAT_BOOLEAN = 0x01,               /**< Boolean. */
+        BLE_GATT_FORMAT_2BIT    = 0x02,               /**< Unsigned 2-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_NIBBLE  = 0x03,               /**< Unsigned 4-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT8   = 0x04,               /**< Unsigned 8-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT12  = 0x05,               /**< Unsigned 12-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT16  = 0x06,               /**< Unsigned 16-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT24  = 0x07,               /**< Unsigned 24-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT32  = 0x08,               /**< Unsigned 32-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT48  = 0x09,               /**< Unsigned 48-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT64  = 0x0A,               /**< Unsigned 64-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_UINT128 = 0x0B,               /**< Unsigned 128-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT8   = 0x0C,               /**< Signed 2-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT12  = 0x0D,               /**< Signed 12-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT16  = 0x0E,               /**< Signed 16-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT24  = 0x0F,               /**< Signed 24-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT32  = 0x10,               /**< Signed 32-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT48  = 0x11,               /**< Signed 48-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT64  = 0x12,               /**< Signed 64-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_SINT128 = 0x13,               /**< Signed 128-bit
+                                                       *integer. */
+        BLE_GATT_FORMAT_FLOAT32 = 0x14,               /**< IEEE-754 32-bit
+                                                       *floating point. */
+        BLE_GATT_FORMAT_FLOAT64 = 0x15,               /**< IEEE-754 64-bit
+                                                       *floating point. */
+        BLE_GATT_FORMAT_SFLOAT  = 0x16,               /**< IEEE-11073 16-bit
+                                                       *SFLOAT. */
+        BLE_GATT_FORMAT_FLOAT   = 0x17,               /**< IEEE-11073 32-bit
+                                                       *FLOAT. */
+        BLE_GATT_FORMAT_DUINT16 = 0x18,               /**< IEEE-20601 format.
+                                                       **/
+        BLE_GATT_FORMAT_UTF8S   = 0x19,               /**< UTF-8 string. */
+        BLE_GATT_FORMAT_UTF16S  = 0x1A,               /**< UTF-16 string. */
+        BLE_GATT_FORMAT_STRUCT  = 0x1B                /**< Opaque Structure.
+                                                       **/
+    } ble_gatt_format_t;
+
+    /**************************************************************************/
+    /*!
+        \brief  Standard GATT characteritic properties
+
+        \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.1.1
+                and Section 3.3.3.1 for Extended Properties
+    */
+    /**************************************************************************/
+    typedef enum ble_gatt_char_properties_e
+    {
+        BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01,    /**<
+                                                                         *Permits
+                                                                         *broadcasts
+                                                                         *of
+                                                                         *the
+                                                                         *Characteristic
+                                                                         *Value
+                                                                         *using
+                                                                         *Server
+                                                                         *Characteristic
+                                                                         *Configuration
+                                                                         *Descriptor.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02,    /**<
+                                                                         *Permits
+                                                                         *reads
+                                                                         *of
+                                                                         *the
+                                                                         *Characteristic
+                                                                         *Value.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04,    /**<
+                                                                         *Permits
+                                                                         *writes
+                                                                         *of
+                                                                         *the
+                                                                         *Characteristic
+                                                                         *Value
+                                                                         *without
+                                                                         *response.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_WRITE                       = 0x08,    /**<
+                                                                         *Permits
+                                                                         *writes
+                                                                         *of
+                                                                         *the
+                                                                         *Characteristic
+                                                                         *Value
+                                                                         *with
+                                                                         *response.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_NOTIFY                      = 0x10,    /**<
+                                                                         *Permits
+                                                                         *notifications
+                                                                         *of a
+                                                                         *Characteristic
+                                                                         *Value
+                                                                         *without
+                                                                         *acknowledgement.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_INDICATE                    = 0x20,    /**<
+                                                                         *Permits
+                                                                         *indications
+                                                                         *of a
+                                                                         *Characteristic
+                                                                         *Value
+                                                                         *with
+                                                                         *acknowledgement.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES = 0x40,    /**<
+                                                                         *Permits
+                                                                         *signed
+                                                                         *writes
+                                                                         *to
+                                                                         *the
+                                                                         *Characteristic
+                                                                         *Value.
+                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES         = 0x80     /**<
+                                                                         *Additional
+                                                                         *characteristic
+                                                                         *properties
+                                                                         *are
+                                                                         *defined
+                                                                         *in
+                                                                         *the
+                                                                         *Characteristic
+                                                                         *Extended
+                                                                         *Properties
+                                                                         *Descriptor
+                                                                         **/
+    } ble_gatt_char_properties_t;
+
+    /**************************************************************************/
+    /*!
+        \brief  GATT presentation format wrapper
+
+        \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5
+        \note   See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
+    */
+    /**************************************************************************/
+    typedef struct PresentationFormat
+    {
+        uint8_t gatt_format;        /**< Format of the value, see @ref
+                                     *ble_gatt_format_t. */
+        int8_t exponent;            /**< Exponent for integer data types. Ex.
+                                     *if Exponent = -3 and the char value is
+                                     *3892, the actual value is 3.892 */
+        uint16_t gatt_unit;         /**< UUID from Bluetooth Assigned Numbers,
+                                     *see @ref ble_gatt_unit_t. */
+        uint8_t gatt_namespace;     /**< Namespace from Bluetooth Assigned
+                                     *Numbers, normally '1',  see @ref
+                                     *BLE_GATT_CPF_NAMESPACES. */
+        uint16_t gatt_nsdesc;       /**< Namespace description from Bluetooth
+                                     *Assigned Numbers, normally '0', see @ref
+                                     *BLE_GATT_CPF_NAMESPACES. */
+    } presentation_format_t;
+
+    GattCharacteristic(uint16_t uuid = 0,
+                       uint16_t minLen = 1,
+                       uint16_t maxLen = 1,
+                       uint8_t  properties = 0);
+    virtual ~GattCharacteristic(void);
+
+    uint16_t uuid;                  /* Characteristic UUID */
+    uint16_t lenMin;                /* Minimum length of the value */
+    uint16_t lenMax;                /* Maximum length of the value */
+    uint16_t handle;
+    uint8_t  properties;
+
+private:
 };
 
-#endif
+#endif // ifndef __GATT_CHARACTERISTIC_H__

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 #ifndef __GAP_H__
 #define __GAP_H__
 
@@ -32,53 +32,62 @@
 /**************************************************************************/
 class Gap
 {
-    private:
-        GapEvents *m_pEventHandler;
+private:
+    GapEvents *m_pEventHandler;
 
-    public:
-				typedef enum addr_type_e{
-                 ADDR_TYPE_PUBLIC = 0,
-                 ADDR_TYPE_RANDOM_STATIC,
-                 ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
-                 ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
-               } addr_type_t;
-             
-				/* These functions must be defined in the sub-class */
-        virtual ble_error_t setAddress(addr_type_t type, uint8_t address[6]) = 0;
-				virtual ble_error_t setAdvertisingData(GapAdvertisingData &, GapAdvertisingData &) = 0;
-				virtual ble_error_t startAdvertising(GapAdvertisingParams &) = 0;
-				virtual ble_error_t stopAdvertising(void) = 0;
-				virtual ble_error_t disconnect(void) = 0;
+public:
+    typedef enum addr_type_e {
+        ADDR_TYPE_PUBLIC = 0,
+        ADDR_TYPE_RANDOM_STATIC,
+        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
+        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
+    } addr_type_t;
 
-				/* Describes the current state of the device (more than one bit can be set) */
-				typedef struct GapState_s
-				{
-						unsigned advertising : 1;   /**< The device is current advertising */
-						unsigned connected   : 1;   /**< The peripheral is connected to a central device */
-				} GapState_t;
+    /* These functions must be defined in the sub-class */
+    virtual ble_error_t setAddress(addr_type_t type, uint8_t address[6]) = 0;
+    virtual ble_error_t setAdvertisingData(GapAdvertisingData &,
+                                           GapAdvertisingData &) = 0;
+    virtual ble_error_t startAdvertising(GapAdvertisingParams &) = 0;
+    virtual ble_error_t stopAdvertising(void)                    = 0;
+    virtual ble_error_t disconnect(void)                         = 0;
 
-				/* Event callback handlers */
-				void setEventHandler(GapEvents *pEventHandler) {m_pEventHandler = pEventHandler;}
-				void handleEvent(GapEvents::gapEvent_e type) {
-						if (NULL == m_pEventHandler)
-									return;
-						switch(type) {
-									case GapEvents::GAP_EVENT_TIMEOUT:
-										    state.advertising = 0;
-												m_pEventHandler->onTimeout();
-												break;
-									case GapEvents::GAP_EVENT_CONNECTED:
-										    state.connected = 1;
-												m_pEventHandler->onConnected();
-												break;
-									case GapEvents::GAP_EVENT_DISCONNECTED:
-										    state.connected = 0;
-												m_pEventHandler->onDisconnected();
-												break;
-						}
-				}
-				
-				GapState_t state;
+    /* Describes the current state of the device (more than one bit can be
+     *set) */
+    typedef struct GapState_s
+    {
+        unsigned advertising : 1;                   /**< The device is current
+                                                     *advertising */
+        unsigned connected : 1;                     /**< The peripheral is
+                                                     *connected to a central
+                                                     *device */
+    } GapState_t;
+
+    /* Event callback handlers */
+    void setEventHandler(GapEvents *pEventHandler) {
+        m_pEventHandler = pEventHandler;
+    }
+
+    void handleEvent(GapEvents::gapEvent_e type) {
+        if (NULL == m_pEventHandler) {
+            return;
+        }
+        switch (type) {
+        case GapEvents::GAP_EVENT_TIMEOUT:
+            state.advertising = 0;
+            m_pEventHandler->onTimeout();
+            break;
+        case GapEvents::GAP_EVENT_CONNECTED:
+            state.connected = 1;
+            m_pEventHandler->onConnected();
+            break;
+        case GapEvents::GAP_EVENT_DISCONNECTED:
+            state.connected = 0;
+            m_pEventHandler->onDisconnected();
+            break;
+        }
+    }
+
+    GapState_t state;
 };
 
-#endif
+#endif // ifndef __GAP_H__

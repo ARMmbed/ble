@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +23,7 @@
 /**************************************************************************/
 /*!
     @brief  Creates a new GattService using the specified 128-bit UUID
-            
+
     @note   The UUID value must be unique on the device
 
     @param[in]  uuid
@@ -32,7 +32,7 @@
     @section EXAMPLE
 
     @code
-   
+
     @endcode
 */
 /**************************************************************************/
@@ -40,13 +40,13 @@ GattService::GattService(uint8_t base_uuid[16])
 {
     primaryServiceID.update(base_uuid);
     characteristicCount = 0;
-    handle = 0;
+    handle              = 0;
 }
 
 /**************************************************************************/
 /*!
     @brief  Creates a new GattService using the specified 16-bit BLE UUID
-            
+
     @param[in]  ble_uuid
                 The standardised 16-bit (2 byte) BLE UUID to use for this
                 characteristic
@@ -54,7 +54,7 @@ GattService::GattService(uint8_t base_uuid[16])
     @section EXAMPLE
 
     @code
-   
+
     @endcode
 */
 /**************************************************************************/
@@ -62,7 +62,7 @@ GattService::GattService(uint16_t ble_uuid)
 {
     primaryServiceID.update( ble_uuid );
     characteristicCount = 0;
-    handle = 0;
+    handle              = 0;
 }
 
 /**************************************************************************/
@@ -77,10 +77,10 @@ GattService::~GattService(void)
 /**************************************************************************/
 /*!
     @brief  Adds a GattCharacterisic to the service.
-            
+
     @note   This function will not update the .handle field in the
             GattCharacteristic. This value is updated when the parent
-            service is added via the radio driver. 
+            service is added via the radio driver.
 
     @param[in]  characteristic
                 The GattCharacteristic object describing the characteristic
@@ -94,7 +94,7 @@ GattService::~GattService(void)
     @section EXAMPLE
 
     @code
-   
+
     @endcode
 */
 /**************************************************************************/
@@ -106,6 +106,6 @@ ble_error_t GattService::addCharacteristic(GattCharacteristic & characteristic)
 
     characteristics[characteristicCount] = &characteristic;
     characteristicCount++;
-    
+
     return BLE_ERROR_NONE;
 }
