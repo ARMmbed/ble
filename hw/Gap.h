@@ -44,7 +44,7 @@ public:
     } addr_type_t;
 
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(addr_type_t type, uint8_t address[6]) = 0;
+    virtual ble_error_t setAddress(addr_type_t type, const uint8_t address[6]) = 0;
     virtual ble_error_t setAdvertisingData(GapAdvertisingData &,
                                            GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(GapAdvertisingParams &) = 0;

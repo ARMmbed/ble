@@ -41,7 +41,7 @@ public:
      * Set the BTLE MAC address and type.
      * @return
      */
-    ble_error_t setAddress(Gap::addr_type_t type, uint8_t address[6]);
+    ble_error_t setAddress(Gap::addr_type_t type, const uint8_t address[6]);
 
     ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures,
                                    GapAdvertisingData &scanResponse);
@@ -55,7 +55,7 @@ public: /* TODO: to be made private soon */
     virtual GattServer& getGattServer() = 0;
 };
 
-inline ble_error_t BLEDevice::setAddress(Gap::addr_type_t type, uint8_t address[6]) {
+inline ble_error_t BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6]) {
     return getGap().setAddress(type, address);
 }
 
