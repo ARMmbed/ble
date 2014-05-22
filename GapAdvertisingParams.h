@@ -84,9 +84,9 @@ public:
         uint16_t                  timeout = 0);
     virtual ~GapAdvertisingParams(void);
 
-    virtual AdvertisingType getAdvertisingType(void);
-    virtual uint16_t        getInterval(void);
-    virtual uint16_t        getTimeout(void);
+    virtual AdvertisingType getAdvertisingType(void) const;
+    virtual uint16_t        getInterval(void) const;
+    virtual uint16_t        getTimeout(void) const;
 
 private:
     AdvertisingType _advType;

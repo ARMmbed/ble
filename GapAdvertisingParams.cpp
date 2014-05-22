@@ -133,7 +133,7 @@ GapAdvertisingParams::~GapAdvertisingParams(void)
     \brief returns the current Advertising Type value
 */
 /**************************************************************************/
-GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(void)
+GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(void) const
 {
     return _advType;
 }
@@ -143,7 +143,7 @@ GapAdvertisingParams::AdvertisingType GapAdvertisingParams::getAdvertisingType(v
     \brief returns the current Advertising Delay (in units of 0.625ms)
 */
 /**************************************************************************/
-uint16_t GapAdvertisingParams::getInterval(void)
+uint16_t GapAdvertisingParams::getInterval(void) const
 {
     return _interval;
 }
@@ -153,7 +153,7 @@ uint16_t GapAdvertisingParams::getInterval(void)
     \brief returns the current Advertising Timeout (in seconds)
 */
 /**************************************************************************/
-uint16_t GapAdvertisingParams::getTimeout(void)
+uint16_t GapAdvertisingParams::getTimeout(void) const
 {
     return _timeout;
 }

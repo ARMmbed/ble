@@ -213,7 +213,7 @@ void GapAdvertisingData::clear(void)
     \returns    A pointer to the payload
 */
 /**************************************************************************/
-uint8_t *GapAdvertisingData::getPayload(void)
+const uint8_t *GapAdvertisingData::getPayload(void) const
 {
     return (_payloadLen > 0) ? _payload : NULL;
 }
@@ -225,7 +225,7 @@ uint8_t *GapAdvertisingData::getPayload(void)
     \returns    The payload length in bytes
 */
 /**************************************************************************/
-uint8_t GapAdvertisingData::getPayloadLen(void)
+uint8_t GapAdvertisingData::getPayloadLen(void) const
 {
     return _payloadLen;
 }
@@ -237,7 +237,7 @@ uint8_t GapAdvertisingData::getPayloadLen(void)
     \returns    The 16-bit appearance value
 */
 /**************************************************************************/
-uint16_t GapAdvertisingData::getAppearance(void)
+uint16_t GapAdvertisingData::getAppearance(void) const
 {
     return (uint16_t)_appearance;
 }

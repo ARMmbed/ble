@@ -355,9 +355,9 @@ public:
     ble_error_t addFlags(Flags flag = LE_GENERAL_DISCOVERABLE);
     ble_error_t addTxPower(int8_t txPower);
     void        clear(void);
-    uint8_t *getPayload(void);
-    uint8_t     getPayloadLen(void);
-    uint16_t    getAppearance(void);
+    const uint8_t *getPayload(void) const;
+    uint8_t     getPayloadLen(void) const;
+    uint16_t    getAppearance(void) const;
 
 private:
     uint8_t  _payload[GAP_ADVERTISING_DATA_MAX_PAYLOAD];

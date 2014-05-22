@@ -43,9 +43,9 @@ public:
      */
     ble_error_t setAddress(Gap::addr_type_t type, const uint8_t address[6]);
 
-    ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures,
-                                   GapAdvertisingData &scanResponse);
-    ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures);
+    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures,
+                                   const GapAdvertisingData &scanResponse);
+    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
     ble_error_t startAdvertising(GapAdvertisingParams &advParams);
     ble_error_t stopAdvertising(void);
     ble_error_t disconnect(void);
@@ -61,13 +61,13 @@ BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6]) {
 }
 
 inline ble_error_t
-BLEDevice::setAdvertisingData(GapAdvertisingData &ADStructures,
-                              GapAdvertisingData &scanResponse) {
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures,
+                              const GapAdvertisingData &scanResponse) {
     return getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
 inline ble_error_t
-BLEDevice::setAdvertisingData(GapAdvertisingData &ADStructures) {
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures) {
     GapAdvertisingData scanResponse;
     return getGap().setAdvertisingData(ADStructures, scanResponse);
 }
