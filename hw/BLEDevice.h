@@ -37,35 +37,44 @@ public:
 
     /* GAP specific APIs */
 public:
-    ble_error_t setAddress(Gap::addr_type_t type, uint8_t address[6]) {
-        return getGap().setAddress(type, address);
-    }
+    ble_error_t setAddress(Gap::addr_type_t type, uint8_t address[6]);
 
     ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures,
-                                   GapAdvertisingData &scanResponse) {
-        return getGap().setAdvertisingData(ADStructures, scanResponse);
-    }
-
-    ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures) {
-        GapAdvertisingData scanResponse;
-        return getGap().setAdvertisingData(ADStructures, scanResponse);
-    }
-
-    ble_error_t startAdvertising(GapAdvertisingParams &advParams) {
-        return getGap().startAdvertising(advParams);
-    }
-
-    ble_error_t stopAdvertising(void) {
-        return getGap().stopAdvertising();
-    }
-
-    ble_error_t disconnect(void) {
-        return getGap().disconnect();
-    }
+                                   GapAdvertisingData &scanResponse);
+    ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures);
+    ble_error_t startAdvertising(GapAdvertisingParams &advParams);
+    ble_error_t stopAdvertising(void);
+    ble_error_t disconnect(void);
 
 public: /* TODO: to be made private soon */
     virtual Gap&        getGap()        = 0;
     virtual GattServer& getGattServer() = 0;
 };
+
+inline ble_error_t BLEDevice::setAddress(Gap::addr_type_t type, uint8_t address[6]) {
+    return getGap().setAddress(type, address);
+}
+
+inline ble_error_t BLEDevice::setAdvertisingData(GapAdvertisingData &ADStructures,
+                               GapAdvertisingData &scanResponse) {
+    return getGap().setAdvertisingData(ADStructures, scanResponse);
+}
+
+inline ble_error_t BLEDevice::setAdvertisingData(GapAdvertisingData &ADStructures) {
+    GapAdvertisingData scanResponse;
+    return getGap().setAdvertisingData(ADStructures, scanResponse);
+}
+
+inline ble_error_t BLEDevice::startAdvertising(GapAdvertisingParams &advParams) {
+    return getGap().startAdvertising(advParams);
+}
+
+inline ble_error_t BLEDevice::stopAdvertising(void) {
+    return getGap().stopAdvertising();
+}
+
+inline ble_error_t BLEDevice::disconnect(void) {
+    return getGap().disconnect();
+}
 
 #endif // ifndef __BLE_DEVICE_H__
