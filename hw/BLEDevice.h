@@ -32,10 +32,40 @@
 class BLEDevice
 {
 public:
+    virtual ble_error_t init()        = 0;
+    virtual ble_error_t reset(void)   = 0;
+
+    /* GAP specific APIs */
+public:
+    ble_error_t setAddress(Gap::addr_type_t type, uint8_t address[6]) {
+        return getGap().setAddress(type, address);
+    }
+
+    ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures,
+                                   GapAdvertisingData &scanResponse) {
+        return getGap().setAdvertisingData(ADStructures, scanResponse);
+    }
+
+    ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures) {
+        GapAdvertisingData scanResponse;
+        return getGap().setAdvertisingData(ADStructures, scanResponse);
+    }
+
+    ble_error_t startAdvertising(GapAdvertisingParams &advParams) {
+        return getGap().startAdvertising(advParams);
+    }
+
+    ble_error_t stopAdvertising(void) {
+        return getGap().stopAdvertising();
+    }
+
+    ble_error_t disconnect(void) {
+        return getGap().disconnect();
+    }
+
+public: /* TODO: to be made private soon */
     virtual Gap&        getGap()        = 0;
     virtual GattServer& getGattServer() = 0;
-    virtual ble_error_t   init()        = 0;
-    virtual ble_error_t   reset(void)   = 0;
 };
 
 #endif // ifndef __BLE_DEVICE_H__
