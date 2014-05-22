@@ -37,6 +37,10 @@ public:
 
     /* GAP specific APIs */
 public:
+    /**
+     * Set the BTLE MAC address and type.
+     * @return
+     */
     ble_error_t setAddress(Gap::addr_type_t type, uint8_t address[6]);
 
     ble_error_t setAdvertisingData(GapAdvertisingData &ADStructures,
