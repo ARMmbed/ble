@@ -51,13 +51,15 @@
                 modes
 
     \param[in]  interval
-                Advertising interval between 0x0020 and 0x4000 in 0.625ms
-                units (20ms to 10.24s).  If using non-connectable mode
-                (ADV_NON_CONNECTABLE_UNDIRECTED) this min value is
-                0x00A0 (100ms).
+                Advertising interval between 0x0020 and 0x4000 in 0.625ms units
+                (20ms to 10.24s).  If using non-connectable mode
+                (ADV_NON_CONNECTABLE_UNDIRECTED) this min value is 0x00A0
+                (100ms). To reduce the likelihood of collisions, the link layer
+                perturbs this interval by a pseudo-random delay with a range of
+                0 ms to 10 ms for each advertising event.
 
                 \par
-                Increasing this value will allow central devices to detect
+                Decreasing this value will allow central devices to detect
                 your peripheral faster at the expense of more power being
                 used by the radio due to the higher data transmit rate.
 
