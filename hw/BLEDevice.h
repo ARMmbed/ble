@@ -52,10 +52,6 @@ public:
      */
     ble_error_t setAddress(Gap::addr_type_t type, const uint8_t address[6]);
 
-    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures,
-                                   const GapAdvertisingData &scanResponse);
-    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
-
     /**
      * @param[in] advType
      *              The GAP advertising mode to use for this device. Valid
@@ -139,6 +135,10 @@ private:
      * DEPRECATED
      */
 public:
+    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures,
+                                   const GapAdvertisingData &scanResponse);
+    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
+
     ble_error_t startAdvertising(const GapAdvertisingParams &advParams);
 };
 
@@ -172,18 +172,6 @@ BLEDevice::reset(void) {
 inline ble_error_t
 BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6]) {
     return transport->getGap().setAddress(type, address);
-}
-
-inline ble_error_t
-BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures,
-                              const GapAdvertisingData &scanResponse) {
-    return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
-}
-
-inline ble_error_t
-BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures) {
-    GapAdvertisingData scanResponse;
-    return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
 inline void
@@ -221,7 +209,22 @@ BLEDevice::disconnect(void) {
     return transport->getGap().disconnect();
 }
 
-/* DEPRECATED */
+/*
+ * ALL OF THE FOLLOWING METHODS ARE DEPRECATED
+ */
+
+inline ble_error_t
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures,
+                              const GapAdvertisingData &scanResponse) {
+    return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
+}
+
+inline ble_error_t
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures) {
+    GapAdvertisingData scanResponse;
+    return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
+}
+
 inline ble_error_t
 BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams) {
     return transport->getGap().startAdvertising(_advParams);
