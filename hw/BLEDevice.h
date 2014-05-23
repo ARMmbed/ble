@@ -55,7 +55,7 @@ public:
     ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures,
                                    const GapAdvertisingData &scanResponse);
     ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
-    ble_error_t startAdvertising(GapAdvertisingParams &advParams);
+    ble_error_t startAdvertising(const GapAdvertisingParams &advParams);
     ble_error_t stopAdvertising(void);
     ble_error_t disconnect(void);
 
@@ -113,7 +113,7 @@ BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures) {
 }
 
 inline ble_error_t
-BLEDevice::startAdvertising(GapAdvertisingParams &advParams) {
+BLEDevice::startAdvertising(const GapAdvertisingParams &advParams) {
     return transport->getGap().startAdvertising(advParams);
 }
 
