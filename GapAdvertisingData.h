@@ -350,7 +350,7 @@ public:
     GapAdvertisingData(void);
     virtual ~GapAdvertisingData(void);
 
-    ble_error_t addData(DataType, uint8_t *, uint8_t);
+    ble_error_t addData(DataType, const uint8_t *, uint8_t);
     ble_error_t addAppearance(Appearance appearance = GENERIC_TAG);
     ble_error_t addFlags(Flags flag = LE_GENERAL_DISCOVERABLE);
     ble_error_t addTxPower(int8_t txPower);

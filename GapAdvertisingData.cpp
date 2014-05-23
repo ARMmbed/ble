@@ -71,9 +71,9 @@ GapAdvertisingData::~GapAdvertisingData(void)
     \endcode
 */
 /**************************************************************************/
-ble_error_t GapAdvertisingData::addData(DataType advDataType,
-                                        uint8_t *payload,
-                                        uint8_t  len)
+ble_error_t GapAdvertisingData::addData(DataType       advDataType,
+                                        const uint8_t *payload,
+                                        uint8_t        len)
 {
     /* ToDo: Check if an AD type already exists and if the existing */
     /*       value is exclusive or not (flags, etc.) */
