@@ -55,17 +55,91 @@ public:
     ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures,
                                    const GapAdvertisingData &scanResponse);
     ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
-    ble_error_t startAdvertising(const GapAdvertisingParams &advParams);
+
+    /**
+     * @param[in] advType
+     *              The GAP advertising mode to use for this device. Valid
+     *              values are defined in AdvertisingType:
+     *
+     *              \par ADV_NON_CONNECTABLE_UNDIRECTED
+     *              All connections to the peripheral device will be refused.
+     *
+     *              \par ADV_CONNECTABLE_DIRECTED
+     *              Only connections from a pre-defined central device will be
+     *              accepted.
+     *
+     *              \par ADV_CONNECTABLE_UNDIRECTED
+     *              Any central device can connect to this peripheral.
+     *
+     *              \par ADV_SCANNABLE_UNDIRECTED
+     *              Any central device can connect to this peripheral, and
+     *              the secondary Scan Response payload will be included or
+     *              available to central devices.
+     *
+     *              \par
+     *              See Bluetooth Core Specification 4.0 (Vol. 3), Part C,
+     *              Section 9.3 and Core Specification 4.0 (Vol. 6), Part B,
+     *              Section 2.3.1 for further information on GAP connection
+     *              modes
+     */
+    void        setAdvertisingType(GapAdvertisingParams::AdvertisingType);
+
+    /**
+     * @param[in] interval
+     *              Advertising interval between 0x0020 and 0x4000 in 0.625ms
+     *              units (20ms to 10.24s).  If using non-connectable mode
+     *              (ADV_NON_CONNECTABLE_UNDIRECTED) this min value is
+     *              0x00A0 (100ms). To reduce the likelihood of collisions, the
+     *              link layer perturbs this interval by a pseudo-random delay
+     *              with a range of 0 ms to 10 ms for each advertising event.
+     *
+     *              \par
+     *              Decreasing this value will allow central devices to detect
+     *              your peripheral faster at the expense of more power being
+     *              used by the radio due to the higher data transmit rate.
+     *
+     *              \par
+     *              This field must be set to 0 if connectionMode is equal
+     *              to ADV_CONNECTABLE_DIRECTED
+     *
+     *              \par
+     *              See Bluetooth Core Specification, Vol 3., Part C,
+     *              Appendix A for suggested advertising intervals.
+     */
+    void        setAdvertisingInterval(uint16_t interval);
+
+    /**
+     * @param[in] timeout
+     *              Advertising timeout between 0x1 and 0x3FFF (1 and 16383)
+     *              in seconds.  Enter 0 to disable the advertising timeout.
+     */
+    void        setAdvertisingTimeout(uint16_t timeout);
+
+    /**
+     * Please refer to the APIs above.
+     */
+    void        setAdvertisingParams(const GapAdvertisingParams &advParams);
+
+    ble_error_t startAdvertising(void);
     ble_error_t stopAdvertising(void);
+
     ble_error_t disconnect(void);
 
 public:
-    BLEDevice() : transport(createBLEDeviceInstance()) {
+    BLEDevice() : transport(createBLEDeviceInstance()), advParams() {
         /* empty */
     }
 
 private:
-    BLEDeviceInstanceBase *transport;
+    BLEDeviceInstanceBase *transport; /* handle to the device specific backend*/
+    GapAdvertisingParams   advParams;
+
+
+    /**
+     * DEPRECATED
+     */
+public:
+    ble_error_t startAdvertising(const GapAdvertisingParams &advParams);
 };
 
 /**
@@ -112,8 +186,28 @@ BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures) {
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
+inline void
+BLEDevice::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType) {
+    advParams.setAdvertisingType(advType);
+}
+
+inline void
+BLEDevice::setAdvertisingInterval(uint16_t interval) {
+    advParams.setInterval(interval);
+}
+
+inline void
+BLEDevice::setAdvertisingTimeout(uint16_t timeout) {
+    advParams.setTimeout(timeout);
+}
+
+inline void
+BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams) {
+    advParams = newAdvParams;
+}
+
 inline ble_error_t
-BLEDevice::startAdvertising(const GapAdvertisingParams &advParams) {
+BLEDevice::startAdvertising(void) {
     return transport->getGap().startAdvertising(advParams);
 }
 
@@ -125,6 +219,12 @@ BLEDevice::stopAdvertising(void) {
 inline ble_error_t
 BLEDevice::disconnect(void) {
     return transport->getGap().disconnect();
+}
+
+/* DEPRECATED */
+inline ble_error_t
+BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams) {
+    return transport->getGap().startAdvertising(_advParams);
 }
 
 #endif // ifndef __BLE_DEVICE_H__
