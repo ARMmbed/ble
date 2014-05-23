@@ -83,6 +83,10 @@ public:
                          uint16_t        timeout  = 0);
     virtual ~GapAdvertisingParams(void);
 
+    void setAdvertisingType(AdvertisingType newAdvType);
+    void setInterval(uint16_t newInterval);
+    void setTimeout(uint16_t  newTimeout);
+
     virtual AdvertisingType getAdvertisingType(void) const;
     virtual uint16_t        getInterval(void) const;
     virtual uint16_t        getTimeout(void) const;
@@ -92,5 +96,55 @@ private:
     uint16_t        _interval;
     uint16_t        _timeout;
 };
+
+inline void
+GapAdvertisingParams::setAdvertisingType(AdvertisingType newAdvType) {
+    _advType = newAdvType;
+}
+
+inline void
+GapAdvertisingParams::setInterval(uint16_t newInterval) {
+    _interval = newInterval;
+}
+
+inline void
+GapAdvertisingParams::setTimeout(uint16_t  newTimeout) {
+    _timeout = newTimeout;
+}
+
+
+/**************************************************************************/
+/*!
+    \brief returns the current Advertising Type value
+*/
+/**************************************************************************/
+inline GapAdvertisingParams::AdvertisingType
+GapAdvertisingParams::getAdvertisingType(void) const
+{
+    return _advType;
+}
+
+/**************************************************************************/
+/*!
+    \brief returns the current Advertising Delay (in units of 0.625ms)
+*/
+/**************************************************************************/
+inline uint16_t
+GapAdvertisingParams::getInterval(void) const
+{
+    return _interval;
+}
+
+/**************************************************************************/
+/*!
+    \brief returns the current Advertising Timeout (in seconds)
+*/
+/**************************************************************************/
+inline uint16_t
+GapAdvertisingParams::getTimeout(void) const
+{
+    return _timeout;
+}
+
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__
