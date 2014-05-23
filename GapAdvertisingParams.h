@@ -76,12 +76,11 @@ public:
                                          *Vol 6, Part B, Section 2.3.1.3 */
     };
 
-    GapAdvertisingParams(
-        AdvertisingType           advType =
-            GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
-        uint16_t                  interval =
-            GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
-        uint16_t                  timeout = 0);
+    GapAdvertisingParams(AdvertisingType advType  =
+                             GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
+                         uint16_t        interval =
+                             GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
+                         uint16_t        timeout  = 0);
     virtual ~GapAdvertisingParams(void);
 
     virtual AdvertisingType getAdvertisingType(void) const;

@@ -90,7 +90,7 @@ UUID::UUID(uint8_t const uuid_base[16])
         uuid_base[8] + uuid_base[9] + uuid_base[10] + uuid_base[11] +
         uuid_base[12] + uuid_base[13] + uuid_base[14] + uuid_base[15] == 0) {
         type = UUID_TYPE_SHORT;
-    } else   {
+    } else {
         type = UUID_TYPE_LONG;
     }
 }
@@ -151,7 +151,7 @@ ble_error_t UUID::update(uint8_t const uuid_base[16])
         uuid_base[8] + uuid_base[9] + uuid_base[10] + uuid_base[11] +
         uuid_base[12] + uuid_base[13] + uuid_base[14] + uuid_base[15] == 0) {
         type = UUID_TYPE_SHORT;
-    } else   {
+    } else {
         type = UUID_TYPE_LONG;
     }
 

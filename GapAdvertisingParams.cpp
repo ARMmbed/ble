@@ -92,7 +92,7 @@ GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType,
     if (_advType == ADV_CONNECTABLE_DIRECTED) {
         /* Interval must be 0 in directed connectable mode */
         _interval = 0;
-    } else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED)   {
+    } else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED) {
         /* Min interval is slightly larger than in other modes */
         if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON;
@@ -100,7 +100,7 @@ GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType,
         if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
         }
-    } else   {
+    } else {
         /* Stay within interval limits */
         if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN) {
             _interval = GAP_ADV_PARAMS_INTERVAL_MIN;
