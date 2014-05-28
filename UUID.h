@@ -22,26 +22,27 @@
 
 class UUID
 {
-private:
-
 public:
-    enum
-    {
+    enum {
         UUID_TYPE_SHORT = 0,    // Short BLE UUID
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID
     };
 
+    static const unsigned LENGTH_OF_LONG_UUID = 16;
+
+public:
     UUID(void);
-    UUID(uint8_t const[16]);
+    UUID(uint8_t const[LENGTH_OF_LONG_UUID]);
     UUID(uint16_t const);
     virtual ~UUID(void);
 
-    uint8_t  type;         // UUID_TYPE_SHORT or UUID_TYPE_LONG
-    uint8_t  base[16];     // in case of custom
-    uint16_t value;        // 16 bit uuid (byte 2-3 using with base)
-
-    ble_error_t update(uint8_t const[16]);
+    ble_error_t update(uint8_t const[LENGTH_OF_LONG_UUID]);
     ble_error_t update(uint16_t const);
+
+public:
+    uint8_t  type;         // UUID_TYPE_SHORT or UUID_TYPE_LONG
+    uint8_t  base[LENGTH_OF_LONG_UUID];     // in case of custom
+    uint16_t value;        // 16 bit uuid (byte 2-3 using with base)
 };
 
 #endif // ifndef __UUID_H__

@@ -28,11 +28,11 @@
             function before it can be safely used!
 */
 /**************************************************************************/
-UUID::UUID(void)
+UUID::UUID(void) : type(UUID_TYPE_SHORT),
+                   base(),
+                   value(0)
 {
-    memset(base, 0, 16);
-    value = 0;
-    type  = UUID_TYPE_SHORT;
+    /* empty */
 }
 
 /**************************************************************************/
@@ -79,9 +79,12 @@ UUID::UUID(void)
     @endcode
 */
 /**************************************************************************/
-UUID::UUID(uint8_t const uuid_base[16])
+UUID::UUID(const uint8_t uuid_base[LENGTH_OF_LONG_UUID]) :
+                                        type(UUID_TYPE_SHORT),
+                                        base(),
+                                        value(0)
 {
-    memcpy(base, uuid_base, 16);
+    memcpy(base, uuid_base, LENGTH_OF_LONG_UUID);
     value = (uint16_t)((uuid_base[3] << 8) | (uuid_base[2]));
 
     /* Check if this is a short of a long UUID */
@@ -103,12 +106,11 @@ UUID::UUID(uint8_t const uuid_base[16])
                 The 16-bit BLE UUID value.
 */
 /**************************************************************************/
-UUID::UUID(uint16_t const ble_uuid)
+UUID::UUID(const uint16_t ble_uuid) : type(UUID_TYPE_SHORT),
+                                      base(),
+                                      value(ble_uuid)
 {
-    memset(base, 0, 16);
     memcpy(base + 2, (uint8_t *)&ble_uuid, 2);
-    value = ble_uuid;
-    type  = UUID_TYPE_SHORT;
 }
 
 /**************************************************************************/
@@ -140,9 +142,9 @@ UUID::~UUID(void)
     @endcode
 */
 /**************************************************************************/
-ble_error_t UUID::update(uint8_t const uuid_base[16])
+ble_error_t UUID::update(uint8_t const uuid_base[LENGTH_OF_LONG_UUID])
 {
-    memcpy(base, uuid_base, 16);
+    memcpy(base, uuid_base, LENGTH_OF_LONG_UUID);
     value = (uint16_t)((uuid_base[3] << 8) | (uuid_base[2]));
 
     /* Check if this is a short of a long UUID */
@@ -179,7 +181,7 @@ ble_error_t UUID::update(uint8_t const uuid_base[16])
 /**************************************************************************/
 ble_error_t UUID::update(uint16_t const ble_uuid)
 {
-    memset(base, 0, 16);
+    memset(base, 0, LENGTH_OF_LONG_UUID);
     memcpy(base + 2, (uint8_t *)&ble_uuid, 2);
     value = ble_uuid;
     type  = UUID_TYPE_SHORT;
