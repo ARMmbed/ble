@@ -49,13 +49,14 @@
 GattCharacteristic::GattCharacteristic(uint16_t id,
                                        uint16_t minLen,
                                        uint16_t maxLen,
-                                       uint8_t  props)
+                                       uint8_t  props) :
+    uuid(id),
+    lenMin(minLen),
+    lenMax(maxLen),
+    handle(),
+    properties(props)
 {
-    uuid = id;
-    memcpy(&properties, &props, 1);
-    lenMin = minLen;
-    lenMax = maxLen;
-    //    handle = 0;
+    /* empty */
 }
 
 /**************************************************************************/
