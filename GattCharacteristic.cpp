@@ -58,6 +58,18 @@ GattCharacteristic::GattCharacteristic(uint16_t id,
 {
     /* empty */
 }
+GattCharacteristic::GattCharacteristic(const uint8_t longUUID[UUID::LENGTH_OF_LONG_UUID],
+                                       uint16_t      minLen,
+                                       uint16_t      maxLen,
+                                       uint8_t       props) :
+    uuid(longUUID),
+    lenMin(minLen),
+    lenMax(maxLen),
+    handle(),
+    properties(props)
+{
+    /* empty */
+}
 
 /**************************************************************************/
 /*!
