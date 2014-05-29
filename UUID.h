@@ -36,9 +36,6 @@ public:
     UUID(uint16_t const);
     virtual ~UUID(void);
 
-    ble_error_t update(uint8_t const[LENGTH_OF_LONG_UUID]);
-    ble_error_t update(uint16_t const);
-
 public:
     uint8_t  type;         // UUID_TYPE_SHORT or UUID_TYPE_LONG
     uint8_t  base[LENGTH_OF_LONG_UUID];     // in case of custom
