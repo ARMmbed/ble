@@ -22,7 +22,6 @@
 #include "UUID.h"
 
 #include "ble_gatts.h"
-/* ToDo: Update to use 16-bit or 128-bit UUIDs! */
 
 /**************************************************************************/
 /*!
