@@ -30,11 +30,10 @@
     \endcode
 */
 /**************************************************************************/
-GapAdvertisingData::GapAdvertisingData(void)
+GapAdvertisingData::GapAdvertisingData(void) : _payload(),
+                                               _payloadLen(0),
+                                               _appearance(GENERIC_TAG)
 {
-    memset(_payload, 0, GAP_ADVERTISING_DATA_MAX_PAYLOAD);
-    _payloadLen = 0;
-    _appearance = GENERIC_TAG;
 }
 
 /**************************************************************************/
