@@ -78,7 +78,7 @@ ble_error_t GapAdvertisingData::addData(DataType       advDataType,
     /*       value is exclusive or not (flags, etc.) */
 
     /* Make sure we don't exceed the 31 byte payload limit */
-    if (_payloadLen + len + 2 >= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
+    if (_payloadLen + len + 2 > GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
         return BLE_ERROR_BUFFER_OVERFLOW;
     }
 
