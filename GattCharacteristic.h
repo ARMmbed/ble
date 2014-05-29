@@ -418,13 +418,32 @@ public:
                        uint8_t  properties = 0);
     virtual ~GattCharacteristic(void);
 
+public:
+    uint16_t getHandle(void) const {
+        return handle;
+    }
+    void setHandle(uint16_t id) {
+        handle = id;
+    }
+    const UUID &getUUID(void) const {
+        return uuid;
+    }
+    uint8_t getProperties(void) const {
+        return properties;
+    }
+    uint16_t getMinLength(void) const {
+        return lenMin;
+    }
+    uint16_t getMaxLength(void) const {
+        return lenMax;
+    }
+
+private:
     UUID     uuid;                  /* Characteristic UUID */
     uint16_t lenMin;                /* Minimum length of the value */
     uint16_t lenMax;                /* Maximum length of the value */
     uint16_t handle;
     uint8_t  properties;
-
-private:
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__
