@@ -37,6 +37,17 @@ public:
     virtual ~UUID(void);
 
 public:
+    uint8_t shortOrLong(void) const {
+        return type;
+    }
+    const uint8_t* getBaseUUID(void) const {
+        return base;
+    }
+    uint16_t get16BitUUID(void) const {
+        return value;
+    }
+
+private:
     uint8_t  type;         // UUID_TYPE_SHORT or UUID_TYPE_LONG
     uint8_t  base[LENGTH_OF_LONG_UUID];     // in case of custom
     uint16_t value;        // 16 bit uuid (byte 2-3 using with base)
