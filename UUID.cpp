@@ -67,10 +67,10 @@
 UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
                                         type(UUID_TYPE_SHORT),
                                         baseUUID(),
-                                        value(0)
+                                        shortUUID(0)
 {
     memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
-    value = (uint16_t)((longUUID[3] << 8) | (longUUID[2]));/* NEEDS REVIEW */
+    shortUUID = (uint16_t)((longUUID[3] << 8) | (longUUID[2]));/* NEEDS REVIEW */
 
     /* Check if this is a short of a long UUID */
     unsigned index;
@@ -102,11 +102,12 @@ UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
                 The 16-bit BLE UUID value.
 */
 /**************************************************************************/
-UUID::UUID(const uint16_t shortUUID) : type(UUID_TYPE_SHORT),
-                                       baseUUID(),
-                                       value(shortUUID)
+UUID::UUID(uint16_t shortUUID) : type(UUID_TYPE_SHORT),
+                                 baseUUID(),
+                                 shortUUID(shortUUID)
 {
-    /* NEEDS REVIEW */
+    /* NEEDS REVIEW; actually, I'm not sure if we need to populate the baseUUID
+     * with the shortUUID here.*/
     baseUUID[2] = (shortUUID >> 8);
     baseUUID[3] = (shortUUID & 0xff);
 }

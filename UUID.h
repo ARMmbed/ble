@@ -32,7 +32,7 @@ public:
 
 public:
     UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]);
-    UUID(uint16_t      shortUUID);
+    UUID(uint16_t      uuid);
     virtual ~UUID(void);
 
 public:
@@ -43,7 +43,7 @@ public:
         return baseUUID;
     }
     uint16_t get16BitUUID(void) const {
-        return value;
+        return shortUUID;
     }
 
 private:
@@ -53,7 +53,7 @@ private:
                             * are zeroed out to allow comparison with other long
                             * UUIDs which differ only in the 16-bit relative
                             * part.*/
-    uint16_t value;        // 16 bit uuid (byte 2-3 using with base)
+    uint16_t shortUUID;     // 16 bit uuid (byte 2-3 using with base)
 };
 
 #endif // ifndef __UUID_H__
