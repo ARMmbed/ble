@@ -31,9 +31,8 @@ public:
     static const unsigned LENGTH_OF_LONG_UUID = 16;
 
 public:
-    UUID(void);
-    UUID(uint8_t const[LENGTH_OF_LONG_UUID]);
-    UUID(uint16_t const);
+    UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]);
+    UUID(uint16_t      shortUUID);
     virtual ~UUID(void);
 
 public:
@@ -41,7 +40,7 @@ public:
         return type;
     }
     const uint8_t* getBaseUUID(void) const {
-        return base;
+        return baseUUID;
     }
     uint16_t get16BitUUID(void) const {
         return value;
@@ -49,7 +48,11 @@ public:
 
 private:
     uint8_t  type;         // UUID_TYPE_SHORT or UUID_TYPE_LONG
-    uint8_t  base[LENGTH_OF_LONG_UUID];     // in case of custom
+    uint8_t  baseUUID[LENGTH_OF_LONG_UUID]; /* the base of the long UUID (if
+                            * used). Note: bytes 12 and 13 (counting from LSB)
+                            * are zeroed out to allow comparison with other long
+                            * UUIDs which differ only in the 16-bit relative
+                            * part.*/
     uint16_t value;        // 16 bit uuid (byte 2-3 using with base)
 };
 

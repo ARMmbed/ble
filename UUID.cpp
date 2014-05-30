@@ -22,21 +22,6 @@
 
 /**************************************************************************/
 /*!
-    @brief  Creates an empty 128-bit UUID
-
-    @note   This UUID must be assigned a valid value via the 'update'
-            function before it can be safely used!
-*/
-/**************************************************************************/
-UUID::UUID(void) : type(UUID_TYPE_SHORT),
-                   base(),
-                   value(0)
-{
-    /* empty */
-}
-
-/**************************************************************************/
-/*!
     @brief  Creates a new 128-bit UUID
 
     @note   The UUID is a unique 128-bit (16 byte) ID used to identify
@@ -79,22 +64,33 @@ UUID::UUID(void) : type(UUID_TYPE_SHORT),
     @endcode
 */
 /**************************************************************************/
-UUID::UUID(const uint8_t uuid_base[LENGTH_OF_LONG_UUID]) :
+UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
                                         type(UUID_TYPE_SHORT),
-                                        base(),
+                                        baseUUID(),
                                         value(0)
 {
-    memcpy(base, uuid_base, LENGTH_OF_LONG_UUID);
-    value = (uint16_t)((uuid_base[3] << 8) | (uuid_base[2]));
+    memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
+    value = (uint16_t)((longUUID[3] << 8) | (longUUID[2]));/* NEEDS REVIEW */
 
     /* Check if this is a short of a long UUID */
-    if (uuid_base[0] + uuid_base[1] +
-        uuid_base[4] + uuid_base[5] + uuid_base[6] + uuid_base[7] +
-        uuid_base[8] + uuid_base[9] + uuid_base[10] + uuid_base[11] +
-        uuid_base[12] + uuid_base[13] + uuid_base[14] + uuid_base[15] == 0) {
-        type = UUID_TYPE_SHORT;
-    } else {
-        type = UUID_TYPE_LONG;
+    unsigned index;
+    for (index = 0; index < LENGTH_OF_LONG_UUID; index++) {
+        if ((index == 2) || (index == 3)) {
+            continue; /* we should not consider bytes 2 and 3 because that's
+                       * where the 16-bit relative UUID is placed. */
+        }
+
+        if (baseUUID[index] != 0) {
+            type = UUID_TYPE_LONG;
+
+            /* NEEDS REVIEW */
+            /* zero out the 16-bit part in the base; this will help equate long
+             * UUIDs when they differ only in this 16-bit relative part.*/
+            baseUUID[2] = 0;
+            baseUUID[3] = 0;
+
+            return;
+        }
     }
 }
 
@@ -106,11 +102,13 @@ UUID::UUID(const uint8_t uuid_base[LENGTH_OF_LONG_UUID]) :
                 The 16-bit BLE UUID value.
 */
 /**************************************************************************/
-UUID::UUID(const uint16_t ble_uuid) : type(UUID_TYPE_SHORT),
-                                      base(),
-                                      value(ble_uuid)
+UUID::UUID(const uint16_t shortUUID) : type(UUID_TYPE_SHORT),
+                                       baseUUID(),
+                                       value(shortUUID)
 {
-    memcpy(base + 2, (uint8_t *)&ble_uuid, 2);
+    /* NEEDS REVIEW */
+    baseUUID[2] = (shortUUID >> 8);
+    baseUUID[3] = (shortUUID & 0xff);
 }
 
 /**************************************************************************/
