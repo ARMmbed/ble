@@ -70,7 +70,7 @@ UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
                                         shortUUID(0)
 {
     memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
-    shortUUID = (uint16_t)((longUUID[3] << 8) | (longUUID[2]));/* NEEDS REVIEW */
+    shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
 
     /* Check if this is a short of a long UUID */
     unsigned index;
@@ -83,7 +83,6 @@ UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
         if (baseUUID[index] != 0) {
             type = UUID_TYPE_LONG;
 
-            /* NEEDS REVIEW */
             /* zero out the 16-bit part in the base; this will help equate long
              * UUIDs when they differ only in this 16-bit relative part.*/
             baseUUID[2] = 0;
@@ -104,12 +103,8 @@ UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
 /**************************************************************************/
 UUID::UUID(uint16_t shortUUID) : type(UUID_TYPE_SHORT),
                                  baseUUID(),
-                                 shortUUID(shortUUID)
-{
-    /* NEEDS REVIEW; actually, I'm not sure if we need to populate the baseUUID
-     * with the shortUUID here.*/
-    baseUUID[2] = (shortUUID >> 8);
-    baseUUID[3] = (shortUUID & 0xff);
+                                 shortUUID(shortUUID) {
+    /* empty */
 }
 
 /**************************************************************************/
