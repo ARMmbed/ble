@@ -129,6 +129,10 @@ public:
 
     ble_error_t disconnect(void);
 
+    void onTimeout(Gap::EventCallback_t       timeoutCallback);
+    void onConnection(Gap::EventCallback_t    connectionCallback);
+    void onDisconnection(Gap::EventCallback_t disconnectionCallback);
+
 private:
     /**
      * Internal helper to udpate the transport backend with advertising data
@@ -299,5 +303,21 @@ inline ble_error_t
 BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams) {
     return transport->getGap().startAdvertising(_advParams);
 }
+
+inline void
+BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback) {
+    transport->getGap().setOnTimeout(timeoutCallback);
+}
+
+inline void
+BLEDevice::onConnection(Gap::EventCallback_t connectionCallback) {
+    transport->getGap().setOnConnection(connectionCallback);
+}
+
+inline void
+BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback) {
+    transport->getGap().setOnDisconnection(disconnectionCallback);
+}
+
 
 #endif // ifndef __BLE_DEVICE_H__

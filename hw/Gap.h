@@ -32,9 +32,6 @@
 /**************************************************************************/
 class Gap
 {
-private:
-    GapEvents *m_pEventHandler;
-
 public:
     typedef enum addr_type_e {
         ADDR_TYPE_PUBLIC = 0,
@@ -53,41 +50,62 @@ public:
 
     /* Describes the current state of the device (more than one bit can be
      *set) */
-    typedef struct GapState_s
-    {
-        unsigned advertising : 1;                   /**< The device is current
-                                                     *advertising */
-        unsigned connected : 1;                     /**< The peripheral is
-                                                     *connected to a central
-                                                     *device */
+    typedef struct GapState_s {
+        unsigned advertising : 1; /**< peripheral is currently advertising */
+        unsigned connected   : 1; /**< peripheral is connected to a central */
     } GapState_t;
 
     /* Event callback handlers */
-    void setEventHandler(GapEvents *pEventHandler) {
-        m_pEventHandler = pEventHandler;
+    typedef void (*EventCallback_t)(void);
+    void setOnTimeout(EventCallback_t callback) {
+        onTimeout = callback;
+    }
+    void setOnConnection(EventCallback_t callback) {
+        onConnection = callback;
+    }
+    void setOnDisconnection(EventCallback_t callback) {
+        onDisconnection = callback;
     }
 
     void handleEvent(GapEvents::gapEvent_e type) {
-        if (NULL == m_pEventHandler) {
-            return;
-        }
         switch (type) {
         case GapEvents::GAP_EVENT_TIMEOUT:
             state.advertising = 0;
-            m_pEventHandler->onTimeout();
+            if (onTimeout) {
+                onTimeout();
+            }
             break;
         case GapEvents::GAP_EVENT_CONNECTED:
             state.connected = 1;
-            m_pEventHandler->onConnected();
+            if (onConnection) {
+                onConnection();
+            }
             break;
         case GapEvents::GAP_EVENT_DISCONNECTED:
             state.connected = 0;
-            m_pEventHandler->onDisconnected();
+            if (onDisconnection) {
+                onDisconnection();
+            }
             break;
         }
     }
 
+protected:
+    Gap() :
+        state(),
+        onTimeout(NULL),
+        onConnection(NULL),
+        onDisconnection(NULL) {
+        /* empty */
+    }
+
+protected:
     GapState_t state;
+
+private:
+    EventCallback_t onTimeout;
+    EventCallback_t onConnection;
+    EventCallback_t onDisconnection;
 };
 
 #endif // ifndef __GAP_H__
