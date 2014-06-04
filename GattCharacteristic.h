@@ -235,59 +235,34 @@ public:
     /**************************************************************************/
     typedef enum ble_gatt_format_e
     {
-        BLE_GATT_FORMAT_RFU     = 0x00,               /**< Reserved For Future
-                                                       *Use. */
-        BLE_GATT_FORMAT_BOOLEAN = 0x01,               /**< Boolean. */
-        BLE_GATT_FORMAT_2BIT    = 0x02,               /**< Unsigned 2-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_NIBBLE  = 0x03,               /**< Unsigned 4-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT8   = 0x04,               /**< Unsigned 8-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT12  = 0x05,               /**< Unsigned 12-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT16  = 0x06,               /**< Unsigned 16-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT24  = 0x07,               /**< Unsigned 24-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT32  = 0x08,               /**< Unsigned 32-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT48  = 0x09,               /**< Unsigned 48-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT64  = 0x0A,               /**< Unsigned 64-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_UINT128 = 0x0B,               /**< Unsigned 128-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT8   = 0x0C,               /**< Signed 2-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT12  = 0x0D,               /**< Signed 12-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT16  = 0x0E,               /**< Signed 16-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT24  = 0x0F,               /**< Signed 24-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT32  = 0x10,               /**< Signed 32-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT48  = 0x11,               /**< Signed 48-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT64  = 0x12,               /**< Signed 64-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_SINT128 = 0x13,               /**< Signed 128-bit
-                                                       *integer. */
-        BLE_GATT_FORMAT_FLOAT32 = 0x14,               /**< IEEE-754 32-bit
-                                                       *floating point. */
-        BLE_GATT_FORMAT_FLOAT64 = 0x15,               /**< IEEE-754 64-bit
-                                                       *floating point. */
-        BLE_GATT_FORMAT_SFLOAT  = 0x16,               /**< IEEE-11073 16-bit
-                                                       *SFLOAT. */
-        BLE_GATT_FORMAT_FLOAT   = 0x17,               /**< IEEE-11073 32-bit
-                                                       *FLOAT. */
-        BLE_GATT_FORMAT_DUINT16 = 0x18,               /**< IEEE-20601 format.
-                                                       **/
-        BLE_GATT_FORMAT_UTF8S   = 0x19,               /**< UTF-8 string. */
-        BLE_GATT_FORMAT_UTF16S  = 0x1A,               /**< UTF-16 string. */
-        BLE_GATT_FORMAT_STRUCT  = 0x1B                /**< Opaque Structure.
-                                                       **/
+        BLE_GATT_FORMAT_RFU     = 0x00, /**< Reserved For Future Use. */
+        BLE_GATT_FORMAT_BOOLEAN = 0x01, /**< Boolean. */
+        BLE_GATT_FORMAT_2BIT    = 0x02, /**< Unsigned 2-bit integer. */
+        BLE_GATT_FORMAT_NIBBLE  = 0x03, /**< Unsigned 4-bit integer. */
+        BLE_GATT_FORMAT_UINT8   = 0x04, /**< Unsigned 8-bit integer. */
+        BLE_GATT_FORMAT_UINT12  = 0x05, /**< Unsigned 12-bit integer. */
+        BLE_GATT_FORMAT_UINT16  = 0x06, /**< Unsigned 16-bit integer. */
+        BLE_GATT_FORMAT_UINT24  = 0x07, /**< Unsigned 24-bit integer. */
+        BLE_GATT_FORMAT_UINT32  = 0x08, /**< Unsigned 32-bit integer. */
+        BLE_GATT_FORMAT_UINT48  = 0x09, /**< Unsigned 48-bit integer. */
+        BLE_GATT_FORMAT_UINT64  = 0x0A, /**< Unsigned 64-bit integer. */
+        BLE_GATT_FORMAT_UINT128 = 0x0B, /**< Unsigned 128-bit integer. */
+        BLE_GATT_FORMAT_SINT8   = 0x0C, /**< Signed 2-bit integer. */
+        BLE_GATT_FORMAT_SINT12  = 0x0D, /**< Signed 12-bit integer. */
+        BLE_GATT_FORMAT_SINT16  = 0x0E, /**< Signed 16-bit integer. */
+        BLE_GATT_FORMAT_SINT24  = 0x0F, /**< Signed 24-bit integer. */
+        BLE_GATT_FORMAT_SINT32  = 0x10, /**< Signed 32-bit integer. */
+        BLE_GATT_FORMAT_SINT48  = 0x11, /**< Signed 48-bit integer. */
+        BLE_GATT_FORMAT_SINT64  = 0x12, /**< Signed 64-bit integer. */
+        BLE_GATT_FORMAT_SINT128 = 0x13, /**< Signed 128-bit integer. */
+        BLE_GATT_FORMAT_FLOAT32 = 0x14, /**< IEEE-754 32-bit floating point. */
+        BLE_GATT_FORMAT_FLOAT64 = 0x15, /**< IEEE-754 64-bit floating point. */
+        BLE_GATT_FORMAT_SFLOAT  = 0x16, /**< IEEE-11073 16-bit SFLOAT. */
+        BLE_GATT_FORMAT_FLOAT   = 0x17, /**< IEEE-11073 32-bit FLOAT. */
+        BLE_GATT_FORMAT_DUINT16 = 0x18, /**< IEEE-20601 format. */
+        BLE_GATT_FORMAT_UTF8S   = 0x19, /**< UTF-8 string. */
+        BLE_GATT_FORMAT_UTF16S  = 0x1A, /**< UTF-16 string. */
+        BLE_GATT_FORMAT_STRUCT  = 0x1B  /**< Opaque Structure. */
     } ble_gatt_format_t;
 
     /**************************************************************************/
@@ -300,87 +275,46 @@ public:
     /**************************************************************************/
     typedef enum ble_gatt_char_properties_e
     {
-        BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01,    /**<
-                                                                         *Permits
-                                                                         *broadcasts
-                                                                         *of
-                                                                         *the
-                                                                         *Characteristic
-                                                                         *Value
-                                                                         *using
-                                                                         *Server
-                                                                         *Characteristic
-                                                                         *Configuration
-                                                                         *Descriptor.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02,    /**<
-                                                                         *Permits
-                                                                         *reads
-                                                                         *of
-                                                                         *the
-                                                                         *Characteristic
-                                                                         *Value.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04,    /**<
-                                                                         *Permits
-                                                                         *writes
-                                                                         *of
-                                                                         *the
-                                                                         *Characteristic
-                                                                         *Value
-                                                                         *without
-                                                                         *response.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_WRITE                       = 0x08,    /**<
-                                                                         *Permits
-                                                                         *writes
-                                                                         *of
-                                                                         *the
-                                                                         *Characteristic
-                                                                         *Value
-                                                                         *with
-                                                                         *response.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_NOTIFY                      = 0x10,    /**<
-                                                                         *Permits
-                                                                         *notifications
-                                                                         *of a
-                                                                         *Characteristic
-                                                                         *Value
-                                                                         *without
-                                                                         *acknowledgement.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_INDICATE                    = 0x20,    /**<
-                                                                         *Permits
-                                                                         *indications
-                                                                         *of a
-                                                                         *Characteristic
-                                                                         *Value
-                                                                         *with
-                                                                         *acknowledgement.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES = 0x40,    /**<
-                                                                         *Permits
-                                                                         *signed
-                                                                         *writes
-                                                                         *to
-                                                                         *the
-                                                                         *Characteristic
-                                                                         *Value.
-                                                                         **/
-        BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES         = 0x80     /**<
-                                                                         *Additional
-                                                                         *characteristic
-                                                                         *properties
-                                                                         *are
-                                                                         *defined
-                                                                         *in
-                                                                         *the
-                                                                         *Characteristic
-                                                                         *Extended
-                                                                         *Properties
-                                                                         *Descriptor
-                                                                         **/
+        BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01, /**<
+                                                 * Permits broadcasts of the
+                                                 * Characteristic Value using
+                                                 * Server Characteristic
+                                                 * Configuration Descriptor.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02, /**<
+                                                 * Permits reads of the
+                                                 * Characteristic Value.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04, /**<
+                                                 * Permits writes of the
+                                                 * Characteristic Value without
+                                                 * response.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_WRITE                       = 0x08, /**<
+                                                 * Permits writes of the
+                                                 * Characteristic Value with
+                                                 * response.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_NOTIFY                      = 0x10, /**<
+                                                 * Permits notifications of a
+                                                 * Characteristic Value without
+                                                 * acknowledgement.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_INDICATE                    = 0x20, /**<
+                                                 * Permits indications of a
+                                                 * Characteristic Value with
+                                                 * acknowledgement.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES = 0x40, /**<
+                                                 * Permits signed writes to the
+                                                 * Characteristic Value.
+                                                 **/
+        BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES         = 0x80  /**<
+                                                 * Additional characteristic
+                                                 * properties are defined in the
+                                                 * Characteristic Extended
+                                                 * Properties Descriptor
+                                                 **/
     } ble_gatt_char_properties_t;
 
     /**************************************************************************/
