@@ -129,9 +129,17 @@ public:
 
     ble_error_t disconnect(void);
 
+    /* APIs to set GAP callbacks. */
     void onTimeout(Gap::EventCallback_t       timeoutCallback);
     void onConnection(Gap::EventCallback_t    connectionCallback);
     void onDisconnection(Gap::EventCallback_t disconnectionCallback);
+
+    /* APIs to set GATT server callbacks */
+    void onDataSent(GattServer::EventCallback_t callback);
+    void onDataWritten(GattServer::EventCallback_t callback);
+    void onUpdatesEnabled(GattServer::EventCallback_t callback);
+    void onUpdatesDisabled(GattServer::EventCallback_t callback);
+    void onConfirmationReceived(GattServer::EventCallback_t callback);
 
 private:
     /**
@@ -283,6 +291,46 @@ BLEDevice::setAdvertisingDataForTransport(void) {
     return transport->getGap().setAdvertisingData(advPayload, scanResponse);
 }
 
+inline void
+BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback) {
+    transport->getGap().setOnTimeout(timeoutCallback);
+}
+
+inline void
+BLEDevice::onConnection(Gap::EventCallback_t connectionCallback) {
+    transport->getGap().setOnConnection(connectionCallback);
+}
+
+inline void
+BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback) {
+    transport->getGap().setOnDisconnection(disconnectionCallback);
+}
+
+inline void
+BLEDevice::onDataSent(GattServer::EventCallback_t callback) {
+    transport->getGattServer().setOnDataSent(callback);
+}
+
+inline void
+BLEDevice::onDataWritten(GattServer::EventCallback_t callback) {
+    transport->getGattServer().setOnDataWritten(callback);
+}
+
+inline void
+BLEDevice::onUpdatesEnabled(GattServer::EventCallback_t callback) {
+    transport->getGattServer().setOnUpdatesEnabled(callback);
+}
+
+inline void
+BLEDevice::onUpdatesDisabled(GattServer::EventCallback_t callback) {
+    transport->getGattServer().setOnUpdatesDisabled(callback);
+}
+
+inline void
+BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback) {
+    transport->getGattServer().setOnConfirmationReceived(callback);
+}
+
 /*
  * ALL OF THE FOLLOWING METHODS ARE DEPRECATED
  */
@@ -303,21 +351,5 @@ inline ble_error_t
 BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams) {
     return transport->getGap().startAdvertising(_advParams);
 }
-
-inline void
-BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback) {
-    transport->getGap().setOnTimeout(timeoutCallback);
-}
-
-inline void
-BLEDevice::onConnection(Gap::EventCallback_t connectionCallback) {
-    transport->getGap().setOnConnection(connectionCallback);
-}
-
-inline void
-BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback) {
-    transport->getGap().setOnDisconnection(disconnectionCallback);
-}
-
 
 #endif // ifndef __BLE_DEVICE_H__

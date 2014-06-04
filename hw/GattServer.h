@@ -31,9 +31,6 @@
 /**************************************************************************/
 class GattServer
 {
-private:
-    GattServerEvents *m_pEventHandler;
-
 public:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t addService(GattService &) = 0;
@@ -49,36 +46,76 @@ public:
     // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
     // Strange use case, but valid and must be covered!
 
-    /* Event callback handlers */
-    void setEventHandler(GattServerEvents *pEventHandler) {
-        m_pEventHandler = pEventHandler;
+    /* Event callback handlers. */
+    typedef void (*EventCallback_t)(uint16_t attributeHandle);
+    void setOnDataSent(EventCallback_t callback) {
+        onDataSent = callback;
+    }
+    void setOnDataWritten(EventCallback_t callback) {
+        onDataWritten = callback;
+    }
+    void setOnUpdatesEnabled(EventCallback_t callback) {
+        onUpdatesEnabled = callback;
+    }
+    void setOnUpdatesDisabled(EventCallback_t callback) {
+        onUpdatesDisabled = callback;
+    }
+    void setOnConfirmationReceived(EventCallback_t callback) {
+        onConfirmationReceived = callback;
     }
 
     void handleEvent(GattServerEvents::gattEvent_e type, uint16_t charHandle) {
-        if (NULL == m_pEventHandler) {
-            return;
-        }
         switch (type) {
         case GattServerEvents::GATT_EVENT_DATA_SENT:
-            m_pEventHandler->onDataSent(charHandle);
+            if (onDataSent) {
+                onDataSent(charHandle);
+            }
             break;
         case GattServerEvents::GATT_EVENT_DATA_WRITTEN:
-            m_pEventHandler->onDataWritten(charHandle);
+            if (onDataWritten) {
+                onDataWritten(charHandle);
+            }
             break;
         case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
-            m_pEventHandler->onUpdatesEnabled(charHandle);
+            if (onUpdatesEnabled) {
+                onUpdatesEnabled(charHandle);
+            }
             break;
         case GattServerEvents::GATT_EVENT_UPDATES_DISABLED:
-            m_pEventHandler->onUpdatesDisabled(charHandle);
+            if (onUpdatesDisabled) {
+                onUpdatesDisabled(charHandle);
+            }
             break;
         case GattServerEvents::GATT_EVENT_CONFIRMATION_RECEIVED:
-            m_pEventHandler->onConfirmationReceived(charHandle);
+            if (onConfirmationReceived) {
+                onConfirmationReceived(charHandle);
+            }
             break;
         }
     }
 
+protected:
+    GattServer() :
+        serviceCount(0),
+        characteristicCount(0),
+        onDataSent(NULL),
+        onDataWritten(NULL),
+        onUpdatesEnabled(NULL),
+        onUpdatesDisabled(NULL),
+        onConfirmationReceived(NULL) {
+        /* empty */
+    }
+
+protected:
     uint8_t serviceCount;
     uint8_t characteristicCount;
+
+private:
+    EventCallback_t onDataSent;
+    EventCallback_t onDataWritten;
+    EventCallback_t onUpdatesEnabled;
+    EventCallback_t onUpdatesDisabled;
+    EventCallback_t onConfirmationReceived;
 };
 
 #endif // ifndef __GATT_SERVER_H__
