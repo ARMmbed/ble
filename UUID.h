@@ -20,7 +20,7 @@
 
 #include "blecommon.h"
 
-const unsigned LENGTH_OF_LONG_UUID = 16;
+const unsigned   LENGTH_OF_LONG_UUID = 16;
 typedef uint16_t ShortUUID_t;
 typedef uint8_t  LongUUID_t[LENGTH_OF_LONG_UUID];
 
@@ -38,13 +38,13 @@ public:
     virtual ~UUID(void);
 
 public:
-    uint8_t shortOrLong(void) const {
+    uint8_t        shortOrLong(void) const {
         return type;
     }
     const uint8_t* getBaseUUID(void) const {
         return baseUUID;
     }
-    ShortUUID_t getShortUUID(void) const {
+    ShortUUID_t    getShortUUID(void) const {
         return shortUUID;
     }
 
