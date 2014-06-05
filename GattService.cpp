@@ -36,36 +36,13 @@
     @endcode
 */
 /**************************************************************************/
-GattService::GattService(const LongUUID_t base_uuid) :
-    primaryServiceID(base_uuid),
+GattService::GattService(UUID uuid) :
+    primaryServiceID(uuid),
     characteristicCount(0),
     characteristics(),
     handle(0)
 {
     /* empty */
-}
-
-/**************************************************************************/
-/*!
-    @brief  Creates a new GattService using the specified 16-bit BLE UUID
-
-    @param[in]  ble_uuid
-                The standardised 16-bit (2 byte) BLE UUID to use for this
-                characteristic
-
-    @section EXAMPLE
-
-    @code
-
-    @endcode
-*/
-/**************************************************************************/
-GattService::GattService(uint16_t ble_uuid) :
-    primaryServiceID(ble_uuid),
-    characteristicCount(0),
-    characteristics(),
-    handle(0)
-{
 }
 
 /**************************************************************************/
