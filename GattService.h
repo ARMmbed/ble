@@ -34,7 +34,7 @@ class GattService
 private:
 
 public:
-    GattService(const uint8_t[16]); /* 128-bit Base UUID */
+    GattService(const uint8_t[UUID::LENGTH_OF_LONG_UUID]);
     GattService(uint16_t);          /* 16-bit BLE UUID */
     virtual ~GattService(void);
 
