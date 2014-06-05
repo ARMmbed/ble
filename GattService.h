@@ -37,11 +37,6 @@ public:
     GattService(UUID uuid);
     virtual ~GattService(void);
 
-    UUID                primaryServiceID;
-    uint8_t             characteristicCount;
-    GattCharacteristic *characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
-    uint16_t            handle;
-
     ble_error_t         addCharacteristic(GattCharacteristic &);
 
     enum {
@@ -64,6 +59,31 @@ public:
         UUID_SCAN_PARAMETERS_SERVICE        = 0x1813,
         UUID_TX_POWER_SERVICE               = 0x1804
     };
+
+    const UUID &getUUID(void) const {
+        return primaryServiceID;
+    }
+    uint16_t *getHandlePtr(void) {
+        return &handle;
+    }
+    uint16_t getHandle(void) const {
+        return handle;
+    }
+    uint8_t getCharacteristicCount(void) const {
+        return characteristicCount;
+    }
+    GattCharacteristic *getCharacteristic(uint8_t index) {
+        if (index >= characteristicCount) {
+            return NULL;
+        }
+        return characteristics[index];
+    }
+
+private:
+    UUID                primaryServiceID;
+    uint8_t             characteristicCount;
+    GattCharacteristic *characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
+    uint16_t            handle;
 };
 
 #endif // ifndef __GATT_SERVICE_H__
