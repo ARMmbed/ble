@@ -36,7 +36,7 @@
     @endcode
 */
 /**************************************************************************/
-GattService::GattService(const uint8_t base_uuid[16]) :
+GattService::GattService(const LongUUID_t base_uuid) :
     primaryServiceID(base_uuid),
     characteristicCount(0),
     characteristics(),

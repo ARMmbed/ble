@@ -342,11 +342,11 @@ public:
                                      *BLE_GATT_CPF_NAMESPACES. */
     } presentation_format_t;
 
-    GattCharacteristic(uint16_t uuid = 0,
+    GattCharacteristic(ShortUUID_t uuid = 0,
                        uint16_t minLen = 1,
                        uint16_t maxLen = 1,
                        uint8_t  properties = 0);
-    GattCharacteristic(const uint8_t longUUID[UUID::LENGTH_OF_LONG_UUID],
+    GattCharacteristic(const LongUUID_t longUUID,
                        uint16_t minLen = 1,
                        uint16_t maxLen = 1,
                        uint8_t  properties = 0);

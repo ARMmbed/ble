@@ -64,10 +64,10 @@
     @endcode
 */
 /**************************************************************************/
-UUID::UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]) :
-                                        type(UUID_TYPE_SHORT),
-                                        baseUUID(),
-                                        shortUUID(0)
+UUID::UUID(const LongUUID_t longUUID) :
+    type(UUID_TYPE_SHORT),
+    baseUUID(),
+    shortUUID(0)
 {
     memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
     shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));

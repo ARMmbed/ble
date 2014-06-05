@@ -20,6 +20,10 @@
 
 #include "blecommon.h"
 
+const unsigned LENGTH_OF_LONG_UUID = 16;
+typedef uint16_t ShortUUID_t;
+typedef uint8_t  LongUUID_t[LENGTH_OF_LONG_UUID];
+
 class UUID
 {
 public:
@@ -28,11 +32,9 @@ public:
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID
     };
 
-    static const unsigned LENGTH_OF_LONG_UUID = 16;
-
 public:
-    UUID(const uint8_t longUUID[LENGTH_OF_LONG_UUID]);
-    UUID(uint16_t      uuid);
+    UUID(const LongUUID_t);
+    UUID(ShortUUID_t);
     virtual ~UUID(void);
 
 public:
@@ -42,18 +44,18 @@ public:
     const uint8_t* getBaseUUID(void) const {
         return baseUUID;
     }
-    uint16_t get16BitUUID(void) const {
+    ShortUUID_t getShortUUID(void) const {
         return shortUUID;
     }
 
 private:
-    uint8_t  type;         // UUID_TYPE_SHORT or UUID_TYPE_LONG
-    uint8_t  baseUUID[LENGTH_OF_LONG_UUID]; /* the base of the long UUID (if
+    uint8_t     type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
+    LongUUID_t  baseUUID;  /* the base of the long UUID (if
                             * used). Note: bytes 12 and 13 (counting from LSB)
                             * are zeroed out to allow comparison with other long
                             * UUIDs which differ only in the 16-bit relative
                             * part.*/
-    uint16_t shortUUID;     // 16 bit uuid (byte 2-3 using with base)
+    ShortUUID_t shortUUID; // 16 bit uuid (byte 2-3 using with base)
 };
 
 #endif // ifndef __UUID_H__
