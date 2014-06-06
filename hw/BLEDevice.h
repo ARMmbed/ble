@@ -141,6 +141,8 @@ public:
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
 
+    ble_error_t addService(GattService &service);
+
 private:
     /**
      * Internal helper to udpate the transport backend with advertising data
@@ -329,6 +331,11 @@ BLEDevice::onUpdatesDisabled(GattServer::EventCallback_t callback) {
 inline void
 BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback) {
     transport->getGattServer().setOnConfirmationReceived(callback);
+}
+
+inline ble_error_t
+BLEDevice::addService(GattService &service) {
+    return transport->getGattServer().addService(service);
 }
 
 /*
