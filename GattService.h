@@ -37,7 +37,7 @@ public:
     GattService(UUID uuid);
     virtual ~GattService(void);
 
-    ble_error_t         addCharacteristic(GattCharacteristic &);
+    ble_error_t addCharacteristic(GattCharacteristic &);
 
     enum {
         UUID_ALERT_NOTIFICATION_SERVICE     = 0x1811,
@@ -76,6 +76,7 @@ public:
         if (index >= characteristicCount) {
             return NULL;
         }
+
         return characteristics[index];
     }
 

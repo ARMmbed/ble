@@ -302,14 +302,8 @@ public:
         uint16_t gatt_nsdesc;       /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
     } presentation_format_t;
 
-    GattCharacteristic(ShortUUID_t uuid = 0,
-                       uint16_t minLen = 1,
-                       uint16_t maxLen = 1,
-                       uint8_t  properties = 0);
-    GattCharacteristic(const LongUUID_t longUUID,
-                       uint16_t minLen = 1,
-                       uint16_t maxLen = 1,
-                       uint8_t  properties = 0);
+    GattCharacteristic(ShortUUID_t uuid = 0, uint16_t minLen = 1, uint16_t maxLen = 1, uint8_t  properties = 0);
+    GattCharacteristic(const LongUUID_t longUUID, uint16_t minLen = 1, uint16_t maxLen = 1, uint8_t  properties = 0);
     virtual ~GattCharacteristic(void);
 
 public:

@@ -152,11 +152,7 @@ private:
     ble_error_t setAdvertisingDataForTransport(void);
 
 public:
-    BLEDevice() : transport(createBLEDeviceInstance()),
-                  advParams(),
-                  advPayload(),
-                  scanResponse(),
-                  needToUpdateAdvData(true) {
+    BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToUpdateAdvData(true) {
         advPayload.clear();
         scanResponse.clear();
     }
@@ -167,19 +163,18 @@ private:
     GapAdvertisingParams advParams;
     GapAdvertisingData   advPayload;
     GapAdvertisingData   scanResponse;
-    bool                 needToUpdateAdvData; /* Accumulation of AD structures
-                                * in the advertisement payload should eventually
-                                * result in a call to the target's
-                                * setAdvertisingData() before the server begins
-                                * advertising. This flag marks the status of the
-                                * pending update.*/
+
+    /* Accumulation of AD structures in the advertisement payload should
+     * eventually result in a call to the target's setAdvertisingData() before
+     * the server begins advertising. This flag marks the status of the pending
+     * update.*/
+    bool                 needToUpdateAdvData;
 
     /**
      * DEPRECATED
      */
 public:
-    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures,
-                                   const GapAdvertisingData &scanResponse);
+    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures, const GapAdvertisingData &scanResponse);
     ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
 
     ble_error_t startAdvertising(const GapAdvertisingParams &advParams);

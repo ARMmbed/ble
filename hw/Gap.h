@@ -42,8 +42,7 @@ public:
 
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(addr_type_t type, const uint8_t address[6]) = 0;
-    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &,
-                                           const GapAdvertisingData &) = 0;
+    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &) = 0;
     virtual ble_error_t stopAdvertising(void)                    = 0;
     virtual ble_error_t disconnect(void)                         = 0;
@@ -95,11 +94,7 @@ public:
     }
 
 protected:
-    Gap() :
-        state(),
-        onTimeout(NULL),
-        onConnection(NULL),
-        onDisconnection(NULL) {
+    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL) {
         /* empty */
     }
 
