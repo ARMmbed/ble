@@ -120,9 +120,7 @@ public:
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Flags flags);
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app);
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power);
-    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType  type,
-                                             const uint8_t                *data,
-                                             uint8_t                       len);
+    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len);
 
     ble_error_t startAdvertising(void);
     ble_error_t stopAdvertising(void);
@@ -144,6 +142,7 @@ public:
     ble_error_t addService(GattService &service);
 
     Gap::GapState_t getGapState(void) const;
+    ble_error_t     updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
 
 private:
     /**
@@ -343,6 +342,11 @@ BLEDevice::addService(GattService &service) {
 inline Gap::GapState_t
 BLEDevice::getGapState(void) const {
     return transport->getGap().getState();
+}
+
+inline ble_error_t
+BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly) {
+    return transport->getGattServer().updateValue(handle, const_cast<uint8_t *>(value), size, localOnly);
 }
 
 /*
