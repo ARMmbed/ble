@@ -90,6 +90,10 @@ public:
         }
     }
 
+    GapState_t getState(void) const {
+        return state;
+    }
+
 protected:
     Gap() :
         state(),

@@ -143,6 +143,8 @@ public:
 
     ble_error_t addService(GattService &service);
 
+    Gap::GapState_t getGapState(void) const;
+
 private:
     /**
      * Internal helper to udpate the transport backend with advertising data
@@ -336,6 +338,11 @@ BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback) {
 inline ble_error_t
 BLEDevice::addService(GattService &service) {
     return transport->getGattServer().addService(service);
+}
+
+inline Gap::GapState_t
+BLEDevice::getGapState(void) const {
+    return transport->getGap().getState();
 }
 
 /*
