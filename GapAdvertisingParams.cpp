@@ -82,9 +82,7 @@
     \endcode
 */
 /**************************************************************************/
-GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType,
-                                           uint16_t        interval,
-                                           uint16_t        timeout)
+GapAdvertisingParams::GapAdvertisingParams(AdvertisingType advType, uint16_t interval, uint16_t timeout)
 {
     _advType  = advType;
     _interval = interval;

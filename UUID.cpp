@@ -64,10 +64,7 @@
     @endcode
 */
 /**************************************************************************/
-UUID::UUID(const LongUUID_t longUUID) :
-    type(UUID_TYPE_SHORT),
-    baseUUID(),
-    shortUUID(0)
+UUID::UUID(const LongUUID_t longUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(0)
 {
     memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
     shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
@@ -101,9 +98,8 @@ UUID::UUID(const LongUUID_t longUUID) :
                 The 16-bit BLE UUID value.
 */
 /**************************************************************************/
-UUID::UUID(uint16_t shortUUID) : type(UUID_TYPE_SHORT),
-                                 baseUUID(),
-                                 shortUUID(shortUUID) {
+UUID::UUID(ShortUUID_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(shortUUID)
+{
     /* empty */
 }
 
