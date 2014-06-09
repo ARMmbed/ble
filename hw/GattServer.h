@@ -62,31 +62,31 @@ public:
 
     void handleEvent(GattServerEvents::gattEvent_e type, uint16_t charHandle) {
         switch (type) {
-        case GattServerEvents::GATT_EVENT_DATA_SENT:
-            if (onDataSent) {
-                onDataSent(charHandle);
-            }
-            break;
-        case GattServerEvents::GATT_EVENT_DATA_WRITTEN:
-            if (onDataWritten) {
-                onDataWritten(charHandle);
-            }
-            break;
-        case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
-            if (onUpdatesEnabled) {
-                onUpdatesEnabled(charHandle);
-            }
-            break;
-        case GattServerEvents::GATT_EVENT_UPDATES_DISABLED:
-            if (onUpdatesDisabled) {
-                onUpdatesDisabled(charHandle);
-            }
-            break;
-        case GattServerEvents::GATT_EVENT_CONFIRMATION_RECEIVED:
-            if (onConfirmationReceived) {
-                onConfirmationReceived(charHandle);
-            }
-            break;
+            case GattServerEvents::GATT_EVENT_DATA_SENT:
+                if (onDataSent) {
+                    onDataSent(charHandle);
+                }
+                break;
+            case GattServerEvents::GATT_EVENT_DATA_WRITTEN:
+                if (onDataWritten) {
+                    onDataWritten(charHandle);
+                }
+                break;
+            case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
+                if (onUpdatesEnabled) {
+                    onUpdatesEnabled(charHandle);
+                }
+                break;
+            case GattServerEvents::GATT_EVENT_UPDATES_DISABLED:
+                if (onUpdatesDisabled) {
+                    onUpdatesDisabled(charHandle);
+                }
+                break;
+            case GattServerEvents::GATT_EVENT_CONFIRMATION_RECEIVED:
+                if (onConfirmationReceived) {
+                    onConfirmationReceived(charHandle);
+                }
+                break;
         }
     }
 

@@ -27,7 +27,8 @@
     triggered with the GATT Server.
 */
 /**************************************************************************/
-class GattServerEvents {
+class GattServerEvents
+{
 public:
     /******************************************************************/
     /*!
@@ -36,8 +37,7 @@ public:
         callback occurs
     */
     /******************************************************************/
-    typedef enum gattEvent_e
-    {
+    typedef enum gattEvent_e {
         GATT_EVENT_DATA_SENT             = 1,       /**< Fired when a msg was
                                                      *successfully sent out
                                                      *(notify only?) */

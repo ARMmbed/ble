@@ -68,24 +68,24 @@ public:
 
     void handleEvent(GapEvents::gapEvent_e type) {
         switch (type) {
-        case GapEvents::GAP_EVENT_TIMEOUT:
-            state.advertising = 0;
-            if (onTimeout) {
-                onTimeout();
-            }
-            break;
-        case GapEvents::GAP_EVENT_CONNECTED:
-            state.connected = 1;
-            if (onConnection) {
-                onConnection();
-            }
-            break;
-        case GapEvents::GAP_EVENT_DISCONNECTED:
-            state.connected = 0;
-            if (onDisconnection) {
-                onDisconnection();
-            }
-            break;
+            case GapEvents::GAP_EVENT_TIMEOUT:
+                state.advertising = 0;
+                if (onTimeout) {
+                    onTimeout();
+                }
+                break;
+            case GapEvents::GAP_EVENT_CONNECTED:
+                state.connected = 1;
+                if (onConnection) {
+                    onConnection();
+                }
+                break;
+            case GapEvents::GAP_EVENT_DISCONNECTED:
+                state.connected = 0;
+                if (onDisconnection) {
+                    onDisconnection();
+                }
+                break;
         }
     }
 

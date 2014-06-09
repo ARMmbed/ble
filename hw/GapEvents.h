@@ -27,7 +27,8 @@
     triggered with the GAP.
 */
 /**************************************************************************/
-class GapEvents {
+class GapEvents
+{
 public:
     /******************************************************************/
     /*!
@@ -36,8 +37,7 @@ public:
         callback occurs
     */
     /******************************************************************/
-    typedef enum gapEvent_e
-    {
+    typedef enum gapEvent_e {
         GAP_EVENT_TIMEOUT      = 1,                 /**< Advertising timed out
                                                      *before a connection was
                                                      *established */

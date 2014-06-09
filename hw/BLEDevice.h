@@ -198,60 +198,71 @@ public:
  * transport.*/
 
 inline ble_error_t
-BLEDevice::init() {
+BLEDevice::init()
+{
     return transport->init();
 }
 
 inline ble_error_t
-BLEDevice::reset(void) {
+BLEDevice::reset(void)
+{
     return transport->reset();
 }
 
 inline ble_error_t
-BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6]) {
+BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6])
+{
     return transport->getGap().setAddress(type, address);
 }
 
 inline void
-BLEDevice::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType) {
+BLEDevice::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
+{
     advParams.setAdvertisingType(advType);
 }
 
 inline void
-BLEDevice::setAdvertisingInterval(uint16_t interval) {
+BLEDevice::setAdvertisingInterval(uint16_t interval)
+{
     advParams.setInterval(interval);
 }
 
 inline void
-BLEDevice::setAdvertisingTimeout(uint16_t timeout) {
+BLEDevice::setAdvertisingTimeout(uint16_t timeout)
+{
     advParams.setTimeout(timeout);
 }
 
 inline void
-BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams) {
+BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
+{
     advParams = newAdvParams;
 }
 
 inline void
-BLEDevice::clearAdvertisingPayload(void) {
+BLEDevice::clearAdvertisingPayload(void)
+{
     needToUpdateAdvData = true;
     advPayload.clear();
 }
 
 inline ble_error_t
-BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Flags flags) {
+BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Flags flags)
+{
     needToUpdateAdvData = true;
     return advPayload.addFlags(flags);
 }
 
 inline ble_error_t
-BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
+BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
+{
     needToUpdateAdvData = true;
     return advPayload.addAppearance(app);
 }
 
 inline ble_error_t
-BLEDevice::accumulateAdvertisingPayloadTxPower(int8_t txPower) {
+BLEDevice::accumulateAdvertisingPayloadTxPower(int8_t txPower)
+{
     needToUpdateAdvData = true;
     return advPayload.addTxPower(txPower);
 }
@@ -259,13 +270,15 @@ BLEDevice::accumulateAdvertisingPayloadTxPower(int8_t txPower) {
 inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType  type,
                                         const uint8_t                *data,
-                                        uint8_t                       len) {
+                                        uint8_t                       len)
+{
     needToUpdateAdvData = true;
     return advPayload.addData(type, data, len);
 }
 
 inline ble_error_t
-BLEDevice::startAdvertising(void) {
+BLEDevice::startAdvertising(void)
+{
     if (needToUpdateAdvData) {
         setAdvertisingDataForTransport();
         needToUpdateAdvData = false;
@@ -275,72 +288,86 @@ BLEDevice::startAdvertising(void) {
 }
 
 inline ble_error_t
-BLEDevice::stopAdvertising(void) {
+BLEDevice::stopAdvertising(void)
+{
     return transport->getGap().stopAdvertising();
 }
 
 inline ble_error_t
-BLEDevice::disconnect(void) {
+BLEDevice::disconnect(void)
+{
     return transport->getGap().disconnect();
 }
 
 inline ble_error_t
-BLEDevice::setAdvertisingDataForTransport(void) {
+BLEDevice::setAdvertisingDataForTransport(void)
+{
     return transport->getGap().setAdvertisingData(advPayload, scanResponse);
 }
 
 inline void
-BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback) {
+BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback)
+{
     transport->getGap().setOnTimeout(timeoutCallback);
 }
 
 inline void
-BLEDevice::onConnection(Gap::EventCallback_t connectionCallback) {
+BLEDevice::onConnection(Gap::EventCallback_t connectionCallback)
+{
     transport->getGap().setOnConnection(connectionCallback);
 }
 
 inline void
-BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback) {
+BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback)
+{
     transport->getGap().setOnDisconnection(disconnectionCallback);
 }
 
 inline void
-BLEDevice::onDataSent(GattServer::EventCallback_t callback) {
+BLEDevice::onDataSent(GattServer::EventCallback_t callback)
+{
     transport->getGattServer().setOnDataSent(callback);
 }
 
 inline void
-BLEDevice::onDataWritten(GattServer::EventCallback_t callback) {
+BLEDevice::onDataWritten(GattServer::EventCallback_t callback)
+{
     transport->getGattServer().setOnDataWritten(callback);
 }
 
 inline void
-BLEDevice::onUpdatesEnabled(GattServer::EventCallback_t callback) {
+BLEDevice::onUpdatesEnabled(GattServer::EventCallback_t callback)
+{
     transport->getGattServer().setOnUpdatesEnabled(callback);
 }
 
 inline void
-BLEDevice::onUpdatesDisabled(GattServer::EventCallback_t callback) {
+BLEDevice::onUpdatesDisabled(GattServer::EventCallback_t callback)
+{
     transport->getGattServer().setOnUpdatesDisabled(callback);
 }
 
 inline void
-BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback) {
+BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback)
+{
     transport->getGattServer().setOnConfirmationReceived(callback);
 }
 
 inline ble_error_t
-BLEDevice::addService(GattService &service) {
+BLEDevice::addService(GattService &service)
+{
     return transport->getGattServer().addService(service);
 }
 
 inline Gap::GapState_t
-BLEDevice::getGapState(void) const {
+BLEDevice::getGapState(void) const
+{
     return transport->getGap().getState();
 }
 
 inline ble_error_t
-BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly) {
+BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly)
+{
     return transport->getGattServer().updateValue(handle, const_cast<uint8_t *>(value), size, localOnly);
 }
 
@@ -350,18 +377,21 @@ BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint
 
 inline ble_error_t
 BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures,
-                              const GapAdvertisingData &scanResponse) {
+                              const GapAdvertisingData &scanResponse)
+{
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
 inline ble_error_t
-BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures) {
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures)
+{
     GapAdvertisingData scanResponse;
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
 inline ble_error_t
-BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams) {
+BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams)
+{
     return transport->getGap().startAdvertising(_advParams);
 }
 
