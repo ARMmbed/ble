@@ -144,6 +144,11 @@ public:
     Gap::GapState_t getGapState(void) const;
     ble_error_t     updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
 
+    /**
+     * Yield control to the BLE stack or to other tasks waiting for events.
+     */
+    void waitForEvent(void);
+
 private:
     /**
      * Internal helper to udpate the transport backend with advertising data
@@ -187,10 +192,11 @@ public:
 class BLEDeviceInstanceBase
 {
 public:
-    virtual Gap&        getGap()        = 0;
-    virtual GattServer& getGattServer() = 0;
-    virtual ble_error_t init(void)      = 0;
-    virtual ble_error_t reset(void)     = 0;
+    virtual Gap&        getGap()           = 0;
+    virtual GattServer& getGattServer()    = 0;
+    virtual ble_error_t init(void)         = 0;
+    virtual ble_error_t reset(void)        = 0;
+    virtual void        waitForEvent(void) = 0;
 };
 
 
@@ -369,6 +375,12 @@ inline ble_error_t
 BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly)
 {
     return transport->getGattServer().updateValue(handle, const_cast<uint8_t *>(value), size, localOnly);
+}
+
+inline void
+BLEDevice::waitForEvent(void)
+{
+    transport->waitForEvent();
 }
 
 /*
