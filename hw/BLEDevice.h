@@ -145,7 +145,11 @@ public:
     ble_error_t     updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
 
     /**
-     * Yield control to the BLE stack or to other tasks waiting for events.
+     * Yield control to the BLE stack or to other tasks waiting for events. This
+     * is a sleep function which will return when there is an application
+     * specific interrupt, but the MCU might wake up several times before
+     * returning (to service the stack). Note: The use of this API is not always
+     * interchangeable with the MCU's WFE() instruction.
      */
     void waitForEvent(void);
 
