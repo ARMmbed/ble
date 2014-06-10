@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-#ifndef __BLE_PERIPHERAL__
-#define __BLE_PERIPHERAL__
+#ifndef __BLE_DEVICE__
+#define __BLE_DEVICE__
 
 #include "mbed.h"
 #include "blecommon.h"
 #include "hw/Gap.h"
 #include "hw/GattServer.h"
 
-class BLEPeripheralInstanceBase; /* forward declaration */
+class BLEDeviceInstanceBase; /* forward declaration */
 
 /**
- * BLEPeripheral uses composition to hide an interface object encapsulating the
+ * BLEDevice uses composition to hide an interface object encapsulating the
  * backend transport.
  *
  * The following API is used to create the singleton interface object. An
  * implementation for this function must be provided by the device-specific
  * library, otherwise there will be a linker error.
  */
-extern BLEPeripheralInstanceBase *createBLEPeripheralInstance(void);
+extern BLEDeviceInstanceBase *createBLEDeviceInstance(void);
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
  * to enable this BLE API to work with any radio transparently.
  */
-class BLEPeripheral
+class BLEDevice
 {
 public:
     ble_error_t init();
@@ -161,13 +161,13 @@ private:
     ble_error_t setAdvertisingDataForTransport(void);
 
 public:
-    BLEPeripheral() : transport(createBLEPeripheralInstance()), advParams(), advPayload(), scanResponse(), needToUpdateAdvData(true) {
+    BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToUpdateAdvData(true) {
         advPayload.clear();
         scanResponse.clear();
     }
 
 private:
-    BLEPeripheralInstanceBase *const transport; /* the device specific backend */
+    BLEDeviceInstanceBase *const transport; /* the device specific backend */
 
     GapAdvertisingParams advParams;
     GapAdvertisingData   advPayload;
@@ -191,9 +191,9 @@ public:
 
 /**
  *  The interface for the transport object to be created by the target library's
- *  createBLEPeripheralInstance().
+ *  createBLEDeviceInstance().
  */
-class BLEPeripheralInstanceBase
+class BLEDeviceInstanceBase
 {
 public:
     virtual Gap&        getGap()           = 0;
@@ -204,88 +204,88 @@ public:
 };
 
 
-/* BLEPeripheral methods. Most of these simply forward the calls to the underlying
+/* BLEDevice methods. Most of these simply forward the calls to the underlying
  * transport.*/
 
 inline ble_error_t
-BLEPeripheral::init()
+BLEDevice::init()
 {
     return transport->init();
 }
 
 inline ble_error_t
-BLEPeripheral::reset(void)
+BLEDevice::reset(void)
 {
     return transport->reset();
 }
 
 inline ble_error_t
-BLEPeripheral::setAddress(Gap::addr_type_t type, const uint8_t address[6])
+BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6])
 {
     return transport->getGap().setAddress(type, address);
 }
 
 inline void
-BLEPeripheral::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
+BLEDevice::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
 {
     advParams.setAdvertisingType(advType);
 }
 
 inline void
-BLEPeripheral::setAdvertisingInterval(uint16_t interval)
+BLEDevice::setAdvertisingInterval(uint16_t interval)
 {
     advParams.setInterval(interval);
 }
 
 inline void
-BLEPeripheral::setAdvertisingTimeout(uint16_t timeout)
+BLEDevice::setAdvertisingTimeout(uint16_t timeout)
 {
     advParams.setTimeout(timeout);
 }
 
 inline void
-BLEPeripheral::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
+BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
 {
     advParams = newAdvParams;
 }
 
 inline void
-BLEPeripheral::clearAdvertisingPayload(void)
+BLEDevice::clearAdvertisingPayload(void)
 {
     needToUpdateAdvData = true;
     advPayload.clear();
 }
 
 inline ble_error_t
-BLEPeripheral::accumulateAdvertisingPayload(GapAdvertisingData::Flags flags)
+BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Flags flags)
 {
     needToUpdateAdvData = true;
     return advPayload.addFlags(flags);
 }
 
 inline ble_error_t
-BLEPeripheral::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
+BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
 {
     needToUpdateAdvData = true;
     return advPayload.addAppearance(app);
 }
 
 inline ble_error_t
-BLEPeripheral::accumulateAdvertisingPayloadTxPower(int8_t txPower)
+BLEDevice::accumulateAdvertisingPayloadTxPower(int8_t txPower)
 {
     needToUpdateAdvData = true;
     return advPayload.addTxPower(txPower);
 }
 
 inline ble_error_t
-BLEPeripheral::accumulateAdvertisingPayload(GapAdvertisingData::DataType  type, const uint8_t *data, uint8_t len)
+BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType  type, const uint8_t *data, uint8_t len)
 {
     needToUpdateAdvData = true;
     return advPayload.addData(type, data, len);
 }
 
 inline ble_error_t
-BLEPeripheral::startAdvertising(void)
+BLEDevice::startAdvertising(void)
 {
     if (needToUpdateAdvData) {
         setAdvertisingDataForTransport();
@@ -296,91 +296,91 @@ BLEPeripheral::startAdvertising(void)
 }
 
 inline ble_error_t
-BLEPeripheral::stopAdvertising(void)
+BLEDevice::stopAdvertising(void)
 {
     return transport->getGap().stopAdvertising();
 }
 
 inline ble_error_t
-BLEPeripheral::disconnect(void)
+BLEDevice::disconnect(void)
 {
     return transport->getGap().disconnect();
 }
 
 inline ble_error_t
-BLEPeripheral::setAdvertisingDataForTransport(void)
+BLEDevice::setAdvertisingDataForTransport(void)
 {
     return transport->getGap().setAdvertisingData(advPayload, scanResponse);
 }
 
 inline void
-BLEPeripheral::onTimeout(Gap::EventCallback_t timeoutCallback)
+BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback)
 {
     transport->getGap().setOnTimeout(timeoutCallback);
 }
 
 inline void
-BLEPeripheral::onConnection(Gap::EventCallback_t connectionCallback)
+BLEDevice::onConnection(Gap::EventCallback_t connectionCallback)
 {
     transport->getGap().setOnConnection(connectionCallback);
 }
 
 inline void
-BLEPeripheral::onDisconnection(Gap::EventCallback_t disconnectionCallback)
+BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback)
 {
     transport->getGap().setOnDisconnection(disconnectionCallback);
 }
 
 inline void
-BLEPeripheral::onDataSent(GattServer::EventCallback_t callback)
+BLEDevice::onDataSent(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnDataSent(callback);
 }
 
 inline void
-BLEPeripheral::onDataWritten(GattServer::EventCallback_t callback)
+BLEDevice::onDataWritten(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnDataWritten(callback);
 }
 
 inline void
-BLEPeripheral::onUpdatesEnabled(GattServer::EventCallback_t callback)
+BLEDevice::onUpdatesEnabled(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnUpdatesEnabled(callback);
 }
 
 inline void
-BLEPeripheral::onUpdatesDisabled(GattServer::EventCallback_t callback)
+BLEDevice::onUpdatesDisabled(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnUpdatesDisabled(callback);
 }
 
 inline void
-BLEPeripheral::onConfirmationReceived(GattServer::EventCallback_t callback)
+BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnConfirmationReceived(callback);
 }
 
 inline ble_error_t
-BLEPeripheral::addService(GattService &service)
+BLEDevice::addService(GattService &service)
 {
     return transport->getGattServer().addService(service);
 }
 
 inline Gap::GapState_t
-BLEPeripheral::getGapState(void) const
+BLEDevice::getGapState(void) const
 {
     return transport->getGap().getState();
 }
 
 inline ble_error_t
-BLEPeripheral::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly)
+BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly)
 {
     return transport->getGattServer().updateValue(handle, const_cast<uint8_t *>(value), size, localOnly);
 }
 
 inline void
-BLEPeripheral::waitForEvent(void)
+BLEDevice::waitForEvent(void)
 {
     transport->waitForEvent();
 }
@@ -390,22 +390,22 @@ BLEPeripheral::waitForEvent(void)
  */
 
 inline ble_error_t
-BLEPeripheral::setAdvertisingData(const GapAdvertisingData &ADStructures, const GapAdvertisingData &scanResponse)
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures, const GapAdvertisingData &scanResponse)
 {
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
 inline ble_error_t
-BLEPeripheral::setAdvertisingData(const GapAdvertisingData &ADStructures)
+BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures)
 {
     GapAdvertisingData scanResponse;
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
 inline ble_error_t
-BLEPeripheral::startAdvertising(const GapAdvertisingParams &_advParams)
+BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams)
 {
     return transport->getGap().startAdvertising(_advParams);
 }
 
-#endif // ifndef __BLE_PERIPHERAL__
+#endif // ifndef __BLE_DEVICE__
