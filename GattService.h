@@ -22,7 +22,6 @@
 #include "UUID.h"
 #include "GattCharacteristic.h"
 
-#define BLE_SERVICE_MAX_CHARACTERISTICS (5)
 
 /**************************************************************************/
 /*!
@@ -31,13 +30,8 @@
 /**************************************************************************/
 class GattService
 {
-private:
-
 public:
-    GattService(const UUID &uuid);
-    virtual ~GattService(void);
-
-    ble_error_t addCharacteristic(GattCharacteristic &);
+    GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics);
 
     enum {
         UUID_ALERT_NOTIFICATION_SERVICE     = 0x1811,
@@ -61,30 +55,30 @@ public:
     };
 
     const UUID &getUUID(void) const {
-        return primaryServiceID;
-    }
-    uint16_t *getHandlePtr(void) {
-        return &handle;
+        return _primaryServiceID;
     }
     uint16_t getHandle(void) const {
-        return handle;
+        return _handle;
+    }
+    void setHandle(uint16_t handle) {
+        _handle = handle;
     }
     uint8_t getCharacteristicCount(void) const {
-        return characteristicCount;
+        return _characteristicCount;
     }
     GattCharacteristic *getCharacteristic(uint8_t index) {
-        if (index >= characteristicCount) {
+        if (index >= _characteristicCount) {
             return NULL;
         }
 
-        return characteristics[index];
+        return _characteristics[index];
     }
 
 private:
-    UUID                primaryServiceID;
-    uint8_t             characteristicCount;
-    GattCharacteristic *characteristics[BLE_SERVICE_MAX_CHARACTERISTICS];
-    uint16_t            handle;
+    UUID                 _primaryServiceID;
+    uint8_t              _characteristicCount;
+    GattCharacteristic **_characteristics;
+    uint16_t             _handle;
 };
 
 #endif // ifndef __GATT_SERVICE_H__
