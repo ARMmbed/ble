@@ -36,11 +36,7 @@
     @endcode
 */
 /**************************************************************************/
-GattService::GattService(UUID uuid) :
-    primaryServiceID(uuid),
-    characteristicCount(0),
-    characteristics(),
-    handle(0)
+GattService::GattService(UUID uuid) : primaryServiceID(uuid), characteristicCount(0), characteristics(), handle(0)
 {
     /* empty */
 }
