@@ -348,6 +348,9 @@ public:
     uint16_t getMaxLength(void) const {
         return _lenMax;
     }
+    uint8_t *getValuePtr(void) {
+        return _value;
+    }
 
 private:
     UUID     _uuid;        /* Characteristic UUID */
