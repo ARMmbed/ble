@@ -34,7 +34,7 @@ class GattService
 private:
 
 public:
-    GattService(UUID uuid);
+    GattService(const UUID &uuid);
     virtual ~GattService(void);
 
     ble_error_t addCharacteristic(GattCharacteristic &);
