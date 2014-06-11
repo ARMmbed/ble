@@ -271,6 +271,7 @@ public:
     */
     /**************************************************************************/
     typedef enum ble_gatt_char_properties_e {
+        BLE_GATT_CHAR_PROPERTIES_NONE                        = 0x00,
         BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01, /**< Permits broadcasts of the Characteristic Value using Server Characteristic Configuration Descriptor. */
         BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02, /**< Permits reads of the Characteristic Value. */
         BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04, /**< Permits writes of the Characteristic Value without response. */
@@ -322,7 +323,8 @@ public:
      *  @endcode
     */
     /**************************************************************************/
-    GattCharacteristic(const UUID &uuid, uint8_t *value, uint16_t initialLen = 1, uint16_t maxLen = 1, uint8_t props = 0) :
+    GattCharacteristic(const UUID &uuid, uint8_t *value, uint16_t initialLen = 1, uint16_t maxLen = 1,
+                       uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE) :
         _uuid(uuid), _value(value), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
         /* empty */
     }
