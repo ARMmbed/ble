@@ -31,8 +31,7 @@
 class GattCharacteristic
 {
 public:
-    enum
-    {
+    enum {
         UUID_BATTERY_LEVEL_STATE_CHAR                     = 0x2A1B,
         UUID_BATTERY_POWER_STATE_CHAR                     = 0x2A1A,
         UUID_REMOVABLE_CHAR                               = 0x2A3A,
@@ -112,8 +111,7 @@ public:
         \note   See https://developer.bluetooth.org/gatt/units/Pages/default.aspx
     */
     /**************************************************************************/
-    typedef enum ble_gatt_unit_e
-    {
+    typedef enum ble_gatt_unit_e {
           BLE_GATT_UNIT_NONE                                                   = 0x2700,    /**< No specified unit type */
           BLE_GATT_UNIT_LENGTH_METRE                                           = 0x2701,    /**< Length, Metre */
           BLE_GATT_UNIT_MASS_KILOGRAM                                          = 0x2702,    /**< Mass, Kilogram */
@@ -233,8 +231,7 @@ public:
         \note   See http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
     */
     /**************************************************************************/
-    typedef enum ble_gatt_format_e
-    {
+    typedef enum ble_gatt_format_e {
         BLE_GATT_FORMAT_RFU     = 0x00, /**< Reserved For Future Use. */
         BLE_GATT_FORMAT_BOOLEAN = 0x01, /**< Boolean. */
         BLE_GATT_FORMAT_2BIT    = 0x02, /**< Unsigned 2-bit integer. */
@@ -273,8 +270,7 @@ public:
                 and Section 3.3.3.1 for Extended Properties
     */
     /**************************************************************************/
-    typedef enum ble_gatt_char_properties_e
-    {
+    typedef enum ble_gatt_char_properties_e {
         BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01, /**< Permits broadcasts of the Characteristic Value using Server Characteristic Configuration Descriptor. */
         BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02, /**< Permits reads of the Characteristic Value. */
         BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04, /**< Permits writes of the Characteristic Value without response. */
@@ -293,8 +289,7 @@ public:
         \note   See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
     */
     /**************************************************************************/
-    typedef struct PresentationFormat
-    {
+    typedef struct PresentationFormat {
         uint8_t  gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
         int8_t   exponent;       /**< Exponent for integer data types. Ex. if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
         uint16_t gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
@@ -328,7 +323,7 @@ public:
     */
     /**************************************************************************/
     GattCharacteristic(const UUID &uuid, uint16_t initialLen, uint16_t maxLen, uint8_t props) :
-        _uuid(uuid), _lenMin(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
+        _uuid(uuid), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
         /* empty */
     }
 
@@ -345,17 +340,17 @@ public:
     uint8_t getProperties(void) const {
         return _properties;
     }
-    uint16_t getMinLength(void) const {
-        return _lenMin;
+    uint16_t getInitialLength(void) const {
+        return _initialLen;
     }
     uint16_t getMaxLength(void) const {
         return _lenMax;
     }
 
 private:
-    UUID     _uuid;                  /* Characteristic UUID */
-    uint16_t _lenMin;                /* Minimum length of the value */
-    uint16_t _lenMax;                /* Maximum length of the value */
+    UUID     _uuid;        /* Characteristic UUID */
+    uint16_t _initialLen;  /* Initial length of the value */
+    uint16_t _lenMax;      /* Maximum length of the value */
     uint16_t _handle;
     uint8_t  _properties;
 };
