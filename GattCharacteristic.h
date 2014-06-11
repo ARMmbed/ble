@@ -306,12 +306,12 @@ public:
      *
      *  @param[in]  uuid
      *              The UUID to use for this characteristic
-     *  @param[in]  props
-     *              The 8-bit bit field containing the characteristic's properties
      *  @param[in]  initialLen
      *              The min length in bytes of this characteristic's value
      *  @param[in]  maxLen
      *              The max length in bytes of this characteristic's value
+     *  @param[in]  props
+     *              The 8-bit bit field containing the characteristic's properties
      *
      *  @section EXAMPLE
      *
@@ -348,14 +348,17 @@ public:
     uint16_t getMaxLength(void) const {
         return _lenMax;
     }
+    uint8_t *getValuePtr(void) {
+        return _value;
+    }
 
 private:
-    UUID     _uuid;        /* Characteristic UUID */
-    uint8_t *_value;
-    uint16_t _initialLen;  /* Initial length of the value */
-    uint16_t _lenMax;      /* Maximum length of the value */
-    uint16_t _handle;
-    uint8_t  _properties;
+    UUID      _uuid;        /* Characteristic UUID */
+    uint8_t  *_value;
+    uint16_t  _initialLen;  /* Initial length of the value */
+    uint16_t  _lenMax;      /* Maximum length of the value */
+    uint16_t  _handle;
+    uint8_t   _properties;
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__
