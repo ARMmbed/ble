@@ -322,8 +322,8 @@ public:
      *  @endcode
     */
     /**************************************************************************/
-    GattCharacteristic(const UUID &uuid, uint16_t initialLen, uint16_t maxLen, uint8_t props) :
-        _uuid(uuid), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
+    GattCharacteristic(const UUID &uuid, uint8_t *value, uint16_t initialLen = 1, uint16_t maxLen = 1, uint8_t props = 0) :
+        _uuid(uuid), _value(value), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
         /* empty */
     }
 
@@ -349,6 +349,7 @@ public:
 
 private:
     UUID     _uuid;        /* Characteristic UUID */
+    uint8_t *_value;
     uint16_t _initialLen;  /* Initial length of the value */
     uint16_t _lenMax;      /* Maximum length of the value */
     uint16_t _handle;
