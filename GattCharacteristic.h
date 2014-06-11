@@ -353,12 +353,12 @@ public:
     }
 
 private:
-    UUID     _uuid;        /* Characteristic UUID */
-    uint8_t *_value;
-    uint16_t _initialLen;  /* Initial length of the value */
-    uint16_t _lenMax;      /* Maximum length of the value */
-    uint16_t _handle;
-    uint8_t  _properties;
+    UUID      _uuid;        /* Characteristic UUID */
+    uint8_t  *_value;
+    uint16_t  _initialLen;  /* Initial length of the value */
+    uint16_t  _lenMax;      /* Maximum length of the value */
+    uint16_t  _handle;
+    uint8_t   _properties;
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__
