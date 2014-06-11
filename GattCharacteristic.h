@@ -295,43 +295,41 @@ public:
     /**************************************************************************/
     typedef struct PresentationFormat
     {
-        uint8_t gatt_format;        /**< Format of the value, see @ref ble_gatt_format_t. */
-        int8_t exponent;            /**< Exponent for integer data types. Ex. if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
-        uint16_t gatt_unit;         /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
-        uint8_t gatt_namespace;     /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
-        uint16_t gatt_nsdesc;       /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
+        uint8_t  gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
+        int8_t   exponent;       /**< Exponent for integer data types. Ex. if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
+        uint16_t gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
+        uint8_t  gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
+        uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
     } presentation_format_t;
 
-    GattCharacteristic(ShortUUID_t uuid = 0, uint16_t minLen = 1, uint16_t maxLen = 1, uint8_t  properties = 0);
-    GattCharacteristic(const LongUUID_t longUUID, uint16_t minLen = 1, uint16_t maxLen = 1, uint8_t  properties = 0);
-    virtual ~GattCharacteristic(void);
+    GattCharacteristic(const UUID &uuid, uint16_t initialLen = 1, uint16_t maxLen = 1, uint8_t properties = 0);
 
 public:
     uint16_t getHandle(void) const {
-        return handle;
+        return _handle;
     }
     void setHandle(uint16_t id) {
-        handle = id;
+        _handle = id;
     }
     const UUID &getUUID(void) const {
-        return uuid;
+        return _uuid;
     }
     uint8_t getProperties(void) const {
-        return properties;
+        return _properties;
     }
     uint16_t getMinLength(void) const {
-        return lenMin;
+        return _lenMin;
     }
     uint16_t getMaxLength(void) const {
-        return lenMax;
+        return _lenMax;
     }
 
 private:
-    UUID     uuid;                  /* Characteristic UUID */
-    uint16_t lenMin;                /* Minimum length of the value */
-    uint16_t lenMax;                /* Maximum length of the value */
-    uint16_t handle;
-    uint8_t  properties;
+    UUID     _uuid;                  /* Characteristic UUID */
+    uint16_t _lenMin;                /* Minimum length of the value */
+    uint16_t _lenMax;                /* Maximum length of the value */
+    uint16_t _handle;
+    uint8_t  _properties;
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__

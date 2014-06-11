@@ -26,15 +26,14 @@
 
     @note   The UUID value must be unique in the service and is normally >1
 
-    @param[in]  id
-                The 16-bit UUID to use for this characteristic
-    @param[in]  minLen
+    @param[in]  uuid
+                The UUID to use for this characteristic
+    @param[in]  initialLen
                 The min length in bytes of this characteristic's value
     @param[in]  maxLen
                 The max length in bytes of this characteristic's value
     @param[in]  props
-                The 8-bit bit field containing the characteristic's
-                properties
+                The 8-bit bit field containing the characteristic's properties
 
     @section EXAMPLE
 
@@ -46,37 +45,8 @@
     @endcode
 */
 /**************************************************************************/
-GattCharacteristic::GattCharacteristic(uint16_t id,
-                                       uint16_t minLen,
-                                       uint16_t maxLen,
-                                       uint8_t  props) :
-    uuid(id),
-    lenMin(minLen),
-    lenMax(maxLen),
-    handle(),
-    properties(props)
+GattCharacteristic::GattCharacteristic(const UUID &id, uint16_t initialLen, uint16_t maxLen, uint8_t props) :
+    _uuid(id), _lenMin(initialLen), _lenMax(maxLen), _handle(), _properties(props)
 {
     /* empty */
-}
-
-GattCharacteristic::GattCharacteristic(const LongUUID_t longUUID,
-                                       uint16_t         minLen,
-                                       uint16_t         maxLen,
-                                       uint8_t          props) :
-    uuid(longUUID),
-    lenMin(minLen),
-    lenMax(maxLen),
-    handle(),
-    properties(props)
-{
-    /* empty */
-}
-
-/**************************************************************************/
-/*!
-    Destructor
-*/
-/**************************************************************************/
-GattCharacteristic::~GattCharacteristic(void)
-{
 }
