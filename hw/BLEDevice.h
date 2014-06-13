@@ -142,7 +142,9 @@ public:
     ble_error_t addService(GattService &service);
 
     Gap::GapState_t getGapState(void) const;
-    ble_error_t     updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
+
+    ble_error_t readCharacteristicValue(uint16_t handle, uint8_t *const buffer, uint16_t *const lengthP);
+    ble_error_t updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -371,6 +373,11 @@ inline Gap::GapState_t
 BLEDevice::getGapState(void) const
 {
     return transport->getGap().getState();
+}
+
+inline ble_error_t BLEDevice::readCharacteristicValue(uint16_t handle, uint8_t *const buffer, uint16_t *const lengthP)
+{
+    return transport->getGattServer().readValue(handle, buffer, lengthP);
 }
 
 inline ble_error_t
