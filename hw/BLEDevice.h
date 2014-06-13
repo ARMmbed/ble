@@ -41,6 +41,10 @@ extern BLEDeviceInstanceBase *createBLEDeviceInstance(void);
 class BLEDevice
 {
 public:
+    /**
+     * Initialize the BLE controller. This should be called before using
+     * anything else in the BLE_API.
+     */
     ble_error_t init();
     ble_error_t reset(void);
 
@@ -116,13 +120,72 @@ public:
      */
     void        setAdvertisingParams(const GapAdvertisingParams &advParams);
 
+    /**
+     * Reset any advertising payload prepared from prior calls to
+     * accumulateAdvertisingPayload().
+     */
     void        clearAdvertisingPayload(void);
+
+    /**
+     * Accumulate an AD structure in the advertising payload. Please note that
+     * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
+     * as an additional 31 bytes if the advertising payload proves to be too
+     * small.
+     *
+     * @param  flags
+     *         The flag to be added.
+     */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Flags flags);
+
+    /**
+     * Accumulate an AD structure in the advertising payload. Please note that
+     * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
+     * as an additional 31 bytes if the advertising payload proves to be too
+     * small.
+     *
+     * @param  app
+     *         The appearance of the peripheral.
+     */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app);
+
+    /**
+     * Accumulate an AD structure in the advertising payload. Please note that
+     * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
+     * as an additional 31 bytes if the advertising payload proves to be too
+     * small.
+     *
+     * @param  app
+     *         The max transmit power to be used by the controller. This is
+     *         only a hint.
+     */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power);
+
+    /**
+     * @param  app
+     *         The appearance of the peripheral.
+     */
+    /**
+     * Accumulate a variable length byte-stream as an AD structure in the
+     * advertising payload. Please note that the payload is limited to 31 bytes.
+     * The SCAN_RESPONSE message may be used as an additional 31 bytes if the
+     * advertising payload proves to be too small.
+     *
+     * @param  type The type which describes the variable length data.
+     * @param  data data bytes.
+     * @param  len  length of data.
+     */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len);
 
+    /**
+     * Start advertising (GAP Discoverable, Connectable modes, Broadcast
+     * Procedure).
+     */
     ble_error_t startAdvertising(void);
+
+    /**
+     * Stop advertising (GAP Discoverable, Connectable modes, Broadcast
+     * Procedure).
+     */
     ble_error_t stopAdvertising(void);
 
     ble_error_t disconnect(void);
@@ -130,15 +193,29 @@ public:
     /* APIs to set GAP callbacks. */
     void onTimeout(Gap::EventCallback_t       timeoutCallback);
     void onConnection(Gap::EventCallback_t    connectionCallback);
+    /**
+     * Used to setup a callback for GAP disconnection.
+     */
     void onDisconnection(Gap::EventCallback_t disconnectionCallback);
 
-    /* APIs to set GATT server callbacks */
+    /**
+     * Setup a callback for the GATT event DATA_SENT.
+     */
     void onDataSent(GattServer::EventCallback_t callback);
+
+    /**
+     * Setup a callback for when a characteristic has its value updated by a
+     * client.
+     */
     void onDataWritten(GattServer::EventCallback_t callback);
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
 
+    /**
+     * Add a service declaration to the local server ATT table. Also add the
+     * characteristics contained within.
+     */
     ble_error_t addService(GattService &service);
 
     Gap::GapState_t getGapState(void) const;
@@ -177,8 +254,7 @@ private:
 
     /* Accumulation of AD structures in the advertisement payload should
      * eventually result in a call to the target's setAdvertisingData() before
-     * the server begins advertising. This flag marks the status of the pending
-     * update.*/
+     * the server begins advertising. This flag marks the status of the pending update.*/
     bool                 needToUpdateAdvData;
 
     /**
