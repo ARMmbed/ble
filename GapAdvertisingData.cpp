@@ -156,9 +156,9 @@ ble_error_t GapAdvertisingData::addAppearance(Appearance appearance)
     \endcode
 */
 /**************************************************************************/
-ble_error_t GapAdvertisingData::addFlags(Flags flag)
+ble_error_t GapAdvertisingData::addFlags(uint8_t flags)
 {
-    return addData(GapAdvertisingData::FLAGS, (uint8_t *)&flag, 1);
+    return addData(GapAdvertisingData::FLAGS, &flags, 1);
 }
 
 /**************************************************************************/
