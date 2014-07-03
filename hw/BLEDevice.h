@@ -201,7 +201,7 @@ public:
     /**
      * Setup a callback for the GATT event DATA_SENT.
      */
-    void onDataSent(GattServer::EventCallback_t callback);
+    void onDataSent(GattServer::ServerEventCallback_t callback);
 
     /**
      * Setup a callback for when a characteristic has its value updated by a
@@ -415,7 +415,7 @@ BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback)
 }
 
 inline void
-BLEDevice::onDataSent(GattServer::EventCallback_t callback)
+BLEDevice::onDataSent(GattServer::ServerEventCallback_t callback)
 {
     transport->getGattServer().setOnDataSent(callback);
 }

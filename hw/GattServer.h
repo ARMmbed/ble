@@ -44,7 +44,8 @@ public:
 
     /* Event callback handlers. */
     typedef void (*EventCallback_t)(uint16_t attributeHandle);
-    void setOnDataSent(EventCallback_t callback) {
+    typedef void (*ServerEventCallback_t)(void); /* independent of any particular attribute */
+    void setOnDataSent(ServerEventCallback_t callback) {
         onDataSent = callback;
     }
     void setOnDataWritten(EventCallback_t callback) {
@@ -62,11 +63,6 @@ public:
 
     void handleEvent(GattServerEvents::gattEvent_e type, uint16_t charHandle) {
         switch (type) {
-            case GattServerEvents::GATT_EVENT_DATA_SENT:
-                if (onDataSent) {
-                    onDataSent(charHandle);
-                }
-                break;
             case GattServerEvents::GATT_EVENT_DATA_WRITTEN:
                 if (onDataWritten) {
                     onDataWritten(charHandle);
@@ -90,6 +86,18 @@ public:
         }
     }
 
+    void handleEvent(GattServerEvents::gattEvent_e type) {
+        switch (type) {
+            case GattServerEvents::GATT_EVENT_DATA_SENT:
+                if (onDataSent) {
+                    onDataSent();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 protected:
     GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(NULL), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
         /* empty */
@@ -100,11 +108,11 @@ protected:
     uint8_t characteristicCount;
 
 private:
-    EventCallback_t onDataSent;
-    EventCallback_t onDataWritten;
-    EventCallback_t onUpdatesEnabled;
-    EventCallback_t onUpdatesDisabled;
-    EventCallback_t onConfirmationReceived;
+    ServerEventCallback_t onDataSent;
+    EventCallback_t       onDataWritten;
+    EventCallback_t       onUpdatesEnabled;
+    EventCallback_t       onUpdatesDisabled;
+    EventCallback_t       onConfirmationReceived;
 };
 
 #endif // ifndef __GATT_SERVER_H__
