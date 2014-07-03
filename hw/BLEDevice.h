@@ -232,15 +232,8 @@ public:
      */
     void waitForEvent(void);
 
-private:
-    /**
-     * Internal helper to udpate the transport backend with advertising data
-     * before starting to advertise.
-     */
-    ble_error_t setAdvertisingDataForTransport(void);
-
 public:
-    BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToUpdateAdvData(true) {
+    BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
         advPayload.clear();
         scanResponse.clear();
     }
@@ -255,7 +248,17 @@ private:
     /* Accumulation of AD structures in the advertisement payload should
      * eventually result in a call to the target's setAdvertisingData() before
      * the server begins advertising. This flag marks the status of the pending update.*/
-    bool                 needToUpdateAdvData;
+    bool                 needToSetAdvPayload;
+
+public:
+    /**
+     * This API is typically used as an internal helper to udpate the transport
+     * backend with advertising data before starting to advertise. It may also
+     * be explicity used to dynamically reset the accumulated advertising
+     * payload; to do this, the application can clear and re-accumulate a new
+     * advertising payload before using this API.
+     */
+    ble_error_t setAdvertisingPayload(void);
 
     /**
      * DEPRECATED
@@ -330,44 +333,52 @@ BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
 inline void
 BLEDevice::clearAdvertisingPayload(void)
 {
-    needToUpdateAdvData = true;
+    needToSetAdvPayload = true;
     advPayload.clear();
 }
 
 inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Flags flags)
 {
-    needToUpdateAdvData = true;
+    needToSetAdvPayload = true;
     return advPayload.addFlags(flags);
 }
 
 inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
 {
-    needToUpdateAdvData = true;
+    needToSetAdvPayload = true;
     return advPayload.addAppearance(app);
 }
 
 inline ble_error_t
 BLEDevice::accumulateAdvertisingPayloadTxPower(int8_t txPower)
 {
-    needToUpdateAdvData = true;
+    needToSetAdvPayload = true;
     return advPayload.addTxPower(txPower);
 }
 
 inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType  type, const uint8_t *data, uint8_t len)
 {
-    needToUpdateAdvData = true;
+    needToSetAdvPayload = true;
     return advPayload.addData(type, data, len);
+}
+
+inline ble_error_t
+BLEDevice::setAdvertisingPayload(void) {
+    needToSetAdvPayload = false;
+    return transport->getGap().setAdvertisingData(advPayload, scanResponse);
 }
 
 inline ble_error_t
 BLEDevice::startAdvertising(void)
 {
-    if (needToUpdateAdvData) {
-        setAdvertisingDataForTransport();
-        needToUpdateAdvData = false;
+    if (needToSetAdvPayload) {
+        ble_error_t rc;
+        if ((rc = setAdvertisingPayload()) != BLE_ERROR_NONE) {
+            return rc;
+        }
     }
 
     return transport->getGap().startAdvertising(advParams);
@@ -383,12 +394,6 @@ inline ble_error_t
 BLEDevice::disconnect(void)
 {
     return transport->getGap().disconnect();
-}
-
-inline ble_error_t
-BLEDevice::setAdvertisingDataForTransport(void)
-{
-    return transport->getGap().setAdvertisingData(advPayload, scanResponse);
 }
 
 inline void
@@ -475,6 +480,7 @@ BLEDevice::waitForEvent(void)
 inline ble_error_t
 BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures, const GapAdvertisingData &scanResponse)
 {
+    needToSetAdvPayload = false;
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
@@ -482,6 +488,8 @@ inline ble_error_t
 BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures)
 {
     GapAdvertisingData scanResponse;
+
+    needToSetAdvPayload = false;
     return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
 }
 
