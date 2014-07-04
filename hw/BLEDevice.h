@@ -133,9 +133,10 @@ public:
      * small.
      *
      * @param  flags
-     *         The flag to be added.
+     *         The flags to be added. Multiple flags may be specified in
+     *         combination.
      */
-    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Flags flags);
+    ble_error_t accumulateAdvertisingPayload(uint8_t flags);
 
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
@@ -338,7 +339,7 @@ BLEDevice::clearAdvertisingPayload(void)
 }
 
 inline ble_error_t
-BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Flags flags)
+BLEDevice::accumulateAdvertisingPayload(uint8_t flags)
 {
     needToSetAdvPayload = true;
     return advPayload.addFlags(flags);
