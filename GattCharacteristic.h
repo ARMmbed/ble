@@ -306,6 +306,8 @@ public:
      *
      *  @param[in]  uuid
      *              The UUID to use for this characteristic
+     *  @param[in]  valuePtr
+     *              The memory holding the initial value.
      *  @param[in]  initialLen
      *              The min length in bytes of this characteristic's value
      *  @param[in]  maxLen
@@ -323,9 +325,9 @@ public:
      *  @endcode
      */
     /**************************************************************************/
-    GattCharacteristic(const UUID &uuid, uint8_t *value = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
+    GattCharacteristic(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
                        uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE) :
-        _uuid(uuid), _value(value), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
+        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
         /* empty */
     }
 
@@ -349,12 +351,12 @@ public:
         return _lenMax;
     }
     uint8_t *getValuePtr(void) {
-        return _value;
+        return _valuePtr;
     }
 
 private:
     UUID      _uuid;        /* Characteristic UUID */
-    uint8_t  *_value;
+    uint8_t  *_valuePtr;
     uint16_t  _initialLen;  /* Initial length of the value */
     uint16_t  _lenMax;      /* Maximum length of the value */
     uint16_t  _handle;
