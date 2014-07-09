@@ -121,6 +121,16 @@ public:
     void        setAdvertisingParams(const GapAdvertisingParams &advParams);
 
     /**
+     * This API is typically used as an internal helper to udpate the transport
+     * backend with advertising data before starting to advertise. It may also
+     * be explicity used to dynamically reset the accumulated advertising
+     * payload and scanResponse; to do this, the application can clear and re-
+     * accumulate a new advertising payload (and scanResponse) before using this
+     * API.
+     */
+    ble_error_t setAdvertisingPayload(void);
+
+    /**
      * Reset any advertising payload prepared from prior calls to
      * accumulateAdvertisingPayload().
      */
@@ -161,10 +171,6 @@ public:
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power);
 
-    /**
-     * @param  app
-     *         The appearance of the peripheral.
-     */
     /**
      * Accumulate a variable length byte-stream as an AD structure in the
      * advertising payload. Please note that the payload is limited to 31 bytes.
@@ -250,16 +256,6 @@ private:
      * eventually result in a call to the target's setAdvertisingData() before
      * the server begins advertising. This flag marks the status of the pending update.*/
     bool                 needToSetAdvPayload;
-
-public:
-    /**
-     * This API is typically used as an internal helper to udpate the transport
-     * backend with advertising data before starting to advertise. It may also
-     * be explicity used to dynamically reset the accumulated advertising
-     * payload; to do this, the application can clear and re-accumulate a new
-     * advertising payload before using this API.
-     */
-    ble_error_t setAdvertisingPayload(void);
 
     /**
      * DEPRECATED
