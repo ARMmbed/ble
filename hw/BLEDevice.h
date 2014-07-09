@@ -184,6 +184,16 @@ public:
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len);
 
     /**
+     * Accumulate a variable length byte-stream as an AD structure in the
+     * scanResponse payload.
+     *
+     * @param  type The type which describes the variable length data.
+     * @param  data data bytes.
+     * @param  len  length of data.
+     */
+    ble_error_t accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len);
+
+    /**
      * Start advertising (GAP Discoverable, Connectable modes, Broadcast
      * Procedure).
      */
@@ -356,10 +366,17 @@ BLEDevice::accumulateAdvertisingPayloadTxPower(int8_t txPower)
 }
 
 inline ble_error_t
-BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType  type, const uint8_t *data, uint8_t len)
+BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
 {
     needToSetAdvPayload = true;
     return advPayload.addData(type, data, len);
+}
+
+inline ble_error_t
+BLEDevice::accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
+{
+    needToSetAdvPayload = true;
+    return scanResponse.addData(type, data, len);
 }
 
 inline ble_error_t
