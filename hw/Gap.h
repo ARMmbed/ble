@@ -54,36 +54,44 @@ public:
         unsigned connected   : 1; /**< peripheral is connected to a central */
     } GapState_t;
 
-    /* Event callback handlers */
     typedef void (*EventCallback_t)(void);
+    typedef uint16_t Handle_t;
+    typedef void (*HandleSpecificEventCallback_t)(Handle_t);
+
+    /* Event callback handlers */
     void setOnTimeout(EventCallback_t callback) {
         onTimeout = callback;
     }
-    void setOnConnection(EventCallback_t callback) {
+    void setOnConnection(HandleSpecificEventCallback_t callback) {
         onConnection = callback;
     }
-    void setOnDisconnection(EventCallback_t callback) {
+    void setOnDisconnection(HandleSpecificEventCallback_t callback) {
         onDisconnection = callback;
     }
 
-    void handleEvent(GapEvents::gapEvent_e type) {
+    void processHandleSpecificEvent(GapEvents::gapEvent_e type, Handle_t handle) {
         switch (type) {
-            case GapEvents::GAP_EVENT_TIMEOUT:
-                state.advertising = 0;
-                if (onTimeout) {
-                    onTimeout();
-                }
-                break;
             case GapEvents::GAP_EVENT_CONNECTED:
                 state.connected = 1;
                 if (onConnection) {
-                    onConnection();
+                    onConnection(handle);
                 }
                 break;
             case GapEvents::GAP_EVENT_DISCONNECTED:
                 state.connected = 0;
                 if (onDisconnection) {
-                    onDisconnection();
+                    onDisconnection(handle);
+                }
+                break;
+        }
+    }
+
+    void processEvent(GapEvents::gapEvent_e type) {
+        switch (type) {
+            case GapEvents::GAP_EVENT_TIMEOUT:
+                state.advertising = 0;
+                if (onTimeout) {
+                    onTimeout();
                 }
                 break;
         }
@@ -102,9 +110,9 @@ protected:
     GapState_t state;
 
 private:
-    EventCallback_t onTimeout;
-    EventCallback_t onConnection;
-    EventCallback_t onDisconnection;
+    EventCallback_t               onTimeout;
+    HandleSpecificEventCallback_t onConnection;
+    HandleSpecificEventCallback_t onDisconnection;
 };
 
 #endif // ifndef __GAP_H__

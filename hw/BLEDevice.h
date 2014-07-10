@@ -208,12 +208,13 @@ public:
     ble_error_t disconnect(void);
 
     /* APIs to set GAP callbacks. */
-    void onTimeout(Gap::EventCallback_t       timeoutCallback);
-    void onConnection(Gap::EventCallback_t    connectionCallback);
+    void onTimeout(Gap::EventCallback_t timeoutCallback);
+
+    void onConnection(Gap::HandleSpecificEventCallback_t connectionCallback);
     /**
      * Used to setup a callback for GAP disconnection.
      */
-    void onDisconnection(Gap::EventCallback_t disconnectionCallback);
+    void onDisconnection(Gap::HandleSpecificEventCallback_t disconnectionCallback);
 
     /**
      * Setup a callback for the GATT event DATA_SENT.
@@ -417,13 +418,13 @@ BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback)
 }
 
 inline void
-BLEDevice::onConnection(Gap::EventCallback_t connectionCallback)
+BLEDevice::onConnection(Gap::HandleSpecificEventCallback_t connectionCallback)
 {
     transport->getGap().setOnConnection(connectionCallback);
 }
 
 inline void
-BLEDevice::onDisconnection(Gap::EventCallback_t disconnectionCallback)
+BLEDevice::onDisconnection(Gap::HandleSpecificEventCallback_t disconnectionCallback)
 {
     transport->getGap().setOnDisconnection(disconnectionCallback);
 }
