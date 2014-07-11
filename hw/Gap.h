@@ -40,22 +40,33 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
     } addr_type_t;
 
+    /* Describes the current state of the device (more than one bit can be set) */
+    typedef struct GapState_s {
+        unsigned advertising : 1; /**< peripheral is currently advertising */
+        unsigned connected   : 1; /**< peripheral is connected to a central */
+    } GapState_t;
+
+    typedef uint16_t Handle_t;
+
+    typedef struct {
+      uint16_t minConnectionInterval;        /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+      uint16_t maxConnectionInterval;        /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+      uint16_t slaveLatency;                 /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
+      uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+    } ConnectionParams_t;
+
+public:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(addr_type_t type, const uint8_t address[6]) = 0;
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &) = 0;
     virtual ble_error_t stopAdvertising(void)                    = 0;
     virtual ble_error_t disconnect(void)                         = 0;
-
-    /* Describes the current state of the device (more than one bit can be
-     *set) */
-    typedef struct GapState_s {
-        unsigned advertising : 1; /**< peripheral is currently advertising */
-        unsigned connected   : 1; /**< peripheral is connected to a central */
-    } GapState_t;
+    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) = 0;
+    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) = 0;
+    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) = 0;
 
     typedef void (*EventCallback_t)(void);
-    typedef uint16_t Handle_t;
     typedef void (*HandleSpecificEventCallback_t)(Handle_t);
 
     /* Event callback handlers */
