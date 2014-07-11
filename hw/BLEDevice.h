@@ -250,6 +250,11 @@ public:
      */
     void waitForEvent(void);
 
+    ble_error_t getPreferredConnectionParams(Gap::ConnectionParams_t *params);
+    ble_error_t setPreferredConnectionParams(const Gap::ConnectionParams_t *params);
+    ble_error_t updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params);
+    // ble_version_t getVersion(void);
+
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
         advPayload.clear();
@@ -486,6 +491,23 @@ inline void
 BLEDevice::waitForEvent(void)
 {
     transport->waitForEvent();
+}
+
+inline ble_error_t
+BLEDevice::getPreferredConnectionParams(Gap::ConnectionParams_t *params)
+{
+    return transport->getGap().getPreferredConnectionParams(params);
+}
+
+inline ble_error_t
+BLEDevice::setPreferredConnectionParams(const Gap::ConnectionParams_t *params)
+{
+    return transport->getGap().setPreferredConnectionParams(params);
+}
+
+inline ble_error_t
+BLEDevice::updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params) {
+    return transport->getGap().updateConnectionParams(handle, params);
 }
 
 /*
