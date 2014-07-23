@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef __BLE_DEVICE__
-#define __BLE_DEVICE__
-
 #include "mbed.h"
 #include "blecommon.h"
-#include "hw/Gap.h"
-#include "hw/GattServer.h"
+#include "Gap.h"
+#include "GattServer.h"
+#include "BLEDeviceInstanceBase.hpp"
 
-class BLEDeviceInstanceBase; /* forward declaration */
-
-/**
- * BLEDevice uses composition to hide an interface object encapsulating the
- * backend transport.
- *
- * The following API is used to create the singleton interface object. An
- * implementation for this function must be provided by the device-specific
- * library, otherwise there will be a linker error.
- */
-extern BLEDeviceInstanceBase *createBLEDeviceInstance(void);
+#ifndef __BLE_DEVICE__
+#define __BLE_DEVICE__
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
@@ -282,21 +271,6 @@ public:
 
     ble_error_t startAdvertising(const GapAdvertisingParams &advParams);
 };
-
-/**
- *  The interface for the transport object to be created by the target library's
- *  createBLEDeviceInstance().
- */
-class BLEDeviceInstanceBase
-{
-public:
-    virtual Gap&        getGap()           = 0;
-    virtual GattServer& getGattServer()    = 0;
-    virtual ble_error_t init(void)         = 0;
-    virtual ble_error_t reset(void)        = 0;
-    virtual void        waitForEvent(void) = 0;
-};
-
 
 /* BLEDevice methods. Most of these simply forward the calls to the underlying
  * transport.*/
