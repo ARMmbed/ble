@@ -36,6 +36,10 @@ public:
     virtual ble_error_t addService(GattService &) = 0;
     virtual ble_error_t readValue(uint16_t handle, uint8_t buffer[], uint16_t *const lengthP) = 0;
     virtual ble_error_t updateValue(uint16_t, uint8_t[], uint16_t, bool localOnly = false) = 0;
+    virtual ble_error_t setDeviceName(const uint8_t *deviceName) = 0;
+    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
+    virtual ble_error_t setAppearance(uint16_t appearance) = 0;
+    virtual ble_error_t getAppearance(uint16_t *appearanceP) = 0;
 
     // ToDo: For updateValue, check the CCCD to see if the value we are
     // updating has the notify or indicate bits sent, and if BOTH are set

@@ -242,7 +242,65 @@ public:
     ble_error_t getPreferredConnectionParams(Gap::ConnectionParams_t *params);
     ble_error_t setPreferredConnectionParams(const Gap::ConnectionParams_t *params);
     ble_error_t updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params);
-    // ble_version_t getVersion(void);
+
+    /**
+     * This call allows the application to get the BLE stack version information.
+     *
+     * @return  A pointer to a const string representing the version.
+     *          Note: The string is owned by the BLE_API.
+     */
+    const char *getVersion(void);
+
+     /**
+      * Set the device name characteristic in the GAP service.
+      * @param  deviceName The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
+      */
+     ble_error_t setDeviceName(const uint8_t *deviceName);
+
+     /**
+      * Get the value of the device name characteristic in the GAP service.
+      * @param[out]    deviceName Pointer to an empty buffer where the UTF-8 *non NULL-
+      *                           terminated* string will be placed. Set this
+      *                           value to NULL in order to obtain the deviceName-length
+      *                           from the 'length' parameter.
+      *
+      * @param[in/out] lengthP    (on input) Length of the buffer pointed to by deviceName;
+      *                           (on output) the complete device name length (without the
+      *                           null terminator).
+      *
+      * @note          If the device name is longer than the size of the supplied buffer,
+      *                length will return the complete device name length,
+      *                and not the number of bytes actually returned in deviceName.
+      *                The application may use this information to retry with a suitable buffer size.
+      *
+      * Sample use:
+      *     uint8_t deviceName[20];
+      *     unsigned length = sizeof(deviceName);
+      *     ble.getDeviceName(deviceName, &length);
+      *     if (length < sizeof(deviceName)) {
+      *         deviceName[length] = 0;
+      *     }
+      *     DEBUG("length: %u, deviceName: %s\r\n", length, deviceName);
+      */
+     ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP);
+
+     /**
+      * Set the appearance characteristic in the GAP service.
+      * @param[in]  appearance The new value for the device-appearance.
+      */
+     ble_error_t setAppearance(uint16_t appearance);
+
+     /**
+      * Set the appearance characteristic in the GAP service.
+      * @param[out]  appearance The new value for the device-appearance.
+      */
+     ble_error_t getAppearance(uint16_t *appearanceP);
+
+     /**
+      * Set the radio's transmit power.
+      * @param[in] txPower Radio transmit power in dBm.
+      */
+     ble_error_t setTxPower(int8_t txPower);
 
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
@@ -482,6 +540,42 @@ BLEDevice::setPreferredConnectionParams(const Gap::ConnectionParams_t *params)
 inline ble_error_t
 BLEDevice::updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params) {
     return transport->getGap().updateConnectionParams(handle, params);
+}
+
+inline const char *
+BLEDevice::getVersion(void)
+{
+    return transport->getVersion();
+}
+
+inline ble_error_t
+BLEDevice::setDeviceName(const uint8_t *deviceName)
+{
+    return transport->getGattServer().setDeviceName(deviceName);
+}
+
+inline ble_error_t
+BLEDevice::getDeviceName(uint8_t *deviceName, unsigned *lengthP)
+{
+    return transport->getGattServer().getDeviceName(deviceName, lengthP);
+}
+
+inline ble_error_t
+BLEDevice::setAppearance(uint16_t appearance)
+{
+    return transport->getGattServer().setAppearance(appearance);
+}
+
+inline ble_error_t
+BLEDevice::getAppearance(uint16_t *appearanceP)
+{
+    return transport->getGattServer().getAppearance(appearanceP);
+}
+
+inline ble_error_t
+BLEDevice::setTxPower(int8_t txPower)
+{
+    return transport->setTxPower(txPower);
 }
 
 /*

@@ -24,11 +24,13 @@
 class BLEDeviceInstanceBase
 {
 public:
-    virtual Gap&        getGap()           = 0;
-    virtual GattServer& getGattServer()    = 0;
-    virtual ble_error_t init(void)         = 0;
-    virtual ble_error_t reset(void)        = 0;
-    virtual void        waitForEvent(void) = 0;
+    virtual const char *getVersion(void)           = 0;
+    virtual Gap&        getGap()                   = 0;
+    virtual GattServer& getGattServer()            = 0;
+    virtual ble_error_t init(void)                 = 0;
+    virtual ble_error_t reset(void)                = 0;
+    virtual ble_error_t setTxPower(int8_t txPower) = 0;
+    virtual void        waitForEvent(void)         = 0;
 };
 
 /**
