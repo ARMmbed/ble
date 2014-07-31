@@ -21,7 +21,7 @@
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
-#include "BLEDeviceInstanceBase.hpp"
+#include "BLEDeviceInstanceBase.h"
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
