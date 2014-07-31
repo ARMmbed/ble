@@ -21,8 +21,6 @@
 #include "blecommon.h"
 #include "UUID.h"
 
-#include "ble_gatts.h"
-
 /**************************************************************************/
 /*!
     \brief  GATT characteristic

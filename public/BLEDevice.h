@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+#ifndef __BLE_DEVICE__
+#define __BLE_DEVICE__
+
 #include "mbed.h"
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
 #include "BLEDeviceInstanceBase.hpp"
-
-#ifndef __BLE_DEVICE__
-#define __BLE_DEVICE__
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
