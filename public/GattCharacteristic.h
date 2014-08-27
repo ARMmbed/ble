@@ -20,13 +20,14 @@
 
 #include "blecommon.h"
 #include "UUID.h"
+#include "GattAttribute.h"
 
 /**************************************************************************/
 /*!
     \brief  GATT characteristic
 */
 /**************************************************************************/
-class GattCharacteristic
+class GattCharacteristic : public GattAttribute
 {
 public:
     enum {
@@ -325,39 +326,17 @@ public:
     /**************************************************************************/
     GattCharacteristic(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
                        uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE) :
-        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _handle(), _properties(props) {
+        GattAttribute(uuid, valuePtr, initialLen, maxLen), _properties(props) {
         /* empty */
     }
 
 public:
-    uint16_t getHandle(void) const {
-        return _handle;
-    }
-    void setHandle(uint16_t id) {
-        _handle = id;
-    }
-    const UUID &getUUID(void) const {
-        return _uuid;
-    }
     uint8_t getProperties(void) const {
         return _properties;
     }
-    uint16_t getInitialLength(void) const {
-        return _initialLen;
-    }
-    uint16_t getMaxLength(void) const {
-        return _lenMax;
-    }
-    uint8_t *getValuePtr(void) {
-        return _valuePtr;
-    }
+
 
 private:
-    UUID      _uuid;        /* Characteristic UUID */
-    uint8_t  *_valuePtr;
-    uint16_t  _initialLen;  /* Initial length of the value */
-    uint16_t  _lenMax;      /* Maximum length of the value */
-    uint16_t  _handle;
     uint8_t   _properties;
 };
 
