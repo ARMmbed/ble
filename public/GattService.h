@@ -31,6 +31,20 @@
 class GattService
 {
 public:
+   /**
+     *  @brief  Creates a new GattCharacteristic using the specified 16-bit
+     *          UUID, value length, and properties
+     *
+     *  @note   The UUID value must be unique in the service and is normally >1
+     *
+     *  @param[in]  uuid
+     *              The UUID to use for this characteristic
+     *  @param[in]  characteristics
+     *              A pointer to an array of characteristics to be included within this service
+     *  @param[in]  numCharacteristics
+     *              The number of characteristics
+     */
+    /**************************************************************************/
     GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics);
 
     enum {

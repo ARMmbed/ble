@@ -297,7 +297,7 @@ public:
         uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
     } presentation_format_t;
 
-    /**
+   /**
      *  @brief  Creates a new GattCharacteristic using the specified 16-bit
      *          UUID, value length, and properties
      *
@@ -313,21 +313,17 @@ public:
      *              The max length in bytes of this characteristic's value
      *  @param[in]  props
      *              The 8-bit bit field containing the characteristic's properties
-     *
-     *  @section EXAMPLE
-     *
-     *  @code
-     *
-     *  // UUID = 0x2A19, Min length 2, Max len = 2, Properties = write
-     *  GattCharacteristic c = GattCharacteristic( 0x2A19, 2, 2, BLE_GATT_CHAR_PROPERTIES_WRITE );
-     *
-     *  @endcode
+     *  @param[in]  descriptors
+     *              A pointer to an array of descriptors to be included within this characteristic
+     *  @param[in]  numDescriptors
+     *              The number of descriptors
      */
     /**************************************************************************/
     GattCharacteristic(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
-                       uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE) :
-        GattAttribute(uuid, valuePtr, initialLen, maxLen), _properties(props) {
-        /* empty */
+                       uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE,
+                       GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
+        GattAttribute(uuid, valuePtr, initialLen, maxLen), _properties(props), _descriptors(descriptors), _descriptorCount(numDescriptors) {
+        
     }
 
 public:
@@ -335,9 +331,10 @@ public:
         return _properties;
     }
 
-
 private:
     uint8_t   _properties;
+    GattAttribute ** _descriptors;
+    uint8_t   _descriptorCount;
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__
