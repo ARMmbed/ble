@@ -330,6 +330,16 @@ public:
     uint8_t getProperties(void) const {
         return _properties;
     }
+    uint8_t getDescriptorCount(void) const {
+        return _descriptorCount;
+    }
+    GattAttribute *getDescriptor(uint8_t index) {
+        if (index >= _descriptorCount) {
+            return NULL;
+        }
+
+        return _descriptors[index];
+    }
 
 private:
     uint8_t   _properties;
