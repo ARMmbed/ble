@@ -27,7 +27,7 @@
     \brief  GATT characteristic
 */
 /**************************************************************************/
-class GattCharacteristic : public GattAttribute
+class GattCharacteristic
 {
 public:
     enum {
@@ -322,11 +322,14 @@ public:
     GattCharacteristic(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
                        uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE,
                        GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
-        GattAttribute(uuid, valuePtr, initialLen, maxLen), _properties(props), _descriptors(descriptors), _descriptorCount(numDescriptors) {
+        _valueAttribute(uuid, valuePtr, initialLen, maxLen), _properties(props), _descriptors(descriptors), _descriptorCount(numDescriptors) {
         
     }
 
 public:
+    GattAttribute& getValueAttribute() {
+        return _valueAttribute;
+    }
     uint8_t getProperties(void) const {
         return _properties;
     }
@@ -342,9 +345,10 @@ public:
     }
 
 private:
-    uint8_t   _properties;
-    GattAttribute ** _descriptors;
-    uint8_t   _descriptorCount;
+    GattAttribute     _valueAttribute;
+    uint8_t           _properties;
+    GattAttribute **  _descriptors;
+    uint8_t           _descriptorCount;
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__
