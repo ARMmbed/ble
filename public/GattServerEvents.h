@@ -44,53 +44,6 @@ public:
         GATT_EVENT_UPDATES_DISABLED      = 4,       /**< Notify/Indicate Disabled in CCCD */
         GATT_EVENT_CONFIRMATION_RECEIVED = 5        /**< Response received from Indicate message */
     } gattEvent_t;
-
-    /******************************************************************/
-    /*!
-        \brief
-        A message was successfully transmitted
-    */
-    /******************************************************************/
-    virtual void onDataSent(uint16_t charHandle) {
-    }
-
-    /******************************************************************/
-    /*!
-        \brief
-        The GATT client (the phone, tablet, etc.) wrote data to a
-        characteristic or descriptor on the GATT Server (the peripheral
-        device).
-    */
-    /******************************************************************/
-    virtual void onDataWritten(uint16_t charHandle) {
-    }
-
-    /******************************************************************/
-    /*!
-        \brief
-        A Notify or Indicate flag was enabled in the CCCD
-    */
-    /******************************************************************/
-    virtual void onUpdatesEnabled(uint16_t charHandle) {
-    }
-
-    /******************************************************************/
-    /*!
-        \brief
-        A Notify or Indicate flag was disabled in the CCCD
-    */
-    /******************************************************************/
-    virtual void onUpdatesDisabled(uint16_t charHandle) {
-    }
-
-    /******************************************************************/
-    /*!
-        \brief
-        A confirmation response was received from an Indicate message
-    */
-    /******************************************************************/
-    virtual void onConfirmationReceived(uint16_t charHandle) {
-    }
 };
 
 #endif // ifndef __GATT_SERVER_EVENTS_H__

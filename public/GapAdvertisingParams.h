@@ -63,23 +63,15 @@ public:
         \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 9.3
     */
     /**************************************************************************/
-    enum AdvertisingType
-    {
-        ADV_CONNECTABLE_UNDIRECTED,     /**< Vol 3, Part C, Section 9.3.4 and
-                                         *Vol 6, Part B, Section 2.3.1.1 */
-        ADV_CONNECTABLE_DIRECTED,       /**< Vol 3, Part C, Section 9.3.3 and
-                                         *Vol 6, Part B, Section 2.3.1.2 */
-        ADV_SCANNABLE_UNDIRECTED,       /**< Include support for Scan Response
-                                         *payloads, see Vol 6, Part B, Section
-                                         *2.3.1.4 */
-        ADV_NON_CONNECTABLE_UNDIRECTED  /**< Vol 3, Part C, Section 9.3.2 and
-                                         *Vol 6, Part B, Section 2.3.1.3 */
+    enum AdvertisingType {
+        ADV_CONNECTABLE_UNDIRECTED,     /**< Vol 3, Part C, Section 9.3.4 and Vol 6, Part B, Section 2.3.1.1 */
+        ADV_CONNECTABLE_DIRECTED,       /**< Vol 3, Part C, Section 9.3.3 and Vol 6, Part B, Section 2.3.1.2 */
+        ADV_SCANNABLE_UNDIRECTED,       /**< Include support for Scan Response payloads, see Vol 6, Part B, Section 2.3.1.4 */
+        ADV_NON_CONNECTABLE_UNDIRECTED  /**< Vol 3, Part C, Section 9.3.2 and Vol 6, Part B, Section 2.3.1.3 */
     };
 
-    GapAdvertisingParams(AdvertisingType advType  =
-                             GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
-                         uint16_t        interval =
-                             GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
+    GapAdvertisingParams(AdvertisingType advType  = GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
+                         uint16_t        interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
                          uint16_t        timeout  = 0);
     virtual ~GapAdvertisingParams(void);
 
@@ -145,6 +137,5 @@ GapAdvertisingParams::getTimeout(void) const
 {
     return _timeout;
 }
-
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__

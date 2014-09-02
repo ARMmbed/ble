@@ -40,6 +40,12 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
     } addr_type_t;
 
+    enum DisconnectionReason_t {
+        REMOTE_USER_TERMINATED_CONNECTION,
+        CONN_INTERVAL_UNACCEPTABLE,
+        LOCAL_HOST_TERMINATED_CONNECTION,
+    };
+
     /* Describes the current state of the device (more than one bit can be set) */
     typedef struct GapState_s {
         unsigned advertising : 1; /**< peripheral is currently advertising */
@@ -61,39 +67,42 @@ public:
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &) = 0;
     virtual ble_error_t stopAdvertising(void)                    = 0;
-    virtual ble_error_t disconnect(void)                         = 0;
+    virtual ble_error_t disconnect(DisconnectionReason_t reason) = 0;
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) = 0;
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) = 0;
     virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) = 0;
 
+    virtual ble_error_t setDeviceName(const uint8_t *deviceName) = 0;
+    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
+    virtual ble_error_t setAppearance(uint16_t appearance) = 0;
+    virtual ble_error_t getAppearance(uint16_t *appearanceP) = 0;
+
     typedef void (*EventCallback_t)(void);
-    typedef void (*HandleSpecificEventCallback_t)(Handle_t);
+    typedef void (*ConnectionEventCallback_t)(Handle_t, const ConnectionParams_t *);
+    typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
 
     /* Event callback handlers */
     void setOnTimeout(EventCallback_t callback) {
         onTimeout = callback;
     }
-    void setOnConnection(HandleSpecificEventCallback_t callback) {
+    void setOnConnection(ConnectionEventCallback_t callback) {
         onConnection = callback;
     }
-    void setOnDisconnection(HandleSpecificEventCallback_t callback) {
+    void setOnDisconnection(DisconnectionEventCallback_t callback) {
         onDisconnection = callback;
     }
 
-    void processHandleSpecificEvent(GapEvents::gapEvent_e type, Handle_t handle) {
-        switch (type) {
-            case GapEvents::GAP_EVENT_CONNECTED:
-                state.connected = 1;
-                if (onConnection) {
-                    onConnection(handle);
-                }
-                break;
-            case GapEvents::GAP_EVENT_DISCONNECTED:
-                state.connected = 0;
-                if (onDisconnection) {
-                    onDisconnection(handle);
-                }
-                break;
+    void processConnectionEvent(Handle_t handle, const ConnectionParams_t *params) {
+        state.connected = 1;
+        if (onConnection) {
+            onConnection(handle, params);
+        }
+    }
+
+    void processDisconnectionEvent(Handle_t handle, DisconnectionReason_t reason) {
+        state.connected = 0;
+        if (onDisconnection) {
+            onDisconnection(handle, reason);
         }
     }
 
@@ -121,9 +130,9 @@ protected:
     GapState_t state;
 
 private:
-    EventCallback_t               onTimeout;
-    HandleSpecificEventCallback_t onConnection;
-    HandleSpecificEventCallback_t onDisconnection;
+    EventCallback_t              onTimeout;
+    ConnectionEventCallback_t    onConnection;
+    DisconnectionEventCallback_t onDisconnection;
 };
 
 #endif // ifndef __GAP_H__
