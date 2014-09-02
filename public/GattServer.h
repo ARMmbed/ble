@@ -21,6 +21,7 @@
 #include "blecommon.h"
 #include "GattService.h"
 #include "GattServerEvents.h"
+#include "GattCharacteristicWriteCBParams.h"
 
 /**************************************************************************/
 /*!
@@ -36,10 +37,6 @@ public:
     virtual ble_error_t addService(GattService &) = 0;
     virtual ble_error_t readValue(uint16_t handle, uint8_t buffer[], uint16_t *const lengthP) = 0;
     virtual ble_error_t updateValue(uint16_t, uint8_t[], uint16_t, bool localOnly = false) = 0;
-    virtual ble_error_t setDeviceName(const uint8_t *deviceName) = 0;
-    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
-    virtual ble_error_t setAppearance(uint16_t appearance) = 0;
-    virtual ble_error_t getAppearance(uint16_t *appearanceP) = 0;
 
     // ToDo: For updateValue, check the CCCD to see if the value we are
     // updating has the notify or indicate bits sent, and if BOTH are set
@@ -48,11 +45,13 @@ public:
 
     /* Event callback handlers. */
     typedef void (*EventCallback_t)(uint16_t attributeHandle);
-    typedef void (*ServerEventCallback_t)(void); /* independent of any particular attribute */
-    void setOnDataSent(ServerEventCallback_t callback) {
+    typedef void (*WriteEventCallback_t)(uint16_t attributeHandle, const GattCharacteristicWriteCBParams *eventDataP);
+    typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
+    typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
+    void setOnDataSent(ServerEventCallbackWithCount_t callback) {
         onDataSent = callback;
     }
-    void setOnDataWritten(EventCallback_t callback) {
+    void setOnDataWritten(WriteEventCallback_t callback) {
         onDataWritten = callback;
     }
     void setOnUpdatesEnabled(EventCallback_t callback) {
@@ -65,13 +64,14 @@ public:
         onConfirmationReceived = callback;
     }
 
+    void handleDataWrittenEvent(uint16_t charHandle, const GattCharacteristicWriteCBParams *params) {
+        if (onDataWritten) {
+            onDataWritten(charHandle, params);
+        }
+    }
+
     void handleEvent(GattServerEvents::gattEvent_e type, uint16_t charHandle) {
         switch (type) {
-            case GattServerEvents::GATT_EVENT_DATA_WRITTEN:
-                if (onDataWritten) {
-                    onDataWritten(charHandle);
-                }
-                break;
             case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
                 if (onUpdatesEnabled) {
                     onUpdatesEnabled(charHandle);
@@ -90,15 +90,9 @@ public:
         }
     }
 
-    void handleEvent(GattServerEvents::gattEvent_e type) {
-        switch (type) {
-            case GattServerEvents::GATT_EVENT_DATA_SENT:
-                if (onDataSent) {
-                    onDataSent();
-                }
-                break;
-            default:
-                break;
+    void handleDataSentEvent(unsigned count) {
+        if (onDataSent) {
+            onDataSent(count);
         }
     }
 
@@ -113,11 +107,11 @@ protected:
     uint8_t descriptorCount;
 
 private:
-    ServerEventCallback_t onDataSent;
-    EventCallback_t       onDataWritten;
-    EventCallback_t       onUpdatesEnabled;
-    EventCallback_t       onUpdatesDisabled;
-    EventCallback_t       onConfirmationReceived;
+    ServerEventCallbackWithCount_t onDataSent;
+    WriteEventCallback_t           onDataWritten;
+    EventCallback_t                onUpdatesEnabled;
+    EventCallback_t                onUpdatesDisabled;
+    EventCallback_t                onConfirmationReceived;
 };
 
 #endif // ifndef __GATT_SERVER_H__

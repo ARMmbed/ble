@@ -194,27 +194,27 @@ public:
      */
     ble_error_t stopAdvertising(void);
 
-    ble_error_t disconnect(void);
+    ble_error_t disconnect(Gap::DisconnectionReason_t reason);
 
     /* APIs to set GAP callbacks. */
     void onTimeout(Gap::EventCallback_t timeoutCallback);
 
-    void onConnection(Gap::HandleSpecificEventCallback_t connectionCallback);
+    void onConnection(Gap::ConnectionEventCallback_t connectionCallback);
     /**
      * Used to setup a callback for GAP disconnection.
      */
-    void onDisconnection(Gap::HandleSpecificEventCallback_t disconnectionCallback);
+    void onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback);
 
     /**
      * Setup a callback for the GATT event DATA_SENT.
      */
-    void onDataSent(GattServer::ServerEventCallback_t callback);
+    void onDataSent(GattServer::ServerEventCallbackWithCount_t callback);
 
     /**
      * Setup a callback for when a characteristic has its value updated by a
      * client.
      */
-    void onDataWritten(GattServer::EventCallback_t callback);
+    void onDataWritten(GattServer::WriteEventCallback_t callback);
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
@@ -443,9 +443,9 @@ BLEDevice::stopAdvertising(void)
 }
 
 inline ble_error_t
-BLEDevice::disconnect(void)
+BLEDevice::disconnect(Gap::DisconnectionReason_t reason)
 {
-    return transport->getGap().disconnect();
+    return transport->getGap().disconnect(reason);
 }
 
 inline void
@@ -455,25 +455,25 @@ BLEDevice::onTimeout(Gap::EventCallback_t timeoutCallback)
 }
 
 inline void
-BLEDevice::onConnection(Gap::HandleSpecificEventCallback_t connectionCallback)
+BLEDevice::onConnection(Gap::ConnectionEventCallback_t connectionCallback)
 {
     transport->getGap().setOnConnection(connectionCallback);
 }
 
 inline void
-BLEDevice::onDisconnection(Gap::HandleSpecificEventCallback_t disconnectionCallback)
+BLEDevice::onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback)
 {
     transport->getGap().setOnDisconnection(disconnectionCallback);
 }
 
 inline void
-BLEDevice::onDataSent(GattServer::ServerEventCallback_t callback)
+BLEDevice::onDataSent(GattServer::ServerEventCallbackWithCount_t callback)
 {
     transport->getGattServer().setOnDataSent(callback);
 }
 
 inline void
-BLEDevice::onDataWritten(GattServer::EventCallback_t callback)
+BLEDevice::onDataWritten(GattServer::WriteEventCallback_t callback)
 {
     transport->getGattServer().setOnDataWritten(callback);
 }
@@ -551,25 +551,25 @@ BLEDevice::getVersion(void)
 inline ble_error_t
 BLEDevice::setDeviceName(const uint8_t *deviceName)
 {
-    return transport->getGattServer().setDeviceName(deviceName);
+    return transport->getGap().setDeviceName(deviceName);
 }
 
 inline ble_error_t
 BLEDevice::getDeviceName(uint8_t *deviceName, unsigned *lengthP)
 {
-    return transport->getGattServer().getDeviceName(deviceName, lengthP);
+    return transport->getGap().getDeviceName(deviceName, lengthP);
 }
 
 inline ble_error_t
 BLEDevice::setAppearance(uint16_t appearance)
 {
-    return transport->getGattServer().setAppearance(appearance);
+    return transport->getGap().setAppearance(appearance);
 }
 
 inline ble_error_t
 BLEDevice::getAppearance(uint16_t *appearanceP)
 {
-    return transport->getGattServer().getAppearance(appearanceP);
+    return transport->getGap().getAppearance(appearanceP);
 }
 
 inline ble_error_t

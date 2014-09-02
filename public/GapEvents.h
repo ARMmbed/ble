@@ -38,43 +38,10 @@ public:
     */
     /******************************************************************/
     typedef enum gapEvent_e {
-        GAP_EVENT_TIMEOUT      = 1,                 /**< Advertising timed out
-                                                     *before a connection was
-                                                     *established */
-        GAP_EVENT_CONNECTED    = 2,                 /**< A connection was
-                                                     *established with a
-                                                     *central device */
-        GAP_EVENT_DISCONNECTED = 3                  /**< A connection was
-                                                     *closed or lost with a
-                                                     *central device */
+        GAP_EVENT_TIMEOUT      = 1, /**< Advertising timed out before a connection was established */
+        GAP_EVENT_CONNECTED    = 2, /**< A connection was established with a central device */
+        GAP_EVENT_DISCONNECTED = 3  /**< A connection was closed or lost with a central device */
     } gapEvent_t;
-
-    /******************************************************************/
-    /*!
-        \brief
-        Advertising timed out before a connection was established
-    */
-    /******************************************************************/
-    virtual void onTimeout(void) {
-    }
-
-    /******************************************************************/
-    /*!
-        \brief
-        A connection was established with a central device
-    */
-    /******************************************************************/
-    virtual void onConnected(void) {
-    }
-
-    /******************************************************************/
-    /*!
-        \brief
-        A connection was closed or lost with a central device
-    */
-    /******************************************************************/
-    virtual void onDisconnected(void) {
-    }
 };
 
 #endif // ifndef __GAP_EVENTS_H__
