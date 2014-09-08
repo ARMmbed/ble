@@ -40,10 +40,17 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
     } addr_type_t;
 
+    /**
+     * enumeration for disconnection reasons. The values for these reasons are
+     * derived from Nordic's implementation; but the reasons are meant to be
+     * independent of the transport. If you are returned a reason which is not
+     * covered by this enumeration, then please refer to the underlying
+     * transport library.
+     */
     enum DisconnectionReason_t {
-        REMOTE_USER_TERMINATED_CONNECTION,
-        CONN_INTERVAL_UNACCEPTABLE,
-        LOCAL_HOST_TERMINATED_CONNECTION,
+        REMOTE_USER_TERMINATED_CONNECTION = 0x13,
+        LOCAL_HOST_TERMINATED_CONNECTION  = 0x16,
+        CONN_INTERVAL_UNACCEPTABLE        = 0x3B,
     };
 
     /* Describes the current state of the device (more than one bit can be set) */
