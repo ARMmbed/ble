@@ -29,7 +29,9 @@
 class GattAttribute
 {
 public:
+    typedef uint16_t Handle_t;
 
+public:
     /**
      *  @brief  Creates a new GattAttribute using the specified
      *          UUID, value length, and inital value
@@ -59,21 +61,26 @@ public:
     }
 
 public:
-    uint16_t getHandle(void) const {
+    Handle_t getHandle(void) const {
         return _handle;
     }
-    void setHandle(uint16_t id) {
+
+    void setHandle(Handle_t id) {
         _handle = id;
     }
+
     const UUID &getUUID(void) const {
         return _uuid;
     }
+
     uint16_t getInitialLength(void) const {
         return _initialLen;
     }
+
     uint16_t getMaxLength(void) const {
         return _lenMax;
     }
+
     uint8_t *getValuePtr(void) {
         return _valuePtr;
     }
@@ -83,7 +90,7 @@ protected:
     uint8_t  *_valuePtr;
     uint16_t  _initialLen;  /* Initial length of the value */
     uint16_t  _lenMax;      /* Maximum length of the value */
-    uint16_t  _handle;
+    Handle_t  _handle;
 };
 
 #endif // ifndef __GATT_ATTRIBUTE_H__
