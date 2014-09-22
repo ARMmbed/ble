@@ -213,8 +213,18 @@ public:
     /**
      * Setup a callback for when a characteristic has its value updated by a
      * client.
+     *
+     * @Note: it is possible to chain together multiple onDataWritten callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Many services, such as DFU and UART add their own
+     * onDataWritten callbacks behind the scenes to trap interesting events.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
      */
-    void onDataWritten(GattServer::WriteEventCallback_t callback);
+    void onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP));
+    template <typename T> void onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
+
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
@@ -227,7 +237,17 @@ public:
 
     Gap::GapState_t getGapState(void) const;
 
+    /**
+     * @param[in/out]  lengthP
+     *     input:  Length in bytes to be read,
+     *     output: Total length of attribute value upon successful return.
+     */
     ble_error_t readCharacteristicValue(uint16_t handle, uint8_t *const buffer, uint16_t *const lengthP);
+
+    /**
+     * @param  localOnly
+     *         Only update the characteristic locally regardless of notify/indicate flags in the CCCD.
+     */
     ble_error_t updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
 
     /**
@@ -473,10 +493,15 @@ BLEDevice::onDataSent(GattServer::ServerEventCallbackWithCount_t callback)
 }
 
 inline void
-BLEDevice::onDataWritten(GattServer::WriteEventCallback_t callback)
-{
+BLEDevice::onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {
     transport->getGattServer().setOnDataWritten(callback);
 }
+
+template <typename T> inline void
+BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
+    transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
+}
+
 
 inline void
 BLEDevice::onUpdatesEnabled(GattServer::EventCallback_t callback)

@@ -18,6 +18,7 @@
 #define __GATT_CHARACTERISTIC_WRITE_CB_PARAMS_H__
 
 struct GattCharacteristicWriteCBParams {
+    GattAttribute::Handle_t charHandle;
     enum Type {
         GATTS_CHAR_OP_INVALID               = 0x00,  /**< Invalid Operation. */
         GATTS_CHAR_OP_WRITE_REQ             = 0x01,  /**< Write Request. */

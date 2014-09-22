@@ -22,6 +22,7 @@
 #include "GattService.h"
 #include "GattServerEvents.h"
 #include "GattCharacteristicWriteCBParams.h"
+#include "CallChainOfFunctionPointersWithContext.h"
 
 /**************************************************************************/
 /*!
@@ -45,14 +46,17 @@ public:
 
     /* Event callback handlers. */
     typedef void (*EventCallback_t)(uint16_t attributeHandle);
-    typedef void (*WriteEventCallback_t)(uint16_t attributeHandle, const GattCharacteristicWriteCBParams *eventDataP);
     typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
     typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
     void setOnDataSent(ServerEventCallbackWithCount_t callback) {
         onDataSent = callback;
     }
-    void setOnDataWritten(WriteEventCallback_t callback) {
-        onDataWritten = callback;
+    void setOnDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {
+        onDataWritten.add(callback);
+    }
+    template <typename T>
+    void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
+        onDataWritten.add(objPtr, memberPtr);
     }
     void setOnUpdatesEnabled(EventCallback_t callback) {
         onUpdatesEnabled = callback;
@@ -64,9 +68,9 @@ public:
         onConfirmationReceived = callback;
     }
 
-    void handleDataWrittenEvent(uint16_t charHandle, const GattCharacteristicWriteCBParams *params) {
-        if (onDataWritten) {
-            onDataWritten(charHandle, params);
+    void handleDataWrittenEvent(const GattCharacteristicWriteCBParams *params) {
+        if (onDataWritten.hasCallbacksAttached()) {
+            onDataWritten.call(params);
         }
     }
 
@@ -97,7 +101,7 @@ public:
     }
 
 protected:
-    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(NULL), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
+    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
         /* empty */
     }
 
@@ -108,7 +112,7 @@ protected:
 
 private:
     ServerEventCallbackWithCount_t onDataSent;
-    WriteEventCallback_t           onDataWritten;
+    CallChainOfFunctionPointersWithContext<const GattCharacteristicWriteCBParams *> onDataWritten;
     EventCallback_t                onUpdatesEnabled;
     EventCallback_t                onUpdatesDisabled;
     EventCallback_t                onConfirmationReceived;
