@@ -28,13 +28,14 @@ extern const uint16_t DFUServiceControlCharacteristicShortUUID;
 
 extern const uint8_t  DFUServiceUUID[];
 extern const uint8_t  DFUServiceControlCharacteristicUUID[];
+extern const uint8_t  DFUServicePacketCharacteristicUUID[];
 
 class DFUService {
 public:
     /**
      * Signature for the handover callback. The application may provide such a
      * callback when setting up the DFU service, in which case it will be
-     * invoked before handing control over to the Bootloader.
+     * invoked before handing control over to the bootloader.
      */
     typedef void (*ResetPrepare_t)(void);
 
@@ -43,13 +44,15 @@ public:
         ble(_ble),
         controlBytes(),
         controlPoint(DFUServiceControlCharacteristicUUID, controlBytes, SIZEOF_CONTROL_BYTES, SIZEOF_CONTROL_BYTES,
-                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
+                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
+        packet(DFUServicePacketCharacteristicUUID, packetBytes, SIZEOF_PACKET_BYTES, SIZEOF_PACKET_BYTES,
+               GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE) {
         static bool serviceAdded = false; /* We should only ever need to add the DFU service once. */
         if (serviceAdded) {
             return;
         }
 
-        GattCharacteristic *dfuChars[] = {&controlPoint};
+        GattCharacteristic *dfuChars[] = {&controlPoint, &packet};
         GattService         dfuService(DFUServiceUUID, dfuChars, sizeof(dfuChars) / sizeof(GattCharacteristic *));
 
         ble.addService(dfuService);
@@ -70,6 +73,7 @@ public:
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {
+            /* At present, writing anything will do the trick--this needs to be improved. */
             if (handoverCallback) {
                 handoverCallback();
             }
@@ -80,13 +84,26 @@ public:
 
 private:
     static const unsigned SIZEOF_CONTROL_BYTES = 2;
+    static const unsigned SIZEOF_PACKET_BYTES  = 20;
 
     static ResetPrepare_t  handoverCallback;  /**< application specific handover callback. */
 
 private:
     BLEDevice          &ble;
     uint8_t             controlBytes[SIZEOF_CONTROL_BYTES];
+    uint8_t             packetBytes[SIZEOF_PACKET_BYTES];
+
+    /**< Writing to the control characteristic triggers the handover to dfu-
+      *  bootloader. At present, writing anything will do the trick--this needs
+      *  to be improved. */
     GattCharacteristic  controlPoint;
+
+    /**< The packet characteristic in this service doesn't do anything meaningful, but
+      *  is only a placeholder to mimic the corresponding characteristic in the
+      *  actual DFU service implemented by the bootloader. Without this, some
+      *  FOTA clients might get confused as service definitions change after
+      *  handing control over to the bootloader. */
+    GattCharacteristic  packet;
 };
 
 #endif /* #ifndef __BLE_DFU_SERVICE_H__*/
