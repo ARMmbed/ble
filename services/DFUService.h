@@ -43,6 +43,7 @@ public:
     DFUService(BLEDevice &_ble, ResetPrepare_t _handoverCallback = NULL) :
         ble(_ble),
         controlBytes(),
+        packetBytes(),
         controlPoint(DFUServiceControlCharacteristicUUID, controlBytes, SIZEOF_CONTROL_BYTES, SIZEOF_CONTROL_BYTES,
                      GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
         packet(DFUServicePacketCharacteristicUUID, packetBytes, SIZEOF_PACKET_BYTES, SIZEOF_PACKET_BYTES,
@@ -51,6 +52,11 @@ public:
         if (serviceAdded) {
             return;
         }
+
+        /* Set an initial value for control bytes so that the application's DFUService can
+         * be distinguished from the real DFU service provided by the bootloader. */
+        controlBytes[0] = 0xFF;
+        controlBytes[1] = 0xFF;
 
         GattCharacteristic *dfuChars[] = {&controlPoint, &packet};
         GattService         dfuService(DFUServiceUUID, dfuChars, sizeof(dfuChars) / sizeof(GattCharacteristic *));
@@ -86,7 +92,7 @@ private:
     static const unsigned SIZEOF_CONTROL_BYTES = 2;
     static const unsigned SIZEOF_PACKET_BYTES  = 20;
 
-    static ResetPrepare_t  handoverCallback;  /**< application specific handover callback. */
+    static ResetPrepare_t handoverCallback;  /**< application specific handover callback. */
 
 private:
     BLEDevice          &ble;
