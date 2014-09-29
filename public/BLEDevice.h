@@ -354,12 +354,6 @@ public:
  * transport.*/
 
 inline ble_error_t
-BLEDevice::init()
-{
-    return transport->init();
-}
-
-inline ble_error_t
 BLEDevice::reset(void)
 {
     return transport->reset();
