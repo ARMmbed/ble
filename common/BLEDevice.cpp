@@ -31,7 +31,7 @@ BLEDevice::init()
     /* Platforms enabled for DFU should introduce the DFU Service into
      * applications automatically. */
 #if defined(TARGET_OTA_ENABLED)
-    DFUService dfu(*this);
+    static DFUService dfu(*this); // defined static so that the object remains alive
 #endif // TARGET_OTA_ENABLED
 
     return BLE_ERROR_NONE;
