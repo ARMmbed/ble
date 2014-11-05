@@ -41,9 +41,15 @@ public:
 public:
     /**
      * Set the BTLE MAC address and type.
-     * @return
+     * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t setAddress(Gap::addr_type_t type, const uint8_t address[6]);
+    ble_error_t setAddress(Gap::addr_type_t type, const uint8_t address[Gap::ADDR_LEN]);
+
+    /**
+     * Fetch the BTLE MAC address and type.
+     * @return BLE_ERROR_NONE on success.
+     */
+    ble_error_t getAddress(Gap::addr_type_t *typeP, uint8_t address[Gap::ADDR_LEN]);
 
     /**
      * @param[in] advType
@@ -360,9 +366,15 @@ BLEDevice::reset(void)
 }
 
 inline ble_error_t
-BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[6])
+BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[Gap::ADDR_LEN])
 {
     return transport->getGap().setAddress(type, address);
+}
+
+inline ble_error_t
+BLEDevice::getAddress(Gap::addr_type_t *typeP, uint8_t address[Gap::ADDR_LEN])
+{
+    return transport->getGap().getAddress(typeP, address);
 }
 
 inline void

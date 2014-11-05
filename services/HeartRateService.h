@@ -92,10 +92,8 @@ public:
     }
 
     /**
-     * This callback allows the UART service to receive updates to the
-     * txCharacteristic. The application should forward the call to this
-     * function from the global onDataWritten() callback handler; or if that's
-     * not used, this method can be used as a callback directly.
+     * This callback allows the HeartRateService to receive updates to the
+     * controlPoint Characteristic.
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {

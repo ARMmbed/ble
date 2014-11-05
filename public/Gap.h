@@ -40,6 +40,8 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
     } addr_type_t;
 
+    static const unsigned ADDR_LEN = 6;
+
     /**
      * enumeration for disconnection reasons. The values for these reasons are
      * derived from Nordic's implementation; but the reasons are meant to be
@@ -70,7 +72,8 @@ public:
 
 public:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(addr_type_t type, const uint8_t address[6]) = 0;
+    virtual ble_error_t setAddress(addr_type_t type,   const uint8_t address[ADDR_LEN]) = 0;
+    virtual ble_error_t getAddress(addr_type_t *typeP, uint8_t address[ADDR_LEN]) = 0;
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &) = 0;
     virtual ble_error_t stopAdvertising(void)                    = 0;
