@@ -19,11 +19,6 @@
 
 #include "blecommon.h"
 
-#define GAP_ADV_PARAMS_INTERVAL_MIN        (0x0020)
-#define GAP_ADV_PARAMS_INTERVAL_MIN_NONCON (0x00A0)
-#define GAP_ADV_PARAMS_INTERVAL_MAX        (0x1000)
-#define GAP_ADV_PARAMS_TIMEOUT_MAX         (0x3FFF)
-
 /**************************************************************************/
 /*!
     \brief
@@ -50,6 +45,11 @@
 class GapAdvertisingParams
 {
 public:
+    static const unsigned GAP_ADV_PARAMS_INTERVAL_MIN        = 0x0020;
+    static const unsigned GAP_ADV_PARAMS_INTERVAL_MIN_NONCON = 0x00A0;
+    static const unsigned GAP_ADV_PARAMS_INTERVAL_MAX        = 0x4000;
+    static const unsigned GAP_ADV_PARAMS_TIMEOUT_MAX         = 0x3FFF;
+
     /**************************************************************************/
     /*!
         \brief
@@ -70,6 +70,7 @@ public:
         ADV_NON_CONNECTABLE_UNDIRECTED  /**< Vol 3, Part C, Section 9.3.2 and Vol 6, Part B, Section 2.3.1.3 */
     };
 
+public:
     GapAdvertisingParams(AdvertisingType advType  = GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
                          uint16_t        interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
                          uint16_t        timeout  = 0);
