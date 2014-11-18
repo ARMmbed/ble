@@ -17,8 +17,6 @@
 #ifndef __GATT_SERVER_H__
 #define __GATT_SERVER_H__
 
-#include "mbed.h"
-#include "blecommon.h"
 #include "GattService.h"
 #include "GattServerEvents.h"
 #include "GattCharacteristicWriteCBParams.h"
