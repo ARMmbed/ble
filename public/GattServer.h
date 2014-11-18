@@ -66,6 +66,12 @@ public:
         onConfirmationReceived = callback;
     }
 
+protected:
+    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
+        /* empty */
+    }
+
+protected:
     void handleDataWrittenEvent(const GattCharacteristicWriteCBParams *params) {
         if (onDataWritten.hasCallbacksAttached()) {
             onDataWritten.call(params);
@@ -96,11 +102,6 @@ public:
         if (onDataSent) {
             onDataSent(count);
         }
-    }
-
-protected:
-    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
-        /* empty */
     }
 
 protected:
