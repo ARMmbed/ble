@@ -89,7 +89,7 @@ public:
     virtual ble_error_t getAppearance(uint16_t *appearanceP) = 0;
 
     typedef void (*EventCallback_t)(void);
-    typedef void (*ConnectionEventCallback_t)(Handle_t, const ConnectionParams_t *);
+    typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
 
     /* Event callback handlers */
@@ -103,10 +103,10 @@ public:
         onDisconnection = callback;
     }
 
-    void processConnectionEvent(Handle_t handle, const ConnectionParams_t *params) {
+    void processConnectionEvent(Handle_t handle, addr_type_t type, const address_t addr, const ConnectionParams_t *params) {
         state.connected = 1;
         if (onConnection) {
-            onConnection(handle, params);
+            onConnection(handle, type, addr, params);
         }
     }
 
