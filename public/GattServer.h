@@ -107,7 +107,6 @@ protected:
 protected:
     uint8_t serviceCount;
     uint8_t characteristicCount;
-    uint8_t descriptorCount;
 
 private:
     ServerEventCallbackWithCount_t onDataSent;
