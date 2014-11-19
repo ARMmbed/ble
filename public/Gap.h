@@ -65,28 +65,28 @@ public:
     typedef uint16_t Handle_t;
 
     typedef struct {
-      uint16_t minConnectionInterval;        /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
-      uint16_t maxConnectionInterval;        /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
-      uint16_t slaveLatency;                 /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
-      uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t minConnectionInterval;      /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t maxConnectionInterval;      /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t slaveLatency;               /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
 public:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(addr_type_t type,   const address_t address) = 0;
-    virtual ble_error_t getAddress(addr_type_t *typeP, address_t address) = 0;
+    virtual ble_error_t setAddress(addr_type_t type,   const address_t address)                    = 0;
+    virtual ble_error_t getAddress(addr_type_t *typeP, address_t address)                          = 0;
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
-    virtual ble_error_t startAdvertising(const GapAdvertisingParams &) = 0;
-    virtual ble_error_t stopAdvertising(void)                    = 0;
-    virtual ble_error_t disconnect(DisconnectionReason_t reason) = 0;
-    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) = 0;
-    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) = 0;
-    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) = 0;
+    virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
+    virtual ble_error_t stopAdvertising(void)                                                      = 0;
+    virtual ble_error_t disconnect(DisconnectionReason_t reason)                                   = 0;
+    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params)                   = 0;
+    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;
+    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params)  = 0;
 
-    virtual ble_error_t setDeviceName(const uint8_t *deviceName) = 0;
+    virtual ble_error_t setDeviceName(const uint8_t *deviceName)              = 0;
     virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
-    virtual ble_error_t setAppearance(uint16_t appearance) = 0;
-    virtual ble_error_t getAppearance(uint16_t *appearanceP) = 0;
+    virtual ble_error_t setAppearance(uint16_t appearance)                    = 0;
+    virtual ble_error_t getAppearance(uint16_t *appearanceP)                  = 0;
 
     typedef void (*EventCallback_t)(void);
     typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
@@ -96,9 +96,11 @@ public:
     void setOnTimeout(EventCallback_t callback) {
         onTimeout = callback;
     }
+
     void setOnConnection(ConnectionEventCallback_t callback) {
         onConnection = callback;
     }
+
     void setOnDisconnection(DisconnectionEventCallback_t callback) {
         onDisconnection = callback;
     }
@@ -138,7 +140,7 @@ protected:
     }
 
 protected:
-    GapState_t state;
+    GapState_t                   state;
 
 private:
     EventCallback_t              onTimeout;
