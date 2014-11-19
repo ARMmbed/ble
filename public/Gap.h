@@ -71,6 +71,11 @@ public:
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
+    static const uint16_t UNIT_1_25_MS = 1250; /**< Number of microseconds in 1.25 milliseconds. */
+    static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
+        return (durationInMillis * 1000) / UNIT_1_25_MS;
+    }
+
 public:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(addr_type_t type,   const address_t address)                    = 0;
