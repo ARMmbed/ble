@@ -419,6 +419,7 @@ inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
 {
     needToSetAdvPayload = true;
+    transport->getGap().setAppearance(app);
     return advPayload.addAppearance(app);
 }
 
@@ -433,6 +434,9 @@ inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
 {
     needToSetAdvPayload = true;
+    if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
+        transport->getGap().setDeviceName(data);
+    }
     return advPayload.addData(type, data, len);
 }
 
@@ -452,8 +456,11 @@ BLEDevice::setAdvertisingPayload(void) {
 inline ble_error_t
 BLEDevice::startAdvertising(void)
 {
+    ble_error_t rc;
+    if ((rc = transport->getGattServer().initializeGATTDatabase()) != BLE_ERROR_NONE) {
+        return rc;
+    }
     if (needToSetAdvPayload) {
-        ble_error_t rc;
         if ((rc = setAdvertisingPayload()) != BLE_ERROR_NONE) {
             return rc;
         }
