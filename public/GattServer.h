@@ -36,6 +36,7 @@ public:
     virtual ble_error_t addService(GattService &) = 0;
     virtual ble_error_t readValue(uint16_t handle, uint8_t buffer[], uint16_t *const lengthP) = 0;
     virtual ble_error_t updateValue(uint16_t, uint8_t[], uint16_t, bool localOnly = false) = 0;
+    virtual ble_error_t initializeGATTDatabase(void) = 0;
 
     // ToDo: For updateValue, check the CCCD to see if the value we are
     // updating has the notify or indicate bits sent, and if BOTH are set
