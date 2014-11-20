@@ -17,7 +17,6 @@
 #ifndef __GAP_H__
 #define __GAP_H__
 
-#include "mbed.h"
 #include "blecommon.h"
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"

@@ -19,7 +19,6 @@
 #include <string.h>
 #include "FunctionPointerWithContext.h"
 
-namespace mbed {
 
 /** Group one or more functions in an instance of a CallChainOfFunctionPointersWithContext, then call them in
  * sequence using CallChainOfFunctionPointersWithContext::call(). Used mostly by the interrupt chaining code,
@@ -27,7 +26,6 @@ namespace mbed {
  *
  * Example:
  * @code
- * #include "mbed.h"
  *
  * CallChainOfFunctionPointersWithContext<void *> chain;
  *
@@ -147,7 +145,4 @@ private:
     CallChainOfFunctionPointersWithContext & operator = (const CallChainOfFunctionPointersWithContext &);
 };
 
-} // namespace mbed
-
 #endif
-
