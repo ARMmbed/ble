@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 #ifndef __UUID_H__
 #define __UUID_H__
 
@@ -24,8 +23,7 @@ const unsigned   LENGTH_OF_LONG_UUID = 16;
 typedef uint16_t ShortUUIDBytes_t;
 typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
 
-class UUID
-{
+class UUID {
 public:
     enum {
         UUID_TYPE_SHORT = 0,    // Short BLE UUID
@@ -35,18 +33,11 @@ public:
 public:
     UUID(const LongUUIDBytes_t);
     UUID(ShortUUIDBytes_t);
-    virtual ~UUID(void);
 
 public:
-    uint8_t        shortOrLong(void) const {
-        return type;
-    }
-    const uint8_t* getBaseUUID(void) const {
-        return baseUUID;
-    }
-    ShortUUIDBytes_t    getShortUUID(void) const {
-        return shortUUID;
-    }
+    uint8_t           shortOrLong(void)  const {return type;     }
+    const uint8_t    *getBaseUUID(void)  const {return baseUUID; }
+    ShortUUIDBytes_t  getShortUUID(void) const {return shortUUID;}
 
 private:
     uint8_t          type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG

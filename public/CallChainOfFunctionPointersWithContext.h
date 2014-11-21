@@ -58,7 +58,7 @@
 template <typename ContextType>
 class CallChainOfFunctionPointersWithContext {
 public:
-    typedef FunctionPointerWithContext<ContextType>* pFunctionPointerWithContext_t;
+    typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
 
 public:
     /** Create an empty chain
@@ -120,8 +120,9 @@ public:
      *        chained FunctionPointers.
      */
     void call(ContextType context) {
-        if (chainHead)
+        if (chainHead) {
             chainHead->call(context);
+        }
     }
 
 private:

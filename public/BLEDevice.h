@@ -42,13 +42,13 @@ public:
      * Set the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t setAddress(Gap::addr_type_t type, const uint8_t address[Gap::ADDR_LEN]);
+    ble_error_t setAddress(Gap::addr_type_t type, const Gap::address_t address);
 
     /**
      * Fetch the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t getAddress(Gap::addr_type_t *typeP, uint8_t address[Gap::ADDR_LEN]);
+    ble_error_t getAddress(Gap::addr_type_t *typeP, Gap::address_t address);
 
     /**
      * @param[in] advType
@@ -228,7 +228,7 @@ public:
      * some object.
      */
     void onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP));
-    template <typename T> void onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
+    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
 
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
@@ -253,7 +253,7 @@ public:
      * @param  localOnly
      *         Only update the characteristic locally regardless of notify/indicate flags in the CCCD.
      */
-    ble_error_t updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly = false);
+    ble_error_t updateCharacteristicValue(uint16_t handle, const uint8_t *value, uint16_t size, bool localOnly = false);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -276,56 +276,56 @@ public:
      */
     const char *getVersion(void);
 
-     /**
-      * Set the device name characteristic in the GAP service.
-      * @param  deviceName The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
-      */
-     ble_error_t setDeviceName(const uint8_t *deviceName);
+    /**
+     * Set the device name characteristic in the GAP service.
+     * @param  deviceName The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
+     */
+    ble_error_t setDeviceName(const uint8_t *deviceName);
 
-     /**
-      * Get the value of the device name characteristic in the GAP service.
-      * @param[out]    deviceName Pointer to an empty buffer where the UTF-8 *non NULL-
-      *                           terminated* string will be placed. Set this
-      *                           value to NULL in order to obtain the deviceName-length
-      *                           from the 'length' parameter.
-      *
-      * @param[in/out] lengthP    (on input) Length of the buffer pointed to by deviceName;
-      *                           (on output) the complete device name length (without the
-      *                           null terminator).
-      *
-      * @note          If the device name is longer than the size of the supplied buffer,
-      *                length will return the complete device name length,
-      *                and not the number of bytes actually returned in deviceName.
-      *                The application may use this information to retry with a suitable buffer size.
-      *
-      * Sample use:
-      *     uint8_t deviceName[20];
-      *     unsigned length = sizeof(deviceName);
-      *     ble.getDeviceName(deviceName, &length);
-      *     if (length < sizeof(deviceName)) {
-      *         deviceName[length] = 0;
-      *     }
-      *     DEBUG("length: %u, deviceName: %s\r\n", length, deviceName);
-      */
-     ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP);
+    /**
+     * Get the value of the device name characteristic in the GAP service.
+     * @param[out]    deviceName Pointer to an empty buffer where the UTF-8 *non NULL-
+     *                           terminated* string will be placed. Set this
+     *                           value to NULL in order to obtain the deviceName-length
+     *                           from the 'length' parameter.
+     *
+     * @param[in/out] lengthP    (on input) Length of the buffer pointed to by deviceName;
+     *                           (on output) the complete device name length (without the
+     *                           null terminator).
+     *
+     * @note          If the device name is longer than the size of the supplied buffer,
+     *                length will return the complete device name length,
+     *                and not the number of bytes actually returned in deviceName.
+     *                The application may use this information to retry with a suitable buffer size.
+     *
+     * Sample use:
+     *     uint8_t deviceName[20];
+     *     unsigned length = sizeof(deviceName);
+     *     ble.getDeviceName(deviceName, &length);
+     *     if (length < sizeof(deviceName)) {
+     *         deviceName[length] = 0;
+     *     }
+     *     DEBUG("length: %u, deviceName: %s\r\n", length, deviceName);
+     */
+    ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP);
 
-     /**
-      * Set the appearance characteristic in the GAP service.
-      * @param[in]  appearance The new value for the device-appearance.
-      */
-     ble_error_t setAppearance(uint16_t appearance);
+    /**
+     * Set the appearance characteristic in the GAP service.
+     * @param[in]  appearance The new value for the device-appearance.
+     */
+    ble_error_t setAppearance(uint16_t appearance);
 
-     /**
-      * Set the appearance characteristic in the GAP service.
-      * @param[out]  appearance The new value for the device-appearance.
-      */
-     ble_error_t getAppearance(uint16_t *appearanceP);
+    /**
+     * Set the appearance characteristic in the GAP service.
+     * @param[out]  appearance The new value for the device-appearance.
+     */
+    ble_error_t getAppearance(uint16_t *appearanceP);
 
-     /**
-      * Set the radio's transmit power.
-      * @param[in] txPower Radio transmit power in dBm.
-      */
-     ble_error_t setTxPower(int8_t txPower);
+    /**
+     * Set the radio's transmit power.
+     * @param[in] txPower Radio transmit power in dBm.
+     */
+    ble_error_t setTxPower(int8_t txPower);
 
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
@@ -365,13 +365,13 @@ BLEDevice::reset(void)
 }
 
 inline ble_error_t
-BLEDevice::setAddress(Gap::addr_type_t type, const uint8_t address[Gap::ADDR_LEN])
+BLEDevice::setAddress(Gap::addr_type_t type, const Gap::address_t address)
 {
     return transport->getGap().setAddress(type, address);
 }
 
 inline ble_error_t
-BLEDevice::getAddress(Gap::addr_type_t *typeP, uint8_t address[Gap::ADDR_LEN])
+BLEDevice::getAddress(Gap::addr_type_t *typeP, Gap::address_t address)
 {
     return transport->getGap().getAddress(typeP, address);
 }
@@ -418,6 +418,7 @@ inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
 {
     needToSetAdvPayload = true;
+    transport->getGap().setAppearance(app);
     return advPayload.addAppearance(app);
 }
 
@@ -432,6 +433,9 @@ inline ble_error_t
 BLEDevice::accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
 {
     needToSetAdvPayload = true;
+    if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
+        transport->getGap().setDeviceName(data);
+    }
     return advPayload.addData(type, data, len);
 }
 
@@ -451,8 +455,11 @@ BLEDevice::setAdvertisingPayload(void) {
 inline ble_error_t
 BLEDevice::startAdvertising(void)
 {
+    ble_error_t rc;
+    if ((rc = transport->getGattServer().initializeGATTDatabase()) != BLE_ERROR_NONE) {
+        return rc;
+    }
     if (needToSetAdvPayload) {
-        ble_error_t rc;
         if ((rc = setAdvertisingPayload()) != BLE_ERROR_NONE) {
             return rc;
         }
@@ -507,7 +514,6 @@ BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristi
     transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
 }
 
-
 inline void
 BLEDevice::onUpdatesEnabled(GattServer::EventCallback_t callback)
 {
@@ -544,7 +550,7 @@ inline ble_error_t BLEDevice::readCharacteristicValue(uint16_t handle, uint8_t *
 }
 
 inline ble_error_t
-BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t* value, uint16_t size, bool localOnly)
+BLEDevice::updateCharacteristicValue(uint16_t handle, const uint8_t *value, uint16_t size, bool localOnly)
 {
     return transport->getGattServer().updateValue(handle, const_cast<uint8_t *>(value), size, localOnly);
 }

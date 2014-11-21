@@ -14,39 +14,14 @@
  * limitations under the License.
 */
 
-
 #ifndef __GATT_SERVICE_H__
 #define __GATT_SERVICE_H__
 
-#include "blecommon.h"
 #include "UUID.h"
 #include "GattCharacteristic.h"
 
-
-/**************************************************************************/
-/*!
-    \brief  GATT service
-*/
-/**************************************************************************/
-class GattService
-{
+class GattService {
 public:
-   /**
-     *  @brief  Creates a new GattCharacteristic using the specified 16-bit
-     *          UUID, value length, and properties
-     *
-     *  @note   The UUID value must be unique in the service and is normally >1
-     *
-     *  @param[in]  uuid
-     *              The UUID to use for this characteristic
-     *  @param[in]  characteristics
-     *              A pointer to an array of characteristics to be included within this service
-     *  @param[in]  numCharacteristics
-     *              The number of characteristics
-     */
-    /**************************************************************************/
-    GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics);
-
     enum {
         UUID_ALERT_NOTIFICATION_SERVICE     = 0x1811,
         UUID_BATTERY_SERVICE                = 0x180F,
@@ -68,18 +43,27 @@ public:
         UUID_TX_POWER_SERVICE               = 0x1804
     };
 
-    const UUID &getUUID(void) const {
-        return _primaryServiceID;
-    }
-    uint16_t getHandle(void) const {
-        return _handle;
-    }
-    void setHandle(uint16_t handle) {
-        _handle = handle;
-    }
-    uint8_t getCharacteristicCount(void) const {
-        return _characteristicCount;
-    }
+public:
+    /**
+     *  @brief  Creates a new GattCharacteristic using the specified 16-bit
+     *          UUID, value length, and properties
+     *
+     *  @note   The UUID value must be unique in the service and is normally >1
+     *
+     *  @param[in]  uuid
+     *              The UUID to use for this characteristic
+     *  @param[in]  characteristics
+     *              A pointer to an array of characteristics to be included within this service
+     *  @param[in]  numCharacteristics
+     *              The number of characteristics
+     */
+    GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics);
+
+    const UUID &getUUID(void)                const {return _primaryServiceID;   }
+    uint16_t    getHandle(void)              const {return _handle;             }
+    uint8_t     getCharacteristicCount(void) const {return _characteristicCount;}
+    void setHandle(uint16_t handle) {_handle = handle;}
+
     GattCharacteristic *getCharacteristic(uint8_t index) {
         if (index >= _characteristicCount) {
             return NULL;

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-
-#include <stdio.h>
 #include <string.h>
 
 #include "UUID.h"
+
+UUID::UUID(ShortUUIDBytes_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(shortUUID) {
+    /* empty */
+}
 
 /**************************************************************************/
 /*!
@@ -90,24 +92,3 @@ UUID::UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_SHORT), baseUUID(), 
     }
 }
 
-/**************************************************************************/
-/*!
-    @brief  Creates a short (16-bit) UUID
-
-    @param[in]  ble_uuid
-                The 16-bit BLE UUID value.
-*/
-/**************************************************************************/
-UUID::UUID(ShortUUIDBytes_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(shortUUID)
-{
-    /* empty */
-}
-
-/**************************************************************************/
-/*!
-    @brief  UUID destructor
-*/
-/**************************************************************************/
-UUID::~UUID(void)
-{
-}

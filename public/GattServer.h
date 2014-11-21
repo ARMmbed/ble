@@ -17,56 +17,47 @@
 #ifndef __GATT_SERVER_H__
 #define __GATT_SERVER_H__
 
-#include "blecommon.h"
 #include "GattService.h"
 #include "GattServerEvents.h"
 #include "GattCharacteristicWriteCBParams.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 
-/**************************************************************************/
-/*!
-    \brief
-    The base class used to abstract GATT Server functionality to a specific
-    radio transceiver, SOC or BLE Stack.
-*/
-/**************************************************************************/
-class GattServer
-{
+class GattServer {
 public:
+    /* Event callback handlers. */
+    typedef void (*EventCallback_t)(uint16_t attributeHandle);
+    typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
+    typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
+
+protected:
+    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
+        /* empty */
+    }
+
+    friend class BLEDevice;
+private:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t addService(GattService &) = 0;
     virtual ble_error_t readValue(uint16_t handle, uint8_t buffer[], uint16_t *const lengthP) = 0;
     virtual ble_error_t updateValue(uint16_t, uint8_t[], uint16_t, bool localOnly = false) = 0;
+    virtual ble_error_t initializeGATTDatabase(void) = 0;
 
     // ToDo: For updateValue, check the CCCD to see if the value we are
     // updating has the notify or indicate bits sent, and if BOTH are set
     // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
     // Strange use case, but valid and must be covered!
 
-    /* Event callback handlers. */
-    typedef void (*EventCallback_t)(uint16_t attributeHandle);
-    typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
-    typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
-    void setOnDataSent(ServerEventCallbackWithCount_t callback) {
-        onDataSent = callback;
-    }
-    void setOnDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {
-        onDataWritten.add(callback);
-    }
+    void setOnDataSent(ServerEventCallbackWithCount_t callback) {onDataSent = callback;}
+    void setOnDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {onDataWritten.add(callback);}
     template <typename T>
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
         onDataWritten.add(objPtr, memberPtr);
     }
-    void setOnUpdatesEnabled(EventCallback_t callback) {
-        onUpdatesEnabled = callback;
-    }
-    void setOnUpdatesDisabled(EventCallback_t callback) {
-        onUpdatesDisabled = callback;
-    }
-    void setOnConfirmationReceived(EventCallback_t callback) {
-        onConfirmationReceived = callback;
-    }
+    void setOnUpdatesEnabled(EventCallback_t callback) {onUpdatesEnabled = callback;}
+    void setOnUpdatesDisabled(EventCallback_t callback) {onUpdatesDisabled = callback;}
+    void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
 
+protected:
     void handleDataWrittenEvent(const GattCharacteristicWriteCBParams *params) {
         if (onDataWritten.hasCallbacksAttached()) {
             onDataWritten.call(params);
@@ -100,14 +91,8 @@ public:
     }
 
 protected:
-    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
-        /* empty */
-    }
-
-protected:
     uint8_t serviceCount;
     uint8_t characteristicCount;
-    uint8_t descriptorCount;
 
 private:
     ServerEventCallbackWithCount_t onDataSent;
@@ -115,6 +100,11 @@ private:
     EventCallback_t                onUpdatesEnabled;
     EventCallback_t                onUpdatesDisabled;
     EventCallback_t                onConfirmationReceived;
+
+private:
+    /* disallow copy and assignment */
+    GattServer(const GattServer &);
+    GattServer& operator=(const GattServer &);
 };
 
 #endif // ifndef __GATT_SERVER_H__
