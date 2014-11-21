@@ -22,15 +22,7 @@
 #include "GattCharacteristicWriteCBParams.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 
-/**************************************************************************/
-/*!
-    \brief
-    The base class used to abstract GATT Server functionality to a specific
-    radio transceiver, SOC or BLE Stack.
-*/
-/**************************************************************************/
-class GattServer
-{
+class GattServer {
 public:
     /* Event callback handlers. */
     typedef void (*EventCallback_t)(uint16_t attributeHandle);
@@ -55,25 +47,15 @@ private:
     // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
     // Strange use case, but valid and must be covered!
 
-    void setOnDataSent(ServerEventCallbackWithCount_t callback) {
-        onDataSent = callback;
-    }
-    void setOnDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {
-        onDataWritten.add(callback);
-    }
+    void setOnDataSent(ServerEventCallbackWithCount_t callback) {onDataSent = callback;}
+    void setOnDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {onDataWritten.add(callback);}
     template <typename T>
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
         onDataWritten.add(objPtr, memberPtr);
     }
-    void setOnUpdatesEnabled(EventCallback_t callback) {
-        onUpdatesEnabled = callback;
-    }
-    void setOnUpdatesDisabled(EventCallback_t callback) {
-        onUpdatesDisabled = callback;
-    }
-    void setOnConfirmationReceived(EventCallback_t callback) {
-        onConfirmationReceived = callback;
-    }
+    void setOnUpdatesEnabled(EventCallback_t callback) {onUpdatesEnabled = callback;}
+    void setOnUpdatesDisabled(EventCallback_t callback) {onUpdatesDisabled = callback;}
+    void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
 
 protected:
     void handleDataWrittenEvent(const GattCharacteristicWriteCBParams *params) {
@@ -120,7 +102,7 @@ private:
     EventCallback_t                onConfirmationReceived;
 
 private:
-    /* disallow copy and assginment */
+    /* disallow copy and assignment */
     GattServer(const GattServer &);
     GattServer& operator=(const GattServer &);
 };

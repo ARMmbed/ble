@@ -21,15 +21,7 @@
 #include "GapAdvertisingParams.h"
 #include "GapEvents.h"
 
-/**************************************************************************/
-/*!
-    \brief
-    The base class used to abstract GAP functionality to a specific radio
-    transceiver, SOC or BLE Stack.
-*/
-/**************************************************************************/
-class Gap
-{
+class Gap {
 public:
     typedef enum addr_type_e {
         ADDR_TYPE_PUBLIC = 0,
@@ -42,7 +34,7 @@ public:
     typedef uint8_t address_t[ADDR_LEN];
 
     /**
-     * enumeration for disconnection reasons. The values for these reasons are
+     * Enumeration for disconnection reasons. The values for these reasons are
      * derived from Nordic's implementation; but the reasons are meant to be
      * independent of the transport. If you are returned a reason which is not
      * covered by this enumeration, then please refer to the underlying
@@ -146,7 +138,7 @@ private:
     DisconnectionEventCallback_t onDisconnection;
 
 private:
-    /* disallow copy and assginment */
+    /* disallow copy and assignment */
     Gap(const Gap &);
     Gap& operator=(const Gap &);
 };
