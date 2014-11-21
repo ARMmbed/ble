@@ -17,8 +17,6 @@
 #ifndef __BLE_DEVICE__
 #define __BLE_DEVICE__
 
-#include "mbed.h"
-#include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
 #include "BLEDeviceInstanceBase.h"
