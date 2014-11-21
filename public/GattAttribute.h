@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-
 #ifndef __GATT_ATTRIBUTE_H__
 #define __GATT_ATTRIBUTE_H__
 
-#include <stddef.h>
-
-#include "blecommon.h"
-#include "UUID.h"
-
-/**************************************************************************/
-/*!
-    \brief  GATT attribute
-*/
-/**************************************************************************/
-class GattAttribute
-{
+class GattAttribute {
 public:
     typedef uint16_t Handle_t;
 
@@ -58,41 +46,29 @@ public:
      */
     /**************************************************************************/
     GattAttribute(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0) :
-        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _handle(){
+        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _handle() {
         /* empty */
     }
 
 public:
-    Handle_t getHandle(void) const {
-        return _handle;
-    }
+    Handle_t    getHandle(void)        const {return _handle;    }
+    const UUID &getUUID(void)          const {return _uuid;      }
+    uint16_t    getInitialLength(void) const {return _initialLen;}
+    uint16_t    getMaxLength(void)     const {return _lenMax;    }
+    void        setHandle(Handle_t id)       {_handle = id;      }
+    uint8_t    *getValuePtr(void)            {return _valuePtr;  }
 
-    void setHandle(Handle_t id) {
-        _handle = id;
-    }
-
-    const UUID &getUUID(void) const {
-        return _uuid;
-    }
-
-    uint16_t getInitialLength(void) const {
-        return _initialLen;
-    }
-
-    uint16_t getMaxLength(void) const {
-        return _lenMax;
-    }
-
-    uint8_t *getValuePtr(void) {
-        return _valuePtr;
-    }
-
-protected:
+private:
     UUID      _uuid;        /* Characteristic UUID */
     uint8_t  *_valuePtr;
     uint16_t  _initialLen;  /* Initial length of the value */
     uint16_t  _lenMax;      /* Maximum length of the value */
     Handle_t  _handle;
+
+private:
+    /* disallow copy and assignment */
+    GattAttribute(const GattAttribute &);
+    GattAttribute& operator=(const GattAttribute &);
 };
 
 #endif // ifndef __GATT_ATTRIBUTE_H__

@@ -17,8 +17,6 @@
 #ifndef __GAP_ADVERTISING_PARAMS_H__
 #define __GAP_ADVERTISING_PARAMS_H__
 
-#include "blecommon.h"
-
 /**************************************************************************/
 /*!
     \brief
@@ -32,18 +30,9 @@
 
     \li \c Bluetooth Core Specification 4.0 (Vol. 6), Part B, Section 2.3.1
     \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 9.3
-
-    \par EXAMPLE
-
-    \code
-
-    // ToDo
-
-    \endcode
 */
 /**************************************************************************/
-class GapAdvertisingParams
-{
+class GapAdvertisingParams {
 public:
     static const unsigned GAP_ADV_PARAMS_INTERVAL_MIN        = 0x0020;
     static const unsigned GAP_ADV_PARAMS_INTERVAL_MIN_NONCON = 0x00A0;
@@ -76,67 +65,22 @@ public:
                          uint16_t        timeout  = 0);
     virtual ~GapAdvertisingParams(void);
 
-    void setAdvertisingType(AdvertisingType newAdvType);
-    void setInterval(uint16_t newInterval);
-    void setTimeout(uint16_t  newTimeout);
+    AdvertisingType getAdvertisingType(void) const {return _advType; }
+    uint16_t        getInterval(void)        const {return _interval;}
+    uint16_t        getTimeout(void)         const {return _timeout; }
 
-    virtual AdvertisingType getAdvertisingType(void) const;
-    virtual uint16_t        getInterval(void) const;
-    virtual uint16_t        getTimeout(void) const;
+    void setAdvertisingType(AdvertisingType newAdvType) {_advType = newAdvType;  }
+    void setInterval(uint16_t newInterval)              {_interval = newInterval;}
+    void setTimeout(uint16_t newTimeout)                {_timeout = newTimeout;  }
 
 private:
     AdvertisingType _advType;
     uint16_t        _interval;
     uint16_t        _timeout;
+
+private:
+    /* disallow copy constructor */
+    GapAdvertisingParams(const GapAdvertisingParams &);
 };
-
-inline void
-GapAdvertisingParams::setAdvertisingType(AdvertisingType newAdvType) {
-    _advType = newAdvType;
-}
-
-inline void
-GapAdvertisingParams::setInterval(uint16_t newInterval) {
-    _interval = newInterval;
-}
-
-inline void
-GapAdvertisingParams::setTimeout(uint16_t  newTimeout) {
-    _timeout = newTimeout;
-}
-
-
-/**************************************************************************/
-/*!
-    \brief returns the current Advertising Type value
-*/
-/**************************************************************************/
-inline GapAdvertisingParams::AdvertisingType
-GapAdvertisingParams::getAdvertisingType(void) const
-{
-    return _advType;
-}
-
-/**************************************************************************/
-/*!
-    \brief returns the current Advertising Delay (in units of 0.625ms)
-*/
-/**************************************************************************/
-inline uint16_t
-GapAdvertisingParams::getInterval(void) const
-{
-    return _interval;
-}
-
-/**************************************************************************/
-/*!
-    \brief returns the current Advertising Timeout (in seconds)
-*/
-/**************************************************************************/
-inline uint16_t
-GapAdvertisingParams::getTimeout(void) const
-{
-    return _timeout;
-}
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__
