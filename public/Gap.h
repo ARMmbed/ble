@@ -74,7 +74,12 @@ public:
         return (durationInMillis * 1000) / UNIT_1_25_MS;
     }
 
-public:
+    typedef void (*EventCallback_t)(void);
+    typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
+    typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
+
+    friend class BLEDevice;
+private:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(addr_type_t type,   const address_t address)                    = 0;
     virtual ble_error_t getAddress(addr_type_t *typeP, address_t address)                          = 0;
@@ -91,23 +96,22 @@ public:
     virtual ble_error_t setAppearance(uint16_t appearance)                    = 0;
     virtual ble_error_t getAppearance(uint16_t *appearanceP)                  = 0;
 
-    typedef void (*EventCallback_t)(void);
-    typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
-    typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
-
+private:
     /* Event callback handlers */
-    void setOnTimeout(EventCallback_t callback) {
-        onTimeout = callback;
+    void setOnTimeout(EventCallback_t callback) {onTimeout = callback;}
+    void setOnConnection(ConnectionEventCallback_t callback) {onConnection = callback;}
+    void setOnDisconnection(DisconnectionEventCallback_t callback) {onDisconnection = callback;}
+
+    GapState_t getState(void) const {
+        return state;
     }
 
-    void setOnConnection(ConnectionEventCallback_t callback) {
-        onConnection = callback;
+protected:
+    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL) {
+        /* empty */
     }
 
-    void setOnDisconnection(DisconnectionEventCallback_t callback) {
-        onDisconnection = callback;
-    }
-
+public:
     void processConnectionEvent(Handle_t handle, addr_type_t type, const address_t addr, const ConnectionParams_t *params) {
         state.connected = 1;
         if (onConnection) {
@@ -133,15 +137,6 @@ public:
         }
     }
 
-    GapState_t getState(void) const {
-        return state;
-    }
-
-protected:
-    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL) {
-        /* empty */
-    }
-
 protected:
     GapState_t                   state;
 
@@ -149,6 +144,11 @@ private:
     EventCallback_t              onTimeout;
     ConnectionEventCallback_t    onConnection;
     DisconnectionEventCallback_t onDisconnection;
+
+private:
+    /* disallow copy and assginment */
+    Gap(const Gap &);
+    Gap& operator=(const Gap &);
 };
 
 #endif // ifndef __GAP_H__
