@@ -32,6 +32,18 @@
 class GattServer
 {
 public:
+    /* Event callback handlers. */
+    typedef void (*EventCallback_t)(uint16_t attributeHandle);
+    typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
+    typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
+
+protected:
+    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
+        /* empty */
+    }
+
+    friend class BLEDevice;
+private:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t addService(GattService &) = 0;
     virtual ble_error_t readValue(uint16_t handle, uint8_t buffer[], uint16_t *const lengthP) = 0;
@@ -43,10 +55,6 @@ public:
     // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
     // Strange use case, but valid and must be covered!
 
-    /* Event callback handlers. */
-    typedef void (*EventCallback_t)(uint16_t attributeHandle);
-    typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
-    typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
     void setOnDataSent(ServerEventCallbackWithCount_t callback) {
         onDataSent = callback;
     }
@@ -65,11 +73,6 @@ public:
     }
     void setOnConfirmationReceived(EventCallback_t callback) {
         onConfirmationReceived = callback;
-    }
-
-protected:
-    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
-        /* empty */
     }
 
 protected:
@@ -115,6 +118,11 @@ private:
     EventCallback_t                onUpdatesEnabled;
     EventCallback_t                onUpdatesDisabled;
     EventCallback_t                onConfirmationReceived;
+
+private:
+    /* disallow copy and assginment */
+    GattServer(const GattServer &);
+    GattServer& operator=(const GattServer &);
 };
 
 #endif // ifndef __GATT_SERVER_H__
