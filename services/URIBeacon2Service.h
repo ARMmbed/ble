@@ -21,20 +21,19 @@
 
 class URIBeacon2Service {
 public:
-    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flags = 0, uint8_t power = 0) : ble(ble_), payloadIndex(0), serviceDataPayload() {
-        const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
+    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flags_ = 0, uint8_t power_ = 0) :
+        ble(ble_), payloadIndex(0), serviceDataPayload(),
+        uriDataLength(0),
+        uriDataValue(),
+        flags(flags_),
+        power(power_)
+    {
+        if ((urldata == NULL) || ((uriDataLength = strlen(urldata)) == 0)) {
+            return;
+        }
+        strncpy(reinterpret_cast<char *>(uriDataValue), urldata, MAX_SIZE_URI_DATA_CHAR_VALUE);
 
-        serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
-        serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
-        serviceDataPayload[payloadIndex++] = flags;
-        serviceDataPayload[payloadIndex++] = power;
-
-        size_t sizeofURLData = strlen(urldata);
-        size_t encodedBytes = encodeServiceData(urldata, sizeofURLData);
-
-        ble.setTxPower(power);
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
+        setup();
     }
 
     void dumpEncodedSeviceData() const {
@@ -46,12 +45,22 @@ public:
     }
 
 private:
-    size_t encodeServiceData(const char *urldata, size_t sizeofURLData) {
-        if (sizeofURLData == 0) {
-            return 0;
-        }
+    void setup(void) {
+        payloadIndex = 0;
 
-        return encodeURISchemePrefix(urldata, sizeofURLData) + encodeURI(urldata, sizeofURLData);
+        const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
+        serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
+        serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
+        serviceDataPayload[payloadIndex++] = flags;
+        serviceDataPayload[payloadIndex++] = power;
+
+        const char *urlData = reinterpret_cast<char *>(uriDataValue);
+        size_t sizeofURLData = uriDataLength;
+        size_t encodedBytes = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
+
+        ble.setTxPower(power);
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
     }
 
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
@@ -131,12 +140,17 @@ private:
 
 private:
     static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 27;
+    static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48;
 
 private:
     BLEDevice &ble;
 
-    size_t     payloadIndex;
-    uint8_t    serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
+    size_t   payloadIndex;
+    uint8_t  serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
+    uint16_t uriDataLength;
+    uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
+    uint8_t  flags;
+    uint8_t  power;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
