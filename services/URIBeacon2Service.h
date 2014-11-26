@@ -21,7 +21,6 @@
 
 class URIBeacon2Service {
 public:
-    // ee0c2080-8786-40ba-ab96-99b91ac981d8
     URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flags = 0, uint8_t power = 0) : ble(ble_), payloadIndex(0), serviceDataPayload() {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
