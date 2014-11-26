@@ -101,7 +101,7 @@ private:
         const size_t NUM_SUFFIXES = sizeof(suffixes) / sizeof(char *);
 
         size_t encodedBytes = 0;
-        while (sizeofURLData && (payloadIndex < MAX_SIZEOF_PAYLOAD)) {
+        while (sizeofURLData && (payloadIndex < MAX_SIZEOF_SERVICE_DATA_PAYLOAD)) {
             /* check for suffix match */
             unsigned i;
             for (i = 0; i < NUM_SUFFIXES; i++) {
@@ -131,13 +131,13 @@ private:
     }
 
 private:
-    static const size_t MAX_SIZEOF_PAYLOAD = 32; /* TODO */
+    static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 32; /* TODO */
 
 private:
     BLEDevice &ble;
 
     size_t     payloadIndex;
-    uint8_t    serviceDataPayload[MAX_SIZEOF_PAYLOAD];
+    uint8_t    serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
