@@ -21,24 +21,28 @@
 
 class URIBeacon2Service {
 public:
-
     // ee0c2080-8786-40ba-ab96-99b91ac981d8
-
-    URIBeacon2Service(BLEDevice &ble_, const char *urldata, size_t sizeofURLData) : ble(ble_), payloadIndex(0), payload() {
-        if ((sizeofURLData + 4) > 24) {
-            return;
-        }
-
+    URIBeacon2Service(BLEDevice &ble_, const char *urldata) : ble(ble_), payloadIndex(0), payload() {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
         payload[payloadIndex++] = BEACON_UUID[0];
         payload[payloadIndex++] = BEACON_UUID[1];
         payload[payloadIndex++] = 0x00; /* flags */
         payload[payloadIndex++] = 0x20; /* power */
+
+        size_t sizeofURLData = strlen(urldata);
         size_t encodedBytes = encodeURIData(urldata, sizeofURLData);
 
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, payload, encodedBytes + 4);
+    }
+
+    void dumpEncoded() {
+        printf("encoded: '");
+        for (unsigned i = 0; i < payloadIndex; i++) {
+            printf(" %02x", payload[i]);
+        }
+        printf("'\r\n");
     }
 
 private:
@@ -47,12 +51,7 @@ private:
             return 0;
         }
 
-        size_t encodedBytes = encodePrefix(urldata, sizeofURLData);
-
-        /* memcpy the rest for now. */
-        memcpy(&payload[payloadIndex], urldata, sizeofURLData);
-        encodedBytes += sizeofURLData;
-        return encodedBytes;
+        return encodePrefix(urldata, sizeofURLData) + copyURLCheckingForSuffixes(urldata, sizeofURLData);
     }
 
     size_t encodePrefix(const char *&urldata, size_t &sizeofURLData) {
@@ -75,6 +74,55 @@ private:
                 urldata      += prefixLen;
                 sizeofURLData -= prefixLen;
                 break;
+            }
+        }
+
+        return encodedBytes;
+    }
+
+    size_t copyURLCheckingForSuffixes(const char *urldata, size_t sizeofURLData) {
+        const char *suffixes[] = {
+            ".com/",
+            ".org/",
+            ".edu/",
+            ".net/",
+            ".info/",
+            ".biz/",
+            ".gov/",
+            ".com",
+            ".org",
+            ".edu",
+            ".net",
+            ".info",
+            ".biz",
+            ".gov"
+        };
+        const size_t NUM_SUFFIXES = sizeof(suffixes) / sizeof(char *);
+
+        size_t encodedBytes = 0;
+        while (sizeofURLData && (payloadIndex < MAX_SIZEOF_PAYLOAD)) {
+            /* check for suffix match */
+            unsigned i;
+            for (i = 0; i < NUM_SUFFIXES; i++) {
+                size_t suffixLen = strlen(suffixes[i]);
+                if ((suffixLen == 0) || (sizeofURLData < suffixLen)) {
+                    continue;
+                }
+
+                if (strncmp(urldata, suffixes[i], suffixLen) == 0) {
+                    payload[payloadIndex++] = i;
+                    ++encodedBytes;
+                    urldata       += suffixLen;
+                    sizeofURLData -= suffixLen;
+                    break; /* from the for loop for checking against suffixes */
+                }
+            }
+            /* This is the default case where we've got an ordinary character which doesn't match a suffix. */
+            if (i == NUM_SUFFIXES) {
+                payload[payloadIndex++] = *urldata;
+                ++encodedBytes;
+                ++urldata;
+                --sizeofURLData;
             }
         }
 
