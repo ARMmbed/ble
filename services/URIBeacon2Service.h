@@ -138,8 +138,6 @@ private:
 
     size_t     payloadIndex;
     uint8_t    serviceDataPayload[MAX_SIZEOF_PAYLOAD];
-    // uint8_t              batteryLevel;
-    // GattCharacteristic   batteryLevelCharacteristic;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
