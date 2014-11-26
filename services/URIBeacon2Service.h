@@ -47,6 +47,15 @@ private:
             return 0;
         }
 
+        size_t encodedBytes = encodePrefix(urldata, sizeofURLData);
+
+        /* memcpy the rest for now. */
+        memcpy(&payload[payloadIndex], urldata, sizeofURLData);
+        encodedBytes += sizeofURLData;
+        return encodedBytes;
+    }
+
+    size_t encodePrefix(const char *&urldata, size_t &sizeofURLData) {
         const char *prefixes[] = {
             "http://www.",
             "https://www.",
@@ -54,14 +63,14 @@ private:
             "https://",
             "urn:uuid:"
         };
-        size_t encodedBytes = 0;
 
+        size_t encodedBytes = 0;
         const size_t NUM_PREFIXES = sizeof(prefixes) / sizeof(char *);
         for (unsigned i = 0; i < NUM_PREFIXES; i++) {
             size_t prefixLen = strlen(prefixes[i]);
             if (strncmp(urldata, prefixes[i], prefixLen) == 0) {
                 payload[payloadIndex++] = i;
-                ++encodedBytes;
+                encodedBytes = 1;
 
                 urldata      += prefixLen;
                 sizeofURLData -= prefixLen;
@@ -69,13 +78,8 @@ private:
             }
         }
 
-        memcpy(&payload[payloadIndex], urldata, sizeofURLData);
-        encodedBytes += sizeofURLData;
-
         return encodedBytes;
     }
-
-    // size_t encodePrefix(const char *&urldata, )
 
     // URIBeacon2Service(BLEDevice &_ble, uint8_t level = 100) :
     //     ble(_ble),
