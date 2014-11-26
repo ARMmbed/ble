@@ -130,25 +130,6 @@ private:
         return encodedBytes;
     }
 
-    // URIBeacon2Service(BLEDevice &_ble, uint8_t level = 100) :
-    //     ble(_ble),
-    //     batteryLevel(level),
-    //     batteryLevelCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &batteryLevel, sizeof(batteryLevel), sizeof(batteryLevel),
-    //                                GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
-
-    //     static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
-    //     if (serviceAdded) {
-    //         return;
-    //     }
-
-    //     GattCharacteristic *charTable[] = {&batteryLevelCharacteristic};
-    //     GattService         batteryService(GattService::UUID_BATTERY_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
-
-    //     ble.addService(batteryService);
-    //     serviceAdded = true;
-    // }
-    //
-
 private:
     static const size_t MAX_SIZEOF_PAYLOAD = 32; /* TODO */
 
