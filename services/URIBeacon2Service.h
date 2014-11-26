@@ -19,14 +19,29 @@
 
 #include "BLEDevice.h"
 
+#define UUID_INITIALIZER_LIST(FIRST, SECOND) {         \
+    0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba, \
+    0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,    \
+}
+const uint8_t URIBeacon2ControlServiceUUID[] = UUID_INITIALIZER_LIST(0x20, 0x80);
+const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81);
+const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84);
+
 class URIBeacon2Service {
 public:
     URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flags_ = 0, uint8_t power_ = 0) :
         ble(ble_), payloadIndex(0), serviceDataPayload(),
+        lockedState(false),
         uriDataLength(0),
         uriDataValue(),
         flags(flags_),
-        power(power_)
+        power(power_),
+        lockedStateChar(lockedStateCharUUID, (uint8_t *)&lockedState, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
+        uriDataChar(uriDataCharUUID,
+                    uriDataValue,
+                    MAX_SIZE_URI_DATA_CHAR_VALUE,
+                    MAX_SIZE_URI_DATA_CHAR_VALUE,
+                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
     {
         if ((urldata == NULL) || ((uriDataLength = strlen(urldata)) == 0)) {
             return;
@@ -34,6 +49,17 @@ public:
         strncpy(reinterpret_cast<char *>(uriDataValue), urldata, MAX_SIZE_URI_DATA_CHAR_VALUE);
 
         setup();
+
+        static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
+        if (serviceAdded) {
+            return;
+        }
+
+        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar};
+        GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
+
+        ble.addService(beaconControlService);
+        serviceAdded = true;
     }
 
     void dumpEncodedSeviceData() const {
@@ -147,10 +173,14 @@ private:
 
     size_t   payloadIndex;
     uint8_t  serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
+    bool               lockedState;
     uint16_t uriDataLength;
     uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
     uint8_t  power;
+
+    GattCharacteristic lockedStateChar;
+    GattCharacteristic uriDataChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
