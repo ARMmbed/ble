@@ -24,34 +24,58 @@ public:
 
     // ee0c2080-8786-40ba-ab96-99b91ac981d8
 
-    URIBeacon2Service(BLEDevice &ble_, const uint8_t urldata_[], size_t sizeofURLData) : ble(ble_), payload() {
+    URIBeacon2Service(BLEDevice &ble_, const char *urldata, size_t sizeofURLData) : ble(ble_), payloadIndex(0), payload() {
         if ((sizeofURLData + 4) > 24) {
             return;
         }
 
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
-        payload[0] = BEACON_UUID[0];
-        payload[1] = BEACON_UUID[1];
-        payload[2] = 0x00; /* flags */
-        payload[3] = 0x20; /* power */
-        encodeURIData(urldata_, sizeofURLData);
+        payload[payloadIndex++] = BEACON_UUID[0];
+        payload[payloadIndex++] = BEACON_UUID[1];
+        payload[payloadIndex++] = 0x00; /* flags */
+        payload[payloadIndex++] = 0x20; /* power */
+        size_t encodedBytes = encodeURIData(urldata, sizeofURLData);
 
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, payload, sizeofURLData + 4);
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, payload, encodedBytes + 4);
     }
 
 private:
-    void encodeURIData(const uint8_t urldata_[], size_t sizeofURLData) {
-        memcpy(&payload[4], urldata_, sizeofURLData);
-// |Decimal  | Hex        | Expansion
-// |:------- | :--------- | :--------
-// |0        | 0x00       | http://www.
-// |1        | 0x01       | https://www.
-// |2        | 0x02       | http://
-// |3        | 0x03       | https://
-// |4        | 0x04       | urn:uuid:
+    size_t encodeURIData(const char *urldata, size_t sizeofURLData) {
+        if (sizeofURLData == 0) {
+            return 0;
+        }
+
+        const char *prefixes[] = {
+            "http://www.",
+            "https://www.",
+            "http://",
+            "https://",
+            "urn:uuid:"
+        };
+        size_t encodedBytes = 0;
+
+        const size_t NUM_PREFIXES = sizeof(prefixes) / sizeof(char *);
+        for (unsigned i = 0; i < NUM_PREFIXES; i++) {
+            size_t prefixLen = strlen(prefixes[i]);
+            if (strncmp(urldata, prefixes[i], prefixLen) == 0) {
+                payload[payloadIndex++] = i;
+                ++encodedBytes;
+
+                urldata      += prefixLen;
+                sizeofURLData -= prefixLen;
+                break;
+            }
+        }
+
+        memcpy(&payload[payloadIndex], urldata, sizeofURLData);
+        encodedBytes += sizeofURLData;
+
+        return encodedBytes;
     }
+
+    // size_t encodePrefix(const char *&urldata, )
 
     // URIBeacon2Service(BLEDevice &_ble, uint8_t level = 100) :
     //     ble(_ble),
@@ -77,6 +101,8 @@ private:
 
 private:
     BLEDevice &ble;
+
+    size_t     payloadIndex;
     uint8_t    payload[MAX_SIZEOF_PAYLOAD];
     // uint8_t              batteryLevel;
     // GattCharacteristic   batteryLevelCharacteristic;
