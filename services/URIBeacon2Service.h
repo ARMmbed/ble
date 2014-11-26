@@ -33,6 +33,7 @@ public:
         size_t sizeofURLData = strlen(urldata);
         size_t encodedBytes = encodeServiceData(urldata, sizeofURLData);
 
+        ble.setTxPower(power);
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
     }
