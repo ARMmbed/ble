@@ -130,7 +130,7 @@ private:
     }
 
 private:
-    static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 32; /* TODO */
+    static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 27;
 
 private:
     BLEDevice &ble;
