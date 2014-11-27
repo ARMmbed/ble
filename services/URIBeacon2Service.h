@@ -84,7 +84,7 @@ public:
     }
 
     /**
-     * for debugging only
+     * For debugging only.
      */
     void dumpEncodedSeviceData() const {
         printf("encoded: '");
@@ -199,7 +199,7 @@ private:
 
     size_t   payloadIndex;
     uint8_t  serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
-    bool               lockedState;
+    bool     lockedState;
     uint16_t uriDataLength;
     uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
