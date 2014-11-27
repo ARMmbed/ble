@@ -26,6 +26,8 @@
 const uint8_t URIBeacon2ControlServiceUUID[] = UUID_INITIALIZER_LIST(0x20, 0x80);
 const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81);
 const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84);
+const uint8_t flagsCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x85);
+const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
 
 class URIBeacon2Service {
 public:
@@ -36,12 +38,14 @@ public:
         uriDataValue(),
         flags(flags_),
         power(power_),
+        beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(1000)), /* 1hz */
         lockedStateChar(lockedStateCharUUID, (uint8_t *)&lockedState, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
                     uriDataValue,
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
+                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
+        flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
         if ((urldata == NULL) || ((uriDataLength = strlen(urldata)) == 0)) {
             return;
@@ -78,9 +82,16 @@ public:
 
             uriDataLength = params->len;
             memcpy(uriDataValue, params->data, uriDataLength);
-            setup();
-            ble.setAdvertisingPayload();
+        } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
+            if (lockedState) {
+                ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
+                return;
+            } else {
+                flags = *(params->data);
+            }
         }
+        setup();
+        ble.setAdvertisingPayload();
     }
 
     /**
@@ -112,6 +123,7 @@ private:
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
 
+        ble.setAdvertisingInterval(beaconPeriod);
         ble.setTxPower(power);
     }
 
@@ -204,9 +216,11 @@ private:
     uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
     uint8_t  power;
+    uint16_t beaconPeriod;
 
     GattCharacteristic lockedStateChar;
     GattCharacteristic uriDataChar;
+    GattCharacteristic flagsChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
