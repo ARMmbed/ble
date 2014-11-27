@@ -27,6 +27,7 @@ const uint8_t URIBeacon2ControlServiceUUID[] = UUID_INITIALIZER_LIST(0x20, 0x80)
 const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81);
 const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84);
 const uint8_t flagsCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x85);
+const uint8_t txPowerCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x86);
 const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
 
 class URIBeacon2Service {
@@ -46,6 +47,7 @@ public:
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
         flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        // txPowerChar(txPowerCharUUID, &power, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
         if ((urldata == NULL) || ((uriDataLength = strlen(urldata)) == 0)) {
             return;
@@ -221,6 +223,7 @@ private:
     GattCharacteristic lockedStateChar;
     GattCharacteristic uriDataChar;
     GattCharacteristic flagsChar;
+    // GattCharacteristic txPowerChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
