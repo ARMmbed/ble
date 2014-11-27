@@ -77,7 +77,8 @@ public:
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* when locked, the device isn't allowed to update the uriData characteristic */
+            if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
+                /* Restore GATT database with previous value. */
                 ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriDataValue, uriDataLength);
                 return;
             }
@@ -90,7 +91,8 @@ public:
             uriDataLength = params->len;
             memcpy(uriDataValue, params->data, uriDataLength);
         } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* when locked, the device isn't allowed to update the flags characteristic */
+            if (lockedState) { /* When locked, the device isn't allowed to update the flags characteristic. */
+                /* Restore GATT database with previous value. */
                 ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
                 return;
             } else {
