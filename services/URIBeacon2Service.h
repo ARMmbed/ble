@@ -61,7 +61,7 @@ public:
             return;
         }
 
-        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar};
+        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
@@ -82,7 +82,7 @@ public:
                 return;
             }
 
-            /* we don't handle very large writes at the moment. */
+            /* We don't handle very large writes at the moment. */
             if ((params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
                 return;
             }
@@ -90,7 +90,7 @@ public:
             uriDataLength = params->len;
             memcpy(uriDataValue, params->data, uriDataLength);
         } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
-            if (lockedState) {
+            if (lockedState) { /* when locked, the device isn't allowed to update the flags characteristic */
                 ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
                 return;
             } else {
