@@ -77,6 +77,11 @@ public:
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* when locked, the device isn't allowed to update the uriData characteristic */
+                ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriDataValue, uriDataLength);
+                return;
+            }
+
             /* we don't handle very large writes at the moment. */
             if ((params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
                 return;
