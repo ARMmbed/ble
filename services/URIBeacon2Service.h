@@ -60,8 +60,32 @@ public:
 
         ble.addService(beaconControlService);
         serviceAdded = true;
+
+        ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
+    /**
+     * This callback allows the DFU service to receive the initial trigger to
+     * handover control to the bootloader; but first the application is given a
+     * chance to clean up.
+     */
+    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
+        if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
+            /* we don't handle very large writes at the moment. */
+            if ((params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
+                return;
+            }
+
+            uriDataLength = params->len;
+            memcpy(uriDataValue, params->data, uriDataLength);
+            setup();
+            ble.setAdvertisingPayload();
+        }
+    }
+
+    /**
+     * for debugging only
+     */
     void dumpEncodedSeviceData() const {
         printf("encoded: '");
         for (unsigned i = 0; i < payloadIndex; i++) {
@@ -72,9 +96,9 @@ public:
 
 private:
     void setup(void) {
-        payloadIndex = 0;
-
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
+
+        payloadIndex = 0;
         serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
         serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
         serviceDataPayload[payloadIndex++] = flags;
@@ -84,9 +108,11 @@ private:
         size_t sizeofURLData = uriDataLength;
         size_t encodedBytes = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
 
-        ble.setTxPower(power);
+        ble.clearAdvertisingPayload();
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
+
+        ble.setTxPower(power);
     }
 
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
