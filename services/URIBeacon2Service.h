@@ -46,8 +46,10 @@ public:
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
-        flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         // txPowerChar(txPowerCharUUID, &power, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        beaconPeriodChar(beaconPeriodCharUUID, (uint8_t *)&beaconPeriod, 2, 2,
+                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
         if ((urldata == NULL) || ((uriDataLength = strlen(urldata)) == 0)) {
             return;
@@ -61,7 +63,7 @@ public:
             return;
         }
 
-        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar};
+        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &beaconPeriodChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
@@ -97,6 +99,14 @@ public:
                 return;
             } else {
                 flags = *(params->data);
+            }
+        } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the flags characteristic. */
+                /* Restore GATT database with previous value. */
+                ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), (uint8_t *)&beaconPeriod, 2 /* size */);
+                return;
+            } else {
+                beaconPeriod = *((uint16_t *)(params->data));
             }
         }
         setup();
@@ -231,6 +241,7 @@ private:
     GattCharacteristic uriDataChar;
     GattCharacteristic flagsChar;
     // GattCharacteristic txPowerChar;
+    GattCharacteristic beaconPeriodChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
