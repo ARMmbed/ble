@@ -31,6 +31,13 @@ const uint8_t txPowerCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x86)
 const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
 
 class URIBeacon2Service {
+    enum TXPowerModes_t {
+        TX_POWER_MODE_LOWEST = 0,
+        TX_POWER_MODE_LOW    = 1,
+        TX_POWER_MODE_MEDIUM = 2,
+        TX_POWER_MODE_HIGH   = 3,
+    };
+
 public:
     /**
      * @param[ref] ble
