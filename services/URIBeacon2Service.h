@@ -64,7 +64,11 @@ public:
         }
 
         static URIBeacon2Service service(ble_, urldata, flagsIn, effectiveTxPowerIn, beaconPeriodIn);
-        return &service;
+        if (!service.failedToAccomodate) {
+            return &service;
+        }
+
+        return NULL; /* Oops. Failed to accommodate uridata within the advertising payload. */
     }
 
     /**
@@ -113,6 +117,7 @@ private:
         ble(ble_),
         payloadIndex(0),
         serviceDataPayload(),
+        failedToAccomodate(false),
         lockedState(false),
         uriDataLength(strlen(urldata)),
         uriDataValue(),
@@ -300,6 +305,9 @@ private:
                 --sizeofURLData;
             }
         }
+        if ((payloadIndex == MAX_SIZEOF_SERVICE_DATA_PAYLOAD) && (sizeofURLData != 0)) {
+            failedToAccomodate = true;
+        }
 
         return encodedBytes;
     }
@@ -313,6 +321,8 @@ private:
 
     size_t   payloadIndex;
     uint8_t  serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
+    bool     failedToAccomodate;
+
     bool     lockedState;
     uint16_t uriDataLength;
     uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
