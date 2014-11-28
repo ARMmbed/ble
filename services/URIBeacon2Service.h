@@ -58,7 +58,7 @@ public:
      * @return
      *     Pointer to the singleton uribeacon service if the initialization goes well; else NULL.
      */
-    static URIBeacon2Service *setupService(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) {
+    static URIBeacon2Service *setup(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) {
         if ((urldata == NULL) || (strlen(urldata) == 0)) {
             return NULL;
         }
@@ -89,7 +89,7 @@ public:
      */
     void setFlags(uint8_t flagsIn) {
         flags = flagsIn;
-        setup();
+        configure();
     }
 
     /**
@@ -110,7 +110,7 @@ public:
      */
     void setPowerMode(TXPowerModes_t mode) {
         effectivePower = powerLevels[mode];
-        setup();
+        configure();
     }
 
     /**
@@ -120,7 +120,7 @@ public:
      */
     void setBeaconPeriod(uint16_t beaconPeriodIn) {
         beaconPeriod = beaconPeriodIn;
-        setup();
+        configure();
     }
 
 private:
@@ -156,7 +156,7 @@ private:
     {
         strncpy(reinterpret_cast<char *>(uriDataValue), urldata, MAX_SIZE_URI_DATA_CHAR_VALUE);
 
-        setup();
+        configure();
 
         GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
@@ -211,7 +211,7 @@ protected:
                 beaconPeriod = *((uint16_t *)(params->data));
             }
         }
-        setup();
+        configure();
         ble.setAdvertisingPayload();
     }
 
@@ -227,7 +227,7 @@ protected:
     }
 
 private:
-    void setup(void) {
+    void configure(void) {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
         payloadIndex = 0;
