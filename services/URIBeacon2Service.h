@@ -109,7 +109,7 @@ public:
     /**
      * Set the effective power mode from one of the values in the powerLevels tables.
      */
-    void setPowerMode(TXPowerModes_t mode) {
+    void useTxPowerMode(TXPowerModes_t mode) {
         effectivePower = powerLevels[mode];
         configure();
     }
