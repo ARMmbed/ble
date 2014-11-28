@@ -32,6 +32,20 @@ const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88)
 
 class URIBeacon2Service {
 public:
+    /**
+     * @param[ref] ble
+     *                 BLEDevice object for the underlying controller.
+     * @param[in]  urldata
+     *                 URI as a null-terminated string.
+     * @param[in]  flagsIn
+     *                 UriBeacon Flags.
+     * @param[in]  txPowerIn
+     *                 UriBeacon Tx Power Level.
+     * @param[in]  beaconPeriodIn
+     *                 The period in milliseconds that a UriBeacon packet is
+     *                 transmitted. A value of zero disables UriBeacon
+     *                 transmissions.
+     */
     URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, uint8_t txPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
         ble(ble_), payloadIndex(0), serviceDataPayload(),
         lockedState(false),
