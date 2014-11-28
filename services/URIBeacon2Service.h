@@ -72,6 +72,7 @@ public:
         ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
+protected:
     /**
      * This callback allows the DFU service to receive the initial trigger to
      * handover control to the bootloader; but first the application is given a
