@@ -110,6 +110,12 @@ public:
     }
 
     /**
+     * Please note that the following public APIs are offered to allow modifying
+     * the service programmatically. It is also possible to do so over BLE GATT
+     * transactions.
+     */
+public:
+    /**
      * Update flags of the URIBeacon dynamically.
      *
      * @param[in] flagsIn
@@ -130,12 +136,6 @@ public:
         configure();
     }
 
-    /**
-     * Please note that the following public APIs are offered to allow modifying
-     * the service programmatically. It is also possible to do so over BLE GATT
-     * transactions.
-     */
-public:
     /**
      * Update the txPower for a particular mode in the powerLevels table.
      */
@@ -161,6 +161,7 @@ public:
         configure();
     }
 
+private:
     /**
      * Setup the advertisement payload and GAP settings.
      */
