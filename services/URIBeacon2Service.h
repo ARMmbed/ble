@@ -27,7 +27,7 @@ const uint8_t URIBeacon2ControlServiceUUID[] = UUID_INITIALIZER_LIST(0x20, 0x80)
 const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81);
 const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84);
 const uint8_t flagsCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x85);
-const uint8_t txPowerCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x86);
+const uint8_t txPowerLevelsCharUUID[]        = UUID_INITIALIZER_LIST(0x20, 0x86);
 const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
 
 class URIBeacon2Service {
@@ -72,7 +72,11 @@ public:
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
         flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        // txPowerChar(txPowerCharUUID, &effectivePower, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        txPowerLevelsChar(txPowerLevelsCharUUID,
+                          reinterpret_cast<uint8_t *>(powerLevels),
+                          NUM_POWER_MODES * sizeof(int8_t),
+                          NUM_POWER_MODES * sizeof(int8_t),
+                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         beaconPeriodChar(beaconPeriodCharUUID, (uint8_t *)&beaconPeriod, 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
@@ -88,7 +92,7 @@ public:
             return;
         }
 
-        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &beaconPeriodChar};
+        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
@@ -160,15 +164,23 @@ protected:
             uriDataLength = params->len;
             memcpy(uriDataValue, params->data, uriDataLength);
         } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the flags characteristic. */
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
                 ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
                 return;
             } else {
                 flags = *(params->data);
             }
+        } else if (params->charHandle == txPowerLevelsChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
+                /* Restore GATT database with previous value. */
+                ble.updateCharacteristicValue(txPowerLevelsChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
+                return;
+            } else {
+                memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
+            }
         } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the flags characteristic. */
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
                 ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), (uint8_t *)&beaconPeriod, 2 /* size */);
                 return;
@@ -308,7 +320,7 @@ private:
     GattCharacteristic lockedStateChar;
     GattCharacteristic uriDataChar;
     GattCharacteristic flagsChar;
-    // GattCharacteristic txPowerChar;
+    GattCharacteristic txPowerLevelsChar;
     GattCharacteristic beaconPeriodChar;
 };
 
