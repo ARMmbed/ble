@@ -105,7 +105,7 @@ public:
         ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
-    bool initialized(void) const {
+    bool configuredSuccessfully(void) const {
         return initSucceeded;
     }
 
