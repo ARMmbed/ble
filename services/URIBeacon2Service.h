@@ -47,14 +47,16 @@ public:
      * @param[in]  flagsIn
      *                 UriBeacon Flags.
      * @param[in]  effectiveTxPowerIn
-     *                 UriBeacon Tx Power Level.
+     *                 UriBeacon Tx Power Level in dBm.
      * @param[in]  beaconPeriodIn
      *                 The period in milliseconds that a UriBeacon packet is
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
      */
     URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
-        ble(ble_), payloadIndex(0), serviceDataPayload(),
+        ble(ble_),
+        payloadIndex(0),
+        serviceDataPayload(),
         lockedState(false),
         uriDataLength(0),
         uriDataValue(),
