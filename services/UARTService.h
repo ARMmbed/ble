@@ -33,15 +33,14 @@ extern const uint8_t UARTServiceUUID_reversed[LENGTH_OF_LONG_UUID];
 extern const uint8_t UARTServiceTXCharacteristicUUID[LENGTH_OF_LONG_UUID];
 extern const uint8_t UARTServiceRXCharacteristicUUID[LENGTH_OF_LONG_UUID];
 
-class UARTService : public Stream {
+class UARTService {
 public:
     /**< Maximum length of data (in bytes) that can be transmitted by the UART service module to the peer. */
-    static const unsigned GATT_MTU_SIZE_DEFAULT = 23;
+    static const unsigned GATT_MTU_SIZE_DEFAULT         = 23;
     static const unsigned BLE_UART_SERVICE_MAX_DATA_LEN = (GATT_MTU_SIZE_DEFAULT - 3);
 
 public:
     UARTService(BLEDevice &_ble) :
-        Stream("bleuart"),
         ble(_ble),
         receiveBuffer(),
         sendBuffer(),
@@ -73,41 +72,6 @@ public:
     }
 
     /**
-     * Following a call to this function, all writes to stdout (such as from
-     * printf) get redirected to the outbound characteristic of this service.
-     * This might be very useful when wanting to receive debug messages over BLE.
-     *
-     * @Note: debug messages originating from printf() like calls are buffered
-     * before being sent out. A '\n' in the printf() triggers the buffer update
-     * to the underlying characteristic.
-     *
-     * @Note: long messages need to be chopped up into 20-byte updates so that
-     * they flow out completely with notifications. The receiver should be
-     * prepared to stitch these messages back.
-     */
-    void retargetStdout() {
-        freopen("/bleuart", "w", stdout);
-    }
-
-    /**
-     * This callback allows the UART service to receive updates to the
-     * txCharacteristic. The application should forward the call to this
-     * function from the global onDataWritten() callback handler; or if that's
-     * not used, this method can be used as a callback directly.
-     */
-    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        if (params->charHandle == getTXCharacteristicHandle()) {
-            uint16_t bytesRead = params->len;
-            if (bytesRead <= BLE_UART_SERVICE_MAX_DATA_LEN) {
-                numBytesReceived   = bytesRead;
-                receiveBufferIndex = 0;
-                memcpy(receiveBuffer, params->data, numBytesReceived);
-            }
-        }
-    }
-
-protected:
-    /**
      * Override for Stream::write().
      *
      * We attempt to collect bytes before pushing them to the UART RX
@@ -126,7 +90,7 @@ protected:
      * @param  length Amount of characters to be appended.
      * @return        Amount of characters appended to the rxCharacteristic.
      */
-    virtual ssize_t write(const void* _buffer, size_t length) {
+    ssize_t write(const void* _buffer, size_t length) {
         size_t origLength     = length;
         const uint8_t *buffer = static_cast<const uint8_t *>(_buffer);
 
@@ -162,11 +126,11 @@ protected:
      * @return
      *     The character written as an unsigned char cast to an int or EOF on error.
      */
-    virtual int _putc(int c) {
+    int _putc(int c) {
         return (write(&c, 1) == 1) ? 1 : EOF;
     }
 
-    virtual int _getc() {
+    int _getc() {
         if (receiveBufferIndex == numBytesReceived) {
             return EOF;
         }
@@ -174,8 +138,22 @@ protected:
         return receiveBuffer[receiveBufferIndex++];
     }
 
-    virtual int isatty() {
-        return 1;
+private:
+    /**
+     * This callback allows the UART service to receive updates to the
+     * txCharacteristic. The application should forward the call to this
+     * function from the global onDataWritten() callback handler; or if that's
+     * not used, this method can be used as a callback directly.
+     */
+    void onDataWritten(const GattCharacteristicWriteCBParams *params) {
+        if (params->charHandle == getTXCharacteristicHandle()) {
+            uint16_t bytesRead = params->len;
+            if (bytesRead <= BLE_UART_SERVICE_MAX_DATA_LEN) {
+                numBytesReceived   = bytesRead;
+                receiveBufferIndex = 0;
+                memcpy(receiveBuffer, params->data, numBytesReceived);
+            }
+        }
     }
 
 private:
