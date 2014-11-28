@@ -84,10 +84,10 @@ public:
         resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1,
                   GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
     {
-        if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0)) {
+        if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0) || (uriDataLength > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
             return;
         }
-        strncpy(reinterpret_cast<char *>(uriData), uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        strcpy(reinterpret_cast<char *>(uriData), uriDataIn);
 
         configure();
         if (initSucceeded) {
