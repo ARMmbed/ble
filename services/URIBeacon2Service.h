@@ -316,7 +316,7 @@ private:
         } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), (uint8_t *)&beaconPeriod, 2 /* size */);
+                ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
                 return;
             } else {
                 beaconPeriod = *((uint16_t *)(params->data));
