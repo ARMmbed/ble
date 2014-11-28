@@ -42,8 +42,6 @@ public:
     };
 
     /**
-     * Singleton factory.
-     *
      * @param[ref] ble
      *                 BLEDevice object for the underlying controller.
      * @param[in]  urldata
@@ -56,20 +54,59 @@ public:
      *                 The period in milliseconds that a UriBeacon packet is
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
-     * @return
-     *     Pointer to the singleton uribeacon service if the initialization goes well; else NULL.
      */
-    static URIBeacon2Service *setup(BLEDevice &bleIn, const char *uriDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) {
-        if ((uriDataIn == NULL) || (strlen(uriDataIn) == 0)) {
-            return NULL;
+    URIBeacon2Service(BLEDevice &bleIn, const char *uriDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
+        ble(bleIn),
+        payloadIndex(0),
+        serviceDataPayload(),
+        initSucceeded(false),
+        lockedState(false),
+        uriDataLength(0),
+        uriData(),
+        flags(flagsIn),
+        effectivePower(effectiveTxPowerIn),
+        powerLevels(),
+        beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
+        lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
+        uriDataChar(uriDataCharUUID,
+                    uriData,
+                    MAX_SIZE_URI_DATA_CHAR_VALUE,
+                    MAX_SIZE_URI_DATA_CHAR_VALUE,
+                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
+        flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        txPowerLevelsChar(txPowerLevelsCharUUID,
+                          reinterpret_cast<uint8_t *>(powerLevels),
+                          NUM_POWER_MODES * sizeof(int8_t),
+                          NUM_POWER_MODES * sizeof(int8_t),
+                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
+                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1,
+                  GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
+    {
+        if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0)) {
+            return;
+        }
+        strncpy(reinterpret_cast<char *>(uriData), uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
+
+        configure();
+        if (initSucceeded) {
+            /* Preserve the originals to be able to reset() upon request. */
+            memcpy(originalURIData, uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
+            originalFlags            = flagsIn;
+            originalEffectiveTxPower = effectiveTxPowerIn;
+            originalBeaconPeriod     = beaconPeriodIn;
         }
 
-        static URIBeacon2Service service(bleIn, uriDataIn, flagsIn, effectiveTxPowerIn, beaconPeriodIn);
-        if (!service.failedToAccomodate) {
-            return &service;
-        }
+        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
+        GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
-        return NULL; /* Oops. Failed to accommodate uridata within the advertising payload. */
+        ble.addService(beaconControlService);
+        ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
+    }
+
+    bool initialized(void) const {
+        return initSucceeded;
     }
 
     /**
@@ -122,57 +159,6 @@ public:
     void setBeaconPeriod(uint16_t beaconPeriodIn) {
         beaconPeriod = beaconPeriodIn;
         configure();
-    }
-
-private:
-    /**
-     * Private constructor. We want a singleton.
-     */
-    URIBeacon2Service(BLEDevice &bleIn, const char *uriDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
-        ble(bleIn),
-        payloadIndex(0),
-        serviceDataPayload(),
-        failedToAccomodate(false),
-        lockedState(false),
-        uriDataLength(strlen(uriDataIn)),
-        uriData(),
-        flags(flagsIn),
-        effectivePower(effectiveTxPowerIn),
-        powerLevels(),
-        beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
-        lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        uriDataChar(uriDataCharUUID,
-                    uriData,
-                    MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
-        flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        txPowerLevelsChar(txPowerLevelsCharUUID,
-                          reinterpret_cast<uint8_t *>(powerLevels),
-                          NUM_POWER_MODES * sizeof(int8_t),
-                          NUM_POWER_MODES * sizeof(int8_t),
-                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
-                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1,
-                  GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
-    {
-        strncpy(reinterpret_cast<char *>(uriData), uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
-
-        configure();
-        if (!failedToAccomodate) {
-            /* Preserve the originals to be able to reset() upon request. */
-            memcpy(originalURIData, uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
-            originalFlags            = flagsIn;
-            originalEffectiveTxPower = effectiveTxPowerIn;
-            originalBeaconPeriod     = beaconPeriodIn;
-        }
-
-        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
-        GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
-
-        ble.addService(beaconControlService);
-        ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
     /**
@@ -270,8 +256,8 @@ private:
                 --sizeofURLData;
             }
         }
-        if ((payloadIndex == MAX_SIZEOF_SERVICE_DATA_PAYLOAD) && (sizeofURLData != 0)) {
-            failedToAccomodate = true;
+        if (sizeofURLData == 0) {
+            initSucceeded = true;
         }
 
         return encodedBytes;
@@ -363,7 +349,7 @@ private:
 
     size_t   payloadIndex;
     uint8_t  serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
-    bool     failedToAccomodate;
+    bool     initSucceeded;
 
     bool     lockedState;
     uint16_t uriDataLength;
