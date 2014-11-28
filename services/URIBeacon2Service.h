@@ -93,6 +93,12 @@ public:
     }
 
     /**
+     * Please note that the following public APIs are offered to allow modifying
+     * the service programmatically. It is also possible to do so over BLE GATT
+     * transactions.
+     */
+public:
+    /**
      * Update the txPower for a particular mode in the powerLevels table.
      */
     void setTxPowerLevel(TXPowerModes_t mode, int8_t txPowerIn) {
@@ -107,12 +113,20 @@ public:
         setup();
     }
 
+    /**
+     * The period in milliseconds that a UriBeacon packet is transmitted.
+     *
+     * @Note: A value of zero disables UriBeacon transmissions.
+     */
     void setBeaconPeriod(uint16_t beaconPeriodIn) {
         beaconPeriod = beaconPeriodIn;
         setup();
     }
 
 private:
+    /**
+     * Private constructor. We want a singleton.
+     */
     URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
         ble(ble_),
         payloadIndex(0),
@@ -222,9 +236,9 @@ private:
         serviceDataPayload[payloadIndex++] = flags;
         serviceDataPayload[payloadIndex++] = effectivePower;
 
-        const char *urlData = reinterpret_cast<char *>(uriDataValue);
+        const char *urlData  = reinterpret_cast<char *>(uriDataValue);
         size_t sizeofURLData = uriDataLength;
-        size_t encodedBytes = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
+        size_t encodedBytes  = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
 
         ble.clearAdvertisingPayload();
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
