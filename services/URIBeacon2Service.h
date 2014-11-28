@@ -165,6 +165,9 @@ private:
         ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
+    /**
+     * Setup the advertisement payload and GAP settings.
+     */
     void configure(void) {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
