@@ -65,7 +65,7 @@ public:
         effectivePower(effectiveTxPowerIn),
         powerLevels(),
         beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
-        lockedStateChar(lockedStateCharUUID, (uint8_t *)&lockedState, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
+        lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
                     uriDataValue,
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
@@ -77,7 +77,7 @@ public:
                           NUM_POWER_MODES * sizeof(int8_t),
                           NUM_POWER_MODES * sizeof(int8_t),
                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        beaconPeriodChar(beaconPeriodCharUUID, (uint8_t *)&beaconPeriod, 2, 2,
+        beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
         if ((urldata == NULL) || ((uriDataLength = strlen(urldata)) == 0)) {
