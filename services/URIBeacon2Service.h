@@ -39,20 +39,20 @@ public:
      *                 URI as a null-terminated string.
      * @param[in]  flagsIn
      *                 UriBeacon Flags.
-     * @param[in]  txPowerIn
+     * @param[in]  effectiveTxPowerIn
      *                 UriBeacon Tx Power Level.
      * @param[in]  beaconPeriodIn
      *                 The period in milliseconds that a UriBeacon packet is
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
      */
-    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, uint8_t txPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
+    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
         ble(ble_), payloadIndex(0), serviceDataPayload(),
         lockedState(false),
         uriDataLength(0),
         uriDataValue(),
         flags(flagsIn),
-        power(txPowerIn),
+        effectivePower(effectiveTxPowerIn),
         beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
         lockedStateChar(lockedStateCharUUID, (uint8_t *)&lockedState, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
@@ -61,7 +61,7 @@ public:
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
         flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        // txPowerChar(txPowerCharUUID, &power, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        // txPowerChar(txPowerCharUUID, &effectivePower, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
         beaconPeriodChar(beaconPeriodCharUUID, (uint8_t *)&beaconPeriod, 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
@@ -107,8 +107,8 @@ public:
         setup();
     }
 
-    void setTxPower(uint8_t txPowerIn) {
-        power = txPowerIn;
+    void setTxPower(int8_t txPowerIn) {
+        effectivePower = txPowerIn;
         setup();
     }
 
@@ -178,7 +178,7 @@ private:
         serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
         serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
         serviceDataPayload[payloadIndex++] = flags;
-        serviceDataPayload[payloadIndex++] = power;
+        serviceDataPayload[payloadIndex++] = effectivePower;
 
         const char *urlData = reinterpret_cast<char *>(uriDataValue);
         size_t sizeofURLData = uriDataLength;
@@ -189,7 +189,7 @@ private:
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
 
         ble.setAdvertisingInterval(beaconPeriod);
-        ble.setTxPower(power);
+        ble.setTxPower(effectivePower);
     }
 
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
@@ -280,7 +280,7 @@ private:
     uint16_t uriDataLength;
     uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
-    uint8_t  power;
+    int8_t   effectivePower;
     uint16_t beaconPeriod;
 
     GattCharacteristic lockedStateChar;
