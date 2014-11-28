@@ -36,6 +36,7 @@ class URIBeacon2Service {
         TX_POWER_MODE_LOW    = 1,
         TX_POWER_MODE_MEDIUM = 2,
         TX_POWER_MODE_HIGH   = 3,
+        NUM_POWER_MODES
     };
 
 public:
@@ -62,6 +63,7 @@ public:
         uriDataValue(),
         flags(flagsIn),
         effectivePower(effectiveTxPowerIn),
+        powerLevels(),
         beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
         lockedStateChar(lockedStateCharUUID, (uint8_t *)&lockedState, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
@@ -116,8 +118,18 @@ public:
         setup();
     }
 
-    void setTxPower(int8_t txPowerIn) {
-        effectivePower = txPowerIn;
+    /**
+     * Update the txPower for a particular mode in the powerLevels table.
+     */
+    void setTxPowerLevel(TXPowerModes_t mode, int8_t txPowerIn) {
+        powerLevels[mode] = txPowerIn;
+    }
+
+    /**
+     * Set the effective power mode from one of the values in the powerLevels tables.
+     */
+    void setPowerMode(TXPowerModes_t mode) {
+        effectivePower = powerLevels[mode];
         setup();
     }
 
@@ -290,6 +302,7 @@ private:
     uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
     int8_t   effectivePower;
+    int8_t   powerLevels[NUM_POWER_MODES];
     uint16_t beaconPeriod;
 
     GattCharacteristic lockedStateChar;
