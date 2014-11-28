@@ -58,12 +58,12 @@ public:
      * @return
      *     Pointer to the singleton uribeacon service if the initialization goes well; else NULL.
      */
-    static URIBeacon2Service *setup(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) {
-        if ((urldata == NULL) || (strlen(urldata) == 0)) {
+    static URIBeacon2Service *setup(BLEDevice &bleIn, const char *urlDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) {
+        if ((urlDataIn == NULL) || (strlen(urlDataIn) == 0)) {
             return NULL;
         }
 
-        static URIBeacon2Service service(ble_, urldata, flagsIn, effectiveTxPowerIn, beaconPeriodIn);
+        static URIBeacon2Service service(bleIn, urlDataIn, flagsIn, effectiveTxPowerIn, beaconPeriodIn);
         if (!service.failedToAccomodate) {
             return &service;
         }
@@ -127,21 +127,21 @@ private:
     /**
      * Private constructor. We want a singleton.
      */
-    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
-        ble(ble_),
+    URIBeacon2Service(BLEDevice &bleIn, const char *urldataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
+        ble(bleIn),
         payloadIndex(0),
         serviceDataPayload(),
         failedToAccomodate(false),
         lockedState(false),
-        uriDataLength(strlen(urldata)),
-        uriDataValue(),
+        uriDataLength(strlen(urldataIn)),
+        uriData(),
         flags(flagsIn),
         effectivePower(effectiveTxPowerIn),
         powerLevels(),
         beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
-                    uriDataValue,
+                    uriData,
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     MAX_SIZE_URI_DATA_CHAR_VALUE,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
@@ -154,7 +154,7 @@ private:
         beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
-        strncpy(reinterpret_cast<char *>(uriDataValue), urldata, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        strncpy(reinterpret_cast<char *>(uriData), urldataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
 
         configure();
 
@@ -177,7 +177,7 @@ private:
         serviceDataPayload[payloadIndex++] = flags;
         serviceDataPayload[payloadIndex++] = effectivePower;
 
-        const char *urlData  = reinterpret_cast<char *>(uriDataValue);
+        const char *urlData  = reinterpret_cast<char *>(uriData);
         size_t sizeofURLData = uriDataLength;
         size_t encodedBytes  = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
 
@@ -276,7 +276,7 @@ private:
         if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
                 /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriDataValue, uriDataLength);
+                ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriData, uriDataLength);
                 return;
             }
 
@@ -286,7 +286,7 @@ private:
             }
 
             uriDataLength = params->len;
-            memcpy(uriDataValue, params->data, uriDataLength);
+            memcpy(uriData, params->data, uriDataLength);
         } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
@@ -341,7 +341,7 @@ private:
 
     bool     lockedState;
     uint16_t uriDataLength;
-    uint8_t  uriDataValue[MAX_SIZE_URI_DATA_CHAR_VALUE];
+    uint8_t  uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
     int8_t   effectivePower;
     int8_t   powerLevels[NUM_POWER_MODES];
