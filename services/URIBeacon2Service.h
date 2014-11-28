@@ -40,6 +40,24 @@ public:
         NUM_POWER_MODES
     };
 
+    /**
+     * Singleton factory.
+     *
+     * @param[ref] ble
+     *                 BLEDevice object for the underlying controller.
+     * @param[in]  urldata
+     *                 URI as a null-terminated string.
+     * @param[in]  flagsIn
+     *                 UriBeacon Flags.
+     * @param[in]  effectiveTxPowerIn
+     *                 UriBeacon Tx Power Level in dBm.
+     * @param[in]  beaconPeriodIn
+     *                 The period in milliseconds that a UriBeacon packet is
+     *                 transmitted. A value of zero disables UriBeacon
+     *                 transmissions.
+     * @return
+     *     Pointer to the singleton uribeacon service if the initialization goes well; else NULL.
+     */
     static URIBeacon2Service *setupService(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) {
         if ((urldata == NULL) || (strlen(urldata) == 0)) {
             return NULL;
@@ -91,20 +109,6 @@ public:
     }
 
 private:
-    /**
-     * @param[ref] ble
-     *                 BLEDevice object for the underlying controller.
-     * @param[in]  urldata
-     *                 URI as a null-terminated string.
-     * @param[in]  flagsIn
-     *                 UriBeacon Flags.
-     * @param[in]  effectiveTxPowerIn
-     *                 UriBeacon Tx Power Level in dBm.
-     * @param[in]  beaconPeriodIn
-     *                 The period in milliseconds that a UriBeacon packet is
-     *                 transmitted. A value of zero disables UriBeacon
-     *                 transmissions.
-     */
     URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
         ble(ble_),
         payloadIndex(0),
