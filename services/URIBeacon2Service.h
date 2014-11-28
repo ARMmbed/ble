@@ -29,6 +29,7 @@ const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84)
 const uint8_t flagsCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x85);
 const uint8_t txPowerLevelsCharUUID[]        = UUID_INITIALIZER_LIST(0x20, 0x86);
 const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
+const uint8_t resetCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x89);
 
 class URIBeacon2Service {
 public:
@@ -152,20 +153,22 @@ private:
                           NUM_POWER_MODES * sizeof(int8_t),
                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
-                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1,
+                  GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
     {
         strncpy(reinterpret_cast<char *>(uriData), uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
 
         configure();
         if (!failedToAccomodate) {
             /* Preserve the originals to be able to reset() upon request. */
-            // memcpy(service.originalURIData, urlDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
-            // service.originalFlags            = flagsIn;
-            // service.originalEffectiveTxPower = effectiveTxPowerIn;
-            // service.originalBeaconPeriod     = beaconPeriodIn;
+            memcpy(originalURIData, uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
+            originalFlags            = flagsIn;
+            originalEffectiveTxPower = effectiveTxPowerIn;
+            originalBeaconPeriod     = beaconPeriodIn;
         }
 
-        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar};
+        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
@@ -318,9 +321,25 @@ private:
             } else {
                 beaconPeriod = *((uint16_t *)(params->data));
             }
+        } else if (params->charHandle == resetChar.getValueAttribute().getHandle()) {
+            resetOriginals();
         }
         configure();
         ble.setAdvertisingPayload();
+    }
+
+    void resetOriginals(void) {
+        memcpy(uriData, originalURIData, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        memset(powerLevels, 0, sizeof(powerLevels));
+        flags          = originalFlags;
+        effectivePower = originalEffectiveTxPower;
+        beaconPeriod   = originalBeaconPeriod;
+
+        ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriData, uriDataLength);
+        ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
+        ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
+
+        configure();
     }
 
 private:
@@ -353,16 +372,19 @@ private:
     int8_t   effectivePower;
     int8_t   powerLevels[NUM_POWER_MODES];
     uint16_t beaconPeriod;
+    bool     resetFlag;
 
     uint8_t  originalURIData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  originalFlags;
-    int8_t   originalEffectivePower;
+    int8_t   originalEffectiveTxPower;
+    uint16_t originalBeaconPeriod;
 
     GattCharacteristic lockedStateChar;
     GattCharacteristic uriDataChar;
     GattCharacteristic flagsChar;
     GattCharacteristic txPowerLevelsChar;
     GattCharacteristic beaconPeriodChar;
+    GattCharacteristic resetChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
