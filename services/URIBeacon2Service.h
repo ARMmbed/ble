@@ -165,68 +165,6 @@ private:
         ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
-protected:
-    /**
-     * This callback allows the DFU service to receive the initial trigger to
-     * handover control to the bootloader; but first the application is given a
-     * chance to clean up.
-     */
-    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
-                /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriDataValue, uriDataLength);
-                return;
-            }
-
-            /* We don't handle very large writes at the moment. */
-            if ((params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
-                return;
-            }
-
-            uriDataLength = params->len;
-            memcpy(uriDataValue, params->data, uriDataLength);
-        } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
-                return;
-            } else {
-                flags = *(params->data);
-            }
-        } else if (params->charHandle == txPowerLevelsChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(txPowerLevelsChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
-                return;
-            } else {
-                memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
-            }
-        } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), (uint8_t *)&beaconPeriod, 2 /* size */);
-                return;
-            } else {
-                beaconPeriod = *((uint16_t *)(params->data));
-            }
-        }
-        configure();
-        ble.setAdvertisingPayload();
-    }
-
-    /**
-     * For debugging only.
-     */
-    void dumpEncodedSeviceData() const {
-        printf("encoded: '");
-        for (unsigned i = 0; i < payloadIndex; i++) {
-            printf(" %02x", serviceDataPayload[i]);
-        }
-        printf("'\r\n");
-    }
-
-private:
     void configure(void) {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
@@ -324,6 +262,67 @@ private:
         }
 
         return encodedBytes;
+    }
+
+    /**
+     * This callback allows the DFU service to receive the initial trigger to
+     * handover control to the bootloader; but first the application is given a
+     * chance to clean up.
+     */
+    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
+        if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
+                /* Restore GATT database with previous value. */
+                ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriDataValue, uriDataLength);
+                return;
+            }
+
+            /* We don't handle very large writes at the moment. */
+            if ((params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
+                return;
+            }
+
+            uriDataLength = params->len;
+            memcpy(uriDataValue, params->data, uriDataLength);
+        } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
+                /* Restore GATT database with previous value. */
+                ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
+                return;
+            } else {
+                flags = *(params->data);
+            }
+        } else if (params->charHandle == txPowerLevelsChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
+                /* Restore GATT database with previous value. */
+                ble.updateCharacteristicValue(txPowerLevelsChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
+                return;
+            } else {
+                memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
+            }
+        } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
+                /* Restore GATT database with previous value. */
+                ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), (uint8_t *)&beaconPeriod, 2 /* size */);
+                return;
+            } else {
+                beaconPeriod = *((uint16_t *)(params->data));
+            }
+        }
+        configure();
+        ble.setAdvertisingPayload();
+    }
+
+private:
+    /**
+     * For debugging only.
+     */
+    void dumpEncodedSeviceData() const {
+        printf("encoded: '");
+        for (unsigned i = 0; i < payloadIndex; i++) {
+            printf(" %02x", serviceDataPayload[i]);
+        }
+        printf("'\r\n");
     }
 
 private:
