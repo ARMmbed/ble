@@ -86,6 +86,22 @@ public:
         ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
     }
 
+    /**
+     * Update flags of the URIBeacon dynamically.
+     *
+     * @param[in] flagsIn
+     *
+     *     ### UriBeacon Flags
+     *     Bit   | Description
+     *     :---- | :----------
+     *     0     | Invisible Hint
+     *     1..7  | Reserved for future use. Must be zero.
+     *
+     *     The `Invisible Hint` flag is a command for the user-agent that tells
+     *     it not to access or display the UriBeacon. This is a guideline only,
+     *     and is not a blocking method. User agents may, with user approval,
+     *     display invisible beacons.
+     */
     void setFlags(uint8_t flagsIn) {
         flags = flagsIn;
         setup();
