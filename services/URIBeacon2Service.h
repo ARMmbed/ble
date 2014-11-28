@@ -32,14 +32,14 @@ const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88)
 
 class URIBeacon2Service {
 public:
-    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flags_ = 0, uint8_t power_ = 0) :
+    URIBeacon2Service(BLEDevice &ble_, const char *urldata, uint8_t flagsIn = 0, uint8_t txPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
         ble(ble_), payloadIndex(0), serviceDataPayload(),
         lockedState(false),
         uriDataLength(0),
         uriDataValue(),
-        flags(flags_),
-        power(power_),
-        beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(1000)), /* 1hz */
+        flags(flagsIn),
+        power(txPowerIn),
+        beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
         lockedStateChar(lockedStateCharUUID, (uint8_t *)&lockedState, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
                     uriDataValue,
@@ -70,6 +70,21 @@ public:
         serviceAdded = true;
 
         ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
+    }
+
+    void setFlags(uint8_t flagsIn) {
+        flags = flagsIn;
+        setup();
+    }
+
+    void setTxPower(uint8_t txPowerIn) {
+        power = txPowerIn;
+        setup();
+    }
+
+    void setBeaconPeriod(uint16_t beaconPeriodIn) {
+        beaconPeriod = beaconPeriodIn;
+        setup();
     }
 
 protected:
