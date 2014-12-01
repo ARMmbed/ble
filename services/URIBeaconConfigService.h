@@ -68,11 +68,8 @@ public:
         powerLevels(),
         beaconPeriod(beaconPeriodIn),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        uriDataChar(uriDataCharUUID,
-                    uriData,
-                    MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE),
+        uriDataChar(uriDataCharUUID, uriData, MAX_SIZE_URI_DATA_CHAR_VALUE, MAX_SIZE_URI_DATA_CHAR_VALUE,
+                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ |GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         txPowerLevelsChar(txPowerLevelsCharUUID,
                           reinterpret_cast<uint8_t *>(powerLevels),
@@ -81,8 +78,7 @@ public:
                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1,
-                  GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE)
+        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
         if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0) || (uriDataLength > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
             return;
