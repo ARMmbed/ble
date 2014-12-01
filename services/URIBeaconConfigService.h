@@ -182,6 +182,10 @@ private:
     }
 
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
+        if (!sizeofURLData) {
+            return 0;
+        }
+
         const char *prefixes[] = {
             "http://www.",
             "https://www.",
