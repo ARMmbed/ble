@@ -28,6 +28,7 @@ const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81)
 const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84);
 const uint8_t flagsCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x85);
 const uint8_t txPowerLevelsCharUUID[]        = UUID_INITIALIZER_LIST(0x20, 0x86);
+const uint8_t txPowerModeCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x87);
 const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
 const uint8_t resetCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x89);
 
@@ -48,18 +49,21 @@ public:
      *                 URI as a null-terminated string.
      * @param[in]  flagsIn
      *                 UriBeacon Flags.
-     * @param[in]  effectiveTxPowerIn
-     *                 UriBeacon Tx Power Level in dBm.
+     * @param[in]  powerLevels[]
+     *                 Table of UriBeacon Tx Power Levels in dBm.
+     * @param[in]  powerMode
+     *                 Currently effective power mode.
      * @param[in]  beaconPeriodIn
      *                 The period in milliseconds that a UriBeacon packet is
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
      */
-    URIBeaconConfigService(BLEDevice  &bleIn,
-                           const char *uriDataIn,
-                           uint8_t     flagsIn            = 0,
-                           int8_t      effectiveTxPowerIn = 0,
-                           uint16_t    beaconPeriodIn     = 1000) :
+    URIBeaconConfigService(BLEDevice      &bleIn,
+                           const char     *uriDataIn,
+                           uint8_t         flagsIn        = 0,
+                           const int8_t    powerLevelsIn[NUM_POWER_MODES] = NULL,
+                           TXPowerModes_t  powerModeIn    = TX_POWER_MODE_LOW,
+                           uint16_t        beaconPeriodIn = 1000) :
         ble(bleIn),
         payloadIndex(0),
         serviceDataPayload(),
@@ -68,7 +72,6 @@ public:
         uriDataLength(0),
         uriData(),
         flags(flagsIn),
-        effectiveTxPower(effectiveTxPowerIn),
         powerLevels(),
         beaconPeriod(beaconPeriodIn),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
@@ -80,6 +83,8 @@ public:
                           NUM_POWER_MODES * sizeof(int8_t),
                           NUM_POWER_MODES * sizeof(int8_t),
                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        txPowerModeChar(txPowerModeCharUUID, reinterpret_cast<uint8_t *>(&txPowerMode), sizeof(uint8_t), sizeof(uint8_t),
+                        GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
@@ -88,6 +93,11 @@ public:
             return;
         }
         strcpy(reinterpret_cast<char *>(uriData), uriDataIn);
+
+        if (powerModeIn != NULL) {
+            memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
+            updateTxPowerLevelsCharacteristic();
+        }
 
         configureGAP();
 
@@ -141,8 +151,9 @@ public:
      * Set the effective power mode from one of the values in the powerLevels tables.
      */
     void useTxPowerMode(TXPowerModes_t mode) {
-        effectiveTxPower = powerLevels[mode];
+        txPowerMode = mode;
         configureGAP();
+        updateTxPowerModeCharacteristic();
     }
 
     /**
@@ -167,7 +178,7 @@ private:
         serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
         serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
         serviceDataPayload[payloadIndex++] = flags;
-        serviceDataPayload[payloadIndex++] = effectiveTxPower;
+        serviceDataPayload[payloadIndex++] = powerLevels[txPowerMode];
 
         const char *urlData       = reinterpret_cast<char *>(uriData);
         size_t      sizeofURLData = uriDataLength;
@@ -178,7 +189,7 @@ private:
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
 
         ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
-        ble.setTxPower(effectiveTxPower);
+        ble.setTxPower(powerLevels[txPowerMode]);
     }
 
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
@@ -314,8 +325,8 @@ private:
         uriDataLength    = 0;
         memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
         flags            = 0;
-        effectiveTxPower = 0;
         memset(powerLevels, 0, sizeof(powerLevels));
+        txPowerMode      = TX_POWER_MODE_LOW;
         beaconPeriod     = 0;
 
         updateGATT();
@@ -342,6 +353,14 @@ private:
 
     void updateBeaconPeriodCharacteristic(void) {
         ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
+    }
+
+    void updateTxPowerModeCharacteristic(void) {
+
+    }
+
+    void updateTxPowerLevelsCharacteristic(void) {
+        ble.updateCharacteristicValue(txPowerLevelsChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
     }
 
 private:
@@ -372,8 +391,8 @@ private:
     uint16_t            uriDataLength;
     uint8_t             uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t             flags;
-    int8_t              effectiveTxPower;
     int8_t              powerLevels[NUM_POWER_MODES];
+    TXPowerModes_t      txPowerMode;
     uint16_t            beaconPeriod;
     bool                resetFlag;
 
@@ -381,6 +400,7 @@ private:
     GattCharacteristic  uriDataChar;
     GattCharacteristic  flagsChar;
     GattCharacteristic  txPowerLevelsChar;
+    GattCharacteristic  txPowerModeChar;
     GattCharacteristic  beaconPeriodChar;
     GattCharacteristic  resetChar;
 };
