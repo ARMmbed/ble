@@ -55,7 +55,11 @@ public:
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
      */
-    URIBeaconConfigService(BLEDevice &bleIn, const char *uriDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
+    URIBeaconConfigService(BLEDevice  &bleIn,
+                           const char *uriDataIn,
+                           uint8_t     flagsIn            = 0,
+                           int8_t      effectiveTxPowerIn = 0,
+                           uint16_t    beaconPeriodIn     = 1000) :
         ble(bleIn),
         payloadIndex(0),
         serviceDataPayload(),
