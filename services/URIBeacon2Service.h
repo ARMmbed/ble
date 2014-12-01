@@ -64,7 +64,7 @@ public:
         uriDataLength(0),
         uriData(),
         flags(flagsIn),
-        effectivePower(effectiveTxPowerIn),
+        effectiveTxPower(effectiveTxPowerIn),
         powerLevels(),
         beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
@@ -92,10 +92,10 @@ public:
         configure();
         if (initSucceeded) {
             /* Preserve the originals to be able to reset() upon request. */
-            memcpy(originalURIData, uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
-            originalFlags            = flagsIn;
-            originalEffectiveTxPower = effectiveTxPowerIn;
-            originalBeaconPeriod     = beaconPeriodIn;
+            memcpy(defaultURIData, uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
+            defaultFlags            = flagsIn;
+            defaultEffectiveTxPower = effectiveTxPowerIn;
+            defaultBeaconPeriod     = beaconPeriodIn;
         }
 
         GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
@@ -147,7 +147,7 @@ public:
      * Set the effective power mode from one of the values in the powerLevels tables.
      */
     void useTxPowerMode(TXPowerModes_t mode) {
-        effectivePower = powerLevels[mode];
+        effectiveTxPower = powerLevels[mode];
         configure();
     }
 
@@ -172,7 +172,7 @@ private:
         serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
         serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
         serviceDataPayload[payloadIndex++] = flags;
-        serviceDataPayload[payloadIndex++] = effectivePower;
+        serviceDataPayload[payloadIndex++] = effectiveTxPower;
 
         const char *urlData  = reinterpret_cast<char *>(uriData);
         size_t sizeofURLData = uriDataLength;
@@ -183,7 +183,7 @@ private:
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
 
         ble.setAdvertisingInterval(beaconPeriod);
-        ble.setTxPower(effectivePower);
+        ble.setTxPower(effectiveTxPower);
     }
 
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
@@ -309,18 +309,18 @@ private:
                 beaconPeriod = *((uint16_t *)(params->data));
             }
         } else if (params->charHandle == resetChar.getValueAttribute().getHandle()) {
-            resetOriginals();
+            resetDefaults();
         }
         configure();
         ble.setAdvertisingPayload();
     }
 
-    void resetOriginals(void) {
-        memcpy(uriData, originalURIData, MAX_SIZE_URI_DATA_CHAR_VALUE);
+    void resetDefaults(void) {
+        memcpy(uriData, defaultURIData, MAX_SIZE_URI_DATA_CHAR_VALUE);
         memset(powerLevels, 0, sizeof(powerLevels));
-        flags          = originalFlags;
-        effectivePower = originalEffectiveTxPower;
-        beaconPeriod   = originalBeaconPeriod;
+        flags            = defaultFlags;
+        effectiveTxPower = defaultEffectiveTxPower;
+        beaconPeriod     = defaultBeaconPeriod;
 
         ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriData, uriDataLength);
         ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
@@ -356,15 +356,15 @@ private:
     uint16_t uriDataLength;
     uint8_t  uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t  flags;
-    int8_t   effectivePower;
+    int8_t   effectiveTxPower;
     int8_t   powerLevels[NUM_POWER_MODES];
     uint16_t beaconPeriod;
     bool     resetFlag;
 
-    uint8_t  originalURIData[MAX_SIZE_URI_DATA_CHAR_VALUE];
-    uint8_t  originalFlags;
-    int8_t   originalEffectiveTxPower;
-    uint16_t originalBeaconPeriod;
+    uint8_t  defaultURIData[MAX_SIZE_URI_DATA_CHAR_VALUE];
+    uint8_t  defaultFlags;
+    int8_t   defaultEffectiveTxPower;
+    uint16_t defaultBeaconPeriod;
 
     GattCharacteristic lockedStateChar;
     GattCharacteristic uriDataChar;
