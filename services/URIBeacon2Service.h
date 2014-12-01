@@ -44,7 +44,7 @@ public:
     /**
      * @param[ref] ble
      *                 BLEDevice object for the underlying controller.
-     * @param[in]  urldata
+     * @param[in]  uridata
      *                 URI as a null-terminated string.
      * @param[in]  flagsIn
      *                 UriBeacon Flags.
