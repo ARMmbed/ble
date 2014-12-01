@@ -264,7 +264,7 @@ private:
         return encodedBytes;
     }
 
-    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
+    void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
                 /* Restore GATT database with previous value. */
