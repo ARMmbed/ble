@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __BLE_URI_BEACON_2_SERVICE_H__
-#define __BLE_URI_BEACON_2_SERVICE_H__
+#ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__
+#define __BLE_URI_BEACON_CONFIG_SERVICE_H__
 
 #include "BLEDevice.h"
 
@@ -31,7 +31,7 @@ const uint8_t txPowerLevelsCharUUID[]        = UUID_INITIALIZER_LIST(0x20, 0x86)
 const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
 const uint8_t resetCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x89);
 
-class URIBeacon2Service {
+class URIBeaconConfigService {
 public:
     enum TXPowerModes_t {
         TX_POWER_MODE_LOWEST = 0,
@@ -55,7 +55,7 @@ public:
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
      */
-    URIBeacon2Service(BLEDevice &bleIn, const char *uriDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
+    URIBeaconConfigService(BLEDevice &bleIn, const char *uriDataIn, uint8_t flagsIn = 0, int8_t effectiveTxPowerIn = 0, uint16_t beaconPeriodIn = 1000) :
         ble(bleIn),
         payloadIndex(0),
         serviceDataPayload(),
@@ -98,7 +98,7 @@ public:
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
-        ble.onDataWritten(this, &URIBeacon2Service::onDataWritten);
+        ble.onDataWritten(this, &URIBeaconConfigService::onDataWritten);
     }
 
     bool configuredSuccessfully(void) const {
@@ -374,4 +374,4 @@ private:
     GattCharacteristic  resetChar;
 };
 
-#endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
+#endif /* #ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__*/
