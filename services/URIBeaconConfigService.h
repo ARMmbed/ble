@@ -89,7 +89,7 @@ public:
         }
         strcpy(reinterpret_cast<char *>(uriData), uriDataIn);
 
-        configure();
+        configureGAP();
         if (initSucceeded) {
             saveDefaults();
         }
@@ -129,7 +129,7 @@ public:
      */
     void setFlags(uint8_t flagsIn) {
         flags = flagsIn;
-        configure();
+        configureGAP();
     }
 
     /**
@@ -144,7 +144,7 @@ public:
      */
     void useTxPowerMode(TXPowerModes_t mode) {
         effectiveTxPower = powerLevels[mode];
-        configure();
+        configureGAP();
     }
 
     /**
@@ -154,14 +154,14 @@ public:
      */
     void setBeaconPeriod(uint16_t beaconPeriodIn) {
         beaconPeriod = beaconPeriodIn;
-        configure();
+        configureGAP();
     }
 
 private:
     /**
      * Setup the advertisement payload and GAP settings.
      */
-    void configure(void) {
+    void configureGAP(void) {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
         payloadIndex                       = 0;
@@ -302,7 +302,7 @@ private:
         } else if (params->charHandle == resetChar.getValueAttribute().getHandle()) {
             resetDefaults();
         }
-        configure();
+        configureGAP();
         ble.setAdvertisingPayload();
     }
 
@@ -324,8 +324,6 @@ private:
         ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriData, uriDataLength);
         ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
         ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
-
-        configure();
     }
 
 private:
