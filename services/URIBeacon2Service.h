@@ -338,7 +338,8 @@ private:
 
 private:
     static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 18; /* Uri Data must be between 0 and 18 bytes in length. */
-    static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48;
+    static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48; /* This is chosen arbitrarily. It should be large enough
+                                                               * to hold any reasonable uncompressed URI. */
 
 private:
     BLEDevice &ble;
