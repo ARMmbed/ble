@@ -91,7 +91,7 @@ public:
         }
         strcpy(reinterpret_cast<char *>(uriData), uriDataIn);
 
-        if (powerModeIn != NULL) {
+        if (powerLevelsIn != NULL) {
             memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
             updateTxPowerLevelsCharacteristic();
         }
