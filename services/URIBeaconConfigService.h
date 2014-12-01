@@ -90,9 +90,6 @@ public:
         strcpy(reinterpret_cast<char *>(uriData), uriDataIn);
 
         configureGAP();
-        if (initSucceeded) {
-            saveDefaults();
-        }
 
         GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
@@ -308,20 +305,13 @@ private:
         ble.setAdvertisingPayload();
     }
 
-    /* Preserve the defaults to be able to reset() upon request. */
-    void saveDefaults(void) {
-        memcpy(defaultURIData, uriData, MAX_SIZE_URI_DATA_CHAR_VALUE);
-        defaultFlags            = flags;
-        defaultEffectiveTxPower = effectiveTxPower;
-        defaultBeaconPeriod     = beaconPeriod;
-    }
-
     void resetDefaults(void) {
-        memcpy(uriData, defaultURIData, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        uriDataLength    = 0;
         memset(powerLevels, 0, sizeof(powerLevels));
-        flags            = defaultFlags;
-        effectiveTxPower = defaultEffectiveTxPower;
-        beaconPeriod     = defaultBeaconPeriod;
+        flags            = 0;
+        effectiveTxPower = 0;
+        beaconPeriod     = 0;
 
         updateGATT();
     }
@@ -376,11 +366,6 @@ private:
     int8_t              powerLevels[NUM_POWER_MODES];
     uint16_t            beaconPeriod;
     bool                resetFlag;
-
-    uint8_t             defaultURIData[MAX_SIZE_URI_DATA_CHAR_VALUE];
-    uint8_t             defaultFlags;
-    int8_t              defaultEffectiveTxPower;
-    uint16_t            defaultBeaconPeriod;
 
     GattCharacteristic  lockedStateChar;
     GattCharacteristic  uriDataChar;
