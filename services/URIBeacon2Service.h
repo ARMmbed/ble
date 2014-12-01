@@ -91,11 +91,7 @@ public:
 
         configure();
         if (initSucceeded) {
-            /* Preserve the originals to be able to reset() upon request. */
-            memcpy(defaultURIData, uriDataIn, MAX_SIZE_URI_DATA_CHAR_VALUE);
-            defaultFlags            = flagsIn;
-            defaultEffectiveTxPower = effectiveTxPowerIn;
-            defaultBeaconPeriod     = beaconPeriodIn;
+            saveDefaults();
         }
 
         GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
@@ -308,6 +304,14 @@ private:
         }
         configure();
         ble.setAdvertisingPayload();
+    }
+
+    /* Preserve the defaults to be able to reset() upon request. */
+    void saveDefaults(void) {
+        memcpy(defaultURIData, uriData, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        defaultFlags            = flags;
+        defaultEffectiveTxPower = effectiveTxPower;
+        defaultBeaconPeriod     = beaconPeriod;
     }
 
     void resetDefaults(void) {
