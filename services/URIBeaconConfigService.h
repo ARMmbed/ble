@@ -145,6 +145,7 @@ public:
      */
     void setTxPowerLevels(const int8_t powerLevelsIn[NUM_POWER_MODES]) {
         memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
+        configureGAP();
         updateTxPowerLevelsCharacteristic();
     }
 
