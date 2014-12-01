@@ -66,7 +66,7 @@ public:
         flags(flagsIn),
         effectiveTxPower(effectiveTxPowerIn),
         powerLevels(),
-        beaconPeriod(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriodIn)),
+        beaconPeriod(beaconPeriodIn),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID,
                     uriData,
@@ -182,7 +182,7 @@ private:
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
 
-        ble.setAdvertisingInterval(beaconPeriod);
+        ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
         ble.setTxPower(effectiveTxPower);
     }
 
