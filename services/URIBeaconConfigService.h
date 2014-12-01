@@ -316,14 +316,20 @@ private:
         flags            = 0;
         effectiveTxPower = 0;
         beaconPeriod     = 0;
+        lockedState      = false;
 
         updateGATT();
     }
 
     void updateGATT(void) {
+        updateLockedStateCharacteristic();
         updateURIDataCharacteristic();
         updateFlagsCharacteristic();
         updateBeaconPeriodCharacteristic();
+    }
+
+    void updateLockedStateCharacteristic(void) {
+        ble.updateCharacteristicValue(lockedStateChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&lockedState), sizeof(lockedState));
     }
 
     void updateURIDataCharacteristic(void) {
