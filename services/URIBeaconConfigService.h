@@ -60,10 +60,10 @@ public:
      */
     URIBeaconConfigService(BLEDevice      &bleIn,
                            const char     *uriDataIn,
-                           uint8_t         flagsIn        = 0,
+                           uint8_t         flagsIn                        = 0,
                            const int8_t    powerLevelsIn[NUM_POWER_MODES] = NULL,
-                           TXPowerModes_t  powerModeIn    = TX_POWER_MODE_LOW,
-                           uint16_t        beaconPeriodIn = 1000) :
+                           TXPowerModes_t  powerModeIn                    = TX_POWER_MODE_LOW,
+                           uint16_t        beaconPeriodIn                 = 1000) :
         ble(bleIn),
         payloadIndex(0),
         serviceDataPayload(),
