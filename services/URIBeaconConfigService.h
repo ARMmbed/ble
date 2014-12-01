@@ -301,10 +301,18 @@ private:
         } else if (params->charHandle == txPowerLevelsChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(txPowerLevelsChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
+                updateTxPowerLevelsCharacteristic();
                 return;
             } else {
                 memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
+            }
+        } else if (params->charHandle == txPowerModeChar.getValueAttribute().getHandle()) {
+            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
+                /* Restore GATT database with previous value. */
+                updateTxPowerModeCharacteristic();
+                return;
+            } else {
+                txPowerMode = *reinterpret_cast<const TXPowerModes_t *>(params->data);
             }
         } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
