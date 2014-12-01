@@ -141,16 +141,17 @@ public:
     }
 
     /**
-     * Update the txPower for a particular mode in the powerLevels table.
+     * Update the txPowerLevels table.
      */
-    void setTxPowerLevel(TXPowerModes_t mode, int8_t txPowerIn) {
-        powerLevels[mode] = txPowerIn;
+    void setTxPowerLevels(const int8_t powerLevelsIn[NUM_POWER_MODES]) {
+        memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
+        updateTxPowerLevelsCharacteristic();
     }
 
     /**
      * Set the effective power mode from one of the values in the powerLevels tables.
      */
-    void useTxPowerMode(TXPowerModes_t mode) {
+    void setTxPowerMode(TXPowerModes_t mode) {
         txPowerMode = mode;
         configureGAP();
         updateTxPowerModeCharacteristic();
