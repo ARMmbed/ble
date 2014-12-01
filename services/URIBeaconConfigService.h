@@ -306,13 +306,13 @@ private:
     }
 
     void resetDefaults(void) {
-        memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
+        lockedState      = false;
         uriDataLength    = 0;
-        memset(powerLevels, 0, sizeof(powerLevels));
+        memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
         flags            = 0;
         effectiveTxPower = 0;
+        memset(powerLevels, 0, sizeof(powerLevels));
         beaconPeriod     = 0;
-        lockedState      = false;
 
         updateGATT();
     }
