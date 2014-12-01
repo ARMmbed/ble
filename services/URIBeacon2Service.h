@@ -264,11 +264,6 @@ private:
         return encodedBytes;
     }
 
-    /**
-     * This callback allows the DFU service to receive the initial trigger to
-     * handover control to the bootloader; but first the application is given a
-     * chance to clean up.
-     */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
