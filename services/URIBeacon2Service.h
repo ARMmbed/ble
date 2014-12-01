@@ -19,9 +19,9 @@
 
 #include "BLEDevice.h"
 
-#define UUID_INITIALIZER_LIST(FIRST, SECOND) {         \
-    0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba, \
-    0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,    \
+#define UUID_INITIALIZER_LIST(FIRST, SECOND) {             \
+        0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba, \
+        0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,    \
 }
 const uint8_t URIBeacon2ControlServiceUUID[] = UUID_INITIALIZER_LIST(0x20, 0x80);
 const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81);
@@ -164,15 +164,15 @@ private:
     void configure(void) {
         const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
-        payloadIndex = 0;
+        payloadIndex                       = 0;
         serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
         serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
         serviceDataPayload[payloadIndex++] = flags;
         serviceDataPayload[payloadIndex++] = effectiveTxPower;
 
-        const char *urlData  = reinterpret_cast<char *>(uriData);
-        size_t sizeofURLData = uriDataLength;
-        size_t encodedBytes  = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
+        const char *urlData       = reinterpret_cast<char *>(uriData);
+        size_t      sizeofURLData = uriDataLength;
+        size_t      encodedBytes  = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
 
         ble.clearAdvertisingPayload();
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
@@ -191,15 +191,15 @@ private:
             "urn:uuid:"
         };
 
-        size_t encodedBytes = 0;
+        size_t       encodedBytes = 0;
         const size_t NUM_PREFIXES = sizeof(prefixes) / sizeof(char *);
         for (unsigned i = 0; i < NUM_PREFIXES; i++) {
             size_t prefixLen = strlen(prefixes[i]);
             if (strncmp(urldata, prefixes[i], prefixLen) == 0) {
                 serviceDataPayload[payloadIndex++] = i;
-                encodedBytes = 1;
+                encodedBytes                       = 1;
 
-                urldata      += prefixLen;
+                urldata       += prefixLen;
                 sizeofURLData -= prefixLen;
                 break;
             }
@@ -346,32 +346,32 @@ private:
                                                                * to hold any reasonable uncompressed URI. */
 
 private:
-    BLEDevice &ble;
+    BLEDevice          &ble;
 
-    size_t   payloadIndex;
-    uint8_t  serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
-    bool     initSucceeded;
+    size_t              payloadIndex;
+    uint8_t             serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
+    bool                initSucceeded;
 
-    bool     lockedState;
-    uint16_t uriDataLength;
-    uint8_t  uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
-    uint8_t  flags;
-    int8_t   effectiveTxPower;
-    int8_t   powerLevels[NUM_POWER_MODES];
-    uint16_t beaconPeriod;
-    bool     resetFlag;
+    bool                lockedState;
+    uint16_t            uriDataLength;
+    uint8_t             uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
+    uint8_t             flags;
+    int8_t              effectiveTxPower;
+    int8_t              powerLevels[NUM_POWER_MODES];
+    uint16_t            beaconPeriod;
+    bool                resetFlag;
 
-    uint8_t  defaultURIData[MAX_SIZE_URI_DATA_CHAR_VALUE];
-    uint8_t  defaultFlags;
-    int8_t   defaultEffectiveTxPower;
-    uint16_t defaultBeaconPeriod;
+    uint8_t             defaultURIData[MAX_SIZE_URI_DATA_CHAR_VALUE];
+    uint8_t             defaultFlags;
+    int8_t              defaultEffectiveTxPower;
+    uint16_t            defaultBeaconPeriod;
 
-    GattCharacteristic lockedStateChar;
-    GattCharacteristic uriDataChar;
-    GattCharacteristic flagsChar;
-    GattCharacteristic txPowerLevelsChar;
-    GattCharacteristic beaconPeriodChar;
-    GattCharacteristic resetChar;
+    GattCharacteristic  lockedStateChar;
+    GattCharacteristic  uriDataChar;
+    GattCharacteristic  flagsChar;
+    GattCharacteristic  txPowerLevelsChar;
+    GattCharacteristic  beaconPeriodChar;
+    GattCharacteristic  resetChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_2_SERVICE_H__*/
