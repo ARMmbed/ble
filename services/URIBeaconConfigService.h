@@ -338,6 +338,8 @@ private:
         updateURIDataCharacteristic();
         updateFlagsCharacteristic();
         updateBeaconPeriodCharacteristic();
+        updateTxPowerLevelsCharacteristic();
+        updateTxPowerModeCharacteristic();
     }
 
     void updateLockedStateCharacteristic(void) {
@@ -357,7 +359,7 @@ private:
     }
 
     void updateTxPowerModeCharacteristic(void) {
-
+        ble.updateCharacteristicValue(txPowerModeChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&txPowerMode), sizeof(uint8_t));
     }
 
     void updateTxPowerLevelsCharacteristic(void) {
