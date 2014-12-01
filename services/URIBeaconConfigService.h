@@ -130,6 +130,7 @@ public:
     void setFlags(uint8_t flagsIn) {
         flags = flagsIn;
         configureGAP();
+        updateFlagsCharacteristic();
     }
 
     /**
@@ -155,6 +156,7 @@ public:
     void setBeaconPeriod(uint16_t beaconPeriodIn) {
         beaconPeriod = beaconPeriodIn;
         configureGAP();
+        updateBeaconPeriodCharacteristic();
     }
 
 private:
@@ -264,7 +266,7 @@ private:
         if (params->charHandle == uriDataChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
                 /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriData, uriDataLength);
+                updateURIDataCharacteristic();
                 return;
             }
 
@@ -278,7 +280,7 @@ private:
         } else if (params->charHandle == flagsChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
+                updateFlagsCharacteristic();
                 return;
             } else {
                 flags = *(params->data);
@@ -294,7 +296,7 @@ private:
         } else if (params->charHandle == beaconPeriodChar.getValueAttribute().getHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
-                ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
+                updateBeaconPeriodCharacteristic();
                 return;
             } else {
                 beaconPeriod = *((uint16_t *)(params->data));
@@ -321,8 +323,24 @@ private:
         effectiveTxPower = defaultEffectiveTxPower;
         beaconPeriod     = defaultBeaconPeriod;
 
+        updateGATT();
+    }
+
+    void updateGATT(void) {
+        updateURIDataCharacteristic();
+        updateFlagsCharacteristic();
+        updateBeaconPeriodCharacteristic();
+    }
+
+    void updateURIDataCharacteristic(void) {
         ble.updateCharacteristicValue(uriDataChar.getValueAttribute().getHandle(), uriData, uriDataLength);
+    }
+
+    void updateFlagsCharacteristic(void) {
         ble.updateCharacteristicValue(flagsChar.getValueAttribute().getHandle(), &flags, 1 /* size */);
+    }
+
+    void updateBeaconPeriodCharacteristic(void) {
         ble.updateCharacteristicValue(beaconPeriodChar.getValueAttribute().getHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
     }
 
