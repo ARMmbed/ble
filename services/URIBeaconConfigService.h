@@ -19,18 +19,18 @@
 
 #include "BLEDevice.h"
 
-#define UUID_INITIALIZER_LIST(FIRST, SECOND) {             \
-        0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba, \
-        0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,    \
+#define URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(FIRST, SECOND) { \
+        0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
+        0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
 }
-const uint8_t URIBeacon2ControlServiceUUID[] = UUID_INITIALIZER_LIST(0x20, 0x80);
-const uint8_t lockedStateCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x81);
-const uint8_t uriDataCharUUID[]              = UUID_INITIALIZER_LIST(0x20, 0x84);
-const uint8_t flagsCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x85);
-const uint8_t txPowerLevelsCharUUID[]        = UUID_INITIALIZER_LIST(0x20, 0x86);
-const uint8_t txPowerModeCharUUID[]          = UUID_INITIALIZER_LIST(0x20, 0x87);
-const uint8_t beaconPeriodCharUUID[]         = UUID_INITIALIZER_LIST(0x20, 0x88);
-const uint8_t resetCharUUID[]                = UUID_INITIALIZER_LIST(0x20, 0x89);
+static const uint8_t URIBeacon2ControlServiceUUID[] = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x80);
+static const uint8_t lockedStateCharUUID[]          = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x81);
+static const uint8_t uriDataCharUUID[]              = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x84);
+static const uint8_t flagsCharUUID[]                = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x85);
+static const uint8_t txPowerLevelsCharUUID[]        = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x86);
+static const uint8_t txPowerModeCharUUID[]          = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x87);
+static const uint8_t beaconPeriodCharUUID[]         = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x88);
+static const uint8_t resetCharUUID[]                = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x89);
 
 class URIBeaconConfigService {
 public:
@@ -76,7 +76,7 @@ public:
         beaconPeriod(beaconPeriodIn),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         uriDataChar(uriDataCharUUID, uriData, MAX_SIZE_URI_DATA_CHAR_VALUE, MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ |GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         txPowerLevelsChar(txPowerLevelsCharUUID, reinterpret_cast<uint8_t *>(powerLevels), sizeof(powerLevels), sizeof(powerLevels),
                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
