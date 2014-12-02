@@ -273,13 +273,9 @@ private:
         return encodedBytes;
     }
 
-    inline uint16_t getHandle(GattCharacteristic& characteristic) {
-        return characteristic.getValueAttribute().getHandle();
-    }
-
     void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         uint16_t handle = params->charHandle;
-        if (handle == getHandle(uriDataChar)) {
+        if (handle == uriDataChar.getValueHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
                 /* Restore GATT database with previous value. */
                 updateURIDataCharacteristic();
@@ -293,7 +289,7 @@ private:
 
             uriDataLength = params->len;
             memcpy(uriData, params->data, uriDataLength);
-        } else if (handle == getHandle(flagsChar)) {
+        } else if (handle == flagsChar.getValueHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
                 updateFlagsCharacteristic();
@@ -301,7 +297,7 @@ private:
             } else {
                 flags = *(params->data);
             }
-        } else if (handle == getHandle(txPowerLevelsChar)) {
+        } else if (handle == txPowerLevelsChar.getValueHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
                 updateTxPowerLevelsCharacteristic();
@@ -309,7 +305,7 @@ private:
             } else {
                 memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
             }
-        } else if (handle == getHandle(txPowerModeChar)) {
+        } else if (handle == txPowerModeChar.getValueHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
                 updateTxPowerModeCharacteristic();
@@ -317,7 +313,7 @@ private:
             } else {
                 txPowerMode = *reinterpret_cast<const TXPowerModes_t *>(params->data);
             }
-        } else if (handle == getHandle(beaconPeriodChar)) {
+        } else if (handle == beaconPeriodChar.getValueHandle()) {
             if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
                 /* Restore GATT database with previous value. */
                 updateBeaconPeriodCharacteristic();
@@ -325,7 +321,7 @@ private:
             } else {
                 beaconPeriod = *((uint16_t *)(params->data));
             }
-        } else if (handle == getHandle(resetChar)) {
+        } else if (handle == resetChar.getValueHandle()) {
             resetDefaults();
         }
         configureGAP();
@@ -354,27 +350,27 @@ private:
     }
 
     void updateLockedStateCharacteristic(void) {
-        ble.updateCharacteristicValue(getHandle(lockedStateChar), reinterpret_cast<uint8_t *>(&lockedState), sizeof(lockedState));
+        ble.updateCharacteristicValue(lockedStateChar.getValueHandle(), reinterpret_cast<uint8_t *>(&lockedState), sizeof(lockedState));
     }
 
     void updateURIDataCharacteristic(void) {
-        ble.updateCharacteristicValue(getHandle(uriDataChar), uriData, uriDataLength);
+        ble.updateCharacteristicValue(uriDataChar.getValueHandle(), uriData, uriDataLength);
     }
 
     void updateFlagsCharacteristic(void) {
-        ble.updateCharacteristicValue(getHandle(flagsChar), &flags, 1 /* size */);
+        ble.updateCharacteristicValue(flagsChar.getValueHandle(), &flags, 1 /* size */);
     }
 
     void updateBeaconPeriodCharacteristic(void) {
-        ble.updateCharacteristicValue(getHandle(beaconPeriodChar), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
+        ble.updateCharacteristicValue(beaconPeriodChar.getValueHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
     }
 
     void updateTxPowerModeCharacteristic(void) {
-        ble.updateCharacteristicValue(getHandle(txPowerModeChar), reinterpret_cast<uint8_t *>(&txPowerMode), sizeof(uint8_t));
+        ble.updateCharacteristicValue(txPowerModeChar.getValueHandle(), reinterpret_cast<uint8_t *>(&txPowerMode), sizeof(uint8_t));
     }
 
     void updateTxPowerLevelsCharacteristic(void) {
-       ble.updateCharacteristicValue(getHandle(txPowerLevelsChar), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
+       ble.updateCharacteristicValue(txPowerLevelsChar.getValueHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
     }
 
 private:

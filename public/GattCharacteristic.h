@@ -324,9 +324,11 @@ public:
     }
 
 public:
-    GattAttribute& getValueAttribute()            {return _valueAttribute; }
-    uint8_t        getProperties(void)      const {return _properties;     }
-    uint8_t        getDescriptorCount(void) const {return _descriptorCount;}
+    GattAttribute&          getValueAttribute()            {return _valueAttribute; }
+    const GattAttribute&    getValueAttribute()      const {return _valueAttribute; }
+    GattAttribute::Handle_t getValueHandle(void)     const {return getValueAttribute().getHandle();}
+    uint8_t                 getProperties(void)      const {return _properties;     }
+    uint8_t                 getDescriptorCount(void) const {return _descriptorCount;}
 
     GattAttribute *getDescriptor(uint8_t index) {
         if (index >= _descriptorCount) {
