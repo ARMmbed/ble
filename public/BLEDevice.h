@@ -36,6 +36,11 @@ public:
     ble_error_t init();
     ble_error_t reset(void);
 
+    /**
+     * Purge the BLE stack of GATT and GAP state. init() must be called afterwards to re-instate services and GAP state.
+     */
+    ble_error_t shutdown(void);
+
     /* GAP specific APIs */
 public:
     /**
@@ -362,6 +367,13 @@ inline ble_error_t
 BLEDevice::reset(void)
 {
     return transport->reset();
+}
+
+inline ble_error_t
+BLEDevice::shutdown(void)
+{
+    clearAdvertisingPayload();
+    return transport->shutdown();
 }
 
 inline ble_error_t
