@@ -1,5 +1,5 @@
 # mbed Bluetooth Low Energy Stack
-This is the github repo for the BLE_API used by developer.mbed.org. 
+This is the github repo for the BLE_API used by developer.mbed.org. Please see [mbed BLE Homepage](developer.mbed.org/teams/Bluetooth-Low-Energy/) for all documentation, code examples and general help.
 
 # Supported Services
 Supported GATT services and constantly being added and can be found in the /services folder.
