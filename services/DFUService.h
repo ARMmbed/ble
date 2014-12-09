@@ -81,11 +81,10 @@ public:
     }
 
     /**
-    * @brief
-    * @return
+    * @brief get the handle for the value attribute of the control characteristic.
     */
-    uint16_t getControlHandle(void) {
-        return controlPoint.getValueAttribute().getHandle();
+    uint16_t getControlHandle(void) const {
+        return controlPoint.getValueHandle();
     }
 
     /**
@@ -93,8 +92,8 @@ public:
      * handover control to the bootloader; but first the application is given a
      * chance to clean up.
      *
-     * @param[in]
-     *
+     * @param[in] params
+     *     Information about the characterisitc being updated.
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {

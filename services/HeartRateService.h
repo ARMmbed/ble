@@ -115,6 +115,8 @@ public:
      * This callback allows the HeartRateService to receive updates to the
      * controlPoint Characteristic.
      *
+     * @param[in] params
+     *     Information about the characterisitc being updated.
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {

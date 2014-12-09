@@ -32,7 +32,7 @@ public:
     * @enum Sensor Location
     * @brief Location of sensor on the body
     */
-    enum {
+    enum SensorLocation_t {
         LOCATION_ARMPIT = 1,    /*!< armpit */
         LOCATION_BODY,          /*!< body */
         LOCATION_EAR,           /*!< ear */
@@ -78,6 +78,15 @@ public:
             valueBytes.updateTemperature(temperature);
             ble.updateCharacteristicValue(tempMeasurement.getValueAttribute().getHandle(), valueBytes.getPointer(), sizeof(TemperatureValueBytes));
         }
+    }
+
+    /**
+     * @brief Update the location.
+     * @param loc
+     *        new location value.
+     */
+    void updateLocation(SensorLocation_t loc) {
+        ble.updateCharacteristicValue(tempLocation.getValueHandle(), reinterpret_cast<uint8_t *>(&loc), sizeof(uint8_t));
     }
 
 private:
