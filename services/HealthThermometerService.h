@@ -19,19 +19,18 @@
 
 #include "BLEDevice.h"
 
-/** 
+/**
 * @class HealthThermometerService
-* @breif BLE Health Thermometer Service. This service provides the location of the thermometer and the temperature.  <br>
+* @brief BLE Health Thermometer Service. This service provides the location of the thermometer and the temperature.  <br>
 * Service:  https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.health_thermometer.xml <br>
 * Temperature Measurement: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_measurement.xml <br>
-* Temperature Type: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_type.xml 
+* Temperature Type: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_type.xml
 */
 class HealthThermometerService {
 public:
-    
     /**
     * @enum Sensor Location
-    * @breif Location of sensor on the body
+    * @brief Location of sensor on the body
     */
     enum {
         LOCATION_ARMPIT = 1,    /*!< armpit */
@@ -46,9 +45,8 @@ public:
     };
 
 public:
-
     /**
-     * @breif Add the Health Thermometer Service to an existing ble object, initialize with temperature and location. 
+     * @brief Add the Health Thermometer Service to an existing ble object, initialize with temperature and location.
      * @param[ref] _ble         reference to the BLE device
      * @param[in] initialTemp  initial value in celsius
      * @param[in] _location
@@ -69,11 +67,11 @@ public:
     }
 
     /**
-    * @breif Update the temperature being broadcast 
+    * @brief Update the temperature being broadcast
     *
     * @param[in] temperature
     *                   Floating point value of the temperature
-    * 
+    *
     */
     void updateTemperature(float temperature) {
         if (ble.getGapState().connected) {
@@ -93,8 +91,8 @@ private:
         static const unsigned TIMESTAMP_FLAG_POS         = 1;
         static const unsigned TEMPERATURE_TYPE_FLAG_POS  = 2;
 
-        static const uint8_t TEMPERATURE_UNITS_CELSIUS    = 0;
-        static const uint8_t TEMPERATURE_UNITS_FAHRENHEIT = 1;
+        static const uint8_t  TEMPERATURE_UNITS_CELSIUS    = 0;
+        static const uint8_t  TEMPERATURE_UNITS_FAHRENHEIT = 1;
 
         TemperatureValueBytes(float initialTemperature) : bytes() {
             /* assumption: temperature values are expressed in Celsius */
@@ -109,7 +107,7 @@ private:
             memcpy(&bytes[OFFSET_OF_VALUE], &temp_ieee11073, sizeof(float));
         }
 
-        uint8_t *getPointer(void) {
+        uint8_t       *getPointer(void) {
             return bytes;
         }
 
@@ -117,7 +115,7 @@ private:
             return bytes;
         }
 
-    private:
+private:
         /**
          * @brief A very quick conversion between a float temperature and 11073-20601 FLOAT-Type.
          * @param temperature The temperature as a float.
@@ -130,8 +128,7 @@ private:
             return (((uint32_t)exponent) << 24) | mantissa;
         }
 
-
-    private:
+private:
         /* First byte = 8-bit flags, Second field is a float holding the temperature value. */
         /* See --> https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_measurement.xml */
         uint8_t bytes[SIZEOF_VALUE_BYTES];

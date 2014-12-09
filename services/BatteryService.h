@@ -19,11 +19,11 @@
 
 #include "BLEDevice.h"
 
-/** 
+/**
 * @class BatteryService
-* @breif BLE Battery Service. This service displays the battery level from 0%->100% represented as a 8bit number.<br> 
+* @brief BLE Battery Service. This service displays the battery level from 0%->100% represented as a 8bit number.<br>
 * Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml <br>
-* Battery Level Char:  https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml 
+* Battery Level Char:  https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
 */
 class BatteryService {
 public:
@@ -31,7 +31,7 @@ public:
     * @param[ref] _ble
     *               BLEDevice object for the underlying controller.
     * @param[in] level
-    *               8bit batterly level. Usually used to represent percentage of batterly charge remaining. 
+    *               8bit batterly level. Usually used to represent percentage of batterly charge remaining.
     */
     BatteryService(BLEDevice &_ble, uint8_t level = 100) :
         ble(_ble),
@@ -52,10 +52,10 @@ public:
     }
 
     /**
-     * @breif Update the battery level with a new value. Valid values range from
+     * @brief Update the battery level with a new value. Valid values range from
      * 0..100. Anything outside this range will be ignored.
-     * 
-     * @param newLevel 
+     *
+     * @param newLevel
      *              update to battery level.
      */
     void updateBatteryLevel(uint8_t newLevel) {
@@ -64,9 +64,9 @@ public:
     }
 
 private:
-    BLEDevice           &ble;
-    uint8_t              batteryLevel;
-    GattCharacteristic   batteryLevelCharacteristic;
+    BLEDevice          &ble;
+    uint8_t             batteryLevel;
+    GattCharacteristic  batteryLevelCharacteristic;
 };
 
 #endif /* #ifndef __BLE_BATTERY_SERVICE_H__*/

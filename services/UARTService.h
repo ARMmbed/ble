@@ -23,20 +23,20 @@
 #include "UUID.h"
 #include "BLEDevice.h"
 
-extern const uint8_t UARTServiceBaseUUID[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceBaseUUID[LENGTH_OF_LONG_UUID];
 extern const uint16_t UARTServiceShortUUID;
 extern const uint16_t UARTServiceTXCharacteristicShortUUID;
 extern const uint16_t UARTServiceRXCharacteristicShortUUID;
 
-extern const uint8_t UARTServiceUUID[LENGTH_OF_LONG_UUID];
-extern const uint8_t UARTServiceUUID_reversed[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceUUID[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceUUID_reversed[LENGTH_OF_LONG_UUID];
 
-extern const uint8_t UARTServiceTXCharacteristicUUID[LENGTH_OF_LONG_UUID];
-extern const uint8_t UARTServiceRXCharacteristicUUID[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceTXCharacteristicUUID[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceRXCharacteristicUUID[LENGTH_OF_LONG_UUID];
 
 /**
 * @class UARTService
-* @breif BLE Service to enable UART over BLE
+* @brief BLE Service to enable UART over BLE
 */
 class UARTService {
 public:
@@ -82,8 +82,6 @@ public:
     }
 
     /**
-     * Override for Stream::write().
-     *
      * We attempt to collect bytes before pushing them to the UART RX
      * characteristic--writing to the RX characteristic will then generate
      * notifications for the client. Updates made in quick succession to a
@@ -100,15 +98,15 @@ public:
      * @param  length Amount of characters to be appended.
      * @return        Amount of characters appended to the rxCharacteristic.
      */
-    ssize_t write(const void* _buffer, size_t length) {
-        size_t origLength     = length;
-        const uint8_t *buffer = static_cast<const uint8_t *>(_buffer);
+    ssize_t write(const void *_buffer, size_t length) {
+        size_t         origLength = length;
+        const uint8_t *buffer     = static_cast<const uint8_t *>(_buffer);
 
         if (ble.getGapState().connected) {
             unsigned bufferIndex = 0;
             while (length) {
                 unsigned bytesRemainingInSendBuffer = BLE_UART_SERVICE_MAX_DATA_LEN - sendBufferIndex;
-                unsigned bytesToCopy = (length < bytesRemainingInSendBuffer) ? length : bytesRemainingInSendBuffer;
+                unsigned bytesToCopy                = (length < bytesRemainingInSendBuffer) ? length : bytesRemainingInSendBuffer;
 
                 /* copy bytes into sendBuffer */
                 memcpy(&sendBuffer[sendBufferIndex], &buffer[bufferIndex], bytesToCopy);

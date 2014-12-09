@@ -32,12 +32,12 @@ extern const uint8_t  DFUServicePacketCharacteristicUUID[];
 
 /**
 * @class DFUService
-* @breif Device Firmware Update Service. 
+* @brief Device Firmware Update Service.
 */
 class DFUService {
 public:
     /**
-     * @breif Signature for the handover callback. The application may provide such a
+     * @brief Signature for the handover callback. The application may provide such a
      * callback when setting up the DFU service, in which case it will be
      * invoked before handing control over to the bootloader.
      */
@@ -45,7 +45,7 @@ public:
 
 public:
     /**
-    * @breif Adds Device Firmware Update service to an existing ble object. 
+    * @brief Adds Device Firmware Update service to an existing ble object.
     *
     * @param[ref] _ble
     *               BLEDevice object for the underlying controller.
@@ -75,26 +75,26 @@ public:
 
         ble.addService(dfuService);
         handoverCallback = _handoverCallback;
-        serviceAdded = true;
+        serviceAdded     = true;
 
         ble.onDataWritten(this, &DFUService::onDataWritten);
     }
 
     /**
-    * @breif 
-    * @return 
+    * @brief
+    * @return
     */
     uint16_t getControlHandle(void) {
         return controlPoint.getValueAttribute().getHandle();
     }
 
     /**
-     * @breif This callback allows the DFU service to receive the initial trigger to
+     * @brief This callback allows the DFU service to receive the initial trigger to
      * handover control to the bootloader; but first the application is given a
      * chance to clean up.
      *
      * @param[in]
-     *              
+     *
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {

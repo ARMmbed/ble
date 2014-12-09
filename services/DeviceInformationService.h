@@ -21,14 +21,14 @@
 
 /**
 * @class DeviceInformationService
-* @breif BLE Device Information Service <br>
+* @brief BLE Device Information Service <br>
 * Service: https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.device_information.xml <br>
-* Manufacturer Name String Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.manufacturer_name_string.xml 
+* Manufacturer Name String Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.manufacturer_name_string.xml
 */
 class DeviceInformationService {
 public:
     /**
-     * @breif Device Information Service Constructor. 
+     * @brief Device Information Service Constructor.
      *
      * @param[ref] _ble
      *                BLEDevice object for the underlying controller.
@@ -95,7 +95,7 @@ public:
                                              (softwareRevision != NULL) ? strlen(softwareRevision) : 0, /* minLength */
                                              (softwareRevision != NULL) ? strlen(softwareRevision) : 0, /* maxLength */
                                              GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ)
-                                               {
+    {
         static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
         if (serviceAdded) {
             return;

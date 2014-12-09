@@ -34,17 +34,15 @@ static const uint8_t resetCharUUID[]                = URI_BEACON_CONFIG_UUID_INI
 
 /**
 * @class URIBeaconConfigService
-* @breif UriBeacon Configuration Service. Can be used to set URL, adjust power levels, and set flags.
+* @brief UriBeacon Configuration Service. Can be used to set URL, adjust power levels, and set flags.
 */
 class URIBeaconConfigService {
 public:
-    
     /**
-    * @enum TXPowerModes_t 
-    * @breif Transmission Power Modes for UriBeacon
-    */
+     * @enum TXPowerModes_t
+     * @brief Transmission Power Modes for UriBeacon
+     */
     enum TXPowerModes_t {
-        
         TX_POWER_MODE_LOWEST = 0, /*!< Lowest TX power mode */
         TX_POWER_MODE_LOW    = 1, /*!< Low TX power mode */
         TX_POWER_MODE_MEDIUM = 2, /*!< Medium TX power mode */
@@ -125,7 +123,6 @@ public:
      * transactions.
      */
 public:
-    
     /**
      * Update flags of the URIBeacon dynamically.
      *
@@ -149,8 +146,8 @@ public:
     }
 
     /**
-     * @breif Update the txPowerLevels table.
-     * 
+     * @brief Update the txPowerLevels table.
+     *
      * @param[in] powerLevelsIn
      *              Array of power levels
      */
@@ -161,7 +158,7 @@ public:
     }
 
     /**
-     * @breif Set the effective power mode from one of the values in the powerLevels tables.
+     * @brief Set the effective power mode from one of the values in the powerLevels tables.
      *
      * @param[in] mode
      *              Set the TX Power Mode.
@@ -180,7 +177,7 @@ public:
      * @param beaconPeriodIn
      *              Beacon advertising period in milliseconds
      */
-    void setBeaconPeriod(uint16_t beaconPeriodIn) { 
+    void setBeaconPeriod(uint16_t beaconPeriodIn) {
         beaconPeriod = beaconPeriodIn;
         configureGAP();
         updateBeaconPeriodCharacteristic();
@@ -212,13 +209,13 @@ private:
     }
 
     /*
-    *  Encode the URI Prefix to a single byte if possible.
-    */
+     *  Encode the URI Prefix to a single byte if possible.
+     */
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
         if (!sizeofURLData) {
             return 0;
         }
-        
+
         /* These are the URI Prefixes that can be abbreviated.*/
         const char *prefixes[] = {
             "http://www.",
@@ -244,12 +241,11 @@ private:
 
         return encodedBytes;
     }
-    
+
     /*
-    *  Encode the URI Suffix to a single byte if possible.
-    */
+     *  Encode the URI Suffix to a single byte if possible.
+     */
     size_t encodeURI(const char *urldata, size_t sizeofURLData) {
-        
         /* These are the URI suffixes that can be abbreviated. */
         const char *suffixes[] = {
             ".com/",
@@ -303,8 +299,11 @@ private:
     }
 
     /*
-    *  
-    */
+     * This callback is invoked when a GATT client attempts to modify any of the
+     * characteristics of this service. Attempts to do so must be rolled back if
+     * the config service is locked; else they are also applied to the internal
+     * state of this service object.
+     */
     void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         uint16_t handle = params->charHandle;
         if (handle == uriDataChar.getValueHandle()) {
@@ -361,8 +360,8 @@ private:
     }
 
     /*
-    *  Reset the default values.
-    */
+     *  Reset the default values.
+     */
     void resetDefaults(void) {
         lockedState      = false;
         uriDataLength    = 0;
@@ -376,8 +375,9 @@ private:
     }
 
     /*
-    *  
-    */
+     * Internal helper function used to update the GATT database following any
+     * change to the internal state of the service object.
+     */
     void updateGATT(void) {
         updateLockedStateCharacteristic();
         updateURIDataCharacteristic();
@@ -408,16 +408,12 @@ private:
     }
 
     void updateTxPowerLevelsCharacteristic(void) {
-       ble.updateCharacteristicValue(txPowerLevelsChar.getValueHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
+        ble.updateCharacteristicValue(txPowerLevelsChar.getValueHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
     }
 
-    /**
-    * The following is a private debug function.
-    */
 private:
-
     /**
-     * For debugging only. Print Hex representation of ServiceDataPayload to terminal.
+     * For debugging only. Print Hex representation of ServiceDataPayload to the console.
      */
     void dumpEncodedSeviceData() const {
         printf("encoded: '");
