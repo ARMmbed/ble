@@ -32,14 +32,24 @@ static const uint8_t txPowerModeCharUUID[]          = URI_BEACON_CONFIG_UUID_INI
 static const uint8_t beaconPeriodCharUUID[]         = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x88);
 static const uint8_t resetCharUUID[]                = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x89);
 
+/**
+* @class URIBeaconConfigService
+* @breif UriBeacon Configuration Service. Can be used to set URL, adjust power levels, and set flags.
+*/
 class URIBeaconConfigService {
 public:
+    
+    /**
+    * @enum TXPowerModes_t 
+    * @breif Transmission Power Modes for UriBeacon
+    */
     enum TXPowerModes_t {
-        TX_POWER_MODE_LOWEST = 0,
-        TX_POWER_MODE_LOW    = 1,
-        TX_POWER_MODE_MEDIUM = 2,
-        TX_POWER_MODE_HIGH   = 3,
-        NUM_POWER_MODES
+        
+        TX_POWER_MODE_LOWEST = 0, /*!< Lowest TX power mode */
+        TX_POWER_MODE_LOW    = 1, /*!< Low TX power mode */
+        TX_POWER_MODE_MEDIUM = 2, /*!< Medium TX power mode */
+        TX_POWER_MODE_HIGH   = 3, /*!< High TX power mode */
+        NUM_POWER_MODES           /*!< Number of Power Modes defined */
     };
 
     /**
@@ -115,17 +125,18 @@ public:
      * transactions.
      */
 public:
+    
     /**
      * Update flags of the URIBeacon dynamically.
      *
      * @param[in] flagsIn
-     *
+     * @verbatim
      *     ### UriBeacon Flags
      *     Bit   | Description
      *     :---- | :----------
      *     0     | Invisible Hint
      *     1..7  | Reserved for future use. Must be zero.
-     *
+     * @endverbatim
      *     The `Invisible Hint` flag is a command for the user-agent that tells
      *     it not to access or display the UriBeacon. This is a guideline only,
      *     and is not a blocking method. User agents may, with user approval,
@@ -138,7 +149,10 @@ public:
     }
 
     /**
-     * Update the txPowerLevels table.
+     * @breif Update the txPowerLevels table.
+     * 
+     * @param[in] powerLevelsIn
+     *              Array of power levels
      */
     void setTxPowerLevels(const int8_t powerLevelsIn[NUM_POWER_MODES]) {
         memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
@@ -147,7 +161,10 @@ public:
     }
 
     /**
-     * Set the effective power mode from one of the values in the powerLevels tables.
+     * @breif Set the effective power mode from one of the values in the powerLevels tables.
+     *
+     * @param[in] mode
+     *              Set the TX Power Mode.
      */
     void setTxPowerMode(TXPowerModes_t mode) {
         txPowerMode = mode;
@@ -158,16 +175,19 @@ public:
     /**
      * The period in milliseconds that a UriBeacon packet is transmitted.
      *
-     * @Note: A value of zero disables UriBeacon transmissions.
+     * @note A value of zero disables UriBeacon transmissions.
+     *
+     * @param beaconPeriodIn
+     *              Beacon advertising period in milliseconds
      */
-    void setBeaconPeriod(uint16_t beaconPeriodIn) {
+    void setBeaconPeriod(uint16_t beaconPeriodIn) { 
         beaconPeriod = beaconPeriodIn;
         configureGAP();
         updateBeaconPeriodCharacteristic();
     }
 
 private:
-    /**
+    /*
      * Setup the advertisement payload and GAP settings.
      */
     void configureGAP(void) {
@@ -191,11 +211,15 @@ private:
         ble.setTxPower(powerLevels[txPowerMode]);
     }
 
+    /*
+    *  Encode the URI Prefix to a single byte if possible.
+    */
     size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
         if (!sizeofURLData) {
             return 0;
         }
-
+        
+        /* These are the URI Prefixes that can be abbreviated.*/
         const char *prefixes[] = {
             "http://www.",
             "https://www.",
@@ -220,8 +244,13 @@ private:
 
         return encodedBytes;
     }
-
+    
+    /*
+    *  Encode the URI Suffix to a single byte if possible.
+    */
     size_t encodeURI(const char *urldata, size_t sizeofURLData) {
+        
+        /* These are the URI suffixes that can be abbreviated. */
         const char *suffixes[] = {
             ".com/",
             ".org/",
@@ -273,6 +302,9 @@ private:
         return encodedBytes;
     }
 
+    /*
+    *  
+    */
     void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         uint16_t handle = params->charHandle;
         if (handle == uriDataChar.getValueHandle()) {
@@ -328,6 +360,9 @@ private:
         ble.setAdvertisingPayload();
     }
 
+    /*
+    *  Reset the default values.
+    */
     void resetDefaults(void) {
         lockedState      = false;
         uriDataLength    = 0;
@@ -340,6 +375,9 @@ private:
         updateGATT();
     }
 
+    /*
+    *  
+    */
     void updateGATT(void) {
         updateLockedStateCharacteristic();
         updateURIDataCharacteristic();
@@ -373,9 +411,13 @@ private:
        ble.updateCharacteristicValue(txPowerLevelsChar.getValueHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
     }
 
-private:
     /**
-     * For debugging only.
+    * The following is a private debug function.
+    */
+private:
+
+    /**
+     * For debugging only. Print Hex representation of ServiceDataPayload to terminal.
      */
     void dumpEncodedSeviceData() const {
         printf("encoded: '");

@@ -19,16 +19,19 @@
 
 #include "BLEDevice.h"
 
-/* Device Information Service */
-/* Service: https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.device_information.xml */
-/* Manufacturer Name String Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.manufacturer_name_string.xml */
+/**
+* @class DeviceInformationService
+* @breif BLE Device Information Service <br>
+* Service: https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.device_information.xml <br>
+* Manufacturer Name String Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.manufacturer_name_string.xml 
+*/
 class DeviceInformationService {
 public:
     /**
-     * Constructor.
+     * @breif Device Information Service Constructor. 
      *
-     * @param[in] _ble
-     *                Reference to the BLEDevice.
+     * @param[ref] _ble
+     *                BLEDevice object for the underlying controller.
      * @param[in] manufacturersName
      *                This characteristic represents the name of the
      *                manufacturer of the device. The name is copied into the

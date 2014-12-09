@@ -19,31 +19,39 @@
 
 #include "BLEDevice.h"
 
-/* Heart Rate Service */
-/* Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml */
-/* HRM Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml */
-/* Location: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml */
+/** 
+* @class HeartRateService
+* @breif BLE Service for HeartRate. This BLE Service contains the location of the sensor, the heartrate in beats per minute. <br>
+* Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.heart_rate.xml <br>
+* HRM Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml <br>
+* Location: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml 
+*/
 class HeartRateService {
 public:
+    
+    /**
+    * @enum SensorLocation
+    * @breif Location of HeartRate sensor on body.
+    */
     enum {
-        LOCATION_OTHER = 0,
-        LOCATION_CHEST,
-        LOCATION_WRIST,
-        LOCATION_FINGER,
-        LOCATION_HAND,
-        LOCATION_EAR_LOBE,
-        LOCATION_FOOT,
+        LOCATION_OTHER = 0, /*!< Other Location */
+        LOCATION_CHEST,     /*!< Chest */
+        LOCATION_WRIST,     /*!< Wrist */
+        LOCATION_FINGER,    /*!< Finger */
+        LOCATION_HAND,      /*!< Hand */
+        LOCATION_EAR_LOBE,  /*!< Earlobe */
+        LOCATION_FOOT,      /*!< Foot */
     };
 
 public:
     /**
-     * Constructor.
+     * @breif Constructor with 8bit HRM Counter value.
      *
-     * param[in] _ble
+     * @param[ref] _ble
      *               Reference to the underlying BLEDevice.
-     * param[in] hrmCounter (8-bit)
+     * @param[in] hrmCounter (8-bit)
      *               initial value for the hrm counter.
-     * param[in] location
+     * @param[in] location
      *               Sensor's location.
      */
     HeartRateService(BLEDevice &_ble, uint8_t hrmCounter, uint8_t location) :
@@ -60,7 +68,14 @@ public:
     }
 
     /**
-     * Same constructor as above, but with a 16-bit HRM Counter value.
+     * @breif Constructor with a 16-bit HRM Counter value.
+     *
+     * @param[in] _ble
+     *               Reference to the underlying BLEDevice.
+     * @param[in] hrmCounter (8-bit)
+     *               initial value for the hrm counter.
+     * @param[in] location
+     *               Sensor's location.
      */
     HeartRateService(BLEDevice &_ble, uint16_t hrmCounter, uint8_t location) :
         ble(_ble),
@@ -76,7 +91,10 @@ public:
     }
 
     /**
-     * Set a new 8-bit value for heart rate.
+     * @breif Set a new 8-bit value for heart rate.
+     *
+     * @param[in] hrmCounter
+     *                  HeartRate in bpm. 
      */
     void updateHeartRate(uint8_t hrmCounter) {
         valueBytes.updateHeartRate(hrmCounter);
@@ -85,6 +103,9 @@ public:
 
     /**
      * Set a new 16-bit value for heart rate.
+     *
+     * @param[in] hrmCounter
+     *                  HeartRate in bpm. 
      */
     void updateHeartRate(uint16_t hrmCounter) {
         valueBytes.updateHeartRate(hrmCounter);
@@ -94,6 +115,7 @@ public:
     /**
      * This callback allows the HeartRateService to receive updates to the
      * controlPoint Characteristic.
+     *                  
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {

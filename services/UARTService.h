@@ -34,6 +34,10 @@ extern const uint8_t UARTServiceUUID_reversed[LENGTH_OF_LONG_UUID];
 extern const uint8_t UARTServiceTXCharacteristicUUID[LENGTH_OF_LONG_UUID];
 extern const uint8_t UARTServiceRXCharacteristicUUID[LENGTH_OF_LONG_UUID];
 
+/**
+* @class UARTService
+* @breif BLE Service to enable UART over BLE
+*/
 class UARTService {
 public:
     /**< Maximum length of data (in bytes) that can be transmitted by the UART service module to the peer. */
@@ -41,6 +45,11 @@ public:
     static const unsigned BLE_UART_SERVICE_MAX_DATA_LEN = (GATT_MTU_SIZE_DEFAULT - 3);
 
 public:
+
+    /**
+    * @param[ref] ble
+    *                 BLEDevice object for the underlying controller.
+    */
     UARTService(BLEDevice &_ble) :
         ble(_ble),
         receiveBuffer(),
@@ -131,6 +140,11 @@ public:
         return (write(&c, 1) == 1) ? 1 : EOF;
     }
 
+    /**
+     * Override for Stream::_getc()
+     * @return
+     *     The character read.
+     */
     int _getc() {
         if (receiveBufferIndex == numBytesReceived) {
             return EOF;
@@ -179,4 +193,3 @@ private:
 };
 
 #endif /* #ifndef __BLE_UART_SERVICE_H__*/
-

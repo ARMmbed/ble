@@ -19,28 +19,37 @@
 
 #include "BLEDevice.h"
 
-/* Health Thermometer Service */
-/* Service:  https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.health_thermometer.xml */
-/* Temperature Measurement: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_measurement.xml */
-/* Temperature Type: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_type.xml */
+/** 
+* @class HealthThermometerService
+* @breif BLE Health Thermometer Service. This service provides the location of the thermometer and the temperature.  <br>
+* Service:  https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.health_thermometer.xml <br>
+* Temperature Measurement: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_measurement.xml <br>
+* Temperature Type: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.temperature_type.xml 
+*/
 class HealthThermometerService {
 public:
+    
+    /**
+    * @enum Sensor Location
+    * @breif Location of sensor on the body
+    */
     enum {
-        LOCATION_ARMPIT = 1,
-        LOCATION_BODY,
-        LOCATION_EAR,
-        LOCATION_FINGER,
-        LOCATION_GI_TRACT,
-        LOCATION_MOUTH,
-        LOCATION_RECTUM,
-        LOCATION_TOE,
-        LOCATION_EAR_DRUM,
+        LOCATION_ARMPIT = 1,    /*!< armpit */
+        LOCATION_BODY,          /*!< body */
+        LOCATION_EAR,           /*!< ear */
+        LOCATION_FINGER,        /*!< finger */
+        LOCATION_GI_TRACT,      /*!< GI tract */
+        LOCATION_MOUTH,         /*!< mouth */
+        LOCATION_RECTUM,        /*!< rectum */
+        LOCATION_TOE,           /*!< toe */
+        LOCATION_EAR_DRUM,      /*!< ear drum */
     };
 
 public:
 
     /**
-     * @param[in] _ble         reference to the BLE device
+     * @breif Add the Health Thermometer Service to an existing ble object, initialize with temperature and location. 
+     * @param[ref] _ble         reference to the BLE device
      * @param[in] initialTemp  initial value in celsius
      * @param[in] _location
      */
@@ -59,6 +68,13 @@ public:
         ble.addService(hrmService);
     }
 
+    /**
+    * @breif Update the temperature being broadcast 
+    *
+    * @param[in] temperature
+    *                   Floating point value of the temperature
+    * 
+    */
     void updateTemperature(float temperature) {
         if (ble.getGapState().connected) {
             valueBytes.updateTemperature(temperature);
