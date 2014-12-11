@@ -216,6 +216,14 @@ public:
     void onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback);
 
     /**
+     * Append to a chain of callbacks to be invoked upon disconnection; these
+     * callbacks receive no context and are therefore different from the
+     * onDisconnection callback.
+     */
+    template<typename T>
+    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void));
+
+    /**
      * Setup a callback for the GATT event DATA_SENT.
      */
     void onDataSent(GattServer::ServerEventCallbackWithCount_t callback);
@@ -508,6 +516,12 @@ inline void
 BLEDevice::onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback)
 {
     transport->getGap().setOnDisconnection(disconnectionCallback);
+}
+
+template<typename T>
+inline void
+BLEDevice::addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {
+    transport->getGap().addToDisconnectionCallChain(tptr, mptr);
 }
 
 inline void

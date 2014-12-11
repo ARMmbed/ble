@@ -20,6 +20,9 @@
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
 #include "GapEvents.h"
+#include "CallChain.h"
+
+using namespace mbed;
 
 class Gap {
 public:
@@ -96,14 +99,36 @@ private:
     /* Event callback handlers */
     void setOnTimeout(EventCallback_t callback) {onTimeout = callback;}
     void setOnConnection(ConnectionEventCallback_t callback) {onConnection = callback;}
+
+    /**
+     * Set the application callback for disconnection events.
+     * @param callback
+     *        Pointer to the unique callback.
+     */
     void setOnDisconnection(DisconnectionEventCallback_t callback) {onDisconnection = callback;}
+
+    /**
+     * Append to a chain of callbacks to be invoked upon disconnection; these
+     * callbacks receive no context and are therefore different from the
+     * onDisconnection callback.
+     * @param callback
+     *        function pointer to be invoked upon disconnection; receives no context.
+     *
+     * @note the disconnection CallChain should have been merged with
+     *     onDisconnctionCallback; but this was not possible because
+     *     FunctionPointer (which is a building block for CallChain) doesn't
+     *     accept variadic templates.
+     */
+    template<typename T>
+    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
     GapState_t getState(void) const {
         return state;
     }
 
 protected:
-    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL) {
+    /* Default constructor. */
+    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL), disconnectionCallChain() {
         /* empty */
     }
 
@@ -120,6 +145,7 @@ public:
         if (onDisconnection) {
             onDisconnection(handle, reason);
         }
+        disconnectionCallChain.call();
     }
 
     void processEvent(GapEvents::gapEvent_e type) {
@@ -140,6 +166,7 @@ private:
     EventCallback_t              onTimeout;
     ConnectionEventCallback_t    onConnection;
     DisconnectionEventCallback_t onDisconnection;
+    CallChain                    disconnectionCallChain;
 
 private:
     /* disallow copy and assignment */
