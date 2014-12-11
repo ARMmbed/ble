@@ -96,7 +96,7 @@ public:
      *     Information about the characterisitc being updated.
      */
     virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {
+        if (params->charHandle == controlPoint.getValueHandle()) {
             /* At present, writing anything will do the trick--this needs to be improved. */
             if (handoverCallback) {
                 handoverCallback();
