@@ -109,7 +109,7 @@ public:
         uriDataChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::uriDataWriteAuthorizationCallback);
         flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::flagsAuthorizationCallback);
         txPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
-        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::powerModeAuthorizationCallback);
         beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
 
@@ -391,6 +391,12 @@ private:
 
     void flagsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
         if (lockedState || ((*(params->data) & 0xFE) != 0)) {
+            params->authorizationReply = false;
+        }
+    }
+
+    void powerModeAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
+        if (lockedState || (*(params->data) >= NUM_POWER_MODES)) {
             params->authorizationReply = false;
         }
     }
