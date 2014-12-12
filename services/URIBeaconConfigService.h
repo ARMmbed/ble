@@ -331,7 +331,7 @@ private:
     }
 
     /*
-     *  Reset the default values.
+     * Reset the default values.
      */
     void resetDefaults(void) {
         lockedState      = false;
