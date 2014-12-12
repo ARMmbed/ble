@@ -289,34 +289,33 @@ public:
     } presentation_format_t;
 
     /**
-      *  @brief  Creates a new GattCharacteristic using the specified 16-bit
-      *          UUID, value length, and properties
-      *
-      *  @note   The UUID value must be unique in the service and is normally >1
-      *
-      *  @param[in]  uuid
-      *              The UUID to use for this characteristic
-      *  @param[in]  valuePtr
-      *              The memory holding the initial value. The value is copied
-      *              into the stack when the enclosing service is added; and
-      *              thereafter maintained internally by the stack.
-      *  @param[in]  initialLen
-      *              The min length in bytes of this characteristic's value
-      *  @param[in]  maxLen
-      *              The max length in bytes of this characteristic's value
-      *  @param[in]  props
-      *              The 8-bit bit field containing the characteristic's properties
-      *  @param[in]  descriptors
-      *              A pointer to an array of descriptors to be included within this characteristic
-      *  @param[in]  numDescriptors
-      *              The number of descriptors
-      *
-      * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
-      *        for the value attribute of a characteristic, then that particular
-      *        characteristic may be considered optional and dropped while
-      *        instantiating the service with the underlying BLE stack.
-      */
-    /**************************************************************************/
+     *  @brief  Creates a new GattCharacteristic using the specified 16-bit
+     *          UUID, value length, and properties
+     *
+     *  @note   The UUID value must be unique in the service and is normally >1
+     *
+     *  @param[in]  uuid
+     *              The UUID to use for this characteristic
+     *  @param[in]  valuePtr
+     *              The memory holding the initial value. The value is copied
+     *              into the stack when the enclosing service is added; and
+     *              thereafter maintained internally by the stack.
+     *  @param[in]  initialLen
+     *              The min length in bytes of this characteristic's value
+     *  @param[in]  maxLen
+     *              The max length in bytes of this characteristic's value
+     *  @param[in]  props
+     *              The 8-bit bit field containing the characteristic's properties
+     *  @param[in]  descriptors
+     *              A pointer to an array of descriptors to be included within this characteristic
+     *  @param[in]  numDescriptors
+     *              The number of descriptors
+     *
+     * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
+     *        for the value attribute of a characteristic, then that particular
+     *        characteristic may be considered optional and dropped while
+     *        instantiating the service with the underlying BLE stack.
+     */
     GattCharacteristic(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
                        uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE,
                        GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
