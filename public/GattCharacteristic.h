@@ -334,15 +334,17 @@ public:
         _properties(props),
         _descriptors(descriptors),
         _descriptorCount(numDescriptors),
+        enabledReadAuthorization(false),
         enabledWriteAuthorization(false),
+        readAuthorizationCallback(),
         writeAuthorizationCallback() {
         /* empty */
     }
 
-public:
     /**
-     * Setup write authorization.
+     * Authorization.
      */
+public:
     void setWriteAuthorizationCallback(void (*callback)(GattCharacteristicWriteAuthCBParams *)) {
         writeAuthorizationCallback.attach(callback);
         enabledWriteAuthorization = true;
@@ -351,6 +353,15 @@ public:
     void setWriteAuthorizationCallback(T *object, void (T::*member)(GattCharacteristicWriteAuthCBParams *)) {
         writeAuthorizationCallback.attach(object, member);
         enabledWriteAuthorization = true;
+    }
+    void setReadAuthorizationCallback(void (*callback)(GattCharacteristicReadAuthCBParams *)) {
+        readAuthorizationCallback.attach(callback);
+        enabledReadAuthorization = true;
+    }
+    template <typename T>
+    void setReadAuthorizationCallback(T *object, void (T::*member)(GattCharacteristicReadAuthCBParams *)) {
+        readAuthorizationCallback.attach(object, member);
+        enabledReadAuthorization = true;
     }
 
     /**
@@ -369,11 +380,30 @@ public:
         return params->authorizationReply;
     }
 
-    GattAttribute&          getValueAttribute()                 {return _valueAttribute; }
-    const GattAttribute&    getValueAttribute()           const {return _valueAttribute; }
+    /**
+     * Helper function meant to be called from the guts of the BLE stack to
+     * determine the authorization reply for a read request.
+     * @param  params to capture the context of the read-auth request; and also contains an out-parameter for reply.
+     * @return        true if the read is authorized to proceed.
+     */
+    bool authorizeRead(GattCharacteristicReadAuthCBParams *params) {
+        if (!isReadAuthorizationEnabled()) {
+            return true;
+        }
+
+        params->authorizationReply = true; /* initialized to true by default */
+        readAuthorizationCallback.call(params);
+        return params->authorizationReply;
+    }
+
+    /* accessors */
+public:
+    GattAttribute&          getValueAttribute()                 {return _valueAttribute;                }
+    const GattAttribute&    getValueAttribute()           const {return _valueAttribute;                }
     GattAttribute::Handle_t getValueHandle(void)          const {return getValueAttribute().getHandle();}
-    uint8_t                 getProperties(void)           const {return _properties;     }
-    uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;}
+    uint8_t                 getProperties(void)           const {return _properties;                    }
+    uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;               }
+    bool                    isReadAuthorizationEnabled()  const {return enabledReadAuthorization;       }
     bool                    isWriteAuthorizationEnabled() const {return enabledWriteAuthorization;      }
 
     GattAttribute *getDescriptor(uint8_t index) {
@@ -389,7 +419,10 @@ private:
     uint8_t         _properties;
     GattAttribute **_descriptors;
     uint8_t         _descriptorCount;
+
+    bool            enabledReadAuthorization;
     bool            enabledWriteAuthorization;
+    FunctionPointerWithContext<GattCharacteristicReadAuthCBParams *>  readAuthorizationCallback;
     FunctionPointerWithContext<GattCharacteristicWriteAuthCBParams *> writeAuthorizationCallback;
 
 private:

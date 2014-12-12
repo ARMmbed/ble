@@ -42,4 +42,11 @@ struct GattCharacteristicWriteAuthCBParams {
                                                   * request is to proceed; false otherwise. */
 };
 
+struct GattCharacteristicReadAuthCBParams {
+    GattAttribute::Handle_t  charHandle;
+    uint16_t                 offset; /**< Offset for the write operation. */
+    bool                     authorizationReply; /* This is the out parameter which needs to be set to true by the callback if the
+                                                  * request is to proceed; false otherwise. */
+};
+
 #endif /*__GATT_CHARACTERISTIC_WRITE_CB_PARAMS_H__*/

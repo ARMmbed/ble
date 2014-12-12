@@ -31,7 +31,8 @@ public:
         GATT_EVENT_UPDATES_ENABLED         = 3,  /**< Notify/Indicate Enabled in CCCD */
         GATT_EVENT_UPDATES_DISABLED        = 4,  /**< Notify/Indicate Disabled in CCCD */
         GATT_EVENT_CONFIRMATION_RECEIVED   = 5,  /**< Response received from Indicate message */
-        GATT_EVENT_WRITE_AUTHORIZATION_REQ = 6,  /**< Request application to authorize write */
+        GATT_EVENT_READ_AUTHORIZATION_REQ  = 6,  /**< Request application to authorize read */
+        GATT_EVENT_WRITE_AUTHORIZATION_REQ = 7,  /**< Request application to authorize write */
     } gattEvent_t;
 };
 
