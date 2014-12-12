@@ -106,6 +106,13 @@ public:
 
         configureGAP();
 
+        uriDataChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::uriDataWriteAuthorizationCallback);
+        flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::falgsAuthorizationCallback);
+        txPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+        beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+        resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+
         GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
@@ -300,58 +307,22 @@ private:
 
     /*
      * This callback is invoked when a GATT client attempts to modify any of the
-     * characteristics of this service. Attempts to do so must be rolled back if
-     * the config service is locked; else they are also applied to the internal
-     * state of this service object.
+     * characteristics of this service. Attempts to do so are also applied to
+     * the internal state of this service object.
      */
     void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         uint16_t handle = params->charHandle;
         if (handle == uriDataChar.getValueHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the uriData characteristic. */
-                /* Restore GATT database with previous value. */
-                updateURIDataCharacteristic();
-                return;
-            }
-
-            /* We don't handle very large writes at the moment. */
-            if ((params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
-                return;
-            }
-
             uriDataLength = params->len;
             memcpy(uriData, params->data, uriDataLength);
         } else if (handle == flagsChar.getValueHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                updateFlagsCharacteristic();
-                return;
-            } else {
-                flags = *(params->data);
-            }
+            flags = *(params->data);
         } else if (handle == txPowerLevelsChar.getValueHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                updateTxPowerLevelsCharacteristic();
-                return;
-            } else {
-                memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
-            }
+            memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
         } else if (handle == txPowerModeChar.getValueHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                updateTxPowerModeCharacteristic();
-                return;
-            } else {
-                txPowerMode = *reinterpret_cast<const TXPowerModes_t *>(params->data);
-            }
+            txPowerMode = *reinterpret_cast<const TXPowerModes_t *>(params->data);
         } else if (handle == beaconPeriodChar.getValueHandle()) {
-            if (lockedState) { /* When locked, the device isn't allowed to update the characteristic. */
-                /* Restore GATT database with previous value. */
-                updateBeaconPeriodCharacteristic();
-                return;
-            } else {
-                beaconPeriod = *((uint16_t *)(params->data));
-            }
+            beaconPeriod = *((uint16_t *)(params->data));
         } else if (handle == resetChar.getValueHandle()) {
             resetDefaults();
         }
@@ -409,6 +380,25 @@ private:
 
     void updateTxPowerLevelsCharacteristic(void) {
         ble.updateCharacteristicValue(txPowerLevelsChar.getValueHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
+    }
+
+private:
+    void uriDataWriteAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
+        if (lockedState || (params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
+            params->authorizationReply = false;
+        }
+    }
+
+    void falgsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
+        if (lockedState || ((*(params->data) & 0xFE) != 0)) {
+            params->authorizationReply = false;
+        }
+    }
+
+    void denyGATTWritesIfLocked(GattCharacteristicWriteAuthCBParams *params) {
+        if (lockedState) {
+            params->authorizationReply = false;
+        }
     }
 
 private:
