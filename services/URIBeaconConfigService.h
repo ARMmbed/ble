@@ -107,7 +107,7 @@ public:
         configureGAP();
 
         uriDataChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::uriDataWriteAuthorizationCallback);
-        flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::falgsAuthorizationCallback);
+        flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::flagsAuthorizationCallback);
         txPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
@@ -389,7 +389,7 @@ private:
         }
     }
 
-    void falgsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
+    void flagsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
         if (lockedState || ((*(params->data) & 0xFE) != 0)) {
             params->authorizationReply = false;
         }
