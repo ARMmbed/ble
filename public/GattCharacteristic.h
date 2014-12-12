@@ -18,6 +18,8 @@
 #define __GATT_CHARACTERISTIC_H__
 
 #include "GattAttribute.h"
+#include "GattCharacteristicWriteCBParams.h"
+#include "FunctionPointerWithContext.h"
 
 class GattCharacteristic {
 public:
@@ -310,24 +312,65 @@ public:
      *              A pointer to an array of descriptors to be included within this characteristic
      *  @param[in]  numDescriptors
      *              The number of descriptors
+     *  @param[in]  writeAuthorizationIn
+     *              Do the attribute(s) of this characteristic have write
+     *              authorization enabled? if so, Write Authorization will be
+     *              requested from the application on every write request
+     *              operation (but not write command).
      *
      * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
      *        for the value attribute of a characteristic, then that particular
      *        characteristic may be considered optional and dropped while
      *        instantiating the service with the underlying BLE stack.
      */
-    GattCharacteristic(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0,
-                       uint8_t props = BLE_GATT_CHAR_PROPERTIES_NONE,
-                       GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
-        _valueAttribute(uuid, valuePtr, initialLen, maxLen), _properties(props), _descriptors(descriptors), _descriptorCount(numDescriptors) {
+    GattCharacteristic(const UUID    &uuid,
+                       uint8_t       *valuePtr            = NULL,
+                       uint16_t       initialLen          = 0,
+                       uint16_t       maxLen              = 0,
+                       uint8_t        props               = BLE_GATT_CHAR_PROPERTIES_NONE,
+                       GattAttribute *descriptors[]       = NULL,
+                       unsigned       numDescriptors      = 0) :
+        _valueAttribute(uuid, valuePtr, initialLen, maxLen),
+        _properties(props),
+        _descriptors(descriptors),
+        _descriptorCount(numDescriptors),
+        enableWriteAuthorization(false),
+        writeAuthorizationCallback() {
+        /* empty */
     }
 
 public:
-    GattAttribute&          getValueAttribute()            {return _valueAttribute; }
-    const GattAttribute&    getValueAttribute()      const {return _valueAttribute; }
-    GattAttribute::Handle_t getValueHandle(void)     const {return getValueAttribute().getHandle();}
-    uint8_t                 getProperties(void)      const {return _properties;     }
-    uint8_t                 getDescriptorCount(void) const {return _descriptorCount;}
+    /**
+     * Setup write authorization.
+     */
+    void setWriteAuthorizationCallback(void (*callback)(GattCharacteristicWriteAuthCBParams *)) {
+        enableWriteAuthorization = true;
+        writeAuthorizationCallback.attach(callback);
+    }
+    template <typename T>
+    void setWriteAuthorizationCallback(T *object, void (T::*member)(GattCharacteristicWriteAuthCBParams *)) {
+        enableWriteAuthorization = true;
+        writeAuthorizationCallback.attach(object, member);
+    }
+
+    /**
+     * Helper function meant to be called from the guts of the BLE stack to
+     * determine the authorization reply for a write request.
+     * @param  params to capture the context of the write-auth request; and also contains an out-parameter for reply.
+     * @return        true if the write is authorized to proceed.
+     */
+    bool authorizeWrite(GattCharacteristicWriteAuthCBParams *params) {
+        params->authorizationReply = true; /* initialized to true by default */
+        writeAuthorizationCallback.call(params);
+        return params->authorizationReply;
+    }
+
+    GattAttribute&          getValueAttribute()                 {return _valueAttribute; }
+    const GattAttribute&    getValueAttribute()           const {return _valueAttribute; }
+    GattAttribute::Handle_t getValueHandle(void)          const {return getValueAttribute().getHandle();}
+    uint8_t                 getProperties(void)           const {return _properties;     }
+    uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;}
+    bool                    isWriteAuthorizationEnabled() const {return enableWriteAuthorization;}
 
     GattAttribute *getDescriptor(uint8_t index) {
         if (index >= _descriptorCount) {
@@ -342,6 +385,8 @@ private:
     uint8_t         _properties;
     GattAttribute **_descriptors;
     uint8_t         _descriptorCount;
+    bool            enableWriteAuthorization;
+    FunctionPointerWithContext<GattCharacteristicWriteAuthCBParams *> writeAuthorizationCallback;
 
 private:
     /* disallow copy and assignment */

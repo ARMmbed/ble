@@ -33,4 +33,13 @@ struct GattCharacteristicWriteCBParams {
     const uint8_t *data;   /**< Incoming data, variable length. */
 };
 
+struct GattCharacteristicWriteAuthCBParams {
+    GattAttribute::Handle_t  charHandle;
+    uint16_t                 offset; /**< Offset for the write operation. */
+    uint16_t                 len;    /**< Length of the incoming data. */
+    const uint8_t           *data;   /**< Incoming data, variable length. */
+    bool                     authorizationReply; /* This is the out parameter which needs to be set to true by the callback if the
+                                                  * request is to proceed; false otherwise. */
+};
+
 #endif /*__GATT_CHARACTERISTIC_WRITE_CB_PARAMS_H__*/
