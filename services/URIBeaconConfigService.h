@@ -414,7 +414,9 @@ private:
     }
 
 private:
-    static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 18; /* Uri Data must be between 0 and 18 bytes in length. */
+    static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 22; /* Uri Data must be between 0 and 18 bytes in length; and
+                                                               * together with the 4-byte header, the service data must
+                                                               * fit within 22 bytes. */
     static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48; /* This is chosen arbitrarily. It should be large enough
                                                                * to hold any reasonable uncompressed URI. */
 
