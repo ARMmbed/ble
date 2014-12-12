@@ -334,7 +334,7 @@ public:
         _properties(props),
         _descriptors(descriptors),
         _descriptorCount(numDescriptors),
-        enableWriteAuthorization(false),
+        enabledWriteAuthorization(false),
         writeAuthorizationCallback() {
         /* empty */
     }
@@ -344,13 +344,13 @@ public:
      * Setup write authorization.
      */
     void setWriteAuthorizationCallback(void (*callback)(GattCharacteristicWriteAuthCBParams *)) {
-        enableWriteAuthorization = true;
         writeAuthorizationCallback.attach(callback);
+        enabledWriteAuthorization = true;
     }
     template <typename T>
     void setWriteAuthorizationCallback(T *object, void (T::*member)(GattCharacteristicWriteAuthCBParams *)) {
-        enableWriteAuthorization = true;
         writeAuthorizationCallback.attach(object, member);
+        enabledWriteAuthorization = true;
     }
 
     /**
@@ -360,6 +360,10 @@ public:
      * @return        true if the write is authorized to proceed.
      */
     bool authorizeWrite(GattCharacteristicWriteAuthCBParams *params) {
+        if (!isWriteAuthorizationEnabled()) {
+            return true;
+        }
+
         params->authorizationReply = true; /* initialized to true by default */
         writeAuthorizationCallback.call(params);
         return params->authorizationReply;
@@ -370,7 +374,7 @@ public:
     GattAttribute::Handle_t getValueHandle(void)          const {return getValueAttribute().getHandle();}
     uint8_t                 getProperties(void)           const {return _properties;     }
     uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;}
-    bool                    isWriteAuthorizationEnabled() const {return enableWriteAuthorization;}
+    bool                    isWriteAuthorizationEnabled() const {return enabledWriteAuthorization;      }
 
     GattAttribute *getDescriptor(uint8_t index) {
         if (index >= _descriptorCount) {
@@ -385,7 +389,7 @@ private:
     uint8_t         _properties;
     GattAttribute **_descriptors;
     uint8_t         _descriptorCount;
-    bool            enableWriteAuthorization;
+    bool            enabledWriteAuthorization;
     FunctionPointerWithContext<GattCharacteristicWriteAuthCBParams *> writeAuthorizationCallback;
 
 private:
