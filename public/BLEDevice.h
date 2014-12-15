@@ -225,8 +225,16 @@ public:
 
     /**
      * Setup a callback for the GATT event DATA_SENT.
+     *
+     * @Note: it is possible to chain together multiple onDataSent callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. 
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
      */
-    void onDataSent(GattServer::ServerEventCallbackWithCount_t callback);
+    void onDataSent(void (*callback)(unsigned count));
+    template <typename T> void onDataSent(T * objPtr, void (T::*memberPtr)(unsigned count));
 
     /**
      * Setup a callback for when a characteristic has its value updated by a
@@ -525,9 +533,13 @@ BLEDevice::addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {
 }
 
 inline void
-BLEDevice::onDataSent(GattServer::ServerEventCallbackWithCount_t callback)
-{
+BLEDevice::onDataSent(void (*callback)(unsigned count)) {
     transport->getGattServer().setOnDataSent(callback);
+}
+
+template <typename T> inline void
+BLEDevice::onDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
+    transport->getGattServer().setOnDataSent(objPtr, memberPtr);
 }
 
 inline void

@@ -27,10 +27,9 @@ public:
     /* Event callback handlers. */
     typedef void (*EventCallback_t)(uint16_t attributeHandle);
     typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
-    typedef void (*ServerEventCallbackWithCount_t)(unsigned count); /**< independent of any particular attribute */
 
 protected:
-    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(NULL), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
+    GattServer() : serviceCount(0), characteristicCount(0), onDataSent(), onDataWritten(), onUpdatesEnabled(NULL), onUpdatesDisabled(NULL), onConfirmationReceived(NULL) {
         /* empty */
     }
 
@@ -47,7 +46,11 @@ private:
     // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
     // Strange use case, but valid and must be covered!
 
-    void setOnDataSent(ServerEventCallbackWithCount_t callback) {onDataSent = callback;}
+    void setOnDataSent(void (*callback)(unsigned count)) {onDataSent.add(callback);}
+    template <typename T>
+    void setOnDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
+        onDataSent.add(objPtr, memberPtr);
+    }
     void setOnDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {onDataWritten.add(callback);}
     template <typename T>
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
@@ -85,8 +88,8 @@ protected:
     }
 
     void handleDataSentEvent(unsigned count) {
-        if (onDataSent) {
-            onDataSent(count);
+        if (onDataSent.hasCallbacksAttached()) {
+            onDataSent.call(count);
         }
     }
 
@@ -95,7 +98,7 @@ protected:
     uint8_t characteristicCount;
 
 private:
-    ServerEventCallbackWithCount_t onDataSent;
+    CallChainOfFunctionPointersWithContext<unsigned> onDataSent;
     CallChainOfFunctionPointersWithContext<const GattCharacteristicWriteCBParams *> onDataWritten;
     EventCallback_t                onUpdatesEnabled;
     EventCallback_t                onUpdatesDisabled;
