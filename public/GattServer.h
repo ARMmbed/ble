@@ -100,9 +100,9 @@ protected:
 private:
     CallChainOfFunctionPointersWithContext<unsigned> onDataSent;
     CallChainOfFunctionPointersWithContext<const GattCharacteristicWriteCBParams *> onDataWritten;
-    EventCallback_t                onUpdatesEnabled;
-    EventCallback_t                onUpdatesDisabled;
-    EventCallback_t                onConfirmationReceived;
+    EventCallback_t onUpdatesEnabled;
+    EventCallback_t onUpdatesDisabled;
+    EventCallback_t onConfirmationReceived;
 
 private:
     /* disallow copy and assignment */
