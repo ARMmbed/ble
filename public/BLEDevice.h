@@ -228,7 +228,7 @@ public:
      *
      * @Note: it is possible to chain together multiple onDataSent callbacks
      * (potentially from different modules of an application) to receive updates
-     * to characteristics. 
+     * to characteristics.
      *
      * @Note: it is also possible to setup a callback into a member function of
      * some object.
