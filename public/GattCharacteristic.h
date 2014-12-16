@@ -18,7 +18,7 @@
 #define __GATT_CHARACTERISTIC_H__
 
 #include "GattAttribute.h"
-#include "GattCharacteristicWriteCBParams.h"
+#include "GattCharacteristicCallbackParams.h"
 #include "FunctionPointerWithContext.h"
 
 class GattCharacteristic {

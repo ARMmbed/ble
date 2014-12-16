@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __GATT_CHARACTERISTIC_WRITE_CB_PARAMS_H__
-#define __GATT_CHARACTERISTIC_WRITE_CB_PARAMS_H__
+#ifndef __GATT_CHARACTERISTIC_CALLBACK_PARAMS_H__
+#define __GATT_CHARACTERISTIC_CALLBACK_PARAMS_H__
 
 struct GattCharacteristicWriteCBParams {
     GattAttribute::Handle_t charHandle;
@@ -49,4 +49,4 @@ struct GattCharacteristicReadAuthCBParams {
                                                   * request is to proceed; false otherwise. */
 };
 
-#endif /*__GATT_CHARACTERISTIC_WRITE_CB_PARAMS_H__*/
+#endif /*__GATT_CHARACTERISTIC_CALLBACK_PARAMS_H__*/

@@ -19,7 +19,7 @@
 
 #include "GattService.h"
 #include "GattServerEvents.h"
-#include "GattCharacteristicWriteCBParams.h"
+#include "GattCharacteristicCallbackParams.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 
 class GattServer {
