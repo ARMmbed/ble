@@ -224,7 +224,8 @@ public:
     void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void));
 
     /**
-     * Setup a callback for the GATT event DATA_SENT.
+     * Add a callback for the GATT event DATA_SENT (which is triggered when
+     * updates are sent out by GATT in the form of notifications).
      *
      * @Note: it is possible to chain together multiple onDataSent callbacks
      * (potentially from different modules of an application) to receive updates
