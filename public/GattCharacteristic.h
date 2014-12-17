@@ -383,7 +383,17 @@ public:
     /**
      * Helper function meant to be called from the guts of the BLE stack to
      * determine the authorization reply for a read request.
-     * @param  params to capture the context of the read-auth request; and also contains an out-parameter for reply.
+     * @param  params to capture the context of the read-auth request.
+     *
+     * @NOTE:  To authorize/deny the read the params->authorizationReply field 
+     *         should be set to true/false.
+     *
+     *         If the read is approved and params->data is unchanged (NULL), 
+     *         the current characteristic value will be used.
+     *
+     *         If the read is approved, a new value can be provided by setting 
+     *         the params->data pointer and params->len fields. 
+     *
      * @return        true if the read is authorized to proceed.
      */
     bool authorizeRead(GattCharacteristicReadAuthCBParams *params) {
