@@ -91,6 +91,8 @@ protected:
                     onConfirmationReceived(charHandle);
                 }
                 break;
+            default:
+                break;
         }
     }
 
