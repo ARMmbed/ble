@@ -156,6 +156,8 @@ public:
                     onTimeout();
                 }
                 break;
+            default:
+                break;
         }
     }
 
