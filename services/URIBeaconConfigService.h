@@ -25,6 +25,8 @@
 }
 static const uint8_t URIBeacon2ControlServiceUUID[] = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x80);
 static const uint8_t lockedStateCharUUID[]          = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x81);
+static const uint8_t lockCharUUID[]                 = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x82);
+static const uint8_t unlockCharUUID[]               = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x83);
 static const uint8_t uriDataCharUUID[]              = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x84);
 static const uint8_t flagsCharUUID[]                = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x85);
 static const uint8_t txPowerLevelsCharUUID[]        = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x86);
@@ -83,6 +85,8 @@ public:
         powerLevels(),
         beaconPeriod(beaconPeriodIn),
         lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
+        lockChar(lockCharUUID, lockBits, SIZEOF_LOCK_BITS, SIZEOF_LOCK_BITS, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        unlockChar(unlockCharUUID, lockBits, SIZEOF_LOCK_BITS, SIZEOF_LOCK_BITS, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         uriDataChar(uriDataCharUUID, uriData, MAX_SIZE_URI_DATA_CHAR_VALUE, MAX_SIZE_URI_DATA_CHAR_VALUE,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
@@ -113,7 +117,7 @@ public:
         beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
 
-        GattCharacteristic *charTable[] = {&lockedStateChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
+        GattCharacteristic *charTable[] = {&lockedStateChar, &lockChar, &unlockChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
@@ -312,7 +316,19 @@ private:
      */
     void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         uint16_t handle = params->charHandle;
-        if (handle == uriDataChar.getValueHandle()) {
+
+        static const uint8_t allZeroes[SIZEOF_LOCK_BITS] = {0, 0, 0, 0, 0, 0, 0, 0,
+                                                            0, 0, 0, 0, 0, 0, 0, 0};
+
+        if (handle == lockChar.getValueHandle()) {
+            if (memcmp(params->data, allZeroes, SIZEOF_LOCK_BITS)) {
+                memcpy(lockBits, params->data, SIZEOF_LOCK_BITS);
+                lockedState = true;
+            }
+        } else if (handle == unlockChar.getValueHandle()) {
+            memset(lockBits, 0, SIZEOF_LOCK_BITS);
+            lockedState = false;
+        } else if (handle == uriDataChar.getValueHandle()) {
             uriDataLength = params->len;
             memcpy(uriData, params->data, uriDataLength);
         } else if (handle == flagsChar.getValueHandle()) {
@@ -335,6 +351,7 @@ private:
      */
     void resetDefaults(void) {
         lockedState      = false;
+        memset(lockBits, 0, SIZEOF_LOCK_BITS);
         uriDataLength    = 0;
         memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
         flags            = 0;
@@ -383,6 +400,23 @@ private:
     }
 
 private:
+    void lockedStateAuthorizationCallback(GattCharacteristicReadAuthCBParams *params) {
+        printf("read authorization callback: lockedState is %u\r\n", lockedState);
+        params->authorizationReply = true;
+    }
+
+    void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
+        params->authorizationReply = !lockedState;
+    }
+
+    void unlockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
+        if (lockedState && (memcmp(params->data, lockBits, SIZEOF_LOCK_BITS) == 0)) {
+            params->authorizationReply = true;
+        } else {
+            params->authorizationReply = false;
+        }
+    }
+
     void uriDataWriteAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
         if (lockedState || (params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
             params->authorizationReply = false;
@@ -426,6 +460,8 @@ private:
     static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48; /* This is chosen arbitrarily. It should be large enough
                                                                * to hold any reasonable uncompressed URI. */
 
+    static const size_t SIZEOF_LOCK_BITS = 16;                /* uint128 */
+
 private:
     BLEDevice          &ble;
 
@@ -434,6 +470,7 @@ private:
     bool                initSucceeded;
 
     bool                lockedState;
+    uint8_t             lockBits[SIZEOF_LOCK_BITS];
     uint16_t            uriDataLength;
     uint8_t             uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t             flags;
@@ -443,6 +480,8 @@ private:
     bool                resetFlag;
 
     GattCharacteristic  lockedStateChar;
+    GattCharacteristic  lockChar;
+    GattCharacteristic  unlockChar;
     GattCharacteristic  uriDataChar;
     GattCharacteristic  flagsChar;
     GattCharacteristic  txPowerLevelsChar;
