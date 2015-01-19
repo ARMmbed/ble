@@ -52,6 +52,9 @@ public:
         NUM_POWER_MODES           /*!< Number of Power Modes defined */
     };
 
+    static const size_t SIZEOF_LOCK_BITS = 16;                /* uint128 */
+    typedef uint8_t     LockBits_t[SIZEOF_LOCK_BITS];
+
     /**
      * @param[ref] ble
      *                 BLEDevice object for the underlying controller.
@@ -96,7 +99,8 @@ public:
                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        lockBits()
     {
         if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0) || (uriDataLength > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
             return;
@@ -122,6 +126,10 @@ public:
 
         ble.addService(beaconControlService);
         ble.onDataWritten(this, &URIBeaconConfigService::onDataWritten);
+
+        if (storage_haveSavedLockBits()) {
+            storage_loadLockBits();
+        }
     }
 
     bool configuredSuccessfully(void) const {
@@ -192,6 +200,33 @@ public:
         beaconPeriod = beaconPeriodIn;
         configureGAP();
         updateBeaconPeriodCharacteristic();
+    }
+
+    /**
+     * APIs around making lockBits persistent.
+     */
+private:
+    /**
+     * Have we previously saved lockedBits? Once set, this state is expected to persist.
+     * @return true if we've previously saved locked bits.
+     */
+    virtual bool storage_haveSavedLockBits() const {
+        /* Expecting to be overridden. Left empty to allow the default URIBeacon to be instantiated if persistence isn't required. */
+        return false;
+    }
+
+    /**
+     * Save the current value of lockBits into persistent storage; this value is then retrievable by lockLockBits() until a subsequent call to saveLockBits().
+     */
+    virtual void storage_saveLockBits() {
+        /* Expecting to be overridden. Left empty to allow the default URIBeacon to be instantiated if persistence isn't required. */
+    }
+
+    /**
+     * Retrieve the saved lockBits from persistent storage and update the class member 'lockBits'.
+     */
+    virtual void storage_loadLockBits() {
+        /* Expecting to be overridden. Left empty to allow the default URIBeacon to be instantiated if persistence isn't required. */
     }
 
 private:
@@ -324,10 +359,14 @@ private:
             if (memcmp(params->data, allZeroes, SIZEOF_LOCK_BITS)) {
                 memcpy(lockBits, params->data, SIZEOF_LOCK_BITS);
                 lockedState = true;
+
+                storage_saveLockBits();
             }
         } else if (handle == unlockChar.getValueHandle()) {
             memset(lockBits, 0, SIZEOF_LOCK_BITS);
             lockedState = false;
+
+            storage_saveLockBits();
         } else if (handle == uriDataChar.getValueHandle()) {
             uriDataLength = params->len;
             memcpy(uriData, params->data, uriDataLength);
@@ -358,6 +397,10 @@ private:
         memset(powerLevels, 0, sizeof(powerLevels));
         txPowerMode      = TX_POWER_MODE_LOW;
         beaconPeriod     = 0;
+
+        if (storage_haveSavedLockBits()) {
+            storage_saveLockBits();
+        }
 
         updateGATT();
     }
@@ -459,9 +502,6 @@ private:
                                                                * fit within 22 bytes. */
     static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48; /* This is chosen arbitrarily. It should be large enough
                                                                * to hold any reasonable uncompressed URI. */
-
-    static const size_t SIZEOF_LOCK_BITS = 16;                /* uint128 */
-
 private:
     BLEDevice          &ble;
 
@@ -470,7 +510,6 @@ private:
     bool                initSucceeded;
 
     bool                lockedState;
-    uint8_t             lockBits[SIZEOF_LOCK_BITS];
     uint16_t            uriDataLength;
     uint8_t             uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t             flags;
@@ -488,6 +527,9 @@ private:
     GattCharacteristic  txPowerModeChar;
     GattCharacteristic  beaconPeriodChar;
     GattCharacteristic  resetChar;
+
+protected:
+    uint8_t             lockBits[SIZEOF_LOCK_BITS];
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__*/
