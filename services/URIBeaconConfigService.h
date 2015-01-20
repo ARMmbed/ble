@@ -123,7 +123,14 @@ public:
         beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
 
-        GattCharacteristic *charTable[] = {&lockedStateChar, &lockChar, &unlockChar, &uriDataChar, &flagsChar, &txPowerLevelsChar, &beaconPeriodChar, &resetChar};
+        GattCharacteristic *charTable[] = {&lockedStateChar,
+                                           &lockChar,
+                                           &unlockChar,
+                                           &uriDataChar,
+                                           &flagsChar,
+                                           &txPowerLevelsChar,
+                                           &beaconPeriodChar,
+                                           &resetChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(beaconControlService);
