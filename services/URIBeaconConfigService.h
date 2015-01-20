@@ -82,6 +82,7 @@ public:
         serviceDataPayload(),
         initSucceeded(false),
         lockedState(false),
+        lockBits(),
         uriDataLength(0),
         uriData(),
         flags(flagsIn),
@@ -99,8 +100,7 @@ public:
                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        lockBits()
+        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
     {
         if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0) || (uriDataLength > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
             return;
@@ -196,6 +196,21 @@ public:
         beaconPeriod = beaconPeriodIn;
         configureGAP();
         updateBeaconPeriodCharacteristic();
+    }
+
+protected:
+    void updateLockBits(const LockBits_t lockBitsIn) {
+        static const uint8_t allZeroes[SIZEOF_LOCK_BITS] = {0, 0, 0, 0, 0, 0, 0, 0,
+                                                            0, 0, 0, 0, 0, 0, 0, 0};
+
+        memcpy(lockBits, lockBitsIn, SIZEOF_LOCK_BITS);
+        if (memcmp(lockBits, allZeroes, SIZEOF_LOCK_BITS)) {
+            lockedState = true;
+        }
+    }
+
+    void copyLockBitsInto(LockBits_t lockBitsOut) const {
+        memcpy(lockBitsOut, lockBits, SIZEOF_LOCK_BITS);
     }
 
     /**
@@ -347,17 +362,9 @@ private:
      */
     void onDataWritten(const GattCharacteristicWriteCBParams *params) {
         uint16_t handle = params->charHandle;
-
-        static const uint8_t allZeroes[SIZEOF_LOCK_BITS] = {0, 0, 0, 0, 0, 0, 0, 0,
-                                                            0, 0, 0, 0, 0, 0, 0, 0};
-
         if (handle == lockChar.getValueHandle()) {
-            if (memcmp(params->data, allZeroes, SIZEOF_LOCK_BITS)) {
-                memcpy(lockBits, params->data, SIZEOF_LOCK_BITS);
-                lockedState = true;
-
-                storage_saveLockBits();
-            }
+            updateLockBits(params->data);
+            storage_saveLockBits();
         } else if (handle == unlockChar.getValueHandle()) {
             memset(lockBits, 0, SIZEOF_LOCK_BITS);
             lockedState = false;
@@ -506,6 +513,8 @@ private:
     bool                initSucceeded;
 
     bool                lockedState;
+    uint8_t             lockBits[SIZEOF_LOCK_BITS];
+
     uint16_t            uriDataLength;
     uint8_t             uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
     uint8_t             flags;
@@ -523,9 +532,6 @@ private:
     GattCharacteristic  txPowerModeChar;
     GattCharacteristic  beaconPeriodChar;
     GattCharacteristic  resetChar;
-
-protected:
-    uint8_t             lockBits[SIZEOF_LOCK_BITS];
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__*/
