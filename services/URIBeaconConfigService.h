@@ -114,6 +114,9 @@ public:
 
         configureGAP();
 
+        // enable the following for debugging the state of the lock
+        // lockedStateChar.setReadAuthorizationCallback(this, &URIBeaconConfigService::lockedStateAuthorizationCallback);
+
         lockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::lockAuthorizationCallback);
         unlockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::unlockAuthorizationCallback);
         uriDataChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::uriDataWriteAuthorizationCallback);
@@ -455,10 +458,11 @@ private:
     }
 
 private:
-    void lockedStateAuthorizationCallback(GattCharacteristicReadAuthCBParams *params) {
-        printf("read authorization callback: lockedState is %u\r\n", lockedState);
-        params->authorizationReply = true;
-    }
+    // enable the following for debugging the state of the lock
+    // void lockedStateAuthorizationCallback(GattCharacteristicReadAuthCBParams *params) {
+    //     printf("read authorization callback: lockedState is %u\r\n", lockedState);
+    //     params->authorizationReply = true;
+    // }
 
     void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
         params->authorizationReply = !lockedState;
@@ -500,13 +504,13 @@ private:
     /**
      * For debugging only. Print Hex representation of ServiceDataPayload to the console.
      */
-    void dumpEncodedSeviceData() const {
-        printf("encoded: '");
-        for (unsigned i = 0; i < payloadIndex; i++) {
-            printf(" %02x", serviceDataPayload[i]);
-        }
-        printf("'\r\n");
-    }
+    // void dumpEncodedSeviceData() const {
+    //     printf("encoded: '");
+    //     for (unsigned i = 0; i < payloadIndex; i++) {
+    //         printf(" %02x", serviceDataPayload[i]);
+    //     }
+    //     printf("'\r\n");
+    // }
 
 private:
     static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 22; /* Uri Data must be between 0 and 18 bytes in length; and
