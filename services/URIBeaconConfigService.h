@@ -126,10 +126,6 @@ public:
 
         ble.addService(beaconControlService);
         ble.onDataWritten(this, &URIBeaconConfigService::onDataWritten);
-
-        if (storage_haveSavedLockBits()) {
-            storage_loadLockBits();
-        }
     }
 
     bool configuredSuccessfully(void) const {
