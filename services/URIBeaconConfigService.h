@@ -225,6 +225,12 @@ protected:
         memcpy(lockBitsOut, lockBits, SIZEOF_LOCK_BITS);
     }
 
+    void resetLockBits(void) {
+        lockedState = false;
+        memset(lockBits, 0, SIZEOF_LOCK_BITS);
+        storage_saveLockBits();
+    }
+
     /**
      * APIs around making lockBits persistent.
      */
@@ -404,18 +410,13 @@ private:
      * Reset the default values.
      */
     void resetDefaults(void) {
-        lockedState      = false;
-        memset(lockBits, 0, SIZEOF_LOCK_BITS);
         uriDataLength    = 0;
         memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
         flags            = 0;
         memset(powerLevels, 0, sizeof(powerLevels));
         txPowerMode      = TX_POWER_MODE_LOW;
         beaconPeriod     = 0;
-
-        if (storage_haveSavedLockBits()) {
-            storage_saveLockBits();
-        }
+        resetLockBits();
 
         updateGATT();
     }
