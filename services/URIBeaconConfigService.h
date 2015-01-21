@@ -135,8 +135,8 @@ public:
                                            &beaconPeriodChar,
                                            &resetChar};
         GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
-
         ble.addService(beaconControlService);
+
         ble.onDataWritten(this, &URIBeaconConfigService::onDataWritten);
     }
 
@@ -386,7 +386,6 @@ private:
         } else if (handle == unlockChar.getValueHandle()) {
             memset(lockBits, 0, SIZEOF_LOCK_BITS);
             lockedState = false;
-
             storage_saveLockBits();
         } else if (handle == uriDataChar.getValueHandle()) {
             uriDataLength = params->len;
