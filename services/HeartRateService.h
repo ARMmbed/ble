@@ -59,10 +59,8 @@ public:
         hrmRate(GattCharacteristic::UUID_HEART_RATE_MEASUREMENT_CHAR, valueBytes.getPointer(),
                 valueBytes.getNumValueBytes(), HeartRateValueBytes::MAX_VALUE_BYTES,
                 GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
-        hrmLocation(GattCharacteristic::UUID_BODY_SENSOR_LOCATION_CHAR, (uint8_t *)&location, sizeof(location), sizeof(location),
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        controlPoint(GattCharacteristic::UUID_HEART_RATE_CONTROL_POINT_CHAR, (uint8_t *)&controlPointValue,
-                     sizeof(controlPointValue), sizeof(controlPointValue), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE) {
+        hrmLocation(GattCharacteristic::UUID_BODY_SENSOR_LOCATION_CHAR, &location),
+        controlPoint(GattCharacteristic::UUID_HEART_RATE_CONTROL_POINT_CHAR, &controlPointValue) {
         setupService();
     }
 
@@ -82,10 +80,8 @@ public:
         hrmRate(GattCharacteristic::UUID_HEART_RATE_MEASUREMENT_CHAR, valueBytes.getPointer(),
                 valueBytes.getNumValueBytes(), HeartRateValueBytes::MAX_VALUE_BYTES,
                 GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
-        hrmLocation(GattCharacteristic::UUID_BODY_SENSOR_LOCATION_CHAR, (uint8_t *)&location, sizeof(location), sizeof(location),
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        controlPoint(GattCharacteristic::UUID_HEART_RATE_CONTROL_POINT_CHAR, (uint8_t *)&controlPointValue,
-                     sizeof(controlPointValue), sizeof(controlPointValue), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE) {
+        hrmLocation(GattCharacteristic::UUID_BODY_SENSOR_LOCATION_CHAR, &location),
+        controlPoint(GattCharacteristic::UUID_HEART_RATE_CONTROL_POINT_CHAR, &controlPointValue) {
         setupService();
     }
 
@@ -193,11 +189,13 @@ private:
 
 private:
     BLEDevice           &ble;
+
     HeartRateValueBytes  valueBytes;
     uint8_t              controlPointValue;
-    GattCharacteristic   hrmRate;
-    GattCharacteristic   hrmLocation;
-    GattCharacteristic   controlPoint;
+
+    GattCharacteristic                   hrmRate;
+    ReadOnlyGattCharacteristic<uint8_t>  hrmLocation;
+    WriteOnlyGattCharacteristic<uint8_t> controlPoint;
 };
 
 #endif /* #ifndef __BLE_HEART_RATE_SERVICE_H__*/

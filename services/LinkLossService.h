@@ -43,8 +43,7 @@ public:
         ble(bleIn),
         alertLevel(levelIn),
         callback(callbackIn),
-        alertLevelChar(GattCharacteristic::UUID_ALERT_LEVEL_CHAR, reinterpret_cast<uint8_t *>(&alertLevel), sizeof(uint8_t), sizeof(uint8_t),
-                       GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE) {
+        alertLevelChar(GattCharacteristic::UUID_ALERT_LEVEL_CHAR, reinterpret_cast<uint8_t *>(&alertLevel)) {
         static bool serviceAdded = false; /* We should only ever add one LinkLoss service. */
         if (serviceAdded) {
             return;
@@ -94,10 +93,11 @@ private:
     }
 
 private:
-    BLEDevice          &ble;
-    AlertLevel_t        alertLevel;
-    callback_t          callback;
-    GattCharacteristic  alertLevelChar;
+    BLEDevice    &ble;
+    AlertLevel_t  alertLevel;
+    callback_t    callback;
+
+    ReadWriteGattCharacteristic<uint8_t> alertLevelChar;
 };
 
 #endif /* __BLE_LINK_LOSS_SERVICE_H__ */

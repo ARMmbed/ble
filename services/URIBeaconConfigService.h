@@ -88,19 +88,15 @@ public:
         flags(flagsIn),
         powerLevels(),
         beaconPeriod(beaconPeriodIn),
-        lockedStateChar(lockedStateCharUUID, reinterpret_cast<uint8_t *>(&lockedState), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        lockChar(lockCharUUID, lockBits, SIZEOF_LOCK_BITS, SIZEOF_LOCK_BITS, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        unlockChar(unlockCharUUID, lockBits, SIZEOF_LOCK_BITS, SIZEOF_LOCK_BITS, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        uriDataChar(uriDataCharUUID, uriData, MAX_SIZE_URI_DATA_CHAR_VALUE, MAX_SIZE_URI_DATA_CHAR_VALUE,
-                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        flagsChar(flagsCharUUID, &flags, 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        txPowerLevelsChar(txPowerLevelsCharUUID, reinterpret_cast<uint8_t *>(powerLevels), sizeof(powerLevels), sizeof(powerLevels),
-                          GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        txPowerModeChar(txPowerModeCharUUID, reinterpret_cast<uint8_t *>(&txPowerMode), sizeof(uint8_t), sizeof(uint8_t),
-                        GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        beaconPeriodChar(beaconPeriodCharUUID, reinterpret_cast<uint8_t *>(&beaconPeriod), 2, 2,
-                         GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
-        resetChar(resetCharUUID, reinterpret_cast<uint8_t *>(&resetFlag), 1, 1, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE)
+        lockedStateChar(lockedStateCharUUID, &lockedState),
+        lockChar(lockCharUUID, lockBits),
+        unlockChar(unlockCharUUID, lockBits),
+        uriDataChar(uriDataCharUUID, uriData),
+        flagsChar(flagsCharUUID, &flags),
+        txPowerLevelsChar(txPowerLevelsCharUUID, powerLevels),
+        txPowerModeChar(txPowerModeCharUUID, &txPowerMode),
+        beaconPeriodChar(beaconPeriodCharUUID, &beaconPeriod),
+        resetChar(resetCharUUID, &resetFlag)
     {
         if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0) || (uriDataLength > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
             return;
@@ -536,15 +532,15 @@ private:
     uint16_t            beaconPeriod;
     bool                resetFlag;
 
-    GattCharacteristic  lockedStateChar;
-    GattCharacteristic  lockChar;
-    GattCharacteristic  unlockChar;
-    GattCharacteristic  uriDataChar;
-    GattCharacteristic  flagsChar;
-    GattCharacteristic  txPowerLevelsChar;
-    GattCharacteristic  txPowerModeChar;
-    GattCharacteristic  beaconPeriodChar;
-    GattCharacteristic  resetChar;
+    ReadOnlyGattCharacteristic<bool>                                        lockedStateChar;
+    WriteOnlyArrayGattCharacteristic<uint8_t, SIZEOF_LOCK_BITS>             lockChar;
+    WriteOnlyArrayGattCharacteristic<uint8_t, SIZEOF_LOCK_BITS>             unlockChar;
+    ReadWriteArrayGattCharacteristic<uint8_t, MAX_SIZE_URI_DATA_CHAR_VALUE> uriDataChar;
+    ReadWriteGattCharacteristic<uint8_t>                                    flagsChar;
+    ReadWriteArrayGattCharacteristic<int8_t, NUM_POWER_MODES>               txPowerLevelsChar;
+    ReadWriteGattCharacteristic<TXPowerModes_t>                             txPowerModeChar;
+    ReadWriteGattCharacteristic<uint16_t>                                   beaconPeriodChar;
+    WriteOnlyGattCharacteristic<bool>                                       resetChar;
 };
 
 #endif /* #ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__*/

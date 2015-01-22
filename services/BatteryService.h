@@ -36,8 +36,7 @@ public:
     BatteryService(BLEDevice &_ble, uint8_t level = 100) :
         ble(_ble),
         batteryLevel(level),
-        batteryLevelCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &batteryLevel, sizeof(batteryLevel), sizeof(batteryLevel),
-                                   GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
+        batteryLevelCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &batteryLevel, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
 
         static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
         if (serviceAdded) {
@@ -64,9 +63,10 @@ public:
     }
 
 private:
-    BLEDevice          &ble;
-    uint8_t             batteryLevel;
-    GattCharacteristic  batteryLevelCharacteristic;
+    BLEDevice &ble;
+
+    uint8_t    batteryLevel;
+    ReadOnlyGattCharacteristic<uint8_t> batteryLevelCharacteristic;
 };
 
 #endif /* #ifndef __BLE_BATTERY_SERVICE_H__*/

@@ -54,11 +54,8 @@ public:
     HealthThermometerService(BLEDevice &_ble, float initialTemp, uint8_t _location) :
         ble(_ble),
         valueBytes(initialTemp),
-        tempMeasurement(GattCharacteristic::UUID_TEMPERATURE_MEASUREMENT_CHAR, valueBytes.getPointer(),
-                        sizeof(TemperatureValueBytes), sizeof(TemperatureValueBytes),
-                        GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
-        tempLocation(GattCharacteristic::UUID_TEMPERATURE_TYPE_CHAR, (uint8_t *)&_location, sizeof(_location), sizeof(_location),
-                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ) {
+        tempMeasurement(GattCharacteristic::UUID_TEMPERATURE_MEASUREMENT_CHAR, (TemperatureValueBytes *)valueBytes.getPointer(), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
+        tempLocation(GattCharacteristic::UUID_TEMPERATURE_TYPE_CHAR, &_location) {
 
         GattCharacteristic *hrmChars[] = {&tempMeasurement, &tempLocation, };
         GattService         hrmService(GattService::UUID_HEALTH_THERMOMETER_SERVICE, hrmChars, sizeof(hrmChars) / sizeof(GattCharacteristic *));
@@ -144,10 +141,10 @@ private:
     };
 
 private:
-    BLEDevice             &ble;
-    TemperatureValueBytes  valueBytes;
-    GattCharacteristic     tempMeasurement;
-    GattCharacteristic     tempLocation;
+    BLEDevice                                         &ble;
+    TemperatureValueBytes                              valueBytes;
+    ReadOnlyGattCharacteristic<TemperatureValueBytes>  tempMeasurement;
+    ReadOnlyGattCharacteristic<uint8_t>                tempLocation;
 };
 
 #endif /* #ifndef __BLE_HEALTH_THERMOMETER_SERVICE_H__*/

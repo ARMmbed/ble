@@ -56,8 +56,7 @@ public:
         ble(_ble),
         controlBytes(),
         packetBytes(),
-        controlPoint(DFUServiceControlCharacteristicUUID, controlBytes, SIZEOF_CONTROL_BYTES, SIZEOF_CONTROL_BYTES,
-                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
+        controlPoint(DFUServiceControlCharacteristicUUID, controlBytes, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
         packet(DFUServicePacketCharacteristicUUID, packetBytes, SIZEOF_PACKET_BYTES, SIZEOF_PACKET_BYTES,
                GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE) {
         static bool serviceAdded = false; /* We should only ever need to add the DFU service once. */
@@ -120,7 +119,7 @@ private:
     /**< Writing to the control characteristic triggers the handover to dfu-
       *  bootloader. At present, writing anything will do the trick--this needs
       *  to be improved. */
-    GattCharacteristic  controlPoint;
+    WriteOnlyArrayGattCharacteristic<uint8_t, SIZEOF_CONTROL_BYTES> controlPoint;
 
     /**< The packet characteristic in this service doesn't do anything meaningful, but
       *  is only a placeholder to mimic the corresponding characteristic in the

@@ -385,14 +385,14 @@ public:
      * determine the authorization reply for a read request.
      * @param  params to capture the context of the read-auth request.
      *
-     * @NOTE:  To authorize/deny the read the params->authorizationReply field 
+     * @NOTE:  To authorize/deny the read the params->authorizationReply field
      *         should be set to true/false.
      *
-     *         If the read is approved and params->data is unchanged (NULL), 
+     *         If the read is approved and params->data is unchanged (NULL),
      *         the current characteristic value will be used.
      *
-     *         If the read is approved, a new value can be provided by setting 
-     *         the params->data pointer and params->len fields. 
+     *         If the read is approved, a new value can be provided by setting
+     *         the params->data pointer and params->len fields.
      *
      * @return        true if the read is authorized to proceed.
      */
@@ -439,6 +439,64 @@ private:
     /* disallow copy and assignment */
     GattCharacteristic(const GattCharacteristic &);
     GattCharacteristic& operator=(const GattCharacteristic &);
+};
+
+template <typename T>
+class ReadOnlyGattCharacteristic : public GattCharacteristic {
+public:
+    ReadOnlyGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties) {
+        /* empty */
+    }
+};
+
+template <typename T>
+class WriteOnlyGattCharacteristic : public GattCharacteristic {
+public:
+    WriteOnlyGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+        /* empty */
+    }
+};
+
+template <typename T>
+class ReadWriteGattCharacteristic : public GattCharacteristic {
+public:
+    ReadWriteGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T),
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+        /* empty */
+    }
+};
+
+template <typename T, unsigned NUM_ELEMENTS>
+class WriteOnlyArrayGattCharacteristic : public GattCharacteristic {
+public:
+    WriteOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+        /* empty */
+    }
+};
+
+template <typename T, unsigned NUM_ELEMENTS>
+class ReadOnlyArrayGattCharacteristic : public GattCharacteristic {
+public:
+    ReadOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties) {
+        /* empty */
+    }
+};
+
+template <typename T, unsigned NUM_ELEMENTS>
+class ReadWriteArrayGattCharacteristic : public GattCharacteristic {
+public:
+    ReadWriteArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+        /* empty */
+    }
 };
 
 #endif // ifndef __GATT_CHARACTERISTIC_H__
