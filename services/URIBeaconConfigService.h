@@ -145,7 +145,7 @@ class URIBeaconConfigService {
 
         GattService configService(UUID_URI_BEACON_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
-	ble.addService(configService);
+        ble.addService(configService);
         ble.onDataWritten(this, &URIBeaconConfigService::onDataWrittenCallback);
 
         initSucceeded = true;
@@ -217,12 +217,12 @@ class URIBeaconConfigService {
     void updateCharacteristicValues(void) {
         ble.updateCharacteristicValue(lockedStateChar.getValueHandle(), &lockedState, 1);
         ble.updateCharacteristicValue(uriDataChar.getValueHandle(), params.uriData, params.uriDataLength);
-	ble.updateCharacteristicValue(flagsChar.getValueHandle(), &params.flags, 1);
+        ble.updateCharacteristicValue(flagsChar.getValueHandle(), &params.flags, 1);
         ble.updateCharacteristicValue(beaconPeriodChar.getValueHandle(),
-				      reinterpret_cast<uint8_t *>(&params.beaconPeriod), sizeof(uint16_t));
+                                      reinterpret_cast<uint8_t *>(&params.beaconPeriod), sizeof(uint16_t));
         ble.updateCharacteristicValue(txPowerModeChar.getValueHandle(), &params.txPowerMode, 1);
         ble.updateCharacteristicValue(advPowerLevelsChar.getValueHandle(),
-				      reinterpret_cast<uint8_t *>(params.advPowerLevels), sizeof(PowerLevels_t));
+                                      reinterpret_cast<uint8_t *>(params.advPowerLevels), sizeof(PowerLevels_t));
     }
 
   private:
