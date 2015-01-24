@@ -14,46 +14,66 @@
  * limitations under the License.
  */
 
-#ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__
-#define __BLE_URI_BEACON_CONFIG_SERVICE_H__
+#ifndef SERVICES_URIBEACONCONFIGSERVICE_H_
+#define SERVICES_URIBEACONCONFIGSERVICE_H_
 
 #include "BLEDevice.h"
+#include "GattCharacteristic.h"
+#include "mbed.h"
 
-#define URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(FIRST, SECOND) { \
+#define UUID_URI_BEACON(FIRST, SECOND) { \
         0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
         0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
 }
-static const uint8_t URIBeacon2ControlServiceUUID[] = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x80);
-static const uint8_t lockedStateCharUUID[]          = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x81);
-static const uint8_t lockCharUUID[]                 = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x82);
-static const uint8_t unlockCharUUID[]               = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x83);
-static const uint8_t uriDataCharUUID[]              = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x84);
-static const uint8_t flagsCharUUID[]                = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x85);
-static const uint8_t txPowerLevelsCharUUID[]        = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x86);
-static const uint8_t txPowerModeCharUUID[]          = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x87);
-static const uint8_t beaconPeriodCharUUID[]         = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x88);
-static const uint8_t resetCharUUID[]                = URI_BEACON_CONFIG_UUID_INITIALIZER_LIST(0x20, 0x89);
+
+static const uint8_t UUID_URI_BEACON_SERVICE[]    = UUID_URI_BEACON(0x20, 0x80);
+static const uint8_t UUID_LOCK_STATE_CHAR[]       = UUID_URI_BEACON(0x20, 0x81);
+static const uint8_t UUID_LOCK_CHAR[]             = UUID_URI_BEACON(0x20, 0x82);
+static const uint8_t UUID_UNLOCK_CHAR[]           = UUID_URI_BEACON(0x20, 0x83);
+static const uint8_t UUID_URI_DATA_CHAR[]         = UUID_URI_BEACON(0x20, 0x84);
+static const uint8_t UUID_FLAGS_CHAR[]            = UUID_URI_BEACON(0x20, 0x85);
+static const uint8_t UUID_ADV_POWER_LEVELS_CHAR[] = UUID_URI_BEACON(0x20, 0x86);
+static const uint8_t UUID_TX_POWER_MODE_CHAR[]    = UUID_URI_BEACON(0x20, 0x87);
+static const uint8_t UUID_BEACON_PERIOD_CHAR[]    = UUID_URI_BEACON(0x20, 0x88);
+static const uint8_t UUID_RESET_CHAR[]            = UUID_URI_BEACON(0x20, 0x89);
+static const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
 
 /**
 * @class URIBeaconConfigService
 * @brief UriBeacon Configuration Service. Can be used to set URL, adjust power levels, and set flags.
+* See http://uribeacon.org
+*
 */
 class URIBeaconConfigService {
-public:
+  public:
     /**
-     * @enum TXPowerModes_t
      * @brief Transmission Power Modes for UriBeacon
      */
-    enum TXPowerModes_t {
-        TX_POWER_MODE_LOWEST = 0, /*!< Lowest TX power mode */
-        TX_POWER_MODE_LOW    = 1, /*!< Low TX power mode */
-        TX_POWER_MODE_MEDIUM = 2, /*!< Medium TX power mode */
-        TX_POWER_MODE_HIGH   = 3, /*!< High TX power mode */
-        NUM_POWER_MODES           /*!< Number of Power Modes defined */
+    static const uint8_t TX_POWER_MODE_LOWEST = 0; /*!< Lowest TX power mode */
+    static const uint8_t TX_POWER_MODE_LOW    = 1; /*!< Low TX power mode */
+    static const uint8_t TX_POWER_MODE_MEDIUM = 2; /*!< Medium TX power mode */
+    static const uint8_t TX_POWER_MODE_HIGH   = 3; /*!< High TX power mode */
+    static const int NUM_POWER_MODES = 4;      /*!< Number of Power Modes defined */
+
+
+    typedef uint8_t Lock_t[16];               /* 128 bits */
+    typedef int8_t PowerLevels_t[NUM_POWER_MODES];
+
+    static const int URI_DATA_MAX = 18;
+    typedef uint8_t UriData_t[URI_DATA_MAX];
+
+    struct Params_t {
+        Lock_t              lock;
+        uint8_t             uriDataLength;
+        UriData_t           uriData;
+        uint8_t             flags;
+        // Current value of AdvertisedPowerLevels
+        PowerLevels_t       advPowerLevels;
+        // Firmware power levels used with setTxPower()
+        uint8_t             txPowerMode;
+        uint16_t            beaconPeriod;
     };
 
-    static const size_t SIZEOF_LOCK_BITS = 16;                /* uint128 */
-    typedef uint8_t     LockBits_t[SIZEOF_LOCK_BITS];
 
     /**
      * @param[ref] ble
@@ -72,301 +92,75 @@ public:
      *                 transmissions.
      */
     URIBeaconConfigService(BLEDevice      &bleIn,
-                           const char     *uriDataIn,
-                           uint8_t         flagsIn                        = 0,
-                           const int8_t    powerLevelsIn[NUM_POWER_MODES] = NULL,
-                           TXPowerModes_t  powerModeIn                    = TX_POWER_MODE_LOW,
-                           uint16_t        beaconPeriodIn                 = 1000) :
+                           Params_t       &paramsIn,
+                           bool           resetToDefaultsFlag,
+                           UriData_t      &defaultUriDataIn,
+                           int            defaultUriDataLengthIn,
+                           PowerLevels_t  &defaultAdvPowerLevelsIn) :
         ble(bleIn),
-        payloadIndex(0),
-        serviceDataPayload(),
+        params(paramsIn),
+        defaultUriDataLength(defaultUriDataLengthIn),
+        defaultUriData(defaultUriDataIn),
+        defaultAdvPowerLevels(defaultAdvPowerLevelsIn),
         initSucceeded(false),
-        lockedState(false),
-        lockBits(),
-        uriDataLength(0),
-        uriData(),
-        flags(flagsIn),
-        powerLevels(),
-        beaconPeriod(beaconPeriodIn),
-        lockedStateChar(lockedStateCharUUID, &lockedState),
-        lockChar(lockCharUUID, lockBits),
-        unlockChar(unlockCharUUID, lockBits),
-        uriDataChar(uriDataCharUUID, uriData),
-        flagsChar(flagsCharUUID, &flags),
-        txPowerLevelsChar(txPowerLevelsCharUUID, powerLevels),
-        txPowerModeChar(txPowerModeCharUUID, &txPowerMode),
-        beaconPeriodChar(beaconPeriodCharUUID, &beaconPeriod),
-        resetChar(resetCharUUID, &resetFlag)
-    {
-        if ((uriDataIn == NULL) || ((uriDataLength = strlen(uriDataIn)) == 0) || (uriDataLength > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
+        lockedStateChar(UUID_LOCK_STATE_CHAR, &lockedState),
+        lockChar(UUID_LOCK_CHAR, &params.lock),
+        uriDataChar(UUID_URI_DATA_CHAR, params.uriData, URI_DATA_MAX, params.uriDataLength,
+                    GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
+        unlockChar(UUID_UNLOCK_CHAR, &params.lock),
+        flagsChar(UUID_FLAGS_CHAR, &params.flags),
+        advPowerLevelsChar(UUID_ADV_POWER_LEVELS_CHAR, &params.advPowerLevels),
+        txPowerModeChar(UUID_TX_POWER_MODE_CHAR, &params.txPowerMode),
+        beaconPeriodChar(UUID_BEACON_PERIOD_CHAR, &params.beaconPeriod),
+        resetChar(UUID_RESET_CHAR, &resetFlag) {
+        if (defaultUriDataLengthIn > URI_DATA_MAX) {
             return;
         }
-        strcpy(reinterpret_cast<char *>(uriData), uriDataIn);
 
-        if (powerLevelsIn != NULL) {
-            memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
-            updateTxPowerLevelsCharacteristic();
+        if (params.uriDataLength > URI_DATA_MAX) {
+            resetToDefaultsFlag = true;
         }
 
-        configureGAP();
+        lockedState = isLocked();
 
-        // enable the following for debugging the state of the lock
-        // lockedStateChar.setReadAuthorizationCallback(this, &URIBeaconConfigService::lockedStateAuthorizationCallback);
+        if (resetToDefaultsFlag) {
+            resetToDefaults();
+        } else {
+            updateCharacteristicValues();
+        }
 
         lockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::lockAuthorizationCallback);
         unlockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::unlockAuthorizationCallback);
         uriDataChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::uriDataWriteAuthorizationCallback);
         flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::flagsAuthorizationCallback);
-        txPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
-        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::powerModeAuthorizationCallback);
+        advPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
         resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
 
-        GattCharacteristic *charTable[] = {&lockedStateChar,
-                                           &lockChar,
-                                           &unlockChar,
-                                           &uriDataChar,
-                                           &flagsChar,
-                                           &txPowerLevelsChar,
-                                           &beaconPeriodChar,
-                                           &resetChar};
-        GattService         beaconControlService(URIBeacon2ControlServiceUUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
-        ble.addService(beaconControlService);
+        static GattCharacteristic *charTable[] = {
+            &lockedStateChar, &lockChar, &unlockChar, &uriDataChar,
+            &flagsChar, &advPowerLevelsChar, &txPowerModeChar, &beaconPeriodChar, &resetChar
+        };
 
-        ble.onDataWritten(this, &URIBeaconConfigService::onDataWritten);
+        GattService configService(UUID_URI_BEACON_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
+
+	ble.addService(configService);
+        ble.onDataWritten(this, &URIBeaconConfigService::onDataWrittenCallback);
+
+        initSucceeded = true;
     }
 
     bool configuredSuccessfully(void) const {
         return initSucceeded;
     }
 
-    /**
-     * Please note that the following public APIs are offered to allow modifying
-     * the service programmatically. It is also possible to do so over BLE GATT
-     * transactions.
-     */
-public:
-    /**
-     * Update flags of the URIBeacon dynamically.
-     *
-     * @param[in] flagsIn
-     * @verbatim
-     *     ### UriBeacon Flags
-     *     Bit   | Description
-     *     :---- | :----------
-     *     0     | Invisible Hint
-     *     1..7  | Reserved for future use. Must be zero.
-     * @endverbatim
-     *     The `Invisible Hint` flag is a command for the user-agent that tells
-     *     it not to access or display the UriBeacon. This is a guideline only,
-     *     and is not a blocking method. User agents may, with user approval,
-     *     display invisible beacons.
-     */
-    void setFlags(uint8_t flagsIn) {
-        flags = flagsIn;
-        configureGAP();
-        updateFlagsCharacteristic();
-    }
 
-    /**
-     * @brief Update the txPowerLevels table.
-     *
-     * @param[in] powerLevelsIn
-     *              Array of power levels
-     */
-    void setTxPowerLevels(const int8_t powerLevelsIn[NUM_POWER_MODES]) {
-        memcpy(powerLevels, powerLevelsIn, sizeof(powerLevels));
-        configureGAP();
-        updateTxPowerLevelsCharacteristic();
-    }
-
-    /**
-     * @brief Set the effective power mode from one of the values in the powerLevels tables.
-     *
-     * @param[in] mode
-     *              Set the TX Power Mode.
-     */
-    void setTxPowerMode(TXPowerModes_t mode) {
-        txPowerMode = mode;
-        configureGAP();
-        updateTxPowerModeCharacteristic();
-    }
-
-    /**
-     * The period in milliseconds that a UriBeacon packet is transmitted.
-     *
-     * @note A value of zero disables UriBeacon transmissions.
-     *
-     * @param beaconPeriodIn
-     *              Beacon advertising period in milliseconds
-     */
-    void setBeaconPeriod(uint16_t beaconPeriodIn) {
-        beaconPeriod = beaconPeriodIn;
-        configureGAP();
-        updateBeaconPeriodCharacteristic();
-    }
-
-protected:
-    void updateLockBits(const LockBits_t lockBitsIn) {
-        static const uint8_t allZeroes[SIZEOF_LOCK_BITS] = {0, 0, 0, 0, 0, 0, 0, 0,
-                                                            0, 0, 0, 0, 0, 0, 0, 0};
-
-        memcpy(lockBits, lockBitsIn, SIZEOF_LOCK_BITS);
-        if (memcmp(lockBits, allZeroes, SIZEOF_LOCK_BITS)) {
-            lockedState = true;
-        }
-    }
-
-    void copyLockBitsInto(LockBits_t lockBitsOut) const {
-        memcpy(lockBitsOut, lockBits, SIZEOF_LOCK_BITS);
-    }
-
-    void resetLockBits(void) {
-        lockedState = false;
-        memset(lockBits, 0, SIZEOF_LOCK_BITS);
-        storage_saveLockBits();
-    }
-
-    /**
-     * APIs around making lockBits persistent.
-     */
-private:
-    /**
-     * Have we previously saved lockedBits? Once set, this state is expected to persist.
-     * @return true if we've previously saved locked bits.
-     */
-    virtual bool storage_haveSavedLockBits() const {
-        /* Expecting to be overridden. Left empty to allow the default URIBeacon to be instantiated if persistence isn't required. */
-        return false;
-    }
-
-    /**
-     * Save the current value of lockBits into persistent storage; this value is then retrievable by lockLockBits() until a subsequent call to saveLockBits().
-     */
-    virtual void storage_saveLockBits() {
-        /* Expecting to be overridden. Left empty to allow the default URIBeacon to be instantiated if persistence isn't required. */
-    }
-
-    /**
-     * Retrieve the saved lockBits from persistent storage and update the class member 'lockBits'.
-     */
-    virtual void storage_loadLockBits() {
-        /* Expecting to be overridden. Left empty to allow the default URIBeacon to be instantiated if persistence isn't required. */
-    }
-
-private:
-    /*
-     * Setup the advertisement payload and GAP settings.
-     */
-    void configureGAP(void) {
-        const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
-
-        payloadIndex                       = 0;
-        serviceDataPayload[payloadIndex++] = BEACON_UUID[0];
-        serviceDataPayload[payloadIndex++] = BEACON_UUID[1];
-        serviceDataPayload[payloadIndex++] = flags;
-        serviceDataPayload[payloadIndex++] = powerLevels[txPowerMode];
-
-        const char *urlData       = reinterpret_cast<char *>(uriData);
-        size_t      sizeofURLData = uriDataLength;
-        size_t      encodedBytes  = encodeURISchemePrefix(urlData, sizeofURLData) + encodeURI(urlData, sizeofURLData);
-
-        ble.clearAdvertisingPayload();
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceDataPayload, encodedBytes + 4);
-
-        ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
-        ble.setTxPower(powerLevels[txPowerMode]);
-    }
-
-    /*
-     *  Encode the URI Prefix to a single byte if possible.
-     */
-    size_t encodeURISchemePrefix(const char *&urldata, size_t &sizeofURLData) {
-        if (!sizeofURLData) {
-            return 0;
-        }
-
-        /* These are the URI Prefixes that can be abbreviated.*/
-        const char *prefixes[] = {
-            "http://www.",
-            "https://www.",
-            "http://",
-            "https://",
-            "urn:uuid:"
-        };
-
-        size_t       encodedBytes = 0;
-        const size_t NUM_PREFIXES = sizeof(prefixes) / sizeof(char *);
-        for (unsigned i = 0; i < NUM_PREFIXES; i++) {
-            size_t prefixLen = strlen(prefixes[i]);
-            if (strncmp(urldata, prefixes[i], prefixLen) == 0) {
-                serviceDataPayload[payloadIndex++] = i;
-                encodedBytes                       = 1;
-
-                urldata       += prefixLen;
-                sizeofURLData -= prefixLen;
-                break;
-            }
-        }
-
-        return encodedBytes;
-    }
-
-    /*
-     *  Encode the URI Suffix to a single byte if possible.
-     */
-    size_t encodeURI(const char *urldata, size_t sizeofURLData) {
-        /* These are the URI suffixes that can be abbreviated. */
-        const char *suffixes[] = {
-            ".com/",
-            ".org/",
-            ".edu/",
-            ".net/",
-            ".info/",
-            ".biz/",
-            ".gov/",
-            ".com",
-            ".org",
-            ".edu",
-            ".net",
-            ".info",
-            ".biz",
-            ".gov"
-        };
-        const size_t NUM_SUFFIXES = sizeof(suffixes) / sizeof(char *);
-
-        size_t encodedBytes = 0;
-        while (sizeofURLData && (payloadIndex < MAX_SIZEOF_SERVICE_DATA_PAYLOAD)) {
-            /* check for suffix match */
-            unsigned i;
-            for (i = 0; i < NUM_SUFFIXES; i++) {
-                size_t suffixLen = strlen(suffixes[i]);
-                if ((suffixLen == 0) || (sizeofURLData < suffixLen)) {
-                    continue;
-                }
-
-                if (strncmp(urldata, suffixes[i], suffixLen) == 0) {
-                    serviceDataPayload[payloadIndex++] = i;
-                    ++encodedBytes;
-                    urldata       += suffixLen;
-                    sizeofURLData -= suffixLen;
-                    break; /* from the for loop for checking against suffixes */
-                }
-            }
-            /* This is the default case where we've got an ordinary character which doesn't match a suffix. */
-            if (i == NUM_SUFFIXES) {
-                serviceDataPayload[payloadIndex++] = *urldata;
-                ++encodedBytes;
-                ++urldata;
-                --sizeofURLData;
-            }
-        }
-        if (sizeofURLData == 0) {
-            initSucceeded = true;
-        }
-
-        return encodedBytes;
+  private:
+    bool isLocked() {
+        Lock_t testLock;
+        memset(testLock, 0, sizeof(Lock_t));
+        return memcmp(params.lock, testLock, sizeof(Lock_t));
     }
 
     /*
@@ -374,173 +168,116 @@ private:
      * characteristics of this service. Attempts to do so are also applied to
      * the internal state of this service object.
      */
-    void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        uint16_t handle = params->charHandle;
+    void onDataWrittenCallback(const GattCharacteristicWriteCBParams *writeParams) {
+        uint16_t handle = writeParams->charHandle;
+
         if (handle == lockChar.getValueHandle()) {
-            updateLockBits(params->data);
-            storage_saveLockBits();
+            // Validated earlier
+            memcpy(params.lock, writeParams->data, sizeof(Lock_t));
+            lockedState = true;
         } else if (handle == unlockChar.getValueHandle()) {
-            memset(lockBits, 0, SIZEOF_LOCK_BITS);
+            // Validated earlier
+            memset(params.lock, 0, sizeof(Lock_t));
             lockedState = false;
-            storage_saveLockBits();
         } else if (handle == uriDataChar.getValueHandle()) {
-            uriDataLength = params->len;
-            memcpy(uriData, params->data, uriDataLength);
+            params.uriDataLength = writeParams->len;
+            memcpy(params.uriData, writeParams->data, params.uriDataLength);
         } else if (handle == flagsChar.getValueHandle()) {
-            flags = *(params->data);
-        } else if (handle == txPowerLevelsChar.getValueHandle()) {
-            memcpy(powerLevels, params->data, NUM_POWER_MODES * sizeof(int8_t));
+            params.flags = *(writeParams->data);
+        } else if (handle == advPowerLevelsChar.getValueHandle()) {
+            memcpy(params.advPowerLevels, writeParams->data, sizeof(PowerLevels_t));
         } else if (handle == txPowerModeChar.getValueHandle()) {
-            txPowerMode = *reinterpret_cast<const TXPowerModes_t *>(params->data);
+            params.txPowerMode = *(writeParams->data);
         } else if (handle == beaconPeriodChar.getValueHandle()) {
-            beaconPeriod = *((uint16_t *)(params->data));
+            params.beaconPeriod = *((uint16_t *)(writeParams->data));
         } else if (handle == resetChar.getValueHandle()) {
-            resetDefaults();
+            resetToDefaults();
         }
-        configureGAP();
-        ble.setAdvertisingPayload();
     }
 
     /*
      * Reset the default values.
      */
-    void resetDefaults(void) {
-        uriDataLength    = 0;
-        memset(uriData, 0, MAX_SIZE_URI_DATA_CHAR_VALUE);
-        flags            = 0;
-        memset(powerLevels, 0, sizeof(powerLevels));
-        txPowerMode      = TX_POWER_MODE_LOW;
-        beaconPeriod     = 0;
-        resetLockBits();
-
-        updateGATT();
+    void resetToDefaults(void) {
+        lockedState      = false;
+        memset(params.lock, 0, sizeof(Lock_t));
+        memcpy(params.uriData, defaultUriData, URI_DATA_MAX);
+        params.uriDataLength    = defaultUriDataLength;
+        params.flags            = 0;
+        memcpy(params.advPowerLevels, defaultAdvPowerLevels, sizeof(PowerLevels_t));
+        params.txPowerMode      = TX_POWER_MODE_LOW;
+        params.beaconPeriod     = 1000;
+        updateCharacteristicValues();
     }
 
     /*
      * Internal helper function used to update the GATT database following any
      * change to the internal state of the service object.
      */
-    void updateGATT(void) {
-        updateLockedStateCharacteristic();
-        updateURIDataCharacteristic();
-        updateFlagsCharacteristic();
-        updateBeaconPeriodCharacteristic();
-        updateTxPowerLevelsCharacteristic();
-        updateTxPowerModeCharacteristic();
+    void updateCharacteristicValues(void) {
+        ble.updateCharacteristicValue(lockedStateChar.getValueHandle(), &lockedState, 1);
+        ble.updateCharacteristicValue(uriDataChar.getValueHandle(), params.uriData, params.uriDataLength);
+	ble.updateCharacteristicValue(flagsChar.getValueHandle(), &params.flags, 1);
+        ble.updateCharacteristicValue(beaconPeriodChar.getValueHandle(),
+				      reinterpret_cast<uint8_t *>(&params.beaconPeriod), sizeof(uint16_t));
+        ble.updateCharacteristicValue(txPowerModeChar.getValueHandle(), &params.txPowerMode, 1);
+        ble.updateCharacteristicValue(advPowerLevelsChar.getValueHandle(),
+				      reinterpret_cast<uint8_t *>(params.advPowerLevels), sizeof(PowerLevels_t));
     }
 
-    void updateLockedStateCharacteristic(void) {
-        ble.updateCharacteristicValue(lockedStateChar.getValueHandle(), reinterpret_cast<uint8_t *>(&lockedState), sizeof(lockedState));
+  private:
+    void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+        authParams->authorizationReply = (authParams->len == sizeof(Lock_t)) && !lockedState;
     }
 
-    void updateURIDataCharacteristic(void) {
-        ble.updateCharacteristicValue(uriDataChar.getValueHandle(), uriData, uriDataLength);
-    }
 
-    void updateFlagsCharacteristic(void) {
-        ble.updateCharacteristicValue(flagsChar.getValueHandle(), &flags, 1 /* size */);
-    }
-
-    void updateBeaconPeriodCharacteristic(void) {
-        ble.updateCharacteristicValue(beaconPeriodChar.getValueHandle(), reinterpret_cast<uint8_t *>(&beaconPeriod), sizeof(uint16_t));
-    }
-
-    void updateTxPowerModeCharacteristic(void) {
-        ble.updateCharacteristicValue(txPowerModeChar.getValueHandle(), reinterpret_cast<uint8_t *>(&txPowerMode), sizeof(uint8_t));
-    }
-
-    void updateTxPowerLevelsCharacteristic(void) {
-        ble.updateCharacteristicValue(txPowerLevelsChar.getValueHandle(), reinterpret_cast<uint8_t *>(powerLevels), NUM_POWER_MODES * sizeof(int8_t));
-    }
-
-private:
-    // enable the following for debugging the state of the lock
-    // void lockedStateAuthorizationCallback(GattCharacteristicReadAuthCBParams *params) {
-    //     printf("read authorization callback: lockedState is %u\r\n", lockedState);
-    //     params->authorizationReply = true;
-    // }
-
-    void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
-        params->authorizationReply = !lockedState;
-    }
-
-    void unlockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
-        if (lockedState && (memcmp(params->data, lockBits, SIZEOF_LOCK_BITS) == 0)) {
-            params->authorizationReply = true;
+    void unlockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+        if (!lockedState || (authParams->len == sizeof(Lock_t) && (memcmp(authParams->data, params.lock, sizeof(Lock_t)) == 0))) {
+            authParams->authorizationReply = true;
         } else {
-            params->authorizationReply = false;
+            authParams->authorizationReply = false;
         }
     }
 
-    void uriDataWriteAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
-        if (lockedState || (params->offset != 0) || (params->len > MAX_SIZE_URI_DATA_CHAR_VALUE)) {
-            params->authorizationReply = false;
+    void uriDataWriteAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+        if (lockedState || (authParams->offset != 0) || (authParams->len > URI_DATA_MAX)) {
+            authParams->authorizationReply = false;
         }
     }
 
-    void flagsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
-        if (lockedState || ((*(params->data) & 0xFE) != 0)) {
-            params->authorizationReply = false;
+    void flagsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+        if (lockedState || authParams->len != 1) {
+            authParams->authorizationReply = false;
         }
     }
 
-    void powerModeAuthorizationCallback(GattCharacteristicWriteAuthCBParams *params) {
-        if (lockedState || (*(params->data) >= NUM_POWER_MODES)) {
-            params->authorizationReply = false;
-        }
-    }
-
-    void denyGATTWritesIfLocked(GattCharacteristicWriteAuthCBParams *params) {
+    void denyGATTWritesIfLocked(GattCharacteristicWriteAuthCBParams *authParams) {
         if (lockedState) {
-            params->authorizationReply = false;
+            authParams->authorizationReply = false;
         }
     }
 
-private:
-    /**
-     * For debugging only. Print Hex representation of ServiceDataPayload to the console.
-     */
-    // void dumpEncodedSeviceData() const {
-    //     printf("encoded: '");
-    //     for (unsigned i = 0; i < payloadIndex; i++) {
-    //         printf(" %02x", serviceDataPayload[i]);
-    //     }
-    //     printf("'\r\n");
-    // }
-
-private:
-    static const size_t MAX_SIZEOF_SERVICE_DATA_PAYLOAD = 22; /* Uri Data must be between 0 and 18 bytes in length; and
-                                                               * together with the 4-byte header, the service data must
-                                                               * fit within 22 bytes. */
-    static const size_t MAX_SIZE_URI_DATA_CHAR_VALUE    = 48; /* This is chosen arbitrarily. It should be large enough
-                                                               * to hold any reasonable uncompressed URI. */
-private:
     BLEDevice          &ble;
-
-    size_t              payloadIndex;
-    uint8_t             serviceDataPayload[MAX_SIZEOF_SERVICE_DATA_PAYLOAD];
+    Params_t           &params;
+    // Default value that is restored on reset
+    uint16_t            defaultUriDataLength;
+    UriData_t           &defaultUriData;
+    // Default value that is restored on reset
+    PowerLevels_t       &defaultAdvPowerLevels;
+    uint8_t             lockedState;
     bool                initSucceeded;
+    uint8_t             resetFlag;
 
-    bool                lockedState;
-    uint8_t             lockBits[SIZEOF_LOCK_BITS];
 
-    uint16_t            uriDataLength;
-    uint8_t             uriData[MAX_SIZE_URI_DATA_CHAR_VALUE];
-    uint8_t             flags;
-    int8_t              powerLevels[NUM_POWER_MODES];
-    TXPowerModes_t      txPowerMode;
-    uint16_t            beaconPeriod;
-    bool                resetFlag;
-
-    ReadOnlyGattCharacteristic<bool>                                        lockedStateChar;
-    WriteOnlyArrayGattCharacteristic<uint8_t, SIZEOF_LOCK_BITS>             lockChar;
-    WriteOnlyArrayGattCharacteristic<uint8_t, SIZEOF_LOCK_BITS>             unlockChar;
-    ReadWriteArrayGattCharacteristic<uint8_t, MAX_SIZE_URI_DATA_CHAR_VALUE> uriDataChar;
-    ReadWriteGattCharacteristic<uint8_t>                                    flagsChar;
-    ReadWriteArrayGattCharacteristic<int8_t, NUM_POWER_MODES>               txPowerLevelsChar;
-    ReadWriteGattCharacteristic<TXPowerModes_t>                             txPowerModeChar;
-    ReadWriteGattCharacteristic<uint16_t>                                   beaconPeriodChar;
-    WriteOnlyGattCharacteristic<bool>                                       resetChar;
+    ReadOnlyGattCharacteristic<uint8_t> lockedStateChar;
+    WriteOnlyGattCharacteristic<Lock_t> lockChar;
+    GattCharacteristic uriDataChar;
+    WriteOnlyGattCharacteristic<Lock_t> unlockChar;
+    ReadWriteGattCharacteristic<uint8_t>  flagsChar;
+    ReadWriteGattCharacteristic<PowerLevels_t> advPowerLevelsChar;
+    ReadWriteGattCharacteristic<uint8_t> txPowerModeChar;
+    ReadWriteGattCharacteristic<uint16_t> beaconPeriodChar;
+    WriteOnlyGattCharacteristic<uint8_t> resetChar;
 };
 
-#endif /* #ifndef __BLE_URI_BEACON_CONFIG_SERVICE_H__*/
+#endif  // SERVICES_URIBEACONCONFIGSERVICE_H_
