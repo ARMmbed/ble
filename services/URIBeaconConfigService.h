@@ -17,10 +17,6 @@
 #ifndef SERVICES_URIBEACONCONFIGSERVICE_H_
 #define SERVICES_URIBEACONCONFIGSERVICE_H_
 
-#include "BLEDevice.h"
-#include "GattCharacteristic.h"
-#include "mbed.h"
-
 #define UUID_URI_BEACON(FIRST, SECOND) { \
         0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
         0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
@@ -157,6 +153,7 @@ class URIBeaconConfigService {
 
 
   private:
+    // True if the lock bits are non-zero
     bool isLocked() {
         Lock_t testLock;
         memset(testLock, 0, sizeof(Lock_t));
@@ -174,7 +171,8 @@ class URIBeaconConfigService {
         if (handle == lockChar.getValueHandle()) {
             // Validated earlier
             memcpy(params.lock, writeParams->data, sizeof(Lock_t));
-            lockedState = true;
+            // use isLocked() in case bits are being set to all 0's
+            lockedState = isLocked();
         } else if (handle == unlockChar.getValueHandle()) {
             // Validated earlier
             memset(params.lock, 0, sizeof(Lock_t));
