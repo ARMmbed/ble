@@ -53,7 +53,7 @@ class URIBeaconConfigService {
     static const uint8_t TX_POWER_MODE_LOW    = 1; /*!< Low TX power mode */
     static const uint8_t TX_POWER_MODE_MEDIUM = 2; /*!< Medium TX power mode */
     static const uint8_t TX_POWER_MODE_HIGH   = 3; /*!< High TX power mode */
-    static const unisgned int NUM_POWER_MODES = 4; /*!< Number of Power Modes defined */
+    static const unsigned int NUM_POWER_MODES = 4; /*!< Number of Power Modes defined */
 
 
     typedef uint8_t Lock_t[16];               /* 128 bits */
