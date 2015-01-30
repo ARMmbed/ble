@@ -252,6 +252,20 @@ public:
     void onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP));
     template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
 
+    /**
+     * Setup a callback for when a characteristic is being read by a client.
+     *
+     * @Note: it is possible to chain together multiple onDataRead callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Services may add their own onDataRead callbacks
+     * behind the scenes to trap interesting events.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
+     */
+    void onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP));
+    template <typename T> void onDataRead(T * objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context));
+
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
@@ -551,6 +565,16 @@ BLEDevice::onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams 
 template <typename T> inline void
 BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
     transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
+}
+
+inline void
+BLEDevice::onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+    transport->getGattServer().setOnDataRead(callback);
+}
+
+template <typename T> inline void
+BLEDevice::onDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+    transport->getGattServer().setOnDataRead(objPtr, memberPtr);
 }
 
 inline void

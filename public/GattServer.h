@@ -34,6 +34,7 @@ protected:
         characteristicCount(0),
         onDataSent(),
         onDataWritten(),
+        onDataRead(),
         onUpdatesEnabled(NULL),
         onUpdatesDisabled(NULL),
         onConfirmationReceived(NULL) {
@@ -63,6 +64,11 @@ private:
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
         onDataWritten.add(objPtr, memberPtr);
     }
+    void setOnDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {onDataRead.add(callback);}
+    template <typename T>
+    void setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+        onDataRead.add(objPtr, memberPtr);
+    }
     void setOnUpdatesEnabled(EventCallback_t callback) {onUpdatesEnabled = callback;}
     void setOnUpdatesDisabled(EventCallback_t callback) {onUpdatesDisabled = callback;}
     void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
@@ -71,6 +77,12 @@ protected:
     void handleDataWrittenEvent(const GattCharacteristicWriteCBParams *params) {
         if (onDataWritten.hasCallbacksAttached()) {
             onDataWritten.call(params);
+        }
+    }
+
+    void handleDataReadEvent(const GattCharacteristicReadCBParams *params) {
+        if (onDataRead.hasCallbacksAttached()) {
+            onDataRead.call(params);
         }
     }
 
@@ -109,6 +121,7 @@ protected:
 private:
     CallChainOfFunctionPointersWithContext<unsigned> onDataSent;
     CallChainOfFunctionPointersWithContext<const GattCharacteristicWriteCBParams *> onDataWritten;
+    CallChainOfFunctionPointersWithContext<const GattCharacteristicReadCBParams *> onDataRead;
     EventCallback_t onUpdatesEnabled;
     EventCallback_t onUpdatesDisabled;
     EventCallback_t onConfirmationReceived;
