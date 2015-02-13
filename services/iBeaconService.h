@@ -16,6 +16,7 @@
 #ifndef __BLE_IBEACON_SERVICE_H__
 #define __BLE_IBEACON_SERVICE_H__
 
+#include "core_cmInstr.h"
 #include "BLEDevice.h"
 
 /**
@@ -26,33 +27,9 @@
 class iBeaconService
 {
 public:
-    iBeaconService(BLEDevice &_ble, uint8_t proxUUID[16],uint16_t majNum,uint16_t minNum,uint8_t txP=0xC8, uint16_t compID=0x004C):
-        ble(_ble)
-    {
-        data.ID =  0x02;         // Optional ID field
-        data.len = 0x15;         // Len of remaining stuff (16B UUID, 2B Maj, 2B Min, 1B TxP)
-        data.majorNumber = ((majNum<<8) | (majNum >>8));
-        data.minorNumber = ((minNum<<8) | (minNum >>8));
-        data.txPower = txP;      // The user should calibrate this to ~1meter fromt he device
-        data.companyID = compID; // Note: all iBeacons use the Apple ID of 0x004C
+    typedef const uint8_t LocationUUID_t[16];
 
-        // copy across proximity UUID
-        for(int x=0; x<sizeof(data.proximityUUID); x++) {
-            data.proximityUUID[x]=proxUUID[x];
-        }
-
-        // Set up iBeacon data
-        // Generate the 0x020106 part of the iBeacon Prefix
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE );
-        // Generate the 0x1AFF part of the iBeacon Prefix
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::MANUFACTURER_SPECIFIC_DATA, data.raw, sizeof(data.raw));
-
-        // Set advertising type
-        ble.setAdvertisingType(GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-    }
-
-public:
-    union {
+    union Payload {
         uint8_t raw[25];
         struct {
             uint16_t companyID;
@@ -63,11 +40,35 @@ public:
             uint16_t minorNumber;
             uint8_t txPower;
         };
-    } data;
+
+        Payload(LocationUUID_t uuid, uint16_t majNum, uint16_t minNum, uint8_t transmitPower, uint16_t companyIDIn) :
+            companyID(companyIDIn), ID(0x02), len(0x15), majorNumber(__REV16(majNum)), minorNumber(__REV16(minNum)), txPower(transmitPower)
+        {
+            memcpy(proximityUUID, uuid, sizeof(LocationUUID_t));
+        }
+    };
+
+public:
+    iBeaconService(BLEDevice      &_ble,
+                   LocationUUID_t  uuid,
+                   uint16_t        majNum,
+                   uint16_t        minNum,
+                   uint8_t         txP    = 0xC8,
+                   uint16_t        compID = 0x004C) :
+        ble(_ble), data(uuid, majNum, minNum, txP, compID)
+    {
+        // Generate the 0x020106 part of the iBeacon Prefix
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE );
+        // Generate the 0x1AFF part of the iBeacon Prefix
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::MANUFACTURER_SPECIFIC_DATA, data.raw, sizeof(data.raw));
+
+        // Set advertising type
+        ble.setAdvertisingType(GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
+    }
 
 private:
     BLEDevice &ble;
-
+    Payload   data;
 };
 
 #endif //__BLE_IBEACON_SERVICE_H__
