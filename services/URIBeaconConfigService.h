@@ -275,6 +275,81 @@ class URIBeaconConfigService {
     ReadWriteGattCharacteristic<uint8_t>       txPowerModeChar;
     ReadWriteGattCharacteristic<uint16_t>      beaconPeriodChar;
     WriteOnlyGattCharacteristic<uint8_t>       resetChar;
+
+  public:
+    /*
+     *  Encode a human-readable URI into the binary format defined by URIBeacon spec (https://github.com/google/uribeacon/tree/master/specification).
+     */
+    static void encodeURI(const char *uriDataIn, UriData_t uriDataOut, size_t &sizeofURIDataOut) {
+        sizeofURIDataOut = 0;
+        memset(uriDataOut, 0, sizeof(UriData_t));
+
+        if ((uriDataIn == NULL) || (strlen(uriDataIn) == 0)) {
+            return;
+        }
+
+        /*
+         * handle prefix
+         */
+        const char *prefixes[] = {
+            "http://www.",
+            "https://www.",
+            "http://",
+            "https://",
+            "urn:uuid:"
+        };
+        const size_t NUM_PREFIXES     = sizeof(prefixes) / sizeof(char *);
+        for (unsigned i = 0; i < NUM_PREFIXES; i++) {
+            size_t prefixLen = strlen(prefixes[i]);
+            if (strncmp(uriDataIn, prefixes[i], prefixLen) == 0) {
+                uriDataOut[sizeofURIDataOut++]  = i;
+                uriDataIn                      += prefixLen;
+                break;
+            }
+        }
+
+        /*
+         * handle suffixes
+         */
+        const char *suffixes[] = {
+            ".com/",
+            ".org/",
+            ".edu/",
+            ".net/",
+            ".info/",
+            ".biz/",
+            ".gov/",
+            ".com",
+            ".org",
+            ".edu",
+            ".net",
+            ".info",
+            ".biz",
+            ".gov"
+        };
+        const size_t NUM_SUFFIXES = sizeof(suffixes) / sizeof(char *);
+        while (*uriDataIn && (sizeofURIDataOut < URI_DATA_MAX)) {
+            /* check for suffix match */
+            unsigned i;
+            for (i = 0; i < NUM_SUFFIXES; i++) {
+                size_t suffixLen = strlen(suffixes[i]);
+                if (suffixLen == 0) {
+                    continue;
+                }
+
+                if (strncmp(uriDataIn, suffixes[i], suffixLen) == 0) {
+                    uriDataOut[sizeofURIDataOut++] = i;
+                    uriDataIn       += suffixLen;
+                    break; /* from the for loop for checking against suffixes */
+                }
+            }
+            /* This is the default case where we've got an ordinary character which doesn't match a suffix. */
+            if (i == NUM_SUFFIXES) {
+                uriDataOut[sizeofURIDataOut++] = *uriDataIn;
+                ++uriDataIn;
+            }
+        }
+    }
 };
 
 #endif  // SERVICES_URIBEACONCONFIGSERVICE_H_
