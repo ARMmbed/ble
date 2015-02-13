@@ -72,20 +72,19 @@ class URIBeaconConfigService {
 
 
     /**
-     * @param[ref] ble
-     *                 BLEDevice object for the underlying controller.
-     * @param[in]  uridata
-     *                 URI as a null-terminated string.
-     * @param[in]  flagsIn
-     *                 UriBeacon Flags.
-     * @param[in]  powerLevels[]
-     *                 Table of UriBeacon Tx Power Levels in dBm.
-     * @param[in]  powerMode
-     *                 Currently effective power mode.
-     * @param[in]  beaconPeriodIn
-     *                 The period in milliseconds that a UriBeacon packet is
-     *                 transmitted. A value of zero disables UriBeacon
-     *                 transmissions.
+     * @param[ref]    ble
+     *                    BLEDevice object for the underlying controller.
+     * @param[in/out] paramsIn
+     *                    Reference to application-visible beacon state, loaded
+     *                    from persistent storage at startup.
+     * @param[in]     resetToDefaultsFlag
+     *                    reset params state to the defaults.
+     * @param[in]     defaultUriDataIn
+     *                    Default encoded URIData; applies only if the resetToDefaultsFlag is true.
+     * @param[in]     defaultUriDataLengthIn
+     *                    Length of the default encoded URIData (from above); applies only if the resetToDefaultsFlag is true.
+     * @param[in]     defaultAdvPowerLevelsIn
+     *                    Default power-levels array; applies only if the resetToDefaultsFlag is true.
      */
     URIBeaconConfigService(BLEDevice     &bleIn,
                            Params_t      &paramsIn,
