@@ -56,7 +56,7 @@ class URIBeaconConfigService {
     typedef int8_t PowerLevels_t[NUM_POWER_MODES];
 
     static const int URI_DATA_MAX = 18;
-    typedef uint8_t UriData_t[URI_DATA_MAX];
+    typedef uint8_t  UriData_t[URI_DATA_MAX];
 
     struct Params_t {
         Lock_t              lock;
@@ -87,12 +87,12 @@ class URIBeaconConfigService {
      *                 transmitted. A value of zero disables UriBeacon
      *                 transmissions.
      */
-    URIBeaconConfigService(BLEDevice      &bleIn,
-                           Params_t       &paramsIn,
-                           bool           resetToDefaultsFlag,
-                           UriData_t      &defaultUriDataIn,
-                           int            defaultUriDataLengthIn,
-                           PowerLevels_t  &defaultAdvPowerLevelsIn) :
+    URIBeaconConfigService(BLEDevice     &bleIn,
+                           Params_t      &paramsIn,
+                           bool          resetToDefaultsFlag,
+                           UriData_t     &defaultUriDataIn,
+                           int           defaultUriDataLengthIn,
+                           PowerLevels_t &defaultAdvPowerLevelsIn) :
         ble(bleIn),
         params(paramsIn),
         defaultUriDataLength(defaultUriDataLengthIn),
@@ -255,27 +255,26 @@ class URIBeaconConfigService {
         }
     }
 
-    BLEDevice          &ble;
-    Params_t           &params;
+    BLEDevice     &ble;
+    Params_t      &params;
     // Default value that is restored on reset
-    uint16_t            defaultUriDataLength;
-    UriData_t           &defaultUriData;
+    uint16_t      defaultUriDataLength;
+    UriData_t     &defaultUriData;
     // Default value that is restored on reset
-    PowerLevels_t       &defaultAdvPowerLevels;
-    uint8_t             lockedState;
-    bool                initSucceeded;
-    uint8_t             resetFlag;
+    PowerLevels_t &defaultAdvPowerLevels;
+    uint8_t       lockedState;
+    bool          initSucceeded;
+    uint8_t       resetFlag;
 
-
-    ReadOnlyGattCharacteristic<uint8_t> lockedStateChar;
-    WriteOnlyGattCharacteristic<Lock_t> lockChar;
-    GattCharacteristic uriDataChar;
-    WriteOnlyGattCharacteristic<Lock_t> unlockChar;
-    ReadWriteGattCharacteristic<uint8_t>  flagsChar;
+    ReadOnlyGattCharacteristic<uint8_t>        lockedStateChar;
+    WriteOnlyGattCharacteristic<Lock_t>        lockChar;
+    GattCharacteristic                         uriDataChar;
+    WriteOnlyGattCharacteristic<Lock_t>        unlockChar;
+    ReadWriteGattCharacteristic<uint8_t>       flagsChar;
     ReadWriteGattCharacteristic<PowerLevels_t> advPowerLevelsChar;
-    ReadWriteGattCharacteristic<uint8_t> txPowerModeChar;
-    ReadWriteGattCharacteristic<uint16_t> beaconPeriodChar;
-    WriteOnlyGattCharacteristic<uint8_t> resetChar;
+    ReadWriteGattCharacteristic<uint8_t>       txPowerModeChar;
+    ReadWriteGattCharacteristic<uint16_t>      beaconPeriodChar;
+    WriteOnlyGattCharacteristic<uint8_t>       resetChar;
 };
 
 #endif  // SERVICES_URIBEACONCONFIGSERVICE_H_
