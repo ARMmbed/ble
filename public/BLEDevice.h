@@ -263,8 +263,8 @@ public:
      * @Note: it is also possible to setup a callback into a member function of
      * some object.
      */
-    void onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP));
-    template <typename T> void onDataRead(T * objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context));
+    ble_error_t onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP));
+    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context));
 
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
@@ -567,14 +567,14 @@ BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristi
     transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
 }
 
-inline void
+inline ble_error_t
 BLEDevice::onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
-    transport->getGattServer().setOnDataRead(callback);
+    return transport->getGattServer().setOnDataRead(callback);
 }
 
-template <typename T> inline void
+template <typename T> inline ble_error_t
 BLEDevice::onDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
-    transport->getGattServer().setOnDataRead(objPtr, memberPtr);
+    return transport->getGattServer().setOnDataRead(objPtr, memberPtr);
 }
 
 inline void

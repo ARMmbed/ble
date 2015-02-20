@@ -64,10 +64,14 @@ private:
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
         onDataWritten.add(objPtr, memberPtr);
     }
-    void setOnDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {onDataRead.add(callback);}
+    ble_error_t setOnDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+        onDataRead.add(callback);
+        return BLE_ERROR_NONE;
+    }
     template <typename T>
-    void setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+    ble_error_t setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
         onDataRead.add(objPtr, memberPtr);
+        return BLE_ERROR_NONE;
     }
     void setOnUpdatesEnabled(EventCallback_t callback) {onUpdatesEnabled = callback;}
     void setOnUpdatesDisabled(EventCallback_t callback) {onUpdatesDisabled = callback;}
