@@ -99,7 +99,7 @@ bool UUID::operator==(const UUID &other) const
         return true;
     }
 
-    if ((this->type == LENGTH_OF_LONG_UUID) && (other.type == LENGTH_OF_LONG_UUID) &&
+    if ((this->type == UUID_TYPE_LONG) && (other.type == UUID_TYPE_LONG) &&
         (memcmp(this->baseUUID, other.baseUUID, LENGTH_OF_LONG_UUID) == 0)) {
         return true;
     }

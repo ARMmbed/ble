@@ -37,7 +37,7 @@ public:
 public:
     uint8_t           shortOrLong(void)  const {return type;     }
     const uint8_t    *getBaseUUID(void)  const {
-        if (type == UUID_TYPE_SHORT) { return (uint8_t*)&shortUUID; }
+        if (type == UUID_TYPE_SHORT) { return (const uint8_t*)&shortUUID; }
         else { return baseUUID; }
     }
     ShortUUIDBytes_t  getShortUUID(void) const {return shortUUID;}
