@@ -64,12 +64,28 @@ private:
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
         onDataWritten.add(objPtr, memberPtr);
     }
+
+    /**
+     * A virtual function to allow underlying stacks to indicate if they support
+     * onDataRead(). It should be overridden to return true as applicable.
+     */
+    virtual bool isOnDataReadAvaialble() const {
+        return false;
+    }
     ble_error_t setOnDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+        if (!isOnDataReadAvaialble()) {
+            return BLE_ERROR_NOT_IMPLEMENTED;
+        }
+
         onDataRead.add(callback);
         return BLE_ERROR_NONE;
     }
     template <typename T>
     ble_error_t setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+        if (!isOnDataReadAvaialble()) {
+            return BLE_ERROR_NOT_IMPLEMENTED;
+        }
+
         onDataRead.add(objPtr, memberPtr);
         return BLE_ERROR_NONE;
     }
