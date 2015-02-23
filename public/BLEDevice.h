@@ -250,6 +250,27 @@ public:
     void onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP));
     template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
 
+    /**
+     * Setup a callback for when a characteristic is being read by a client.
+     *
+     * @Note: this functionality may not be available on all underlying stacks.
+     * You could use GattCharacteristic::setReadAuthorizationCallback() as an
+     * alternative.
+     *
+     * @Note: it is possible to chain together multiple onDataRead callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Services may add their own onDataRead callbacks
+     * behind the scenes to trap interesting events.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
+     *
+     * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
+     *         else BLE_ERROR_NONE.
+     */
+    ble_error_t onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP));
+    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context));
+
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
@@ -549,6 +570,16 @@ BLEDevice::onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams 
 template <typename T> inline void
 BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
     transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
+}
+
+inline ble_error_t
+BLEDevice::onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+    return transport->getGattServer().setOnDataRead(callback);
+}
+
+template <typename T> inline ble_error_t
+BLEDevice::onDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+    return transport->getGattServer().setOnDataRead(objPtr, memberPtr);
 }
 
 inline void

@@ -34,6 +34,7 @@ protected:
         characteristicCount(0),
         onDataSent(),
         onDataWritten(),
+        onDataRead(),
         onUpdatesEnabled(NULL),
         onUpdatesDisabled(NULL),
         onConfirmationReceived(NULL) {
@@ -63,6 +64,31 @@ private:
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
         onDataWritten.add(objPtr, memberPtr);
     }
+
+    /**
+     * A virtual function to allow underlying stacks to indicate if they support
+     * onDataRead(). It should be overridden to return true as applicable.
+     */
+    virtual bool isOnDataReadAvaialble() const {
+        return false;
+    }
+    ble_error_t setOnDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+        if (!isOnDataReadAvaialble()) {
+            return BLE_ERROR_NOT_IMPLEMENTED;
+        }
+
+        onDataRead.add(callback);
+        return BLE_ERROR_NONE;
+    }
+    template <typename T>
+    ble_error_t setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+        if (!isOnDataReadAvaialble()) {
+            return BLE_ERROR_NOT_IMPLEMENTED;
+        }
+
+        onDataRead.add(objPtr, memberPtr);
+        return BLE_ERROR_NONE;
+    }
     void setOnUpdatesEnabled(EventCallback_t callback) {onUpdatesEnabled = callback;}
     void setOnUpdatesDisabled(EventCallback_t callback) {onUpdatesDisabled = callback;}
     void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
@@ -71,6 +97,12 @@ protected:
     void handleDataWrittenEvent(const GattCharacteristicWriteCBParams *params) {
         if (onDataWritten.hasCallbacksAttached()) {
             onDataWritten.call(params);
+        }
+    }
+
+    void handleDataReadEvent(const GattCharacteristicReadCBParams *params) {
+        if (onDataRead.hasCallbacksAttached()) {
+            onDataRead.call(params);
         }
     }
 
@@ -109,6 +141,7 @@ protected:
 private:
     CallChainOfFunctionPointersWithContext<unsigned> onDataSent;
     CallChainOfFunctionPointersWithContext<const GattCharacteristicWriteCBParams *> onDataWritten;
+    CallChainOfFunctionPointersWithContext<const GattCharacteristicReadCBParams *> onDataRead;
     EventCallback_t onUpdatesEnabled;
     EventCallback_t onUpdatesDisabled;
     EventCallback_t onConfirmationReceived;

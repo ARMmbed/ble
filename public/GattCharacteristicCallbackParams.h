@@ -33,6 +33,17 @@ struct GattCharacteristicWriteCBParams {
     const uint8_t *data;   /**< Incoming data, variable length. */
 };
 
+struct GattCharacteristicReadCBParams {
+    GattAttribute::Handle_t charHandle;
+    enum Type {
+        GATTS_CHAR_OP_INVALID               = 0x00,  /**< Invalid Operation. */
+        GATTS_CHAR_OP_READ_REQ              = 0x0A,  /**< Read Request. */
+    } op;                  /**< Type of write operation, */
+    uint16_t       offset; /**< Offset for the read operation. */
+    uint16_t       *len;   /**< Length of the outgoing data. */
+    uint8_t        *data;  /**< Outgoing data, variable length. */
+};
+
 struct GattCharacteristicWriteAuthCBParams {
     GattAttribute::Handle_t  charHandle;
     uint16_t                 offset; /**< Offset for the write operation. */
