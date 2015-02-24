@@ -53,6 +53,7 @@ public:
 public:
     Handle_t    getHandle(void)        const {return _handle;    }
     const UUID &getUUID(void)          const {return _uuid;      }
+    uint16_t    getLength(void)        const {return _len;       }
     uint16_t    getInitialLength(void) const {return _initialLen;}
     uint16_t    getMaxLength(void)     const {return _lenMax;    }
     uint16_t   *getLengthPtr(void)           {return &_len;      }
