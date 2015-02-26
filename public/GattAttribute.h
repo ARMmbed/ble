@@ -46,15 +46,17 @@ public:
      */
     /**************************************************************************/
     GattAttribute(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0) :
-        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _handle() {
+        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _len(initialLen), _handle() {
         /* empty */
     }
 
 public:
     Handle_t    getHandle(void)        const {return _handle;    }
     const UUID &getUUID(void)          const {return _uuid;      }
+    uint16_t    getLength(void)        const {return _len;       }
     uint16_t    getInitialLength(void) const {return _initialLen;}
     uint16_t    getMaxLength(void)     const {return _lenMax;    }
+    uint16_t   *getLengthPtr(void)           {return &_len;      }
     void        setHandle(Handle_t id)       {_handle = id;      }
     uint8_t    *getValuePtr(void)            {return _valuePtr;  }
 
@@ -63,6 +65,7 @@ private:
     uint8_t  *_valuePtr;
     uint16_t  _initialLen;  /* Initial length of the value */
     uint16_t  _lenMax;      /* Maximum length of the value */
+    uint16_t  _len;         /* Current length of the value */
     Handle_t  _handle;
 
 private:
