@@ -69,11 +69,11 @@ private:
      * A virtual function to allow underlying stacks to indicate if they support
      * onDataRead(). It should be overridden to return true as applicable.
      */
-    virtual bool isOnDataReadAvaialble() const {
+    virtual bool isOnDataReadAvailable() const {
         return false;
     }
     ble_error_t setOnDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
-        if (!isOnDataReadAvaialble()) {
+        if (!isOnDataReadAvailable()) {
             return BLE_ERROR_NOT_IMPLEMENTED;
         }
 
@@ -82,7 +82,7 @@ private:
     }
     template <typename T>
     ble_error_t setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
-        if (!isOnDataReadAvaialble()) {
+        if (!isOnDataReadAvailable()) {
             return BLE_ERROR_NOT_IMPLEMENTED;
         }
 
