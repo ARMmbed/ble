@@ -100,7 +100,7 @@ class URIBeaconConfigService {
         initSucceeded(false),
         lockedStateChar(UUID_LOCK_STATE_CHAR, &lockedState),
         lockChar(UUID_LOCK_CHAR, &params.lock),
-        uriDataChar(UUID_URI_DATA_CHAR, params.uriData, URI_DATA_MAX, params.uriDataLength,
+        uriDataChar(UUID_URI_DATA_CHAR, params.uriData, 0, URI_DATA_MAX,
                     GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE),
         unlockChar(UUID_UNLOCK_CHAR, &params.lock),
         flagsChar(UUID_FLAGS_CHAR, &params.flags),
