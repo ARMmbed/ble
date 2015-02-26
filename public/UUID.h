@@ -25,7 +25,7 @@ typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
 
 class UUID {
 public:
-    enum {
+    enum UUID_Type_t {
         UUID_TYPE_SHORT = 0,    // Short BLE UUID
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID
     };
@@ -35,10 +35,13 @@ public:
     UUID(ShortUUIDBytes_t);
 
 public:
-    uint8_t           shortOrLong(void)  const {return type;     }
+    UUID_Type_t       shortOrLong(void)  const {return type;     }
     const uint8_t    *getBaseUUID(void)  const {
-        if (type == UUID_TYPE_SHORT) { return (const uint8_t*)&shortUUID; }
-        else { return baseUUID; }
+        if (type == UUID_TYPE_SHORT) {
+            return (const uint8_t*)&shortUUID;
+        } else {
+            return baseUUID;
+        }
     }
     ShortUUIDBytes_t  getShortUUID(void) const {return shortUUID;}
     uint8_t           getLen(void)       const {
@@ -48,7 +51,7 @@ public:
     bool operator== (const UUID&) const;
 
 private:
-    uint8_t          type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
+    UUID_Type_t      type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
     LongUUIDBytes_t  baseUUID;  /* the base of the long UUID (if
                             * used). Note: bytes 12 and 13 (counting from LSB)
                             * are zeroed out to allow comparison with other long
