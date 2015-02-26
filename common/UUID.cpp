@@ -81,12 +81,6 @@ UUID::UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_SHORT), baseUUID(), 
 
         if (baseUUID[index] != 0) {
             type = UUID_TYPE_LONG;
-
-            /* zero out the 16-bit part in the base; this will help equate long
-             * UUIDs when they differ only in this 16-bit relative part.*/
-            baseUUID[2] = 0;
-            baseUUID[3] = 0;
-
             return;
         }
     }
