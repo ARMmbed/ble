@@ -92,3 +92,17 @@ UUID::UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_SHORT), baseUUID(), 
     }
 }
 
+bool UUID::operator==(const UUID &other) const
+{
+    if ((this->type == UUID_TYPE_SHORT) && (other.type == UUID_TYPE_SHORT) &&
+        (this->shortUUID == other.shortUUID)) {
+        return true;
+    }
+
+    if ((this->type == UUID_TYPE_LONG) && (other.type == UUID_TYPE_LONG) &&
+        (memcmp(this->baseUUID, other.baseUUID, LENGTH_OF_LONG_UUID) == 0)) {
+        return true;
+    }
+
+    return false;
+}

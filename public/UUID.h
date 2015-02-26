@@ -36,8 +36,16 @@ public:
 
 public:
     uint8_t           shortOrLong(void)  const {return type;     }
-    const uint8_t    *getBaseUUID(void)  const {return baseUUID; }
+    const uint8_t    *getBaseUUID(void)  const {
+        if (type == UUID_TYPE_SHORT) { return (const uint8_t*)&shortUUID; }
+        else { return baseUUID; }
+    }
     ShortUUIDBytes_t  getShortUUID(void) const {return shortUUID;}
+    uint8_t           getLen(void)       const {
+        return ((type == UUID_TYPE_SHORT) ? sizeof(ShortUUIDBytes_t) : LENGTH_OF_LONG_UUID);
+    }
+
+    bool operator== (const UUID&) const;
 
 private:
     uint8_t          type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
