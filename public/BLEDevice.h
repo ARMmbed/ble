@@ -368,6 +368,16 @@ public:
      */
     ble_error_t setTxPower(int8_t txPower);
 
+    /**
+     * Query the underlying stack for permitted arguments for setTxPower().
+     *
+     * @param[out] valueArrayPP
+     *                 Out parameter to receive the immutable array of Tx values.
+     * @param[out] countP
+     *                 Out parameter to receive the array's size.
+     */
+    void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP);
+
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
         advPayload.clear();
@@ -680,6 +690,12 @@ inline ble_error_t
 BLEDevice::setTxPower(int8_t txPower)
 {
     return transport->setTxPower(txPower);
+}
+
+inline void
+BLEDevice::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
+{
+    transport->getPermittedTxPowerValues(valueArrayPP, countP);
 }
 
 /*
