@@ -66,24 +66,10 @@ UUID::UUID(ShortUUIDBytes_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shor
     @endcode
 */
 /**************************************************************************/
-UUID::UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(0)
+UUID::UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0)
 {
     memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
     shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
-
-    /* Check if this is a short of a long UUID */
-    unsigned index;
-    for (index = 0; index < LENGTH_OF_LONG_UUID; index++) {
-        if ((index == 2) || (index == 3)) {
-            continue; /* we should not consider bytes 2 and 3 because that's
-                       * where the 16-bit relative UUID is placed. */
-        }
-
-        if (baseUUID[index] != 0) {
-            type = UUID_TYPE_LONG;
-            return;
-        }
-    }
 }
 
 bool UUID::operator==(const UUID &other) const
