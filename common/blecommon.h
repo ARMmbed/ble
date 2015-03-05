@@ -17,11 +17,6 @@
 #ifndef __BLE_COMMON_H__
 #define __BLE_COMMON_H__
 
-#define NRF51
-#define DEBUG_NRF_USER
-#define BLE_STACK_SUPPORT_REQD
-#define BOARD_PCA10001
-
 #ifdef __cplusplus
 extern "C" {
 #endif
