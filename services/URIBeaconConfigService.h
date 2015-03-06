@@ -51,6 +51,9 @@ class URIBeaconConfigService {
     static const uint8_t TX_POWER_MODE_HIGH   = 3; /*!< High TX power mode */
     static const unsigned int NUM_POWER_MODES = 4; /*!< Number of Power Modes defined */
 
+    static const int ADVERTISING_TIMEOUT_SECONDS = 60;  // Seconds after power-on that config service is available.
+    static const int ADVERTISING_INTERVAL_MSEC = 1000;  // Advertising interval for config service.
+    static const int SERVICE_DATA_MAX = 31;             // Maximum size of service data in ADV packets
 
     typedef uint8_t Lock_t[16];               /* 128 bits */
     typedef int8_t PowerLevels_t[NUM_POWER_MODES];
@@ -80,24 +83,23 @@ class URIBeaconConfigService {
      * @param[in]     resetToDefaultsFlag
      *                    reset params state to the defaults.
      * @param[in]     defaultUriDataIn
-     *                    Default encoded URIData; applies only if the resetToDefaultsFlag is true.
-     * @param[in]     defaultUriDataLengthIn
-     *                    Length of the default encoded URIData (from above); applies only if the resetToDefaultsFlag is true.
+     *                    Default un-encoded URI; applies only if the resetToDefaultsFlag is true.
      * @param[in]     defaultAdvPowerLevelsIn
      *                    Default power-levels array; applies only if the resetToDefaultsFlag is true.
      */
     URIBeaconConfigService(BLEDevice     &bleIn,
                            Params_t      &paramsIn,
                            bool          resetToDefaultsFlag,
-                           UriData_t     &defaultUriDataIn,
-                           int           defaultUriDataLengthIn,
+                           const char   *defaultURIDataIn,
                            PowerLevels_t &defaultAdvPowerLevelsIn) :
         ble(bleIn),
         params(paramsIn),
-        defaultUriDataLength(defaultUriDataLengthIn),
-        defaultUriData(defaultUriDataIn),
+        defaultUriDataLength(),
+        defaultUriData(),
         defaultAdvPowerLevels(defaultAdvPowerLevelsIn),
         initSucceeded(false),
+        resetFlag(),
+        configAdvertisementTimeoutTicker(),
         lockedStateChar(UUID_LOCK_STATE_CHAR, &lockedState),
         lockChar(UUID_LOCK_CHAR, &params.lock),
         uriDataChar(UUID_URI_DATA_CHAR, params.uriData, 0, URI_DATA_MAX,
@@ -108,7 +110,9 @@ class URIBeaconConfigService {
         txPowerModeChar(UUID_TX_POWER_MODE_CHAR, &params.txPowerMode),
         beaconPeriodChar(UUID_BEACON_PERIOD_CHAR, &params.beaconPeriod),
         resetChar(UUID_RESET_CHAR, &resetFlag) {
-        if (defaultUriDataLengthIn > URI_DATA_MAX) {
+
+        encodeURI(defaultURIDataIn, defaultUriData, defaultUriDataLength);
+        if (defaultUriDataLength > URI_DATA_MAX) {
             return;
         }
 
@@ -143,6 +147,11 @@ class URIBeaconConfigService {
         ble.addService(configService);
         ble.onDataWritten(this, &URIBeaconConfigService::onDataWrittenCallback);
 
+        /* Start out by advertising the configService for a limited time after
+         * startup; and switch to the normal non-connectible beacon functionality
+         * afterwards. */
+        setupUriBeaconConfigAdvertisements();
+
         initSucceeded = true;
     }
 
@@ -150,6 +159,108 @@ class URIBeaconConfigService {
         return initSucceeded;
     }
 
+    /* Start out by advertising the configService for a limited time after
+     * startup; and switch to the normal non-connectible beacon functionality
+     * afterwards. */
+    void setupUriBeaconConfigAdvertisements()
+    {
+        char DEVICE_NAME[] = "mUriBeacon Config";
+
+        ble.clearAdvertisingPayload();
+
+        // Stops advertising the UriBeacon Config Service after a delay
+        configAdvertisementTimeoutTicker.attach(this, &URIBeaconConfigService::timeout, ADVERTISING_TIMEOUT_SECONDS);
+
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
+
+        // UUID is in different order in the ADV frame (!)
+        uint8_t reversedServiceUUID[sizeof(UUID_URI_BEACON_SERVICE)];
+        for (unsigned int i = 0; i < sizeof(UUID_URI_BEACON_SERVICE); i++) {
+            reversedServiceUUID[i] =
+                UUID_URI_BEACON_SERVICE[sizeof(UUID_URI_BEACON_SERVICE) - i - 1];
+        }
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, reversedServiceUUID, sizeof(reversedServiceUUID));
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::GENERIC_TAG);
+        ble.accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, reinterpret_cast<uint8_t *>(&DEVICE_NAME), sizeof(DEVICE_NAME));
+        ble.accumulateScanResponse(
+            GapAdvertisingData::TX_POWER_LEVEL,
+            reinterpret_cast<uint8_t *>(
+                &defaultAdvPowerLevels[URIBeaconConfigService::TX_POWER_MODE_LOW]),
+            sizeof(uint8_t));
+
+        /////// TODO
+        // ble.setTxPower(
+        //     firmwarePowerLevels[URIBeaconConfigService::TX_POWER_MODE_LOW]);
+
+        ble.setDeviceName(reinterpret_cast<uint8_t *>(&DEVICE_NAME));
+        ble.setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED);
+        ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
+    }
+
+    void setupUriBeaconAdvertisements()
+    {
+        // uint8_t serviceData[SERVICE_DATA_MAX];
+        // int serviceDataLen = 0;
+
+        // advertisingStateLed = 1;
+        // connectionStateLed = 1;
+
+        ble.shutdown();
+        ble.init();
+
+        // Fields from the Service
+        // int beaconPeriod  = persistentData.params.beaconPeriod;
+        // int txPowerMode   = persistentData.params.txPowerMode;
+        // int uriDataLength = persistentData.params.uriDataLength;
+        // URIBeaconConfigService::UriData_t &uriData = persistentData.params.uriData;
+        // URIBeaconConfigService::PowerLevels_t &advPowerLevels = persistentData.params.advPowerLevels;
+        // uint8_t flags = persistentData.params.flags;
+
+        // pstorageSave();
+
+        // delete uriBeaconConfig;
+        // uriBeaconConfig = NULL;
+
+        // ble.clearAdvertisingPayload();
+        // ble.setTxPower(firmwarePowerLevels[txPowerMode]);
+
+        // ble.setAdvertisingType(
+        //     GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
+
+        // ble.setAdvertisingInterval(
+        //     Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+
+        // ble.accumulateAdvertisingPayload(
+        //     GapAdvertisingData::BREDR_NOT_SUPPORTED |
+        //     GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
+
+        // ble.accumulateAdvertisingPayload(
+        //     GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID,
+        //     sizeof(BEACON_UUID));
+
+        // serviceData[serviceDataLen++] = BEACON_UUID[0];
+        // serviceData[serviceDataLen++] = BEACON_UUID[1];
+        // serviceData[serviceDataLen++] = flags;
+        // serviceData[serviceDataLen++] = advPowerLevels[txPowerMode];
+        // for (int j=0; j < uriDataLength; j++) {
+        //     serviceData[serviceDataLen++] = uriData[j];
+        // }
+
+        // ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceData, serviceDataLen);
+
+        // ble.startAdvertising();
+    }
+
+    // After advertising timeout, stop config and switch to UriBeacon
+    void timeout(void)
+    {
+        Gap::GapState_t state;
+        state = ble.getGapState();
+        if (!state.connected) {
+            setupUriBeaconAdvertisements();
+            configAdvertisementTimeoutTicker.detach();
+        }
+    }
 
   private:
     // True if the lock bits are non-zero
@@ -257,13 +368,14 @@ class URIBeaconConfigService {
     BLEDevice     &ble;
     Params_t      &params;
     // Default value that is restored on reset
-    uint16_t      defaultUriDataLength;
-    UriData_t     &defaultUriData;
+    size_t        defaultUriDataLength;
+    UriData_t     defaultUriData;
     // Default value that is restored on reset
     PowerLevels_t &defaultAdvPowerLevels;
     uint8_t       lockedState;
     bool          initSucceeded;
     uint8_t       resetFlag;
+    Ticker        configAdvertisementTimeoutTicker;
 
     ReadOnlyGattCharacteristic<uint8_t>        lockedStateChar;
     WriteOnlyGattCharacteristic<Lock_t>        lockChar;
