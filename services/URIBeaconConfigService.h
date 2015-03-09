@@ -66,13 +66,10 @@ class URIBeaconConfigService {
         uint8_t             uriDataLength;
         UriData_t           uriData;
         uint8_t             flags;
-        // Current value of AdvertisedPowerLevels
-        PowerLevels_t       advPowerLevels;
-        // Firmware power levels used with setTxPower()
-        uint8_t             txPowerMode;
+        PowerLevels_t       advPowerLevels; // Current value of AdvertisedPowerLevels
+        uint8_t             txPowerMode;    // Firmware power levels used with setTxPower()
         uint16_t            beaconPeriod;
     };
-
 
     /**
      * @param[ref]    ble
