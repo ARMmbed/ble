@@ -17,6 +17,9 @@
 #ifndef SERVICES_URIBEACONCONFIGSERVICE_H_
 #define SERVICES_URIBEACONCONFIGSERVICE_H_
 
+#include "BLEDevice.h"
+#include "mbed.h"
+
 #define UUID_URI_BEACON(FIRST, SECOND) {                         \
         0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
         0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
@@ -186,10 +189,7 @@ class URIBeaconConfigService {
                 &defaultAdvPowerLevels[URIBeaconConfigService::TX_POWER_MODE_LOW]),
             sizeof(uint8_t));
 
-        /////// TODO
-        // ble.setTxPower(
-        //     firmwarePowerLevels[URIBeaconConfigService::TX_POWER_MODE_LOW]);
-
+        ble.setTxPower(params.advPowerLevels[params.txPowerMode]);
         ble.setDeviceName(reinterpret_cast<uint8_t *>(&DEVICE_NAME));
         ble.setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED);
         ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
@@ -198,56 +198,41 @@ class URIBeaconConfigService {
     /* Helper function to switch to the non-connectible normal mode for URIBeacon. This gets called after a timeout. */
     void setupURIBeaconAdvertisements()
     {
-        // uint8_t serviceData[SERVICE_DATA_MAX];
-        // int serviceDataLen = 0;
+        uint8_t serviceData[SERVICE_DATA_MAX];
+        int serviceDataLen = 0;
 
-        // advertisingStateLed = 1;
-        // connectionStateLed = 1;
-
+        /* Reinitialize the BLE stack. This will clear away the existing services and advertising state. */
         ble.shutdown();
         ble.init();
 
         // Fields from the Service
-        // int beaconPeriod  = persistentData.params.beaconPeriod;
-        // int txPowerMode   = persistentData.params.txPowerMode;
-        // int uriDataLength = persistentData.params.uriDataLength;
-        // URIBeaconConfigService::UriData_t &uriData = persistentData.params.uriData;
-        // URIBeaconConfigService::PowerLevels_t &advPowerLevels = persistentData.params.advPowerLevels;
-        // uint8_t flags = persistentData.params.flags;
+        int beaconPeriod                                      = params.beaconPeriod;
+        int txPowerMode                                       = params.txPowerMode;
+        int uriDataLength                                     = params.uriDataLength;
+        URIBeaconConfigService::UriData_t &uriData            = params.uriData;
+        URIBeaconConfigService::PowerLevels_t &advPowerLevels = params.advPowerLevels;
+        uint8_t flags                                         = params.flags;
 
-        // pstorageSave();
+        extern void saveURIBeaconConfigParams(Params_t *paramsP); /* forward declaration; necessary to avoid a circular dependency. */
+        saveURIBeaconConfigParams(&params);
 
-        // delete uriBeaconConfig;
-        // uriBeaconConfig = NULL;
+        ble.clearAdvertisingPayload();
+        ble.setTxPower(params.advPowerLevels[params.txPowerMode]);
+        ble.setAdvertisingType(GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
+        ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
 
-        // ble.clearAdvertisingPayload();
-        // ble.setTxPower(firmwarePowerLevels[txPowerMode]);
+        serviceData[serviceDataLen++] = BEACON_UUID[0];
+        serviceData[serviceDataLen++] = BEACON_UUID[1];
+        serviceData[serviceDataLen++] = flags;
+        serviceData[serviceDataLen++] = advPowerLevels[txPowerMode];
+        for (int j=0; j < uriDataLength; j++) {
+            serviceData[serviceDataLen++] = uriData[j];
+        }
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceData, serviceDataLen);
 
-        // ble.setAdvertisingType(
-        //     GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-
-        // ble.setAdvertisingInterval(
-        //     Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
-
-        // ble.accumulateAdvertisingPayload(
-        //     GapAdvertisingData::BREDR_NOT_SUPPORTED |
-        //     GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
-
-        // ble.accumulateAdvertisingPayload(
-        //     GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID,
-        //     sizeof(BEACON_UUID));
-
-        // serviceData[serviceDataLen++] = BEACON_UUID[0];
-        // serviceData[serviceDataLen++] = BEACON_UUID[1];
-        // serviceData[serviceDataLen++] = flags;
-        // serviceData[serviceDataLen++] = advPowerLevels[txPowerMode];
-        // for (int j=0; j < uriDataLength; j++) {
-        //     serviceData[serviceDataLen++] = uriData[j];
-        // }
-
-        // ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceData, serviceDataLen);
-
-        // ble.startAdvertising();
+        ble.startAdvertising();
     }
 
     // After advertising timeout, stop config and switch to UriBeacon
@@ -255,9 +240,9 @@ class URIBeaconConfigService {
     {
         Gap::GapState_t state;
         state = ble.getGapState();
-        if (!state.connected) {
+        if (state.advertising) {
             setupURIBeaconAdvertisements();
-            configAdvertisementTimeoutTicker.detach();
+            configAdvertisementTimeoutTicker.detach(); /* disable the timeout Ticker. */
         }
     }
 
