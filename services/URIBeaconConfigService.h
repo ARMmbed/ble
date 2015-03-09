@@ -51,7 +51,7 @@ class URIBeaconConfigService {
     static const uint8_t TX_POWER_MODE_HIGH   = 3; /*!< High TX power mode */
     static const unsigned int NUM_POWER_MODES = 4; /*!< Number of Power Modes defined */
 
-    static const int ADVERTISING_TIMEOUT_SECONDS = 60;  // Seconds after power-on that config service is available.
+    static const int CONFIG_ADVERTISING_TIMEOUT_SECONDS = 60;  // Seconds after power-on that config service is available.
     static const int ADVERTISING_INTERVAL_MSEC = 1000;  // Advertising interval for config service.
     static const int SERVICE_DATA_MAX = 31;             // Maximum size of service data in ADV packets
 
@@ -69,6 +69,9 @@ class URIBeaconConfigService {
         PowerLevels_t advPowerLevels; // Current value of AdvertisedPowerLevels
         uint8_t       txPowerMode;    // Firmware power levels used with setTxPower()
         uint16_t      beaconPeriod;
+        uint32_t      persistenceSignature; /* This isn't really a parameter, but having the expected magic value in
+                                             * this field indicates persistence. */
+        static const uint32_t MAGIC = 0x1BEAC000; // Magic that identifies persistence
     };
 
     /**
@@ -77,8 +80,6 @@ class URIBeaconConfigService {
      * @param[in/out] paramsIn
      *                    Reference to application-visible beacon state, loaded
      *                    from persistent storage at startup.
-     * @param[in]     resetToDefaultsFlag
-     *                    reset params state to the defaults.
      * @param[in]     defaultUriDataIn
      *                    Default un-encoded URI; applies only if the resetToDefaultsFlag is true.
      * @param[in]     defaultAdvPowerLevelsIn
@@ -86,7 +87,6 @@ class URIBeaconConfigService {
      */
     URIBeaconConfigService(BLEDevice     &bleIn,
                            Params_t      &paramsIn,
-                           bool          resetToDefaultsFlag,
                            const char   *defaultURIDataIn,
                            PowerLevels_t &defaultAdvPowerLevelsIn) :
         ble(bleIn),
@@ -113,7 +113,8 @@ class URIBeaconConfigService {
             return;
         }
 
-        if (params.uriDataLength > URI_DATA_MAX) {
+        bool resetToDefaultsFlag = params.persistenceSignature != Params_t::MAGIC;
+        if (!resetToDefaultsFlag && (params.uriDataLength > URI_DATA_MAX)) {
             resetToDefaultsFlag = true;
         }
 
@@ -166,7 +167,7 @@ class URIBeaconConfigService {
         ble.clearAdvertisingPayload();
 
         // Stops advertising the UriBeacon Config Service after a delay
-        configAdvertisementTimeoutTicker.attach(this, &URIBeaconConfigService::timeout, ADVERTISING_TIMEOUT_SECONDS);
+        configAdvertisementTimeoutTicker.attach(this, &URIBeaconConfigService::timeout, CONFIG_ADVERTISING_TIMEOUT_SECONDS);
 
         ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
 
