@@ -148,7 +148,7 @@ class URIBeaconConfigService {
         /* Start out by advertising the configService for a limited time after
          * startup; and switch to the normal non-connectible beacon functionality
          * afterwards. */
-        setupUriBeaconConfigAdvertisements();
+        setupURIBeaconConfigAdvertisements();
 
         initSucceeded = true;
     }
@@ -160,7 +160,7 @@ class URIBeaconConfigService {
     /* Start out by advertising the configService for a limited time after
      * startup; and switch to the normal non-connectible beacon functionality
      * afterwards. */
-    void setupUriBeaconConfigAdvertisements()
+    void setupURIBeaconConfigAdvertisements()
     {
         char DEVICE_NAME[] = "mUriBeacon Config";
 
@@ -195,7 +195,8 @@ class URIBeaconConfigService {
         ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
     }
 
-    void setupUriBeaconAdvertisements()
+    /* Helper function to switch to the non-connectible normal mode for URIBeacon. This gets called after a timeout. */
+    void setupURIBeaconAdvertisements()
     {
         // uint8_t serviceData[SERVICE_DATA_MAX];
         // int serviceDataLen = 0;
@@ -255,7 +256,7 @@ class URIBeaconConfigService {
         Gap::GapState_t state;
         state = ble.getGapState();
         if (!state.connected) {
-            setupUriBeaconAdvertisements();
+            setupURIBeaconAdvertisements();
             configAdvertisementTimeoutTicker.detach();
         }
     }
