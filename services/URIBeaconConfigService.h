@@ -17,7 +17,7 @@
 #ifndef SERVICES_URIBEACONCONFIGSERVICE_H_
 #define SERVICES_URIBEACONCONFIGSERVICE_H_
 
-#define UUID_URI_BEACON(FIRST, SECOND) { \
+#define UUID_URI_BEACON(FIRST, SECOND) {                         \
         0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
         0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
 }
@@ -62,13 +62,13 @@ class URIBeaconConfigService {
     typedef uint8_t  UriData_t[URI_DATA_MAX];
 
     struct Params_t {
-        Lock_t              lock;
-        uint8_t             uriDataLength;
-        UriData_t           uriData;
-        uint8_t             flags;
-        PowerLevels_t       advPowerLevels; // Current value of AdvertisedPowerLevels
-        uint8_t             txPowerMode;    // Firmware power levels used with setTxPower()
-        uint16_t            beaconPeriod;
+        Lock_t        lock;
+        uint8_t       uriDataLength;
+        UriData_t     uriData;
+        uint8_t       flags;
+        PowerLevels_t advPowerLevels; // Current value of AdvertisedPowerLevels
+        uint8_t       txPowerMode;    // Firmware power levels used with setTxPower()
+        uint16_t      beaconPeriod;
     };
 
     /**
