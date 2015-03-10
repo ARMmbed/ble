@@ -160,7 +160,7 @@ class URIBeaconConfigService {
      * afterwards. */
     void setupURIBeaconConfigAdvertisements()
     {
-        char DEVICE_NAME[] = "mUriBeacon Config";
+        const char DEVICE_NAME[] = "mUriBeacon Config";
 
         ble.clearAdvertisingPayload();
 
@@ -174,7 +174,7 @@ class URIBeaconConfigService {
         }
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, reversedServiceUUID, sizeof(reversedServiceUUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::GENERIC_TAG);
-        ble.accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, reinterpret_cast<uint8_t *>(&DEVICE_NAME), sizeof(DEVICE_NAME));
+        ble.accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, reinterpret_cast<const uint8_t *>(&DEVICE_NAME), sizeof(DEVICE_NAME));
         ble.accumulateScanResponse(
             GapAdvertisingData::TX_POWER_LEVEL,
             reinterpret_cast<uint8_t *>(
@@ -182,7 +182,7 @@ class URIBeaconConfigService {
             sizeof(uint8_t));
 
         ble.setTxPower(params.advPowerLevels[params.txPowerMode]);
-        ble.setDeviceName(reinterpret_cast<uint8_t *>(&DEVICE_NAME));
+        ble.setDeviceName(reinterpret_cast<const uint8_t *>(&DEVICE_NAME));
         ble.setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED);
         ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
     }
