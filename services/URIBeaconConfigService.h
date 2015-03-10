@@ -191,16 +191,16 @@ class URIBeaconConfigService {
     void setupURIBeaconAdvertisements()
     {
         uint8_t serviceData[SERVICE_DATA_MAX];
-        int serviceDataLen = 0;
+        unsigned serviceDataLen = 0;
 
         /* Reinitialize the BLE stack. This will clear away the existing services and advertising state. */
         ble.shutdown();
         ble.init();
 
         // Fields from the Service
-        int beaconPeriod                                      = params.beaconPeriod;
-        int txPowerMode                                       = params.txPowerMode;
-        int uriDataLength                                     = params.uriDataLength;
+        unsigned beaconPeriod                                 = params.beaconPeriod;
+        unsigned txPowerMode                                  = params.txPowerMode;
+        unsigned uriDataLength                                = params.uriDataLength;
         URIBeaconConfigService::UriData_t &uriData            = params.uriData;
         URIBeaconConfigService::PowerLevels_t &advPowerLevels = params.advPowerLevels;
         uint8_t flags                                         = params.flags;
@@ -219,7 +219,7 @@ class URIBeaconConfigService {
         serviceData[serviceDataLen++] = BEACON_UUID[1];
         serviceData[serviceDataLen++] = flags;
         serviceData[serviceDataLen++] = advPowerLevels[txPowerMode];
-        for (int j=0; j < uriDataLength; j++) {
+        for (unsigned j = 0; j < uriDataLength; j++) {
             serviceData[serviceDataLen++] = uriData[j];
         }
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceData, serviceDataLen);
@@ -270,7 +270,7 @@ class URIBeaconConfigService {
      * Reset the default values.
      */
     void resetToDefaults(void) {
-        lockedState      = false;
+        lockedState             = false;
         memset(params.lock, 0, sizeof(Lock_t));
         memcpy(params.uriData, defaultUriData, URI_DATA_MAX);
         params.uriDataLength    = defaultUriDataLength;
@@ -317,7 +317,7 @@ class URIBeaconConfigService {
     }
 
     void flagsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
-        if (lockedState || authParams->len != 1) {
+        if (lockedState || (authParams->len != 1)) {
             authParams->authorizationReply = false;
         }
     }
