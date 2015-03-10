@@ -428,10 +428,6 @@ class URIBeaconConfigService {
             unsigned i;
             for (i = 0; i < NUM_SUFFIXES; i++) {
                 size_t suffixLen = strlen(suffixes[i]);
-                if (suffixLen == 0) {
-                    continue;
-                }
-
                 if (strncmp(uriDataIn, suffixes[i], suffixLen) == 0) {
                     uriDataOut[sizeofURIDataOut++]  = i;
                     uriDataIn                      += suffixLen;
