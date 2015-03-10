@@ -393,7 +393,7 @@ class URIBeaconConfigService {
             "https://",
             "urn:uuid:"
         };
-        const size_t NUM_PREFIXES     = sizeof(prefixes) / sizeof(char *);
+        const size_t NUM_PREFIXES = sizeof(prefixes) / sizeof(char *);
         for (unsigned i = 0; i < NUM_PREFIXES; i++) {
             size_t prefixLen = strlen(prefixes[i]);
             if (strncmp(uriDataIn, prefixes[i], prefixLen) == 0) {
@@ -433,8 +433,8 @@ class URIBeaconConfigService {
                 }
 
                 if (strncmp(uriDataIn, suffixes[i], suffixLen) == 0) {
-                    uriDataOut[sizeofURIDataOut++] = i;
-                    uriDataIn       += suffixLen;
+                    uriDataOut[sizeofURIDataOut++]  = i;
+                    uriDataIn                      += suffixLen;
                     break; /* from the for loop for checking against suffixes */
                 }
             }
