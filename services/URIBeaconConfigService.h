@@ -54,7 +54,6 @@ class URIBeaconConfigService {
     static const uint8_t TX_POWER_MODE_HIGH   = 3; /*!< High TX power mode */
     static const unsigned int NUM_POWER_MODES = 4; /*!< Number of Power Modes defined */
 
-    static const int CONFIG_ADVERTISING_TIMEOUT_SECONDS = 60;  // Seconds after power-on that config service is available.
     static const int ADVERTISING_INTERVAL_MSEC = 1000;  // Advertising interval for config service.
     static const int SERVICE_DATA_MAX = 31;             // Maximum size of service data in ADV packets
 
@@ -99,7 +98,6 @@ class URIBeaconConfigService {
         defaultAdvPowerLevels(defaultAdvPowerLevelsIn),
         initSucceeded(false),
         resetFlag(),
-        configAdvertisementTimeoutTicker(),
         lockedStateChar(UUID_LOCK_STATE_CHAR, &lockedState),
         lockChar(UUID_LOCK_CHAR, &params.lock),
         uriDataChar(UUID_URI_DATA_CHAR, params.uriData, 0, URI_DATA_MAX,
@@ -148,10 +146,7 @@ class URIBeaconConfigService {
         ble.addService(configService);
         ble.onDataWritten(this, &URIBeaconConfigService::onDataWrittenCallback);
 
-        /* Start out by advertising the configService for a limited time after
-         * startup; and switch to the normal non-connectible beacon functionality
-         * afterwards. */
-        setupURIBeaconConfigAdvertisements();
+        setupURIBeaconConfigAdvertisements(); /* Setup advertising for the configService. */
 
         initSucceeded = true;
     }
@@ -168,9 +163,6 @@ class URIBeaconConfigService {
         char DEVICE_NAME[] = "mUriBeacon Config";
 
         ble.clearAdvertisingPayload();
-
-        // Stops advertising the UriBeacon Config Service after a delay
-        configAdvertisementTimeoutTicker.attach(this, &URIBeaconConfigService::timeout, CONFIG_ADVERTISING_TIMEOUT_SECONDS);
 
         ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
 
@@ -231,19 +223,6 @@ class URIBeaconConfigService {
             serviceData[serviceDataLen++] = uriData[j];
         }
         ble.accumulateAdvertisingPayload(GapAdvertisingData::SERVICE_DATA, serviceData, serviceDataLen);
-
-        ble.startAdvertising();
-    }
-
-    // After advertising timeout, stop config and switch to UriBeacon
-    void timeout(void)
-    {
-        Gap::GapState_t state;
-        state = ble.getGapState();
-        if (state.advertising) {
-            setupURIBeaconAdvertisements();
-            configAdvertisementTimeoutTicker.detach(); /* disable the timeout Ticker. */
-        }
     }
 
   private:
@@ -359,7 +338,6 @@ class URIBeaconConfigService {
     uint8_t       lockedState;
     bool          initSucceeded;
     uint8_t       resetFlag;
-    Ticker        configAdvertisementTimeoutTicker;
 
     ReadOnlyGattCharacteristic<uint8_t>        lockedStateChar;
     WriteOnlyGattCharacteristic<Lock_t>        lockChar;
