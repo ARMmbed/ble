@@ -71,9 +71,6 @@ class URIBeaconConfigService {
         PowerLevels_t advPowerLevels; // Current value of AdvertisedPowerLevels
         uint8_t       txPowerMode;    // Firmware power levels used with setTxPower()
         uint16_t      beaconPeriod;
-        uint32_t      persistenceSignature; /* This isn't really a parameter, but having the expected magic value in
-                                             * this field indicates persistence. */
-        static const uint32_t MAGIC = 0x1BEAC000; // Magic that identifies persistence
     };
 
     /**
@@ -82,6 +79,11 @@ class URIBeaconConfigService {
      * @param[in/out] paramsIn
      *                    Reference to application-visible beacon state, loaded
      *                    from persistent storage at startup.
+     * @paramsP[in]   resetToDefaultsFlag
+     *                    Applies to the state of the 'paramsIn' parameter.
+     *                    If true, it indicates that paramsIn is potentially
+     *                    un-initialized, and default values should be used
+     *                    instead. Otherwise, paramsIn overrides the defaults.
      * @param[in]     defaultUriDataIn
      *                    Default un-encoded URI; applies only if the resetToDefaultsFlag is true.
      * @param[in]     defaultAdvPowerLevelsIn
@@ -89,6 +91,7 @@ class URIBeaconConfigService {
      */
     URIBeaconConfigService(BLEDevice     &bleIn,
                            Params_t      &paramsIn,
+                           bool          resetToDefaultsFlag,
                            const char   *defaultURIDataIn,
                            PowerLevels_t &defaultAdvPowerLevelsIn) :
         ble(bleIn),
@@ -114,18 +117,16 @@ class URIBeaconConfigService {
             return;
         }
 
-        bool resetToDefaultsFlag = params.persistenceSignature != Params_t::MAGIC;
         if (!resetToDefaultsFlag && (params.uriDataLength > URI_DATA_MAX)) {
             resetToDefaultsFlag = true;
         }
-
-        lockedState = isLocked();
-
         if (resetToDefaultsFlag) {
             resetToDefaults();
         } else {
             updateCharacteristicValues();
         }
+
+        lockedState = isLocked();
 
         lockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::lockAuthorizationCallback);
         unlockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::unlockAuthorizationCallback);
