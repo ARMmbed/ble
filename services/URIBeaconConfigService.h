@@ -170,16 +170,14 @@ class URIBeaconConfigService {
         // UUID is in different order in the ADV frame (!)
         uint8_t reversedServiceUUID[sizeof(UUID_URI_BEACON_SERVICE)];
         for (unsigned int i = 0; i < sizeof(UUID_URI_BEACON_SERVICE); i++) {
-            reversedServiceUUID[i] =
-                UUID_URI_BEACON_SERVICE[sizeof(UUID_URI_BEACON_SERVICE) - i - 1];
+            reversedServiceUUID[i] = UUID_URI_BEACON_SERVICE[sizeof(UUID_URI_BEACON_SERVICE) - i - 1];
         }
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, reversedServiceUUID, sizeof(reversedServiceUUID));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::GENERIC_TAG);
         ble.accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, reinterpret_cast<const uint8_t *>(&DEVICE_NAME), sizeof(DEVICE_NAME));
         ble.accumulateScanResponse(
             GapAdvertisingData::TX_POWER_LEVEL,
-            reinterpret_cast<uint8_t *>(
-                &defaultAdvPowerLevels[URIBeaconConfigService::TX_POWER_MODE_LOW]),
+            reinterpret_cast<uint8_t *>(&defaultAdvPowerLevels[URIBeaconConfigService::TX_POWER_MODE_LOW]),
             sizeof(uint8_t));
 
         ble.setTxPower(params.advPowerLevels[params.txPowerMode]);
