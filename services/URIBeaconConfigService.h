@@ -204,7 +204,7 @@ class URIBeaconConfigService {
         URIBeaconConfigService::PowerLevels_t &advPowerLevels = params.advPowerLevels;
         uint8_t flags                                         = params.flags;
 
-        extern void saveURIBeaconConfigParams(Params_t *paramsP); /* forward declaration; necessary to avoid a circular dependency. */
+        extern void saveURIBeaconConfigParams(const Params_t *paramsP); /* forward declaration; necessary to avoid a circular dependency. */
         saveURIBeaconConfigParams(&params);
 
         ble.clearAdvertisingPayload();
