@@ -312,11 +312,6 @@ public:
      *              A pointer to an array of descriptors to be included within this characteristic
      *  @param[in]  numDescriptors
      *              The number of descriptors
-     *  @param[in]  writeAuthorizationIn
-     *              Do the attribute(s) of this characteristic have write
-     *              authorization enabled? if so, Write Authorization will be
-     *              requested from the application on every write request
-     *              operation (but not write command).
      *
      * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
      *        for the value attribute of a characteristic, then that particular
