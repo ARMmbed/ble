@@ -131,11 +131,11 @@ class URIBeaconConfigService {
         lockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::lockAuthorizationCallback);
         unlockChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::unlockAuthorizationCallback);
         uriDataChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::uriDataWriteAuthorizationCallback);
-        flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::flagsAuthorizationCallback);
-        advPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
-        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
-        beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
-        resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::denyGATTWritesIfLocked);
+        flagsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::basicAuthorizationCallback<uint8_t>);
+        advPowerLevelsChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::basicAuthorizationCallback<PowerLevels_t>);
+        txPowerModeChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::powerModeAuthorizationCallback);
+        beaconPeriodChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::basicAuthorizationCallback<uint16_t>);
+        resetChar.setWriteAuthorizationCallback(this, &URIBeaconConfigService::basicAuthorizationCallback<uint8_t>);
 
         static GattCharacteristic *charTable[] = {
             &lockedStateChar, &lockChar, &unlockChar, &uriDataChar,
@@ -210,7 +210,7 @@ class URIBeaconConfigService {
         ble.clearAdvertisingPayload();
         ble.setTxPower(params.advPowerLevels[params.txPowerMode]);
         ble.setAdvertisingType(GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-        ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+        ble.setAdvertisingInterval(beaconPeriod);
         ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
         ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID, sizeof(BEACON_UUID));
 
@@ -297,33 +297,66 @@ class URIBeaconConfigService {
 
   private:
     void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
-        authParams->authorizationReply = (authParams->len == sizeof(Lock_t)) && !lockedState;
+        if (lockedState) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
+        } else if (authParams->len != sizeof(Lock_t)) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_ATT_VAL_LENGTH;
+        } else if (authParams->offset != 0) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET;
+        } else {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
+        }
     }
 
 
     void unlockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
-        if (!lockedState || (authParams->len == sizeof(Lock_t) && (memcmp(authParams->data, params.lock, sizeof(Lock_t)) == 0))) {
-            authParams->authorizationReply = true;
+        if (!lockedState) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
+        } else if (authParams->len != sizeof(Lock_t)) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_ATT_VAL_LENGTH;
+        } else if (authParams->offset != 0) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET;
+        } else if (memcmp(authParams->data, params.lock, sizeof(Lock_t)) != 0) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
         } else {
-            authParams->authorizationReply = false;
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
         }
     }
 
     void uriDataWriteAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
-        if (lockedState || (authParams->offset != 0) || (authParams->len > URI_DATA_MAX)) {
-            authParams->authorizationReply = false;
-        }
-    }
-
-    void flagsAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
-        if (lockedState || (authParams->len != 1)) {
-            authParams->authorizationReply = false;
-        }
-    }
-
-    void denyGATTWritesIfLocked(GattCharacteristicWriteAuthCBParams *authParams) {
         if (lockedState) {
-            authParams->authorizationReply = false;
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
+        } else if (authParams->offset != 0) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET;
+        } else {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
+        }
+    }
+
+    void powerModeAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+        if (lockedState) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
+        } else if (authParams->len != sizeof(uint8_t)) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_ATT_VAL_LENGTH;
+        } else if (authParams->offset != 0) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET;
+        } else if (*((uint8_t *)authParams->data) >= NUM_POWER_MODES) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_WRITE_NOT_PERMITTED;
+        } else {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
+        }
+    }
+
+    template <typename T>
+    void basicAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+        if (lockedState) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
+        } else if (authParams->len != sizeof(T)) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_ATT_VAL_LENGTH;
+        } else if (authParams->offset != 0) {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET;
+        } else {
+            authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
         }
     }
 

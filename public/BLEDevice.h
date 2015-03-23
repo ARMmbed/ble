@@ -83,12 +83,10 @@ public:
 
     /**
      * @param[in] interval
-     *              Advertising interval between 0x0020 and 0x4000 in 0.625ms
-     *              units (20ms to 10.24s).  If using non-connectable mode
-     *              (ADV_NON_CONNECTABLE_UNDIRECTED) this min value is
-     *              0x00A0 (100ms). To reduce the likelihood of collisions, the
-     *              link layer perturbs this interval by a pseudo-random delay
-     *              with a range of 0 ms to 10 ms for each advertising event.
+     *              Advertising interval in units of milliseconds. Advertising
+     *              is disabled if interval is 0. If interval is smaller than
+     *              the minimum supported value, then the minimum supported
+     *              value is used instead.
      *
      *              \par
      *              Decreasing this value will allow central devices to detect
@@ -104,6 +102,19 @@ public:
      *              Appendix A for suggested advertising intervals.
      */
     void        setAdvertisingInterval(uint16_t interval);
+
+    /**
+     * @return Minimum Advertising interval in milliseconds.
+     */
+    uint16_t    getMinAdvertisingInterval(void) const;
+    /**
+     * @return Minimum Advertising interval in milliseconds for non connectible mode.
+     */
+    uint16_t    getMinNonConnectableAdvertisingInterval(void) const;
+    /**
+     * @return Maximum Advertising interval in milliseconds.
+     */
+    uint16_t    getMaxAdvertisingInterval(void) const;
 
     /**
      * @param[in] timeout
@@ -443,7 +454,27 @@ BLEDevice::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
 inline void
 BLEDevice::setAdvertisingInterval(uint16_t interval)
 {
-    advParams.setInterval(interval);
+    if (interval == 0) {
+        stopAdvertising();
+    } else if (interval < getMinAdvertisingInterval()) {
+        interval = getMinAdvertisingInterval();
+    }
+    advParams.setInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+}
+
+inline uint16_t
+BLEDevice::getMinAdvertisingInterval(void) const {
+    return transport->getGap().getMinAdvertisingInterval();
+}
+
+inline uint16_t
+BLEDevice::getMinNonConnectableAdvertisingInterval(void) const {
+    return transport->getGap().getMinNonConnectableAdvertisingInterval();
+}
+
+inline uint16_t
+BLEDevice::getMaxAdvertisingInterval(void) const {
+    return transport->getGap().getMaxAdvertisingInterval();
 }
 
 inline void

@@ -365,12 +365,12 @@ public:
      * @param  params to capture the context of the write-auth request; and also contains an out-parameter for reply.
      * @return        true if the write is authorized to proceed.
      */
-    bool authorizeWrite(GattCharacteristicWriteAuthCBParams *params) {
+    GattCharacteristicAuthCBReply_t authorizeWrite(GattCharacteristicWriteAuthCBParams *params) {
         if (!isWriteAuthorizationEnabled()) {
-            return true;
+            return AUTH_CALLBACK_REPLY_SUCCESS;
         }
 
-        params->authorizationReply = true; /* initialized to true by default */
+        params->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS; /* initialized to no-error by default */
         writeAuthorizationCallback.call(params);
         return params->authorizationReply;
     }
@@ -391,12 +391,12 @@ public:
      *
      * @return        true if the read is authorized to proceed.
      */
-    bool authorizeRead(GattCharacteristicReadAuthCBParams *params) {
+    GattCharacteristicAuthCBReply_t authorizeRead(GattCharacteristicReadAuthCBParams *params) {
         if (!isReadAuthorizationEnabled()) {
-            return true;
+            return AUTH_CALLBACK_REPLY_SUCCESS;
         }
 
-        params->authorizationReply = true; /* initialized to true by default */
+        params->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS; /* initialized to no-error by default */
         readAuthorizationCallback.call(params);
         return params->authorizationReply;
     }

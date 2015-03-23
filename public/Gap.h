@@ -72,6 +72,9 @@ public:
     static uint16_t MSEC_TO_ADVERTISEMENT_DURATION_UNITS(uint32_t durationInMillis) {
         return (durationInMillis * 1000) / UNIT_0_625_MS;
     }
+    static uint16_t GAP_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
+        return (gapUnits * UNIT_0_625_MS) / 1000;
+    }
 
     typedef void (*EventCallback_t)(void);
     typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
@@ -85,6 +88,9 @@ private:
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
+    virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
+    virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
+    virtual uint16_t    getMaxAdvertisingInterval(void) const                                      = 0;
     virtual ble_error_t disconnect(DisconnectionReason_t reason)                                   = 0;
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params)                   = 0;
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;
