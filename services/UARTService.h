@@ -98,7 +98,7 @@ public:
      * @param  length Amount of characters to be appended.
      * @return        Amount of characters appended to the rxCharacteristic.
      */
-    ssize_t write(const void *_buffer, size_t length) {
+    size_t write(const void *_buffer, size_t length) {
         size_t         origLength = length;
         const uint8_t *buffer     = static_cast<const uint8_t *>(_buffer);
 
