@@ -128,6 +128,15 @@ public:
     }
 
     /**
+     * Helper function to write out strings.
+     * @param  str The received string.
+     * @return     Amount of characters appended to the rxCharacteristic.
+     */
+    size_t writeString(const char *str) {
+        return write(str, strlen(str));
+    }
+
+    /**
      * Override for Stream::_putc()
      * @param  c
      *         This function writes the character c, cast to an unsigned char, to stream.
