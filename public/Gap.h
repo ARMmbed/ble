@@ -77,7 +77,10 @@ public:
     }
 
     typedef void (*EventCallback_t)(void);
-    typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
+    typedef void (*ConnectionEventCallback_t)(Handle_t,
+                                              addr_type_t peerAddrType, const address_t peerAddr,
+                                              addr_type_t ownAddrType,  const address_t ownAddr,
+                                              const ConnectionParams_t *);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
 
@@ -148,10 +151,10 @@ protected:
     }
 
 public:
-    void processConnectionEvent(Handle_t handle, addr_type_t type, const address_t addr, const ConnectionParams_t *params) {
+    void processConnectionEvent(Handle_t handle, addr_type_t peerAddrType, const address_t peerAddr, addr_type_t ownAddrType, const address_t ownAddr, const ConnectionParams_t *params) {
         state.connected = 1;
         if (onConnection) {
-            onConnection(handle, type, addr, params);
+            onConnection(handle, peerAddrType, peerAddr, ownAddrType, ownAddr, params);
         }
     }
 

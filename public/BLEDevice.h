@@ -336,12 +336,20 @@ public:
      *     output: Total length of attribute value upon successful return.
      */
     ble_error_t readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP);
+    /**
+     * A version of the same as above with connection handle parameter to allow fetches for connection-specific multivalued attribtues (such as the CCCDs).
+     */
+    ble_error_t readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP);
 
     /**
      * @param  localOnly
      *         Only update the characteristic locally regardless of notify/indicate flags in the CCCD.
      */
     ble_error_t updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
+    /**
+     * A version of the same as above with connection handle parameter to allow updates for connection-specific multivalued attribtues (such as the CCCDs).
+     */
+    ble_error_t updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -691,10 +699,21 @@ inline ble_error_t BLEDevice::readCharacteristicValue(GattAttribute::Handle_t at
     return transport->getGattServer().readValue(attributeHandle, buffer, lengthP);
 }
 
+inline ble_error_t BLEDevice::readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP)
+{
+    return transport->getGattServer().readValue(connectionHandle, attributeHandle, buffer, lengthP);
+}
+
 inline ble_error_t
 BLEDevice::updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly)
 {
     return transport->getGattServer().updateValue(attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
+}
+
+inline ble_error_t
+BLEDevice::updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly)
+{
+    return transport->getGattServer().updateValue(connectionHandle, attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
 }
 
 inline void
