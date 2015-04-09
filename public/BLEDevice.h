@@ -306,6 +306,10 @@ public:
      */
     ble_error_t addService(GattService &service);
 
+    /**
+     * Returns the current GAP state of the device using a bitmask which
+     * describes whether the device is advertising and/or connected.
+     */
     Gap::GapState_t getGapState(void) const;
 
     /**
