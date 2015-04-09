@@ -79,6 +79,7 @@ public:
     typedef void (*EventCallback_t)(void);
     typedef void (*ConnectionEventCallback_t)(Handle_t, addr_type_t peerAddrType, const address_t peerAddr, const ConnectionParams_t *);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
+    typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
 
     friend class BLEDevice;
 private:
@@ -114,6 +115,13 @@ protected:
     void setOnDisconnection(DisconnectionEventCallback_t callback) {onDisconnection = callback;}
 
     /**
+     * Set the application callback for radio-notification events.
+     * @param callback
+     *          Handler to be executed in resonse to a radio notification event.
+     */
+    virtual void setOnRadioNotification(RadioNotificationEventCallback_t callback) {onRadioNotification = callback;}
+
+    /**
      * Append to a chain of callbacks to be invoked upon disconnection; these
      * callbacks receive no context and are therefore different from the
      * onDisconnection callback.
@@ -135,7 +143,7 @@ private:
 
 protected:
     /* Default constructor. */
-    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL), disconnectionCallChain() {
+    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL), onRadioNotification(), disconnectionCallChain() {
         /* empty */
     }
 
@@ -175,6 +183,7 @@ protected:
     EventCallback_t              onTimeout;
     ConnectionEventCallback_t    onConnection;
     DisconnectionEventCallback_t onDisconnection;
+    RadioNotificationEventCallback_t onRadioNotification;
     CallChain                    disconnectionCallChain;
 
 private:

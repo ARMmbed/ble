@@ -301,6 +301,24 @@ public:
     void onConfirmationReceived(GattServer::EventCallback_t callback);
 
     /**
+     * Radio Notification is a feature that enables ACTIVE and INACTIVE
+     * (nACTIVE) signals from the stack that notify the application when the
+     * radio is in use. The signal is sent using software interrupt.
+     *
+     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
+     * signal is sent at the end of the Radio Event. These signals can be used
+     * by the application programmer to synchronize application logic with radio
+     * activity. For example, the ACTIVE signal can be used to shut off external
+     * devices to manage peak current drawn during periods when the radio is on,
+     * or to trigger sensor data collection for transmission in the Radio Event.
+     *
+     * @param callback
+     *          The application handler to be invoked in response to a radio
+     *          ACTIVE/INACTIVE event.
+     */
+    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
+
+    /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
      */
@@ -648,6 +666,12 @@ inline void
 BLEDevice::onConfirmationReceived(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnConfirmationReceived(callback);
+}
+
+inline void
+BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
+{
+    transport->getGap().setOnRadioNotification(callback);
 }
 
 inline ble_error_t
