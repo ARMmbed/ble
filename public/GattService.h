@@ -57,7 +57,10 @@ public:
      *  @param[in]  numCharacteristics
      *              The number of characteristics
      */
-    GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics);
+    GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics) :
+        _primaryServiceID(uuid), _characteristicCount(numCharacteristics), _characteristics(characteristics), _handle(0) {
+        /* empty */
+    }
 
     const UUID &getUUID(void)                const {return _primaryServiceID;   }
     uint16_t    getHandle(void)              const {return _handle;             }
