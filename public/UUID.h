@@ -31,8 +31,49 @@ public:
     };
 
 public:
-    UUID(const LongUUIDBytes_t);
-    UUID(ShortUUIDBytes_t);
+    /**
+     * Creates a new 128-bit UUID
+     *
+     * @note   The UUID is a unique 128-bit (16 byte) ID used to identify
+     *         different service or characteristics on the BLE device.
+     *
+     * @param longUUID
+     *          The 128-bit (16-byte) UUID value.
+     */
+    UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
+        memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
+        shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
+    }
+
+    /**
+     * Creates a new 16-bit UUID
+     *
+     * @note The UUID is a unique 16-bit (2 byte) ID used to identify
+     *       different service or characteristics on the BLE device.
+     *
+     * For efficiency, and because 16 bytes would take a large chunk of the
+     * 27-byte data payload length of the Link Layer, the BLE specification adds
+     * two additional UUID formats: 16-bit and 32-bit UUIDs. These shortened
+     * formats can be used only with UUIDs that are defined in the Bluetooth
+     * specification (i.e., that are listed by the Bluetooth SIG as standard
+     * Bluetooth UUIDs).
+     *
+     * To reconstruct the full 128-bit UUID from the shortened version, insert
+     * the 16-bit short value (indicated by xxxx, including leading zeros) into
+     * the Bluetooth Base UUID:
+     *
+     *  0000xxxx-0000-1000-8000-00805F9B34FB
+     *
+     * @note Shortening is not available for UUIDs that are not derived from the
+     *       Bluetooth Base UUID. Such non-standard UUIDs are commonly called
+     *       vendor-specific UUIDs. In these cases, you’ll need to use the full
+     *       128-bit UUID value at all times.
+     *
+     * @note we don't yet support 32-bit shortened UUIDs.
+     */
+    UUID(ShortUUIDBytes_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(shortUUID) {
+        /* empty */
+    }
 
 public:
     UUID_Type_t       shortOrLong(void)  const {return type;     }
@@ -43,12 +84,25 @@ public:
             return baseUUID;
         }
     }
+
     ShortUUIDBytes_t  getShortUUID(void) const {return shortUUID;}
     uint8_t           getLen(void)       const {
         return ((type == UUID_TYPE_SHORT) ? sizeof(ShortUUIDBytes_t) : LENGTH_OF_LONG_UUID);
     }
 
-    bool operator== (const UUID&) const;
+    bool operator== (const UUID &other) const {
+        if ((this->type == UUID_TYPE_SHORT) && (other.type == UUID_TYPE_SHORT) &&
+            (this->shortUUID == other.shortUUID)) {
+            return true;
+        }
+
+        if ((this->type == UUID_TYPE_LONG) && (other.type == UUID_TYPE_LONG) &&
+            (memcmp(this->baseUUID, other.baseUUID, LENGTH_OF_LONG_UUID) == 0)) {
+            return true;
+        }
+
+        return false;
+    }
 
 private:
     UUID_Type_t      type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
