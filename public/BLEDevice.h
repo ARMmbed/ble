@@ -100,6 +100,12 @@ public:
      *              \par
      *              See Bluetooth Core Specification, Vol 3., Part C,
      *              Appendix A for suggested advertising intervals.
+     *
+     * @Note: [WARNING] This API previously used 0.625ms as the unit for its
+     * 'interval' argument. That required an explicit conversion from
+     * milliseconds using Gap::MSEC_TO_GAP_DURATION_UNITS(). This conversion is
+     * no longer required as the new units are milliseconds. Any application
+     * code depending on the old semantics would need to be updated accordingly.
      */
     void        setAdvertisingInterval(uint16_t interval);
 
