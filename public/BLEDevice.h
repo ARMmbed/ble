@@ -406,15 +406,6 @@ private:
      * eventually result in a call to the target's setAdvertisingData() before
      * the server begins advertising. This flag marks the status of the pending update.*/
     bool                 needToSetAdvPayload;
-
-    /**
-     * DEPRECATED
-     */
-public:
-    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures, const GapAdvertisingData &scanResponse);
-    ble_error_t setAdvertisingData(const GapAdvertisingData &ADStructures);
-
-    ble_error_t startAdvertising(const GapAdvertisingParams &advParams);
 };
 
 /* BLEDevice methods. Most of these simply forward the calls to the underlying
@@ -727,32 +718,6 @@ inline void
 BLEDevice::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
 {
     transport->getPermittedTxPowerValues(valueArrayPP, countP);
-}
-
-/*
- * ALL OF THE FOLLOWING METHODS ARE DEPRECATED
- */
-
-inline ble_error_t
-BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures, const GapAdvertisingData &scanResponse)
-{
-    needToSetAdvPayload = false;
-    return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
-}
-
-inline ble_error_t
-BLEDevice::setAdvertisingData(const GapAdvertisingData &ADStructures)
-{
-    GapAdvertisingData scanResponse;
-
-    needToSetAdvPayload = false;
-    return transport->getGap().setAdvertisingData(ADStructures, scanResponse);
-}
-
-inline ble_error_t
-BLEDevice::startAdvertising(const GapAdvertisingParams &_advParams)
-{
-    return transport->getGap().startAdvertising(_advParams);
 }
 
 #endif // ifndef __BLE_DEVICE__
