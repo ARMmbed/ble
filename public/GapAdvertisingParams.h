@@ -62,8 +62,37 @@ public:
 public:
     GapAdvertisingParams(AdvertisingType advType  = GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED,
                          uint16_t        interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
-                         uint16_t        timeout  = 0);
-    virtual ~GapAdvertisingParams(void);
+                         uint16_t        timeout  = 0) : _advType(advType), _interval(interval), _timeout(timeout) {
+        /* Interval checks */
+        if (_advType == ADV_CONNECTABLE_DIRECTED) {
+            /* Interval must be 0 in directed connectable mode */
+            _interval = 0;
+        } else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED) {
+            /* Min interval is slightly larger than in other modes */
+            if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON) {
+                _interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON;
+            }
+            if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX) {
+                _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
+            }
+        } else {
+            /* Stay within interval limits */
+            if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN) {
+                _interval = GAP_ADV_PARAMS_INTERVAL_MIN;
+            }
+            if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX) {
+                _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
+            }
+        }
+
+        /* Timeout checks */
+        if (timeout) {
+            /* Stay within timeout limits */
+            if (_timeout > GAP_ADV_PARAMS_TIMEOUT_MAX) {
+                _timeout = GAP_ADV_PARAMS_TIMEOUT_MAX;
+            }
+        }
+    }
 
     AdvertisingType getAdvertisingType(void) const {return _advType; }
     uint16_t        getInterval(void)        const {return _interval;}
