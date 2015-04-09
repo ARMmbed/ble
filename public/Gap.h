@@ -101,7 +101,7 @@ private:
     virtual ble_error_t setAppearance(uint16_t appearance)                    = 0;
     virtual ble_error_t getAppearance(uint16_t *appearanceP)                  = 0;
 
-private:
+protected:
     /* Event callback handlers */
     void setOnTimeout(EventCallback_t callback) {onTimeout = callback;}
     void setOnConnection(ConnectionEventCallback_t callback) {onConnection = callback;}
@@ -128,6 +128,7 @@ private:
     template<typename T>
     void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
+private:
     GapState_t getState(void) const {
         return state;
     }
@@ -170,7 +171,7 @@ public:
 protected:
     GapState_t                   state;
 
-private:
+protected:
     EventCallback_t              onTimeout;
     ConnectionEventCallback_t    onConnection;
     DisconnectionEventCallback_t onDisconnection;
