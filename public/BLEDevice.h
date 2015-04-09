@@ -219,6 +219,14 @@ public:
      */
     ble_error_t stopAdvertising(void);
 
+    /**
+     * This call initiates the disconnection procedure, and its completion will
+     * be communicated to the application with an invocation of the
+     * onDisconnection callback.
+     *
+     * @param  reason
+     *           The reason for disconnection to be sent back to the peer.
+     */
     ble_error_t disconnect(Gap::DisconnectionReason_t reason);
 
     /* APIs to set GAP callbacks. */
