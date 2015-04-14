@@ -17,6 +17,8 @@
 #ifndef __UUID_H__
 #define __UUID_H__
 
+#include <string.h>
+
 #include "blecommon.h"
 
 const unsigned   LENGTH_OF_LONG_UUID = 16;
