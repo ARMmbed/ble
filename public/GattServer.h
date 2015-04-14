@@ -17,7 +17,9 @@
 #ifndef __GATT_SERVER_H__
 #define __GATT_SERVER_H__
 
+#include "Gap.h"
 #include "GattService.h"
+#include "GattAttribute.h"
 #include "GattServerEvents.h"
 #include "GattCharacteristicCallbackParams.h"
 #include "CallChainOfFunctionPointersWithContext.h"
