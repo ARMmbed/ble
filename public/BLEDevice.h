@@ -445,6 +445,14 @@ public:
      */
     void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP);
 
+    /**
+     * Enable the BLE stack's Security Manager. The Security Manager implements
+     * the actual cryptographic algorithms and protocol exchanges that allow two
+     * devices to securely exchange data and privately detect each other.
+     * Calling this API is a prerequisite for encryption and pairing (bonding).
+     */
+    ble_error_t initializeSecurity(void);
+
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
         advPayload.clear();
@@ -798,6 +806,12 @@ inline void
 BLEDevice::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
 {
     transport->getPermittedTxPowerValues(valueArrayPP, countP);
+}
+
+inline ble_error_t
+BLEDevice::initializeSecurity(void)
+{
+    return transport->initializeSecurity();
 }
 
 #endif // ifndef __BLE_DEVICE__
