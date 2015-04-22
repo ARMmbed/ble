@@ -64,6 +64,17 @@ public:
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
+    /**
+     * @brief Defines possible security status/states.
+     *
+     * @details Defines possible security status/states of a link when requested by getLinkSecurity().
+     */
+    enum LinkSecurityStatus_t {
+        NOT_ENCRYPTED,          /**< The link is not secured. */
+        ENCRYPTION_IN_PROGRESS, /**< Link security is being established.*/
+        ENCRYPTED               /**< The link is secure.*/
+    };
+
     static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
     static const uint16_t UNIT_0_625_MS = 650;  /**< Number of microseconds in 0.625 milliseconds. */
     static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
@@ -100,6 +111,9 @@ private:
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params)                   = 0;
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;
     virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params)  = 0;
+
+    virtual ble_error_t deleteAllBondedDevices(void)                                                      = 0;
+    virtual ble_error_t getLinkSecurity(Handle_t connectionHandle, LinkSecurityStatus_t *securityStatusP) = 0;
 
     virtual ble_error_t setDeviceName(const uint8_t *deviceName)              = 0;
     virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
