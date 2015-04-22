@@ -331,6 +331,32 @@ public:
     void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
 
     /**
+     * Setup a callback for when the security procedure for a link has started.
+     */
+    void setOnSecuritySetupStarted(Gap::HandleSpecificEvent_t callback);
+
+    /**
+     * Setup a callback for when the security procedure for a link has
+     * completed.
+     */
+    void setOnSecuritySetupCompleted(Gap::HandleSpecificEvent_t callback);
+
+    /**
+     * Setup a callback for when a link with the peer is secured. For bonded
+     * devices, subsequent reconnections with bonded peer will result only in
+     * this callback when the link is secured and setup procedures will not
+     * occur unless the bonding information is either lost or deleted on either
+     * or both sides.
+     */
+    void setOnLinkSecured(Gap::HandleSpecificEvent_t callback);
+
+    /**
+     * Setup a callback for bonding; i.e. that link-specific security context
+     * is stored persistently for a peer device.
+     */
+    void setOnSecurityContextStored(Gap::HandleSpecificEvent_t callback);
+
+    /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
      */
@@ -707,6 +733,30 @@ inline void
 BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 {
     transport->getGap().setOnRadioNotification(callback);
+}
+
+inline void
+BLEDevice::setOnSecuritySetupStarted(Gap::HandleSpecificEvent_t callback)
+{
+    transport->getGap().setOnSecuritySetupStarted(callback);
+}
+
+inline void
+BLEDevice::setOnSecuritySetupCompleted(Gap::HandleSpecificEvent_t callback)
+{
+    transport->getGap().setOnSecuritySetupCompleted(callback);
+}
+
+inline void
+BLEDevice::setOnLinkSecured(Gap::HandleSpecificEvent_t callback)
+{
+    transport->getGap().setOnLinkSecured(callback);
+}
+
+inline void
+BLEDevice::setOnSecurityContextStored(Gap::HandleSpecificEvent_t callback)
+{
+    transport->getGap().setOnSecurityContextStored(callback);
 }
 
 inline ble_error_t

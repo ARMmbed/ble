@@ -81,6 +81,7 @@ public:
                                               addr_type_t peerAddrType, const address_t peerAddr,
                                               addr_type_t ownAddrType,  const address_t ownAddr,
                                               const ConnectionParams_t *);
+    typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
 
@@ -125,6 +126,29 @@ protected:
     virtual void setOnRadioNotification(RadioNotificationEventCallback_t callback) {onRadioNotification = callback;}
 
     /**
+     * To indicate that security procedure for link has started.
+     */
+    virtual void setOnSecuritySetupStarted(HandleSpecificEvent_t callback) {onSecuritySetupStarted = callback;}
+
+    /**
+     * To indicate that security procedure for link has completed.
+     */
+    virtual void setOnSecuritySetupCompleted(HandleSpecificEvent_t callback) {onSecuritySetupCompleted = callback;}
+
+    /**
+     * To indicate that link with the peer is secured. For bonded devices,
+     * subsequent reconnections with bonded peer will result only in this callback
+     * when the link is secured and setup procedures will not occur unless the
+     * bonding information is either lost or deleted on either or both sides.
+     */
+    virtual void setOnLinkSecured(HandleSpecificEvent_t callback) {onLinkSecured = callback;}
+
+    /**
+     * To indicate that device context is stored persistently.
+     */
+    virtual void setOnSecurityContextStored(HandleSpecificEvent_t callback) {onSecurityContextStored = callback;}
+
+    /**
      * Append to a chain of callbacks to be invoked upon disconnection; these
      * callbacks receive no context and are therefore different from the
      * onDisconnection callback.
@@ -145,8 +169,17 @@ private:
     }
 
 protected:
-    /* Default constructor. */
-    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL), onRadioNotification(), disconnectionCallChain() {
+    Gap() :
+        state(),
+        onTimeout(NULL),
+        onConnection(NULL),
+        onDisconnection(NULL),
+        onRadioNotification(),
+        onSecuritySetupStarted(),
+        onSecuritySetupCompleted(),
+        onLinkSecured(),
+        onSecurityContextStored(),
+        disconnectionCallChain() {
         /* empty */
     }
 
@@ -164,6 +197,30 @@ public:
             onDisconnection(handle, reason);
         }
         disconnectionCallChain.call();
+    }
+
+    void processSecuritySetupStartedEvent(Handle_t handle) {
+        if (onSecuritySetupStarted) {
+            onSecuritySetupStarted(handle);
+        }
+    }
+
+    void processSecuritySetupCompletedEvent(Handle_t handle) {
+        if (onSecuritySetupCompleted) {
+            onSecuritySetupCompleted(handle);
+        }
+    }
+
+    void processLinkSecuredEvent(Handle_t handle) {
+        if (onLinkSecured) {
+            onLinkSecured(handle);
+        }
+    }
+
+    void processSecurityContextStoredEvent(Handle_t handle) {
+        if (onSecurityContextStored) {
+            onSecurityContextStored(handle);
+        }
     }
 
     void processEvent(GapEvents::gapEvent_e type) {
@@ -187,6 +244,10 @@ protected:
     ConnectionEventCallback_t    onConnection;
     DisconnectionEventCallback_t onDisconnection;
     RadioNotificationEventCallback_t onRadioNotification;
+    HandleSpecificEvent_t        onSecuritySetupStarted;
+    HandleSpecificEvent_t        onSecuritySetupCompleted;
+    HandleSpecificEvent_t        onLinkSecured;
+    HandleSpecificEvent_t        onSecurityContextStored;
     CallChain                    disconnectionCallChain;
 
 private:
