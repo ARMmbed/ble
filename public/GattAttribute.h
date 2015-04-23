@@ -31,20 +31,19 @@ public:
      *  @param[in]  valuePtr
      *              The memory holding the initial value.
      *  @param[in]  initialLen
-     *              The min length in bytes of this characteristic's value
+     *              The min length in bytes of this attribute's value
      *  @param[in]  maxLen
-     *              The max length in bytes of this characteristic's value
+     *              The max length in bytes of this attribute's value
      *
      *  @section EXAMPLE
      *
      *  @code
      *
-     *  // UUID = 0x2A19, Min length 2, Max len = 2, Properties = write
-     *  GattCharacteristic c = GattCharacteristic( 0x2A19, 2, 2, BLE_GATT_CHAR_PROPERTIES_WRITE );
+     *  // UUID = 0x2A19, Min length 2, Max len = 2
+     *  GattAttribute attr = GattAttribute(0x2A19, &someValue, 2, 2);
      *
      *  @endcode
      */
-    /**************************************************************************/
     GattAttribute(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0) :
         _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _len(initialLen), _handle() {
         /* empty */
