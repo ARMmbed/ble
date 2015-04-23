@@ -112,7 +112,7 @@ private:
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;
     virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params)  = 0;
 
-    virtual ble_error_t deleteAllBondedDevices(void)                                                      = 0;
+    virtual ble_error_t purgeAllBondingState(void)                                                        = 0;
     virtual ble_error_t getLinkSecurity(Handle_t connectionHandle, LinkSecurityStatus_t *securityStatusP) = 0;
 
     virtual ble_error_t setDeviceName(const uint8_t *deviceName)              = 0;

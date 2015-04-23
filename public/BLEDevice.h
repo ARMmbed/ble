@@ -357,6 +357,26 @@ public:
     void setOnSecurityContextStored(Gap::HandleSpecificEvent_t callback);
 
     /**
+     * Get the security status of a connection.
+     *
+     * @param[in]  connectionHandle   Handle to identify the connection.
+     * @param[out] securityStatusP    security status.
+     *
+     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     */
+    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
+
+    /**
+     * Delete all peer device context and all related bonding information from
+     * the database within the security manager.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     *                                    application registration.
+     */
+    ble_error_t purgeAllBondingState(void);
+
+    /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
      */
@@ -757,6 +777,18 @@ inline void
 BLEDevice::setOnSecurityContextStored(Gap::HandleSpecificEvent_t callback)
 {
     transport->getGap().setOnSecurityContextStored(callback);
+}
+
+inline ble_error_t
+BLEDevice::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
+{
+    return transport->getGap().getLinkSecurity(connectionHandle, securityStatusP);
+}
+
+inline ble_error_t
+BLEDevice::purgeAllBondingState(void)
+{
+    return transport->getGap().purgeAllBondingState();
 }
 
 inline ble_error_t
