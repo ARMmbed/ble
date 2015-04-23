@@ -144,6 +144,7 @@ public:
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
     friend class BLEDevice;
+
 private:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(addr_type_t type,   const address_t address)                    = 0;
