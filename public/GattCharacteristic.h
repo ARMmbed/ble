@@ -349,6 +349,11 @@ public:
     }
 
 public:
+    /**
+     * Setup the minimum security (mode and level) requirements for access to the characteristic's value attribute.
+     *
+     * @param securityMode Can be one of encryption or signing, with or without protection for MITM (man in the middle attacks).
+     */
     void requireSecurity(ble_gatt_char_required_security_t securityMode) {
         _requiredSecurity = securityMode;
     }
