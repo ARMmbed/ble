@@ -733,6 +733,34 @@ BLEDevice::stopAdvertising(void)
 }
 
 inline ble_error_t
+BLEDevice::setScanningParams(uint16_t interval, uint16_t window, uint16_t timeout) {
+    ble_error_t rc;
+    if (((rc = scanningParams.setInterval(interval)) == BLE_ERROR_NONE) &&
+        ((rc = scanningParams.setWindow(window))     == BLE_ERROR_NONE) &&
+        ((rc = scanningParams.setTimeout(timeout))   == BLE_ERROR_NONE)) {
+        return BLE_ERROR_NONE;
+    }
+
+    return rc;
+}
+
+inline ble_error_t
+BLEDevice::setScanningInterval(uint16_t interval) {
+    return scanningParams.setInterval(interval);
+}
+
+inline ble_error_t
+BLEDevice::setScanningWindow(uint16_t window) {
+
+    return scanningParams.setWindow(window);
+}
+
+inline ble_error_t
+BLEDevice::setScanningTimeout(uint16_t timeout) {
+    return scanningParams.setTimeout(timeout);
+}
+
+inline ble_error_t
 BLEDevice::disconnect(Gap::DisconnectionReason_t reason)
 {
     return transport->getGap().disconnect(reason);
