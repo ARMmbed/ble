@@ -150,12 +150,12 @@ public:
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
-    typedef void (*AdvertisementReportCallback_t)(const address_t       peerAddr,
-                                                  int8_t                rssi,
-                                                  bool                  isScanResponse,
-                                                  AdvertisementType_t   type,
-                                                  uint8_t              *advertisingDataLenPtr,
-                                                  const uint8_t       **advertisingDataPtr);
+    typedef void (*AdvertisementReportCallback_t)(const address_t      peerAddr,
+                                                  int8_t               rssi,
+                                                  bool                 isScanResponse,
+                                                  AdvertisementType_t  type,
+                                                  uint8_t              advertisingDataLen,
+                                                  const uint8_t       *advertisingData);
 
     friend class BLEDevice;
 
