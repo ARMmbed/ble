@@ -261,6 +261,7 @@ protected:
         onLinkSecured(),
         onSecurityContextStored(),
         onPasskeyDisplay(),
+        onAdvertisementReport(),
         disconnectionCallChain() {
         /* empty */
     }
@@ -308,6 +309,17 @@ public:
     void processPasskeyDisplayEvent(Handle_t handle, const Passkey_t passkey) {
         if (onPasskeyDisplay) {
             onPasskeyDisplay(handle, passkey);
+        }
+    }
+
+    void processAdvertisementReport(const address_t      peerAddr,
+                                    int8_t               rssi,
+                                    bool                 isScanResponse,
+                                    AdvertisementType_t  type,
+                                    uint8_t              advertisingDataLen,
+                                    const uint8_t       *advertisingData) {
+        if (onAdvertisementReport) {
+            onAdvertisementReport(peerAddr, rssi, isScanResponse, type, advertisingDataLen, advertisingData);
         }
     }
 
