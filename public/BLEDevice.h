@@ -824,7 +824,6 @@ BLEDevice::setScanInterval(uint16_t interval) {
 
 inline ble_error_t
 BLEDevice::setScanWindow(uint16_t window) {
-
     return scanningParams.setWindow(window);
 }
 
@@ -853,7 +852,6 @@ inline ble_error_t
 BLEDevice::stopScan(void) {
     return transport->getGap().stopScan();
 }
-
 
 inline ble_error_t
 BLEDevice::disconnect(Gap::DisconnectionReason_t reason)
