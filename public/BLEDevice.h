@@ -559,7 +559,7 @@ public:
     ble_error_t purgeAllBondingState(void);
 
 public:
-    BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
+    BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true), scanningParams() {
         advPayload.clear();
         scanResponse.clear();
     }
