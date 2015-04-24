@@ -39,14 +39,43 @@ public:
         if (_interval > SCAN_INTERVAL_MAX) {
             _interval = SCAN_INTERVAL_MAX;
         }
+        if (_window < SCAN_WINDOW_MIN) {
+            _window = SCAN_WINDOW_MIN;
+        }
+        if (_window > SCAN_WINDOW_MAX) {
+            _window = SCAN_WINDOW_MAX;
+        }
         if (_timeout > SCAN_TIMEOUT_MAX) {
             _timeout = SCAN_TIMEOUT_MAX;
         }
     }
 
-    void setInterval(uint16_t newInterval) {_interval = newInterval;}
-    void setWindow(uint16_t newWindow)     {_window   = newWindow;  }
-    void setTimeout(uint16_t newTimeout)   {_timeout  = newTimeout; }
+    ble_error_t setInterval(uint16_t newInterval) {
+        if ((newInterval >= SCAN_INTERVAL_MIN) && (newInterval < SCAN_INTERVAL_MAX)) {
+            _interval = newInterval;
+            return BLE_ERROR_NONE;
+        }
+
+        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+    }
+
+    ble_error_t setWindow(uint16_t newWindow)     {
+        if ((newWindow >= SCAN_WINDOW_MIN) && (newWindow < SCAN_WINDOW_MAX)) {
+            _window   = newWindow;
+            return BLE_ERROR_NONE;
+        }
+
+        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+    }
+
+    ble_error_t setTimeout(uint16_t newTimeout)   {
+        if (newTimeout <= SCAN_TIMEOUT_MAX) {
+            _timeout  = newTimeout;
+            return BLE_ERROR_NONE;
+        }
+
+        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+    }
 
     uint16_t getInterval(void) const {return _interval;}
     uint16_t getWindow(void)   const {return _window;  }
