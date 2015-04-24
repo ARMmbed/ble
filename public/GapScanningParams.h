@@ -45,7 +45,7 @@ public:
     }
 
     void setInterval(uint16_t newInterval) {_interval = newInterval;}
-    void setWindow(uint16_t newInterval)   {_window   = newWindow;  }
+    void setWindow(uint16_t newWindow)     {_window   = newWindow;  }
     void setTimeout(uint16_t newTimeout)   {_timeout  = newTimeout; }
 
     uint16_t getInterval(void) const {return _interval;}

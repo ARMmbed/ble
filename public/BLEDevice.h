@@ -20,6 +20,7 @@
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
+#include "GapScanningParams.h"
 #include "BLEDeviceInstanceBase.h"
 
 /**
@@ -230,6 +231,36 @@ public:
      * Procedure).
      */
     ble_error_t stopAdvertising(void);
+
+    /**
+     * Setup parameters for GAP scanning--i.e. observer mode.
+     * @param  interval Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     * @param  window   Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     * @param  timeout  Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     */
+    ble_error_t setScanningParams(uint16_t interval = GapScanningParams::SCAN_INTERVAL_MAX,
+                                  uint16_t window   = GapScanningParams::SCAN_WINDOW_MAX,
+                                  uint16_t timeout  = 0);
+    ble_error_t setScanningInterval(uint16_t interval);
+    ble_error_t setScanningWindow(uint16_t window);
+    ble_error_t setScanningTimeout(uint16_t timeout);
+
+    /**
+     * Start scanning (Observer Procedure) based on the scan-params currently
+     * in effect.
+     *
+     * @param  callback The application callback to be invoked upon receiving
+     *     every advertisement report. Can be passed in as NULL, in which case
+     *     scanning may not be enabled at all.
+     */
+    ble_error_t startScanning(Gap::AdvertisementReportCallback_t callback);
+
+    /**
+     * Stop scanning. The current scanning parameters remain in effect.
+     *
+     * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
+     */
+    ble_error_t stopScanning(void);
 
     /**
      * This call initiates the disconnection procedure, and its completion will
@@ -544,6 +575,8 @@ private:
      * eventually result in a call to the target's setAdvertisingData() before
      * the server begins advertising. This flag marks the status of the pending update.*/
     bool                 needToSetAdvPayload;
+
+    GapScanningParams    scanningParams;
 };
 
 /* BLEDevice methods. Most of these simply forward the calls to the underlying

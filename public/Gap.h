@@ -38,6 +38,13 @@ public:
     typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
     typedef Address_t address_t;         /* @Note: deprecated. */
 
+    enum AdvertisementType_t {
+        ADV_IND           = 0x00,   /**< Connectable undirected. */
+        ADV_DIRECT_IND    = 0x01,   /**< Connectable directed. */
+        ADV_SCAN_IND      = 0x02,   /**< Scannable undirected. */
+        ADV_NONCONN_IND   = 0x03,   /**< Non connectable undirected. */
+    };
+
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
      * derived from Nordic's implementation; but the reasons are meant to be
@@ -142,6 +149,13 @@ public:
     typedef void (*SecuritySetupCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
+
+    typedef void (*AdvertisementReportCallback_t)(const address_t       peerAddr,
+                                                  int8_t                rssi,
+                                                  bool                  isScanResponse,
+                                                  AdvertisementType_t   type,
+                                                  uint8_t              *advertisingDataLenPtr,
+                                                  const uint8_t       **advertisingDataPtr);
 
     friend class BLEDevice;
 
