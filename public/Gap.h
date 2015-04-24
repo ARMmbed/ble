@@ -19,6 +19,7 @@
 
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
+#include "GapScanningParams.h"
 #include "GapEvents.h"
 #include "CallChain.h"
 
@@ -166,6 +167,7 @@ private:
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
+    virtual ble_error_t startScanning(const GapScanningParams &scanningParams, AdvertisementReportCallback_t callback) = 0;
     virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
     virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
     virtual uint16_t    getMaxAdvertisingInterval(void) const                                      = 0;
@@ -349,6 +351,7 @@ protected:
     LinkSecuredCallback_t            onLinkSecured;
     HandleSpecificEvent_t            onSecurityContextStored;
     PasskeyDisplayCallback_t         onPasskeyDisplay;
+    AdvertisementReportCallback_t    onAdvertisementReport;
     CallChain                        disconnectionCallChain;
 
 private:
