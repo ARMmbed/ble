@@ -854,6 +854,11 @@ BLEDevice::stopScan(void) {
 }
 
 inline ble_error_t
+BLEDevice::startScanning(Gap::AdvertisementReportCallback_t callback) {
+    return transport->getGap().startScanning(scanningParams, callback);
+}
+
+inline ble_error_t
 BLEDevice::disconnect(Gap::DisconnectionReason_t reason)
 {
     return transport->getGap().disconnect(reason);
