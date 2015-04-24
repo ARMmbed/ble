@@ -863,7 +863,6 @@ BLEDevice::stopScanning(void) {
     return transport->getGap().stopScanning();
 }
 
-
 inline ble_error_t
 BLEDevice::disconnect(Gap::DisconnectionReason_t reason)
 {
