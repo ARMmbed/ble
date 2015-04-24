@@ -309,9 +309,12 @@ public:
      *  @param[in]  props
      *              The 8-bit bit field containing the characteristic's properties
      *  @param[in]  descriptors
-     *              A pointer to an array of descriptors to be included within this characteristic
+     *              A pointer to an array of descriptors to be included within
+     *              this characteristic. The memory for the descriptor array is
+     *              owned by the caller, and should remain valid at least until
+     *              the enclosing service is added to the GATT table.
      *  @param[in]  numDescriptors
-     *              The number of descriptors
+     *              The number of descriptors in the previous array.
      *
      * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
      *        for the value attribute of a characteristic, then that particular
