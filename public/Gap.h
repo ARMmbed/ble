@@ -168,6 +168,7 @@ private:
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
     virtual ble_error_t startScanning(const GapScanningParams &scanningParams, AdvertisementReportCallback_t callback) = 0;
+    virtual ble_error_t stopScanning()                                                             = 0;
     virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
     virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
     virtual uint16_t    getMaxAdvertisingInterval(void) const                                      = 0;
