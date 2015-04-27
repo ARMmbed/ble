@@ -34,7 +34,7 @@ public:
     } addr_type_t;
 
     static const unsigned ADDR_LEN = 6;
-    typedef uint8_t address_t[ADDR_LEN];
+    typedef uint8_t address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
 
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
