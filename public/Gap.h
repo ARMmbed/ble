@@ -75,6 +75,22 @@ public:
         ENCRYPTED               /**< The link is secure.*/
     };
 
+    enum SecurityIOCapabilities_t {
+      IO_CAPS_DISPLAY_ONLY     = 0x00,   /**< Display Only. */
+      IO_CAPS_DISPLAY_YESNO    = 0x01,   /**< Display and Yes/No entry. */
+      IO_CAPS_KEYBOARD_ONLY    = 0x02,   /**< Keyboard Only. */
+      IO_CAPS_NONE             = 0x03,   /**< No I/O capabilities. */
+      IO_CAPS_KEYBOARD_DISPLAY = 0x04,   /**< Keyboard and Display. */
+    };
+
+    /**
+     * Declaration of type containing a passkey to be used during pairing. This
+     * is passed into initializeSecurity() to specify a pre-programmed passkey
+     * for authentication instead of generating a random one.
+     */
+    static const unsigned PASSKEY_LEN = 6;
+    typedef uint8_t Passkey_t[PASSKEY_LEN];         /**< 6-digit passkey in ASCII ('0'-'9' digits only). */
+
     static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
     static const uint16_t UNIT_0_625_MS = 650;  /**< Number of microseconds in 0.625 milliseconds. */
     static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
