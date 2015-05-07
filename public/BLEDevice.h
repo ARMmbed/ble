@@ -333,13 +333,13 @@ public:
     /**
      * Setup a callback for when the security procedure for a link has started.
      */
-    void setOnSecuritySetupStarted(Gap::HandleSpecificEvent_t callback);
+    void onSecuritySetupStarted(Gap::HandleSpecificEvent_t callback);
 
     /**
      * Setup a callback for when the security procedure for a link has
      * completed.
      */
-    void setOnSecuritySetupCompleted(Gap::HandleSpecificEvent_t callback);
+    void onSecuritySetupCompleted(Gap::HandleSpecificEvent_t callback);
 
     /**
      * Setup a callback for when a link with the peer is secured. For bonded
@@ -348,13 +348,13 @@ public:
      * occur unless the bonding information is either lost or deleted on either
      * or both sides.
      */
-    void setOnLinkSecured(Gap::HandleSpecificEvent_t callback);
+    void onLinkSecured(Gap::HandleSpecificEvent_t callback);
 
     /**
      * Setup a callback for bonding; i.e. that link-specific security context
      * is stored persistently for a peer device.
      */
-    void setOnSecurityContextStored(Gap::HandleSpecificEvent_t callback);
+    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
 
     /**
      * Get the security status of a connection.
@@ -756,25 +756,25 @@ BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 }
 
 inline void
-BLEDevice::setOnSecuritySetupStarted(Gap::HandleSpecificEvent_t callback)
+BLEDevice::onSecuritySetupStarted(Gap::HandleSpecificEvent_t callback)
 {
     transport->getGap().setOnSecuritySetupStarted(callback);
 }
 
 inline void
-BLEDevice::setOnSecuritySetupCompleted(Gap::HandleSpecificEvent_t callback)
+BLEDevice::onSecuritySetupCompleted(Gap::HandleSpecificEvent_t callback)
 {
     transport->getGap().setOnSecuritySetupCompleted(callback);
 }
 
 inline void
-BLEDevice::setOnLinkSecured(Gap::HandleSpecificEvent_t callback)
+BLEDevice::onLinkSecured(Gap::HandleSpecificEvent_t callback)
 {
     transport->getGap().setOnLinkSecured(callback);
 }
 
 inline void
-BLEDevice::setOnSecurityContextStored(Gap::HandleSpecificEvent_t callback)
+BLEDevice::onSecurityContextStored(Gap::HandleSpecificEvent_t callback)
 {
     transport->getGap().setOnSecurityContextStored(callback);
 }
