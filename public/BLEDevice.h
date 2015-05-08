@@ -331,16 +331,6 @@ public:
     void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
 
     /**
-     * Delete all peer device context and all related bonding information from
-     * the database within the security manager.
-     *
-     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
-     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
-     *                                    application registration.
-     */
-    ble_error_t purgeAllBondingState(void);
-
-    /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
      */
@@ -526,6 +516,16 @@ public:
      * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
      */
     ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
+
+    /**
+     * Delete all peer device context and all related bonding information from
+     * the database within the security manager.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     *                                    application registration.
+     */
+    ble_error_t purgeAllBondingState(void);
 
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
@@ -784,12 +784,6 @@ BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 }
 
 inline ble_error_t
-BLEDevice::purgeAllBondingState(void)
-{
-    return transport->getGap().purgeAllBondingState();
-}
-
-inline ble_error_t
 BLEDevice::addService(GattService &service)
 {
     return transport->getGattServer().addService(service);
@@ -931,6 +925,12 @@ inline ble_error_t
 BLEDevice::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
 {
     return transport->getGap().getLinkSecurity(connectionHandle, securityStatusP);
+}
+
+inline ble_error_t
+BLEDevice::purgeAllBondingState(void)
+{
+    return transport->getGap().purgeAllBondingState();
 }
 
 #endif // ifndef __BLE_DEVICE__
