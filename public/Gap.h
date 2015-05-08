@@ -83,6 +83,22 @@ public:
       IO_CAPS_KEYBOARD_DISPLAY = 0x04,   /**< Keyboard and Display. */
     };
 
+    enum SecurityCompletionStatus_t {
+        SEC_STATUS_SUCCESS              = 0x00,  /**< Procedure completed with success. */
+        SEC_STATUS_TIMEOUT              = 0x01,  /**< Procedure timed out. */
+        SEC_STATUS_PDU_INVALID          = 0x02,  /**< Invalid PDU received. */
+        SEC_STATUS_PASSKEY_ENTRY_FAILED = 0x81,  /**< Passkey entry failed (user cancelled or other). */
+        SEC_STATUS_OOB_NOT_AVAILABLE    = 0x82,  /**< Out of Band Key not available. */
+        SEC_STATUS_AUTH_REQ             = 0x83,  /**< Authentication requirements not met. */
+        SEC_STATUS_CONFIRM_VALUE        = 0x84,  /**< Confirm value failed. */
+        SEC_STATUS_PAIRING_NOT_SUPP     = 0x85,  /**< Pairing not supported.  */
+        SEC_STATUS_ENC_KEY_SIZE         = 0x86,  /**< Encryption key size. */
+        SEC_STATUS_SMP_CMD_UNSUPPORTED  = 0x87,  /**< Unsupported SMP command. */
+        SEC_STATUS_UNSPECIFIED          = 0x88,  /**< Unspecified reason. */
+        SEC_STATUS_REPEATED_ATTEMPTS    = 0x89,  /**< Too little time elapsed since last attempt. */
+        SEC_STATUS_INVALID_PARAMS       = 0x8A,  /**< Invalid parameters. */
+    };
+
     /**
      * Declaration of type containing a passkey to be used during pairing. This
      * is passed into initializeSecurity() to specify a pre-programmed passkey
@@ -112,6 +128,7 @@ public:
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
     typedef void (*SecurityProcedureInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
+    typedef void (*SecurityProcedureCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
 
     friend class BLEDevice;
 private:
@@ -159,12 +176,12 @@ protected:
     /**
      * To indicate that security procedure for link has started.
      */
-    virtual void setonSecurityProcedureInitiated(SecurityProcedureInitiatedCallback_t callback) {onSecurityProcedureInitiated = callback;}
+    virtual void setOnSecurityProcedureInitiated(SecurityProcedureInitiatedCallback_t callback) {onSecurityProcedureInitiated = callback;}
 
     /**
      * To indicate that security procedure for link has completed.
      */
-    virtual void setOnSecuritySetupCompleted(HandleSpecificEvent_t callback) {onSecuritySetupCompleted = callback;}
+    virtual void setOnSecurityProcedureCompleted(SecurityProcedureCompletedCallback_t callback) {onSecurityProcedureCompleted = callback;}
 
     /**
      * To indicate that link with the peer is secured. For bonded devices,
@@ -207,7 +224,7 @@ protected:
         onDisconnection(NULL),
         onRadioNotification(),
         onSecurityProcedureInitiated(),
-        onSecuritySetupCompleted(),
+        onSecurityProcedureCompleted(),
         onLinkSecured(),
         onSecurityContextStored(),
         disconnectionCallChain() {
@@ -236,9 +253,9 @@ public:
         }
     }
 
-    void processSecuritySetupCompletedEvent(Handle_t handle) {
-        if (onSecuritySetupCompleted) {
-            onSecuritySetupCompleted(handle);
+    void processSecurityProcedureCompletedEvent(Handle_t handle, SecurityCompletionStatus_t status) {
+        if (onSecurityProcedureCompleted) {
+            onSecurityProcedureCompleted(handle, status);
         }
     }
 
@@ -276,7 +293,7 @@ protected:
     DisconnectionEventCallback_t         onDisconnection;
     RadioNotificationEventCallback_t     onRadioNotification;
     SecurityProcedureInitiatedCallback_t onSecurityProcedureInitiated;
-    HandleSpecificEvent_t                onSecuritySetupCompleted;
+    SecurityProcedureCompletedCallback_t onSecurityProcedureCompleted;
     HandleSpecificEvent_t                onLinkSecured;
     HandleSpecificEvent_t                onSecurityContextStored;
     CallChain                            disconnectionCallChain;
