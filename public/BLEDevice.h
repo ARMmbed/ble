@@ -783,36 +783,6 @@ BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
     transport->getGap().setOnRadioNotification(callback);
 }
 
-inline void
-BLEDevice::onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
-{
-    transport->getGap().setOnSecuritySetupInitiated(callback);
-}
-
-inline void
-BLEDevice::onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback)
-{
-    transport->getGap().setOnSecuritySetupCompleted(callback);
-}
-
-inline void
-BLEDevice::onLinkSecured(Gap::LinkSecuredCallback_t callback)
-{
-    transport->getGap().setOnLinkSecured(callback);
-}
-
-inline void
-BLEDevice::onSecurityContextStored(Gap::HandleSpecificEvent_t callback)
-{
-    transport->getGap().setOnSecurityContextStored(callback);
-}
-
-inline ble_error_t
-BLEDevice::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
-{
-    return transport->getGap().getLinkSecurity(connectionHandle, securityStatusP);
-}
-
 inline ble_error_t
 BLEDevice::purgeAllBondingState(void)
 {
@@ -928,9 +898,39 @@ BLEDevice::initializeSecurity(bool                          enableBonding,
 }
 
 inline void
+BLEDevice::onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
+{
+    transport->getGap().setOnSecuritySetupInitiated(callback);
+}
+
+inline void
+BLEDevice::onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback)
+{
+    transport->getGap().setOnSecuritySetupCompleted(callback);
+}
+
+inline void
+BLEDevice::onLinkSecured(Gap::LinkSecuredCallback_t callback)
+{
+    transport->getGap().setOnLinkSecured(callback);
+}
+
+inline void
+BLEDevice::onSecurityContextStored(Gap::HandleSpecificEvent_t callback)
+{
+    transport->getGap().setOnSecurityContextStored(callback);
+}
+
+inline void
 BLEDevice::onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback)
 {
     return transport->getGap().setOnPasskeyDisplay(callback);
+}
+
+inline ble_error_t
+BLEDevice::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
+{
+    return transport->getGap().getLinkSecurity(connectionHandle, securityStatusP);
 }
 
 #endif // ifndef __BLE_DEVICE__
