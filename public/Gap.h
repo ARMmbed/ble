@@ -64,6 +64,14 @@ public:
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
+    enum SecurityMode_t {
+        SECURITY_MODE_ENCRYPTION_OPEN_LINK = 0x00, /**< Set security mode to require no protection, open link. */
+        SECURITY_MODE_ENCRYPTION_NO_MITM   = 0x01, /**< Set security mode to require encryption, but no MITM protection. */
+        SECURITY_MODE_ENCRYPTION_WITH_MITM = 0x02, /**< Set security mode to require encryption and MITM protection. */
+        SECURITY_MODE_SIGNED_NO_MITM       = 0x04, /**< Set security mode to require signing or encryption, but no MITM protection. */
+        SECURITY_MODE_SIGNED_WITH_MITM     = 0x08, /**< Set security mode to require signing or encryption, and MITM protection. */
+    };
+
     /**
      * @brief Defines possible security status/states.
      *

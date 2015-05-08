@@ -17,6 +17,7 @@
 #ifndef __GATT_CHARACTERISTIC_H__
 #define __GATT_CHARACTERISTIC_H__
 
+#include "Gap.h"
 #include "GattAttribute.h"
 #include "GattCharacteristicCallbackParams.h"
 #include "FunctionPointerWithContext.h"
@@ -290,14 +291,6 @@ public:
         uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
     } presentation_format_t;
 
-    enum SecurityMode_t {
-        SECURITY_MODE_ENCRYPTION_OPEN_LINK = 0x00, /**< Set security mode to require no protection, open link. */
-        SECURITY_MODE_ENCRYPTION_NO_MITM   = 0x01, /**< Set security mode to require encryption, but no MITM protection. */
-        SECURITY_MODE_ENCRYPTION_WITH_MITM = 0x02, /**< Set security mode to require encryption and MITM protection. */
-        SECURITY_MODE_SIGNED_NO_MITM       = 0x04, /**< Set security mode to require signing or encryption, but no MITM protection. */
-        SECURITY_MODE_SIGNED_WITH_MITM     = 0x08, /**< Set security mode to require signing or encryption, and MITM protection. */
-    };
-
     /**
      *  @brief  Creates a new GattCharacteristic using the specified 16-bit
      *          UUID, value length, and properties
@@ -354,7 +347,7 @@ public:
      *
      * @param securityMode Can be one of encryption or signing, with or without protection for MITM (man in the middle attacks).
      */
-    void requireSecurity(SecurityMode_t securityMode) {
+    void requireSecurity(Gap::SecurityMode_t securityMode) {
         _requiredSecurity = securityMode;
     }
 
@@ -429,7 +422,7 @@ public:
     const GattAttribute&    getValueAttribute()             const {return _valueAttribute;                }
     GattAttribute::Handle_t getValueHandle(void)            const {return getValueAttribute().getHandle();}
     uint8_t                 getProperties(void)             const {return _properties;                    }
-    SecurityMode_t          getRequiredSecurity()           const {return _requiredSecurity;              }
+    Gap::SecurityMode_t     getRequiredSecurity()           const {return _requiredSecurity;              }
     uint8_t                 getDescriptorCount(void)        const {return _descriptorCount;               }
     bool                    isReadAuthorizationEnabled()    const {return enabledReadAuthorization;       }
     bool                    isWriteAuthorizationEnabled()   const {return enabledWriteAuthorization;      }
@@ -443,11 +436,11 @@ public:
     }
 
 private:
-    GattAttribute    _valueAttribute;
-    uint8_t          _properties;
-    SecurityMode_t   _requiredSecurity;
-    GattAttribute  **_descriptors;
-    uint8_t          _descriptorCount;
+    GattAttribute         _valueAttribute;
+    uint8_t               _properties;
+    Gap::SecurityMode_t   _requiredSecurity;
+    GattAttribute       **_descriptors;
+    uint8_t               _descriptorCount;
 
     bool             enabledReadAuthorization;
     bool             enabledWriteAuthorization;
