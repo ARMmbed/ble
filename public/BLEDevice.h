@@ -352,8 +352,8 @@ public:
      * devices, subsequent reconnections with bonded peer will result only in
      * this callback when the link is secured and setup procedures will not
      * occur unless the bonding information is either lost or deleted on either
-     * or both sides. The callback is passed in a Gap::SecurityMode_t in effect
-     * for the secured link.
+     * or both sides. The callback is passed in a Gap::SecurityMode_t according
+     * to the level of security in effect for the secured link.
      */
     void onLinkSecured(Gap::LinkSecuredCallback_t callback);
 
