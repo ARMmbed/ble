@@ -331,49 +331,6 @@ public:
     void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
 
     /**
-     * Setup a callback for when the security setup procedure (key generation
-     * and exchange) for a link has started. This will be skipped for bonded
-     * devices. The callback is passed in parameters received from the peer's
-     * security request: bool allowBonding, bool requireMITM, and
-     * SecurityIOCapabilities_t.
-     */
-    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
-
-    /**
-     * Setup a callback for when the security setup procedure (key generation
-     * and exchange) for a link has completed. This will be skipped for bonded
-     * devices. The callback is passed in the success/failure status of the
-     * security setup procedure.
-     */
-    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
-
-    /**
-     * Setup a callback for when a link with the peer is secured. For bonded
-     * devices, subsequent reconnections with bonded peer will result only in
-     * this callback when the link is secured and setup procedures will not
-     * occur unless the bonding information is either lost or deleted on either
-     * or both sides. The callback is passed in a Gap::SecurityMode_t according
-     * to the level of security in effect for the secured link.
-     */
-    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
-
-    /**
-     * Setup a callback for successful bonding; i.e. that link-specific security
-     * context is stored persistently for a peer device.
-     */
-    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
-
-    /**
-     * Get the security status of a connection.
-     *
-     * @param[in]  connectionHandle   Handle to identify the connection.
-     * @param[out] securityStatusP    security status.
-     *
-     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
-     */
-    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
-
-    /**
      * Delete all peer device context and all related bonding information from
      * the database within the security manager.
      *
@@ -517,6 +474,49 @@ public:
                                    bool                          requireMITM   = true,
                                    Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
                                    const Gap::Passkey_t          passkey       = NULL);
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has started. This will be skipped for bonded
+     * devices. The callback is passed in parameters received from the peer's
+     * security request: bool allowBonding, bool requireMITM, and
+     * SecurityIOCapabilities_t.
+     */
+    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has completed. This will be skipped for bonded
+     * devices. The callback is passed in the success/failure status of the
+     * security setup procedure.
+     */
+    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
+
+    /**
+     * Setup a callback for when a link with the peer is secured. For bonded
+     * devices, subsequent reconnections with bonded peer will result only in
+     * this callback when the link is secured and setup procedures will not
+     * occur unless the bonding information is either lost or deleted on either
+     * or both sides. The callback is passed in a Gap::SecurityMode_t according
+     * to the level of security in effect for the secured link.
+     */
+    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
+
+    /**
+     * Setup a callback for successful bonding; i.e. that link-specific security
+     * context is stored persistently for a peer device.
+     */
+    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
+
+    /**
+     * Get the security status of a connection.
+     *
+     * @param[in]  connectionHandle   Handle to identify the connection.
+     * @param[out] securityStatusP    security status.
+     *
+     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     */
+    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
 
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
