@@ -96,7 +96,7 @@ public:
         SEC_STATUS_SUCCESS              = 0x00,  /**< Procedure completed with success. */
         SEC_STATUS_TIMEOUT              = 0x01,  /**< Procedure timed out. */
         SEC_STATUS_PDU_INVALID          = 0x02,  /**< Invalid PDU received. */
-        SEC_STATUS_PASSKEY_ENTRY_FAILED = 0x81,  /**< Passkey entry failed (user cancelled or other). */
+        SEC_STATUS_PASSKEY_ENTRY_FAILED = 0x81,  /**< Passkey entry failed (user canceled or other). */
         SEC_STATUS_OOB_NOT_AVAILABLE    = 0x82,  /**< Out of Band Key not available. */
         SEC_STATUS_AUTH_REQ             = 0x83,  /**< Authentication requirements not met. */
         SEC_STATUS_CONFIRM_VALUE        = 0x84,  /**< Confirm value failed. */
@@ -179,7 +179,7 @@ protected:
     /**
      * Set the application callback for radio-notification events.
      * @param callback
-     *          Handler to be executed in resonse to a radio notification event.
+     *          Handler to be executed in response to a radio notification event.
      */
     virtual void setOnRadioNotification(RadioNotificationEventCallback_t callback) {onRadioNotification = callback;}
 
@@ -195,7 +195,7 @@ protected:
 
     /**
      * To indicate that link with the peer is secured. For bonded devices,
-     * subsequent reconnections with bonded peer will result only in this callback
+     * subsequent re-connections with bonded peer will result only in this callback
      * when the link is secured and setup procedures will not occur unless the
      * bonding information is either lost or deleted on either or both sides.
      */
