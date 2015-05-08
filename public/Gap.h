@@ -186,12 +186,12 @@ protected:
     /**
      * To indicate that security procedure for link has started.
      */
-    virtual void setOnSecurityProcedureInitiated(SecuritySetupInitiatedCallback_t callback) {onSecurityProcedureInitiated = callback;}
+    virtual void setOnSecuritySetupInitiated(SecuritySetupInitiatedCallback_t callback) {onSecuritySetupInitiated = callback;}
 
     /**
      * To indicate that security procedure for link has completed.
      */
-    virtual void setOnSecurityProcedureCompleted(SecuritySetupCompletedCallback_t callback) {onSecurityProcedureCompleted = callback;}
+    virtual void setOnSecuritySetupCompleted(SecuritySetupCompletedCallback_t callback) {onSecuritySetupCompleted = callback;}
 
     /**
      * To indicate that link with the peer is secured. For bonded devices,
@@ -233,8 +233,8 @@ protected:
         onConnection(NULL),
         onDisconnection(NULL),
         onRadioNotification(),
-        onSecurityProcedureInitiated(),
-        onSecurityProcedureCompleted(),
+        onSecuritySetupInitiated(),
+        onSecuritySetupCompleted(),
         onLinkSecured(),
         onSecurityContextStored(),
         disconnectionCallChain() {
@@ -258,14 +258,14 @@ public:
     }
 
     void processSecuritySetupInitiatedEvent(Handle_t handle, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps) {
-        if (onSecurityProcedureInitiated) {
-            onSecurityProcedureInitiated(handle, allowBonding, requireMITM, iocaps);
+        if (onSecuritySetupInitiated) {
+            onSecuritySetupInitiated(handle, allowBonding, requireMITM, iocaps);
         }
     }
 
     void processSecuritySetupCompletedEvent(Handle_t handle, SecurityCompletionStatus_t status) {
-        if (onSecurityProcedureCompleted) {
-            onSecurityProcedureCompleted(handle, status);
+        if (onSecuritySetupCompleted) {
+            onSecuritySetupCompleted(handle, status);
         }
     }
 
@@ -302,8 +302,8 @@ protected:
     ConnectionEventCallback_t        onConnection;
     DisconnectionEventCallback_t     onDisconnection;
     RadioNotificationEventCallback_t onRadioNotification;
-    SecuritySetupInitiatedCallback_t onSecurityProcedureInitiated;
-    SecuritySetupCompletedCallback_t onSecurityProcedureCompleted;
+    SecuritySetupInitiatedCallback_t onSecuritySetupInitiated;
+    SecuritySetupCompletedCallback_t onSecuritySetupCompleted;
     LinkSecuredCallback_t            onLinkSecured;
     HandleSpecificEvent_t            onSecurityContextStored;
     CallChain                        disconnectionCallChain;

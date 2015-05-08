@@ -331,15 +331,15 @@ public:
     void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
 
     /**
-     * Setup a callback for when the security procedure for a link has started.
+     * Setup a callback for when the security setup procedure (key generation
      */
-    void onSecurityProcedureInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
+    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
 
     /**
      * Setup a callback for when the security procedure for a link has
      * completed.
      */
-    void onSecurityProcedureCompleted(Gap::SecuritySetupCompletedCallback_t callback);
+    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
 
     /**
      * Setup a callback for when a link with the peer is secured. For bonded
@@ -768,15 +768,15 @@ BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 }
 
 inline void
-BLEDevice::onSecurityProcedureInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
+BLEDevice::onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
 {
-    transport->getGap().setOnSecurityProcedureInitiated(callback);
+    transport->getGap().setOnSecuritySetupInitiated(callback);
 }
 
 inline void
-BLEDevice::onSecurityProcedureCompleted(Gap::SecuritySetupCompletedCallback_t callback)
+BLEDevice::onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback)
 {
-    transport->getGap().setOnSecurityProcedureCompleted(callback);
+    transport->getGap().setOnSecuritySetupCompleted(callback);
 }
 
 inline void
