@@ -332,12 +332,18 @@ public:
 
     /**
      * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has started. This will be skipped for bonded
+     * devices. The callback is passed in parameters received from the peer's
+     * security request: bool allowBonding, bool requireMITM, and
+     * SecurityIOCapabilities_t.
      */
     void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
 
     /**
-     * Setup a callback for when the security procedure for a link has
-     * completed.
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has completed. This will be skipped for bonded
+     * devices. The callback is passed in the success/failure status of the
+     * security setup procedure.
      */
     void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
 
@@ -346,13 +352,14 @@ public:
      * devices, subsequent reconnections with bonded peer will result only in
      * this callback when the link is secured and setup procedures will not
      * occur unless the bonding information is either lost or deleted on either
-     * or both sides.
+     * or both sides. The callback is passed in a Gap::SecurityMode_t in effect
+     * for the secured link.
      */
     void onLinkSecured(Gap::LinkSecuredCallback_t callback);
 
     /**
-     * Setup a callback for bonding; i.e. that link-specific security context
-     * is stored persistently for a peer device.
+     * Setup a callback for successful bonding; i.e. that link-specific security
+     * context is stored persistently for a peer device.
      */
     void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
 
