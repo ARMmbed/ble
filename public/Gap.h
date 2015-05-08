@@ -111,6 +111,7 @@ public:
     typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
+    typedef void (*SecurityProcedureInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
 
     friend class BLEDevice;
 private:
@@ -158,7 +159,7 @@ protected:
     /**
      * To indicate that security procedure for link has started.
      */
-    virtual void setOnSecuritySetupStarted(HandleSpecificEvent_t callback) {onSecuritySetupStarted = callback;}
+    virtual void setonSecurityProcedureInitiated(SecurityProcedureInitiatedCallback_t callback) {onSecurityProcedureInitiated = callback;}
 
     /**
      * To indicate that security procedure for link has completed.
@@ -205,7 +206,7 @@ protected:
         onConnection(NULL),
         onDisconnection(NULL),
         onRadioNotification(),
-        onSecuritySetupStarted(),
+        onSecurityProcedureInitiated(),
         onSecuritySetupCompleted(),
         onLinkSecured(),
         onSecurityContextStored(),
@@ -229,9 +230,9 @@ public:
         disconnectionCallChain.call();
     }
 
-    void processSecuritySetupStartedEvent(Handle_t handle) {
-        if (onSecuritySetupStarted) {
-            onSecuritySetupStarted(handle);
+    void processSecurityProcedureInitiatedEvent(Handle_t handle, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps) {
+        if (onSecurityProcedureInitiated) {
+            onSecurityProcedureInitiated(handle, allowBonding, requireMITM, iocaps);
         }
     }
 
@@ -267,18 +268,18 @@ public:
     }
 
 protected:
-    GapState_t                   state;
+    GapState_t                           state;
 
 protected:
-    EventCallback_t              onTimeout;
-    ConnectionEventCallback_t    onConnection;
-    DisconnectionEventCallback_t onDisconnection;
-    RadioNotificationEventCallback_t onRadioNotification;
-    HandleSpecificEvent_t        onSecuritySetupStarted;
-    HandleSpecificEvent_t        onSecuritySetupCompleted;
-    HandleSpecificEvent_t        onLinkSecured;
-    HandleSpecificEvent_t        onSecurityContextStored;
-    CallChain                    disconnectionCallChain;
+    EventCallback_t                      onTimeout;
+    ConnectionEventCallback_t            onConnection;
+    DisconnectionEventCallback_t         onDisconnection;
+    RadioNotificationEventCallback_t     onRadioNotification;
+    SecurityProcedureInitiatedCallback_t onSecurityProcedureInitiated;
+    HandleSpecificEvent_t                onSecuritySetupCompleted;
+    HandleSpecificEvent_t                onLinkSecured;
+    HandleSpecificEvent_t                onSecurityContextStored;
+    CallChain                            disconnectionCallChain;
 
 private:
     /* disallow copy and assignment */

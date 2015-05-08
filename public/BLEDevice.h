@@ -333,7 +333,7 @@ public:
     /**
      * Setup a callback for when the security procedure for a link has started.
      */
-    void onSecuritySetupStarted(Gap::HandleSpecificEvent_t callback);
+    void onSecurityProcedureInitiated(Gap::SecurityProcedureInitiatedCallback_t callback);
 
     /**
      * Setup a callback for when the security procedure for a link has
@@ -768,9 +768,9 @@ BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 }
 
 inline void
-BLEDevice::onSecuritySetupStarted(Gap::HandleSpecificEvent_t callback)
+BLEDevice::onSecurityProcedureInitiated(Gap::SecurityProcedureInitiatedCallback_t callback)
 {
-    transport->getGap().setOnSecuritySetupStarted(callback);
+    transport->getGap().setonSecurityProcedureInitiated(callback);
 }
 
 inline void
