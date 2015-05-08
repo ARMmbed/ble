@@ -348,7 +348,7 @@ public:
      * occur unless the bonding information is either lost or deleted on either
      * or both sides.
      */
-    void onLinkSecured(Gap::HandleSpecificEvent_t callback);
+    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
 
     /**
      * Setup a callback for bonding; i.e. that link-specific security context
@@ -780,7 +780,7 @@ BLEDevice::onSecurityProcedureCompleted(Gap::SecurityProcedureCompletedCallback_
 }
 
 inline void
-BLEDevice::onLinkSecured(Gap::HandleSpecificEvent_t callback)
+BLEDevice::onLinkSecured(Gap::LinkSecuredCallback_t callback)
 {
     transport->getGap().setOnLinkSecured(callback);
 }

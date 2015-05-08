@@ -138,6 +138,7 @@ public:
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
     typedef void (*SecurityProcedureInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
     typedef void (*SecurityProcedureCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
+    typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
 
     friend class BLEDevice;
 private:
@@ -198,7 +199,7 @@ protected:
      * when the link is secured and setup procedures will not occur unless the
      * bonding information is either lost or deleted on either or both sides.
      */
-    virtual void setOnLinkSecured(HandleSpecificEvent_t callback) {onLinkSecured = callback;}
+    virtual void setOnLinkSecured(LinkSecuredCallback_t callback) {onLinkSecured = callback;}
 
     /**
      * To indicate that device context is stored persistently.
@@ -268,9 +269,9 @@ public:
         }
     }
 
-    void processLinkSecuredEvent(Handle_t handle) {
+    void processLinkSecuredEvent(Handle_t handle, SecurityMode_t securityMode) {
         if (onLinkSecured) {
-            onLinkSecured(handle);
+            onLinkSecured(handle, securityMode);
         }
     }
 
@@ -303,7 +304,7 @@ protected:
     RadioNotificationEventCallback_t     onRadioNotification;
     SecurityProcedureInitiatedCallback_t onSecurityProcedureInitiated;
     SecurityProcedureCompletedCallback_t onSecurityProcedureCompleted;
-    HandleSpecificEvent_t                onLinkSecured;
+    LinkSecuredCallback_t                onLinkSecured;
     HandleSpecificEvent_t                onSecurityContextStored;
     CallChain                            disconnectionCallChain;
 
