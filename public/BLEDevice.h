@@ -509,6 +509,15 @@ public:
     void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
 
     /**
+     * Setup a callback for when the passkey needs to be displayed on a
+     * peripheral with DISPLAY capability. This happens when security is
+     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
+     * needs to be exchanged between the peers to authenticate the connection
+     * attempt.
+     */
+    void onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback);
+
+    /**
      * Get the security status of a connection.
      *
      * @param[in]  connectionHandle   Handle to identify the connection.
@@ -916,6 +925,12 @@ BLEDevice::initializeSecurity(bool                          enableBonding,
                               const Gap::Passkey_t          passkey)
 {
     return transport->initializeSecurity(enableBonding, requireMITM, iocaps, passkey);
+}
+
+inline void
+BLEDevice::onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback)
+{
+    return transport->getGap().setOnPasskeyDisplay(callback);
 }
 
 #endif // ifndef __BLE_DEVICE__

@@ -139,6 +139,7 @@ public:
     typedef void (*SecuritySetupInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
     typedef void (*SecuritySetupCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
+    typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
     friend class BLEDevice;
 private:
@@ -207,6 +208,11 @@ protected:
     virtual void setOnSecurityContextStored(HandleSpecificEvent_t callback) {onSecurityContextStored = callback;}
 
     /**
+     * To set the callback for when the passkey needs to be displayed on a peripheral with DISPLAY capability.
+     */
+    virtual void setOnPasskeyDisplay(PasskeyDisplayCallback_t callback) {onPasskeyDisplay = callback;}
+
+    /**
      * Append to a chain of callbacks to be invoked upon disconnection; these
      * callbacks receive no context and are therefore different from the
      * onDisconnection callback.
@@ -237,6 +243,7 @@ protected:
         onSecuritySetupCompleted(),
         onLinkSecured(),
         onSecurityContextStored(),
+        onPasskeyDisplay(),
         disconnectionCallChain() {
         /* empty */
     }
@@ -281,6 +288,12 @@ public:
         }
     }
 
+    void processPasskeyDisplayEvent(Handle_t handle, const Passkey_t passkey) {
+        if (onPasskeyDisplay) {
+            onPasskeyDisplay(handle, passkey);
+        }
+    }
+
     void processEvent(GapEvents::gapEvent_e type) {
         switch (type) {
             case GapEvents::GAP_EVENT_TIMEOUT:
@@ -306,6 +319,7 @@ protected:
     SecuritySetupCompletedCallback_t onSecuritySetupCompleted;
     LinkSecuredCallback_t            onLinkSecured;
     HandleSpecificEvent_t            onSecurityContextStored;
+    PasskeyDisplayCallback_t         onPasskeyDisplay;
     CallChain                        disconnectionCallChain;
 
 private:
