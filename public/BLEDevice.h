@@ -333,13 +333,13 @@ public:
     /**
      * Setup a callback for when the security procedure for a link has started.
      */
-    void onSecurityProcedureInitiated(Gap::SecurityProcedureInitiatedCallback_t callback);
+    void onSecurityProcedureInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
 
     /**
      * Setup a callback for when the security procedure for a link has
      * completed.
      */
-    void onSecurityProcedureCompleted(Gap::SecurityProcedureCompletedCallback_t callback);
+    void onSecurityProcedureCompleted(Gap::SecuritySetupCompletedCallback_t callback);
 
     /**
      * Setup a callback for when a link with the peer is secured. For bonded
@@ -768,13 +768,13 @@ BLEDevice::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 }
 
 inline void
-BLEDevice::onSecurityProcedureInitiated(Gap::SecurityProcedureInitiatedCallback_t callback)
+BLEDevice::onSecurityProcedureInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
 {
     transport->getGap().setOnSecurityProcedureInitiated(callback);
 }
 
 inline void
-BLEDevice::onSecurityProcedureCompleted(Gap::SecurityProcedureCompletedCallback_t callback)
+BLEDevice::onSecurityProcedureCompleted(Gap::SecuritySetupCompletedCallback_t callback)
 {
     transport->getGap().setOnSecurityProcedureCompleted(callback);
 }

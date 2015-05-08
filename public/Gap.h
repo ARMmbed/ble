@@ -136,8 +136,8 @@ public:
     typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
-    typedef void (*SecurityProcedureInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
-    typedef void (*SecurityProcedureCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
+    typedef void (*SecuritySetupInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
+    typedef void (*SecuritySetupCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
 
     friend class BLEDevice;
@@ -186,12 +186,12 @@ protected:
     /**
      * To indicate that security procedure for link has started.
      */
-    virtual void setOnSecurityProcedureInitiated(SecurityProcedureInitiatedCallback_t callback) {onSecurityProcedureInitiated = callback;}
+    virtual void setOnSecurityProcedureInitiated(SecuritySetupInitiatedCallback_t callback) {onSecurityProcedureInitiated = callback;}
 
     /**
      * To indicate that security procedure for link has completed.
      */
-    virtual void setOnSecurityProcedureCompleted(SecurityProcedureCompletedCallback_t callback) {onSecurityProcedureCompleted = callback;}
+    virtual void setOnSecurityProcedureCompleted(SecuritySetupCompletedCallback_t callback) {onSecurityProcedureCompleted = callback;}
 
     /**
      * To indicate that link with the peer is secured. For bonded devices,
@@ -257,13 +257,13 @@ public:
         disconnectionCallChain.call();
     }
 
-    void processSecurityProcedureInitiatedEvent(Handle_t handle, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps) {
+    void processSecuritySetupInitiatedEvent(Handle_t handle, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps) {
         if (onSecurityProcedureInitiated) {
             onSecurityProcedureInitiated(handle, allowBonding, requireMITM, iocaps);
         }
     }
 
-    void processSecurityProcedureCompletedEvent(Handle_t handle, SecurityCompletionStatus_t status) {
+    void processSecuritySetupCompletedEvent(Handle_t handle, SecurityCompletionStatus_t status) {
         if (onSecurityProcedureCompleted) {
             onSecurityProcedureCompleted(handle, status);
         }
@@ -295,18 +295,18 @@ public:
     }
 
 protected:
-    GapState_t                           state;
+    GapState_t                       state;
 
 protected:
-    EventCallback_t                      onTimeout;
-    ConnectionEventCallback_t            onConnection;
-    DisconnectionEventCallback_t         onDisconnection;
-    RadioNotificationEventCallback_t     onRadioNotification;
-    SecurityProcedureInitiatedCallback_t onSecurityProcedureInitiated;
-    SecurityProcedureCompletedCallback_t onSecurityProcedureCompleted;
-    LinkSecuredCallback_t                onLinkSecured;
-    HandleSpecificEvent_t                onSecurityContextStored;
-    CallChain                            disconnectionCallChain;
+    EventCallback_t                  onTimeout;
+    ConnectionEventCallback_t        onConnection;
+    DisconnectionEventCallback_t     onDisconnection;
+    RadioNotificationEventCallback_t onRadioNotification;
+    SecuritySetupInitiatedCallback_t onSecurityProcedureInitiated;
+    SecuritySetupCompletedCallback_t onSecurityProcedureCompleted;
+    LinkSecuredCallback_t            onLinkSecured;
+    HandleSpecificEvent_t            onSecurityContextStored;
+    CallChain                        disconnectionCallChain;
 
 private:
     /* disallow copy and assignment */
