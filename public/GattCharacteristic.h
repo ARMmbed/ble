@@ -17,6 +17,7 @@
 #ifndef __GATT_CHARACTERISTIC_H__
 #define __GATT_CHARACTERISTIC_H__
 
+#include "Gap.h"
 #include "GattAttribute.h"
 #include "GattCharacteristicCallbackParams.h"
 #include "FunctionPointerWithContext.h"
@@ -330,6 +331,7 @@ public:
                        unsigned       numDescriptors      = 0) :
         _valueAttribute(uuid, valuePtr, initialLen, maxLen),
         _properties(props),
+        _requiredSecurity(),
         _descriptors(descriptors),
         _descriptorCount(numDescriptors),
         enabledReadAuthorization(false),
@@ -339,10 +341,20 @@ public:
         /* empty */
     }
 
+public:
+    /**
+     * Setup the minimum security (mode and level) requirements for access to the characteristic's value attribute.
+     *
+     * @param securityMode Can be one of encryption or signing, with or without protection for MITM (man in the middle attacks).
+     */
+    void requireSecurity(Gap::SecurityMode_t securityMode) {
+        _requiredSecurity = securityMode;
+    }
+
+public:
     /**
      * Authorization.
      */
-public:
     void setWriteAuthorizationCallback(void (*callback)(GattCharacteristicWriteAuthCBParams *)) {
         writeAuthorizationCallback.attach(callback);
         enabledWriteAuthorization = true;
@@ -406,13 +418,14 @@ public:
 
     /* accessors */
 public:
-    GattAttribute&          getValueAttribute()                 {return _valueAttribute;                }
-    const GattAttribute&    getValueAttribute()           const {return _valueAttribute;                }
-    GattAttribute::Handle_t getValueHandle(void)          const {return getValueAttribute().getHandle();}
-    uint8_t                 getProperties(void)           const {return _properties;                    }
-    uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;               }
-    bool                    isReadAuthorizationEnabled()  const {return enabledReadAuthorization;       }
-    bool                    isWriteAuthorizationEnabled() const {return enabledWriteAuthorization;      }
+    GattAttribute&          getValueAttribute()                   {return _valueAttribute;                }
+    const GattAttribute&    getValueAttribute()             const {return _valueAttribute;                }
+    GattAttribute::Handle_t getValueHandle(void)            const {return getValueAttribute().getHandle();}
+    uint8_t                 getProperties(void)             const {return _properties;                    }
+    Gap::SecurityMode_t     getRequiredSecurity()           const {return _requiredSecurity;              }
+    uint8_t                 getDescriptorCount(void)        const {return _descriptorCount;               }
+    bool                    isReadAuthorizationEnabled()    const {return enabledReadAuthorization;       }
+    bool                    isWriteAuthorizationEnabled()   const {return enabledWriteAuthorization;      }
 
     GattAttribute *getDescriptor(uint8_t index) {
         if (index >= _descriptorCount) {
@@ -423,13 +436,14 @@ public:
     }
 
 private:
-    GattAttribute   _valueAttribute;
-    uint8_t         _properties;
-    GattAttribute **_descriptors;
-    uint8_t         _descriptorCount;
+    GattAttribute         _valueAttribute;
+    uint8_t               _properties;
+    Gap::SecurityMode_t   _requiredSecurity;
+    GattAttribute       **_descriptors;
+    uint8_t               _descriptorCount;
 
-    bool            enabledReadAuthorization;
-    bool            enabledWriteAuthorization;
+    bool             enabledReadAuthorization;
+    bool             enabledWriteAuthorization;
     FunctionPointerWithContext<GattCharacteristicReadAuthCBParams *>  readAuthorizationCallback;
     FunctionPointerWithContext<GattCharacteristicWriteAuthCBParams *> writeAuthorizationCallback;
 

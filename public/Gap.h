@@ -64,6 +64,58 @@ public:
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
+    enum SecurityMode_t {
+        SECURITY_MODE_NO_ACCESS,
+        SECURITY_MODE_ENCRYPTION_OPEN_LINK, /**< Set security mode to require no protection, open link. */
+        SECURITY_MODE_ENCRYPTION_NO_MITM,   /**< Set security mode to require encryption, but no MITM protection. */
+        SECURITY_MODE_ENCRYPTION_WITH_MITM, /**< Set security mode to require encryption and MITM protection. */
+        SECURITY_MODE_SIGNED_NO_MITM,       /**< Set security mode to require signing or encryption, but no MITM protection. */
+        SECURITY_MODE_SIGNED_WITH_MITM,     /**< Set security mode to require signing or encryption, and MITM protection. */
+    };
+
+    /**
+     * @brief Defines possible security status/states.
+     *
+     * @details Defines possible security status/states of a link when requested by getLinkSecurity().
+     */
+    enum LinkSecurityStatus_t {
+        NOT_ENCRYPTED,          /**< The link is not secured. */
+        ENCRYPTION_IN_PROGRESS, /**< Link security is being established.*/
+        ENCRYPTED               /**< The link is secure.*/
+    };
+
+    enum SecurityIOCapabilities_t {
+      IO_CAPS_DISPLAY_ONLY     = 0x00,   /**< Display Only. */
+      IO_CAPS_DISPLAY_YESNO    = 0x01,   /**< Display and Yes/No entry. */
+      IO_CAPS_KEYBOARD_ONLY    = 0x02,   /**< Keyboard Only. */
+      IO_CAPS_NONE             = 0x03,   /**< No I/O capabilities. */
+      IO_CAPS_KEYBOARD_DISPLAY = 0x04,   /**< Keyboard and Display. */
+    };
+
+    enum SecurityCompletionStatus_t {
+        SEC_STATUS_SUCCESS              = 0x00,  /**< Procedure completed with success. */
+        SEC_STATUS_TIMEOUT              = 0x01,  /**< Procedure timed out. */
+        SEC_STATUS_PDU_INVALID          = 0x02,  /**< Invalid PDU received. */
+        SEC_STATUS_PASSKEY_ENTRY_FAILED = 0x81,  /**< Passkey entry failed (user canceled or other). */
+        SEC_STATUS_OOB_NOT_AVAILABLE    = 0x82,  /**< Out of Band Key not available. */
+        SEC_STATUS_AUTH_REQ             = 0x83,  /**< Authentication requirements not met. */
+        SEC_STATUS_CONFIRM_VALUE        = 0x84,  /**< Confirm value failed. */
+        SEC_STATUS_PAIRING_NOT_SUPP     = 0x85,  /**< Pairing not supported.  */
+        SEC_STATUS_ENC_KEY_SIZE         = 0x86,  /**< Encryption key size. */
+        SEC_STATUS_SMP_CMD_UNSUPPORTED  = 0x87,  /**< Unsupported SMP command. */
+        SEC_STATUS_UNSPECIFIED          = 0x88,  /**< Unspecified reason. */
+        SEC_STATUS_REPEATED_ATTEMPTS    = 0x89,  /**< Too little time elapsed since last attempt. */
+        SEC_STATUS_INVALID_PARAMS       = 0x8A,  /**< Invalid parameters. */
+    };
+
+    /**
+     * Declaration of type containing a passkey to be used during pairing. This
+     * is passed into initializeSecurity() to specify a pre-programmed passkey
+     * for authentication instead of generating a random one.
+     */
+    static const unsigned PASSKEY_LEN = 6;
+    typedef uint8_t Passkey_t[PASSKEY_LEN];         /**< 6-digit passkey in ASCII ('0'-'9' digits only). */
+
     static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
     static const uint16_t UNIT_0_625_MS = 650;  /**< Number of microseconds in 0.625 milliseconds. */
     static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
@@ -81,8 +133,13 @@ public:
                                               addr_type_t peerAddrType, const address_t peerAddr,
                                               addr_type_t ownAddrType,  const address_t ownAddr,
                                               const ConnectionParams_t *);
+    typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
+    typedef void (*SecuritySetupInitiatedCallback_t)(Handle_t, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps);
+    typedef void (*SecuritySetupCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
+    typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
+    typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
     friend class BLEDevice;
 private:
@@ -99,6 +156,9 @@ private:
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params)                   = 0;
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;
     virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params)  = 0;
+
+    virtual ble_error_t purgeAllBondingState(void)                                                        = 0;
+    virtual ble_error_t getLinkSecurity(Handle_t connectionHandle, LinkSecurityStatus_t *securityStatusP) = 0;
 
     virtual ble_error_t setDeviceName(const uint8_t *deviceName)              = 0;
     virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
@@ -120,9 +180,37 @@ protected:
     /**
      * Set the application callback for radio-notification events.
      * @param callback
-     *          Handler to be executed in resonse to a radio notification event.
+     *          Handler to be executed in response to a radio notification event.
      */
     virtual void setOnRadioNotification(RadioNotificationEventCallback_t callback) {onRadioNotification = callback;}
+
+    /**
+     * To indicate that security procedure for link has started.
+     */
+    virtual void setOnSecuritySetupInitiated(SecuritySetupInitiatedCallback_t callback) {onSecuritySetupInitiated = callback;}
+
+    /**
+     * To indicate that security procedure for link has completed.
+     */
+    virtual void setOnSecuritySetupCompleted(SecuritySetupCompletedCallback_t callback) {onSecuritySetupCompleted = callback;}
+
+    /**
+     * To indicate that link with the peer is secured. For bonded devices,
+     * subsequent re-connections with bonded peer will result only in this callback
+     * when the link is secured and setup procedures will not occur unless the
+     * bonding information is either lost or deleted on either or both sides.
+     */
+    virtual void setOnLinkSecured(LinkSecuredCallback_t callback) {onLinkSecured = callback;}
+
+    /**
+     * To indicate that device context is stored persistently.
+     */
+    virtual void setOnSecurityContextStored(HandleSpecificEvent_t callback) {onSecurityContextStored = callback;}
+
+    /**
+     * To set the callback for when the passkey needs to be displayed on a peripheral with DISPLAY capability.
+     */
+    virtual void setOnPasskeyDisplay(PasskeyDisplayCallback_t callback) {onPasskeyDisplay = callback;}
 
     /**
      * Append to a chain of callbacks to be invoked upon disconnection; these
@@ -145,8 +233,18 @@ private:
     }
 
 protected:
-    /* Default constructor. */
-    Gap() : state(), onTimeout(NULL), onConnection(NULL), onDisconnection(NULL), onRadioNotification(), disconnectionCallChain() {
+    Gap() :
+        state(),
+        onTimeout(NULL),
+        onConnection(NULL),
+        onDisconnection(NULL),
+        onRadioNotification(),
+        onSecuritySetupInitiated(),
+        onSecuritySetupCompleted(),
+        onLinkSecured(),
+        onSecurityContextStored(),
+        onPasskeyDisplay(),
+        disconnectionCallChain() {
         /* empty */
     }
 
@@ -166,6 +264,36 @@ public:
         disconnectionCallChain.call();
     }
 
+    void processSecuritySetupInitiatedEvent(Handle_t handle, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps) {
+        if (onSecuritySetupInitiated) {
+            onSecuritySetupInitiated(handle, allowBonding, requireMITM, iocaps);
+        }
+    }
+
+    void processSecuritySetupCompletedEvent(Handle_t handle, SecurityCompletionStatus_t status) {
+        if (onSecuritySetupCompleted) {
+            onSecuritySetupCompleted(handle, status);
+        }
+    }
+
+    void processLinkSecuredEvent(Handle_t handle, SecurityMode_t securityMode) {
+        if (onLinkSecured) {
+            onLinkSecured(handle, securityMode);
+        }
+    }
+
+    void processSecurityContextStoredEvent(Handle_t handle) {
+        if (onSecurityContextStored) {
+            onSecurityContextStored(handle);
+        }
+    }
+
+    void processPasskeyDisplayEvent(Handle_t handle, const Passkey_t passkey) {
+        if (onPasskeyDisplay) {
+            onPasskeyDisplay(handle, passkey);
+        }
+    }
+
     void processEvent(GapEvents::gapEvent_e type) {
         switch (type) {
             case GapEvents::GAP_EVENT_TIMEOUT:
@@ -180,14 +308,19 @@ public:
     }
 
 protected:
-    GapState_t                   state;
+    GapState_t                       state;
 
 protected:
-    EventCallback_t              onTimeout;
-    ConnectionEventCallback_t    onConnection;
-    DisconnectionEventCallback_t onDisconnection;
+    EventCallback_t                  onTimeout;
+    ConnectionEventCallback_t        onConnection;
+    DisconnectionEventCallback_t     onDisconnection;
     RadioNotificationEventCallback_t onRadioNotification;
-    CallChain                    disconnectionCallChain;
+    SecuritySetupInitiatedCallback_t onSecuritySetupInitiated;
+    SecuritySetupCompletedCallback_t onSecuritySetupCompleted;
+    LinkSecuredCallback_t            onLinkSecured;
+    HandleSpecificEvent_t            onSecurityContextStored;
+    PasskeyDisplayCallback_t         onPasskeyDisplay;
+    CallChain                        disconnectionCallChain;
 
 private:
     /* disallow copy and assignment */

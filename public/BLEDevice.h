@@ -445,6 +445,88 @@ public:
      */
     void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP);
 
+    /**
+     * Enable the BLE stack's Security Manager. The Security Manager implements
+     * the actual cryptographic algorithms and protocol exchanges that allow two
+     * devices to securely exchange data and privately detect each other.
+     * Calling this API is a prerequisite for encryption and pairing (bonding).
+     *
+     * @param[in]  enableBonding Allow for bonding.
+     * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
+     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
+     *                           such as availability of a display or keyboard to
+     *                           support out-of-band exchanges of security data.
+     * @param[in]  passkey       To specify a static passkey.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    ble_error_t initializeSecurity(bool                          enableBonding = true,
+                                   bool                          requireMITM   = true,
+                                   Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
+                                   const Gap::Passkey_t          passkey       = NULL);
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has started. This will be skipped for bonded
+     * devices. The callback is passed in parameters received from the peer's
+     * security request: bool allowBonding, bool requireMITM, and
+     * SecurityIOCapabilities_t.
+     */
+    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has completed. This will be skipped for bonded
+     * devices. The callback is passed in the success/failure status of the
+     * security setup procedure.
+     */
+    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
+
+    /**
+     * Setup a callback for when a link with the peer is secured. For bonded
+     * devices, subsequent reconnections with bonded peer will result only in
+     * this callback when the link is secured and setup procedures will not
+     * occur unless the bonding information is either lost or deleted on either
+     * or both sides. The callback is passed in a Gap::SecurityMode_t according
+     * to the level of security in effect for the secured link.
+     */
+    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
+
+    /**
+     * Setup a callback for successful bonding; i.e. that link-specific security
+     * context is stored persistently for a peer device.
+     */
+    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
+
+    /**
+     * Setup a callback for when the passkey needs to be displayed on a
+     * peripheral with DISPLAY capability. This happens when security is
+     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
+     * needs to be exchanged between the peers to authenticate the connection
+     * attempt.
+     */
+    void onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback);
+
+    /**
+     * Get the security status of a connection.
+     *
+     * @param[in]  connectionHandle   Handle to identify the connection.
+     * @param[out] securityStatusP    security status.
+     *
+     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     */
+    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
+
+    /**
+     * Delete all peer device context and all related bonding information from
+     * the database within the security manager.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     *                                    application registration.
+     */
+    ble_error_t purgeAllBondingState(void);
+
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true) {
         advPayload.clear();
@@ -798,6 +880,57 @@ inline void
 BLEDevice::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
 {
     transport->getPermittedTxPowerValues(valueArrayPP, countP);
+}
+
+inline ble_error_t
+BLEDevice::initializeSecurity(bool                          enableBonding,
+                              bool                          requireMITM,
+                              Gap::SecurityIOCapabilities_t iocaps,
+                              const Gap::Passkey_t          passkey)
+{
+    return transport->initializeSecurity(enableBonding, requireMITM, iocaps, passkey);
+}
+
+inline void
+BLEDevice::onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
+{
+    transport->getGap().setOnSecuritySetupInitiated(callback);
+}
+
+inline void
+BLEDevice::onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback)
+{
+    transport->getGap().setOnSecuritySetupCompleted(callback);
+}
+
+inline void
+BLEDevice::onLinkSecured(Gap::LinkSecuredCallback_t callback)
+{
+    transport->getGap().setOnLinkSecured(callback);
+}
+
+inline void
+BLEDevice::onSecurityContextStored(Gap::HandleSpecificEvent_t callback)
+{
+    transport->getGap().setOnSecurityContextStored(callback);
+}
+
+inline void
+BLEDevice::onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback)
+{
+    return transport->getGap().setOnPasskeyDisplay(callback);
+}
+
+inline ble_error_t
+BLEDevice::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
+{
+    return transport->getGap().getLinkSecurity(connectionHandle, securityStatusP);
+}
+
+inline ble_error_t
+BLEDevice::purgeAllBondingState(void)
+{
+    return transport->getGap().purgeAllBondingState();
 }
 
 #endif // ifndef __BLE_DEVICE__
