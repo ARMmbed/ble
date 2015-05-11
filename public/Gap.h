@@ -19,11 +19,12 @@
 
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
-#include "GapScanningParams.h"
 #include "GapEvents.h"
 #include "CallChain.h"
 
 using namespace mbed;
+
+class GapScanningParams; /* forward declaration */
 
 class Gap {
 public:
