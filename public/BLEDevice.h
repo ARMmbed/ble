@@ -237,6 +237,8 @@ public:
      * @param  interval Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      * @param  window   Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      * @param  timeout  Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     * @param  activeScanning Set to True if active-scanning is required. This is used to fetch the
+     *                        scan response from a peer if possible.
      *
      * The scanning window divided by the interval determines the duty cycle for
      * scanning. For example, if the interval is 100ms and the window is 10ms,
