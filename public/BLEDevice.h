@@ -250,12 +250,12 @@ public:
      *
      * @Note: The scan interval and window are recommendations to the BLE stack.
      */
-    ble_error_t setScanningParams(uint16_t interval = GapScanningParams::SCAN_INTERVAL_MAX,
-                                  uint16_t window   = GapScanningParams::SCAN_WINDOW_MAX,
-                                  uint16_t timeout  = 0);
-    ble_error_t setScanningInterval(uint16_t interval);
-    ble_error_t setScanningWindow  (uint16_t window);
-    ble_error_t setScanningTimeout (uint16_t timeout);
+    ble_error_t setScanParams(uint16_t interval = GapScanningParams::SCAN_INTERVAL_MAX,
+                              uint16_t window   = GapScanningParams::SCAN_WINDOW_MAX,
+                              uint16_t timeout  = 0);
+    ble_error_t setScanInterval(uint16_t interval);
+    ble_error_t setScanWindow  (uint16_t window);
+    ble_error_t setScanTimeout (uint16_t timeout);
 
     /**
      * Start scanning (Observer Procedure) based on the scan-params currently
@@ -265,14 +265,14 @@ public:
      *     every advertisement report. Can be passed in as NULL, in which case
      *     scanning may not be enabled at all.
      */
-    ble_error_t startScanning(Gap::AdvertisementReportCallback_t callback);
+    ble_error_t startScan(Gap::AdvertisementReportCallback_t callback);
 
     /**
      * Stop scanning. The current scanning parameters remain in effect.
      *
      * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
      */
-    ble_error_t stopScanning(void);
+    ble_error_t stopScan(void);
 
     /**
      * This call initiates the disconnection procedure, and its completion will
@@ -745,7 +745,7 @@ BLEDevice::stopAdvertising(void)
 }
 
 inline ble_error_t
-BLEDevice::setScanningParams(uint16_t interval, uint16_t window, uint16_t timeout) {
+BLEDevice::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout) {
     ble_error_t rc;
     if (((rc = scanningParams.setInterval(interval)) == BLE_ERROR_NONE) &&
         ((rc = scanningParams.setWindow(window))     == BLE_ERROR_NONE) &&
@@ -757,29 +757,29 @@ BLEDevice::setScanningParams(uint16_t interval, uint16_t window, uint16_t timeou
 }
 
 inline ble_error_t
-BLEDevice::setScanningInterval(uint16_t interval) {
+BLEDevice::setScanInterval(uint16_t interval) {
     return scanningParams.setInterval(interval);
 }
 
 inline ble_error_t
-BLEDevice::setScanningWindow(uint16_t window) {
+BLEDevice::setScanWindow(uint16_t window) {
 
     return scanningParams.setWindow(window);
 }
 
 inline ble_error_t
-BLEDevice::setScanningTimeout(uint16_t timeout) {
+BLEDevice::setScanTimeout(uint16_t timeout) {
     return scanningParams.setTimeout(timeout);
 }
 
 inline ble_error_t
-BLEDevice::startScanning(Gap::AdvertisementReportCallback_t callback) {
-    return transport->getGap().startScanning(scanningParams, callback);
+BLEDevice::startScan(Gap::AdvertisementReportCallback_t callback) {
+    return transport->getGap().startScan(scanningParams, callback);
 }
 
 inline ble_error_t
-BLEDevice::stopScanning(void) {
-    return transport->getGap().stopScanning();
+BLEDevice::stopScan(void) {
+    return transport->getGap().stopScan();
 }
 
 
