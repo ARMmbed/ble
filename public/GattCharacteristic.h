@@ -323,12 +323,12 @@ public:
      *        instantiating the service with the underlying BLE stack.
      */
     GattCharacteristic(const UUID    &uuid,
-                       uint8_t       *valuePtr            = NULL,
-                       uint16_t       initialLen          = 0,
-                       uint16_t       maxLen              = 0,
-                       uint8_t        props               = BLE_GATT_CHAR_PROPERTIES_NONE,
-                       GattAttribute *descriptors[]       = NULL,
-                       unsigned       numDescriptors      = 0) :
+                       uint8_t       *valuePtr       = NULL,
+                       uint16_t       initialLen     = 0,
+                       uint16_t       maxLen         = 0,
+                       uint8_t        props          = BLE_GATT_CHAR_PROPERTIES_NONE,
+                       GattAttribute *descriptors[]  = NULL,
+                       unsigned       numDescriptors = 0) :
         _valueAttribute(uuid, valuePtr, initialLen, maxLen),
         _properties(props),
         _requiredSecurity(),
@@ -418,14 +418,14 @@ public:
 
     /* accessors */
 public:
-    GattAttribute&          getValueAttribute()                   {return _valueAttribute;                }
-    const GattAttribute&    getValueAttribute()             const {return _valueAttribute;                }
-    GattAttribute::Handle_t getValueHandle(void)            const {return getValueAttribute().getHandle();}
-    uint8_t                 getProperties(void)             const {return _properties;                    }
-    Gap::SecurityMode_t     getRequiredSecurity()           const {return _requiredSecurity;              }
-    uint8_t                 getDescriptorCount(void)        const {return _descriptorCount;               }
-    bool                    isReadAuthorizationEnabled()    const {return enabledReadAuthorization;       }
-    bool                    isWriteAuthorizationEnabled()   const {return enabledWriteAuthorization;      }
+    GattAttribute&          getValueAttribute()                 {return _valueAttribute;                }
+    const GattAttribute&    getValueAttribute()           const {return _valueAttribute;                }
+    GattAttribute::Handle_t getValueHandle(void)          const {return getValueAttribute().getHandle();}
+    uint8_t                 getProperties(void)           const {return _properties;                    }
+    Gap::SecurityMode_t     getRequiredSecurity()         const {return _requiredSecurity;              }
+    uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;               }
+    bool                    isReadAuthorizationEnabled()  const {return enabledReadAuthorization;       }
+    bool                    isWriteAuthorizationEnabled() const {return enabledWriteAuthorization;      }
 
     GattAttribute *getDescriptor(uint8_t index) {
         if (index >= _descriptorCount) {
@@ -442,8 +442,8 @@ private:
     GattAttribute       **_descriptors;
     uint8_t               _descriptorCount;
 
-    bool             enabledReadAuthorization;
-    bool             enabledWriteAuthorization;
+    bool enabledReadAuthorization;
+    bool enabledWriteAuthorization;
     FunctionPointerWithContext<GattCharacteristicReadAuthCBParams *>  readAuthorizationCallback;
     FunctionPointerWithContext<GattCharacteristicWriteAuthCBParams *> writeAuthorizationCallback;
 
