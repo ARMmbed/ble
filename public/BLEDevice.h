@@ -237,6 +237,18 @@ public:
      * @param  interval Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      * @param  window   Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      * @param  timeout  Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     *
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     *
+     * @Note: The scan interval and window are recommendations to the BLE stack.
      */
     ble_error_t setScanningParams(uint16_t interval = GapScanningParams::SCAN_INTERVAL_MAX,
                                   uint16_t window   = GapScanningParams::SCAN_WINDOW_MAX,
