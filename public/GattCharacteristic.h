@@ -331,7 +331,7 @@ public:
                        unsigned       numDescriptors = 0) :
         _valueAttribute(uuid, valuePtr, initialLen, maxLen),
         _properties(props),
-        _requiredSecurity(),
+        _requiredSecurity(Gap::SECURITY_MODE_ENCRYPTION_OPEN_LINK),
         _descriptors(descriptors),
         _descriptorCount(numDescriptors),
         enabledReadAuthorization(false),
