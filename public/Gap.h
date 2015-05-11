@@ -34,11 +34,11 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
     };
-    typedef enum AddressType_t addr_type_t; /* @Note: decprecated. */
+    typedef enum AddressType_t addr_type_t; /* @Note: deprecated. Use AddressType_t instead. */
 
     static const unsigned ADDR_LEN = 6;
     typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
-    typedef Address_t address_t;         /* @Note: deprecated. */
+    typedef Address_t address_t;         /* @Note: deprecated. Use Address_t instead. */
 
     enum AdvertisementType_t {
         ADV_IND           = 0x00,   /**< Connectable undirected. */
