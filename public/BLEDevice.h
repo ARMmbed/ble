@@ -254,8 +254,8 @@ public:
                                   uint16_t window   = GapScanningParams::SCAN_WINDOW_MAX,
                                   uint16_t timeout  = 0);
     ble_error_t setScanningInterval(uint16_t interval);
-    ble_error_t setScanningWindow(uint16_t window);
-    ble_error_t setScanningTimeout(uint16_t timeout);
+    ble_error_t setScanningWindow  (uint16_t window);
+    ble_error_t setScanningTimeout (uint16_t timeout);
 
     /**
      * Start scanning (Observer Procedure) based on the scan-params currently
