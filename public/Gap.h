@@ -26,15 +26,17 @@ using namespace mbed;
 
 class Gap {
 public:
-    typedef enum addr_type_e {
+    enum AddressType_t {
         ADDR_TYPE_PUBLIC = 0,
         ADDR_TYPE_RANDOM_STATIC,
         ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
-    } addr_type_t;
+    };
+    typedef enum AddressType_t addr_type_t; /* @Note: decprecated. */
 
     static const unsigned ADDR_LEN = 6;
-    typedef uint8_t address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
+    typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
+    typedef Address_t address_t;         /* @Note: deprecated. */
 
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
