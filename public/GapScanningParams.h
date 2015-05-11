@@ -31,7 +31,8 @@ public:
 public:
     GapScanningParams(uint16_t interval = SCAN_INTERVAL_MAX,
                       uint16_t window   = SCAN_WINDOW_MAX,
-                      uint16_t timeout  = 0) : _interval(interval), _window(window), _timeout(timeout) {
+                      uint16_t timeout  = 0,
+                      bool     activeScanning = false) : _interval(interval), _window(window), _timeout(timeout), _activeScanning(activeScanning) {
         /* stay within limits */
         if (_interval < SCAN_INTERVAL_MIN) {
             _interval = SCAN_INTERVAL_MIN;
@@ -77,14 +78,20 @@ public:
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
     }
 
+    void setActiveScanning(bool activeScanning) {
+        _activeScanning = activeScanning;
+    }
+
     uint16_t getInterval(void) const {return _interval;}
     uint16_t getWindow(void)   const {return _window;  }
     uint16_t getTimeout(void)  const {return _timeout; }
+    bool     getActiveScanning(void) const {return _activeScanning;}
 
 private:
     uint16_t _interval; /**< Scan interval (between 2.5ms to 10.24s). */
     uint16_t _window;   /**< Scan window (between 2.5ms to 10.24s). */
     uint16_t _timeout;  /**< Scan timeout between 0x0001 and 0xFFFF in seconds, 0x0000 disables timeout. */
+    bool     _activeScanning; /**< obtain not only the advertising data from the peer device, but also their scanResponse if possible. */
 
 private:
     /* disallow copy constructor */
