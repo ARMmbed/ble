@@ -32,7 +32,10 @@ public:
     GapScanningParams(uint16_t interval = SCAN_INTERVAL_MAX,
                       uint16_t window   = SCAN_WINDOW_MAX,
                       uint16_t timeout  = 0,
-                      bool     activeScanning = false) : _interval(interval), _window(window), _timeout(timeout), _activeScanning(activeScanning) {
+                      bool     activeScanning = false) : _interval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval)),
+                                                         _window(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(window)),
+                                                         _timeout(timeout),
+                                                         _activeScanning(activeScanning) {
         /* stay within limits */
         if (_interval < SCAN_INTERVAL_MIN) {
             _interval = SCAN_INTERVAL_MIN;
@@ -51,7 +54,8 @@ public:
         }
     }
 
-    ble_error_t setInterval(uint16_t newInterval) {
+    ble_error_t setInterval(uint16_t newIntervalInMS) {
+        uint16_t newInterval = Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newIntervalInMS);
         if ((newInterval >= SCAN_INTERVAL_MIN) && (newInterval < SCAN_INTERVAL_MAX)) {
             _interval = newInterval;
             return BLE_ERROR_NONE;
@@ -60,7 +64,8 @@ public:
         return BLE_ERROR_PARAM_OUT_OF_RANGE;
     }
 
-    ble_error_t setWindow(uint16_t newWindow)     {
+    ble_error_t setWindow(uint16_t newWindowInMS)     {
+        uint16_t newWindow = Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newWindowInMS);
         if ((newWindow >= SCAN_WINDOW_MIN) && (newWindow < SCAN_WINDOW_MAX)) {
             _window   = newWindow;
             return BLE_ERROR_NONE;
@@ -82,14 +87,17 @@ public:
         _activeScanning = activeScanning;
     }
 
+
+    /* @Note: The following return durations in units of 0.625 ms */
     uint16_t getInterval(void) const {return _interval;}
     uint16_t getWindow(void)   const {return _window;  }
+
     uint16_t getTimeout(void)  const {return _timeout; }
     bool     getActiveScanning(void) const {return _activeScanning;}
 
 private:
-    uint16_t _interval; /**< Scan interval (between 2.5ms to 10.24s). */
-    uint16_t _window;   /**< Scan window (between 2.5ms to 10.24s). */
+    uint16_t _interval; /**< Scan interval in units of 625us (between 2.5ms to 10.24s). */
+    uint16_t _window;   /**< Scan window in units of 625us (between 2.5ms to 10.24s). */
     uint16_t _timeout;  /**< Scan timeout between 0x0001 and 0xFFFF in seconds, 0x0000 disables timeout. */
     bool     _activeScanning; /**< obtain not only the advertising data from the peer device, but also their scanResponse if possible. */
 
