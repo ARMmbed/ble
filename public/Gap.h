@@ -47,13 +47,6 @@ public:
         ADV_NONCONN_IND   = 0x03,   /**< Non connectable undirected. */
     };
 
-    enum AdvertisementType_t {
-        ADV_IND           = 0x00,   /**< Connectable undirected. */
-        ADV_DIRECT_IND    = 0x01,   /**< Connectable directed. */
-        ADV_SCAN_IND      = 0x02,   /**< Scannable undirected. */
-        ADV_NONCONN_IND   = 0x03,   /**< Non connectable undirected. */
-    };
-
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
      * derived from Nordic's implementation; but the reasons are meant to be
