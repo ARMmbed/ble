@@ -257,7 +257,7 @@ public:
     ble_error_t setScanInterval(uint16_t interval);
     ble_error_t setScanWindow  (uint16_t window);
     ble_error_t setScanTimeout (uint16_t timeout);
-    void        setActiveScan(bool activeScanning);
+    void        setActiveScan  (bool     activeScanning);
 
     /**
      * Start scanning (Observer Procedure) based on the scan-params currently
