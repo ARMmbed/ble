@@ -250,12 +250,14 @@ public:
      *
      * @Note: The scan interval and window are recommendations to the BLE stack.
      */
-    ble_error_t setScanParams(uint16_t interval = GapScanningParams::SCAN_INTERVAL_MAX,
-                              uint16_t window   = GapScanningParams::SCAN_WINDOW_MAX,
-                              uint16_t timeout  = 0);
+    ble_error_t setScanParams(uint16_t interval       = GapScanningParams::SCAN_INTERVAL_MAX,
+                              uint16_t window         = GapScanningParams::SCAN_WINDOW_MAX,
+                              uint16_t timeout        = 0,
+                              bool     activeScanning = false);
     ble_error_t setScanInterval(uint16_t interval);
     ble_error_t setScanWindow  (uint16_t window);
     ble_error_t setScanTimeout (uint16_t timeout);
+    void        setActiveScan(bool activeScanning);
 
     /**
      * Start scanning (Observer Procedure) based on the scan-params currently
@@ -745,11 +747,12 @@ BLEDevice::stopAdvertising(void)
 }
 
 inline ble_error_t
-BLEDevice::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout) {
+BLEDevice::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout, bool activeScanning) {
     ble_error_t rc;
     if (((rc = scanningParams.setInterval(interval)) == BLE_ERROR_NONE) &&
         ((rc = scanningParams.setWindow(window))     == BLE_ERROR_NONE) &&
         ((rc = scanningParams.setTimeout(timeout))   == BLE_ERROR_NONE)) {
+        scanningParams.setActiveScanning(activeScanning);
         return BLE_ERROR_NONE;
     }
 
@@ -770,6 +773,11 @@ BLEDevice::setScanWindow(uint16_t window) {
 inline ble_error_t
 BLEDevice::setScanTimeout(uint16_t timeout) {
     return scanningParams.setTimeout(timeout);
+}
+
+inline void
+BLEDevice::setActiveScan(bool activeScanning) {
+    return scanningParams.setActiveScanning(activeScanning);
 }
 
 inline ble_error_t
