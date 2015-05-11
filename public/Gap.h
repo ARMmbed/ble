@@ -142,7 +142,7 @@ public:
     static uint16_t MSEC_TO_ADVERTISEMENT_DURATION_UNITS(uint32_t durationInMillis) {
         return (durationInMillis * 1000) / UNIT_0_625_MS;
     }
-    static uint16_t GAP_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
+    static uint16_t ADVERTISEMENT_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
         return (gapUnits * UNIT_0_625_MS) / 1000;
     }
 
