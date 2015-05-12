@@ -24,6 +24,8 @@
 
 using namespace mbed;
 
+class GapScanningParams; /* forward declaration */
+
 class Gap {
 public:
     enum AddressType_t {
@@ -32,11 +34,18 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
     };
-    typedef enum AddressType_t addr_type_t; /* @Note: decprecated. */
+    typedef enum AddressType_t addr_type_t; /* @Note: deprecated. Use AddressType_t instead. */
 
     static const unsigned ADDR_LEN = 6;
     typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
-    typedef Address_t address_t;         /* @Note: deprecated. */
+    typedef Address_t address_t;         /* @Note: deprecated. Use Address_t instead. */
+
+    enum AdvertisementType_t {
+        ADV_IND           = 0x00,   /**< Connectable undirected. */
+        ADV_DIRECT_IND    = 0x01,   /**< Connectable directed. */
+        ADV_SCAN_IND      = 0x02,   /**< Scannable undirected. */
+        ADV_NONCONN_IND   = 0x03,   /**< Non connectable undirected. */
+    };
 
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
@@ -119,14 +128,14 @@ public:
     typedef uint8_t Passkey_t[PASSKEY_LEN];         /**< 6-digit passkey in ASCII ('0'-'9' digits only). */
 
     static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
-    static const uint16_t UNIT_0_625_MS = 650;  /**< Number of microseconds in 0.625 milliseconds. */
+    static const uint16_t UNIT_0_625_MS = 625;  /**< Number of microseconds in 0.625 milliseconds. */
     static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
         return (durationInMillis * 1000) / UNIT_1_25_MS;
     }
     static uint16_t MSEC_TO_ADVERTISEMENT_DURATION_UNITS(uint32_t durationInMillis) {
         return (durationInMillis * 1000) / UNIT_0_625_MS;
     }
-    static uint16_t GAP_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
+    static uint16_t ADVERTISEMENT_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
         return (gapUnits * UNIT_0_625_MS) / 1000;
     }
 
@@ -143,7 +152,15 @@ public:
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
+    typedef void (*AdvertisementReportCallback_t)(const address_t      peerAddr,
+                                                  int8_t               rssi,
+                                                  bool                 isScanResponse,
+                                                  AdvertisementType_t  type,
+                                                  uint8_t              advertisingDataLen,
+                                                  const uint8_t       *advertisingData);
+
     friend class BLEDevice;
+
 private:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(addr_type_t type,   const address_t address)                    = 0;
@@ -151,6 +168,8 @@ private:
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
+    virtual ble_error_t startScan(const GapScanningParams &scanningParams, AdvertisementReportCallback_t callback) = 0;
+    virtual ble_error_t stopScan()                                                                 = 0;
     virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
     virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
     virtual uint16_t    getMaxAdvertisingInterval(void) const                                      = 0;
@@ -246,6 +265,7 @@ protected:
         onLinkSecured(),
         onSecurityContextStored(),
         onPasskeyDisplay(),
+        onAdvertisementReport(),
         disconnectionCallChain() {
         /* empty */
     }
@@ -296,6 +316,17 @@ public:
         }
     }
 
+    void processAdvertisementReport(const address_t      peerAddr,
+                                    int8_t               rssi,
+                                    bool                 isScanResponse,
+                                    AdvertisementType_t  type,
+                                    uint8_t              advertisingDataLen,
+                                    const uint8_t       *advertisingData) {
+        if (onAdvertisementReport) {
+            onAdvertisementReport(peerAddr, rssi, isScanResponse, type, advertisingDataLen, advertisingData);
+        }
+    }
+
     void processEvent(GapEvents::gapEvent_e type) {
         switch (type) {
             case GapEvents::GAP_EVENT_TIMEOUT:
@@ -322,6 +353,7 @@ protected:
     LinkSecuredCallback_t            onLinkSecured;
     HandleSpecificEvent_t            onSecurityContextStored;
     PasskeyDisplayCallback_t         onPasskeyDisplay;
+    AdvertisementReportCallback_t    onAdvertisementReport;
     CallChain                        disconnectionCallChain;
 
 private:
