@@ -93,8 +93,8 @@ private:
         onDataRead.add(objPtr, memberPtr);
         return BLE_ERROR_NONE;
     }
-    void setOnUpdatesEnabled(EventCallback_t callback) {onUpdatesEnabled = callback;}
-    void setOnUpdatesDisabled(EventCallback_t callback) {onUpdatesDisabled = callback;}
+    void setOnUpdatesEnabled(EventCallback_t callback)       {onUpdatesEnabled       = callback;}
+    void setOnUpdatesDisabled(EventCallback_t callback)      {onUpdatesDisabled      = callback;}
     void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
 
 protected:
@@ -143,12 +143,12 @@ protected:
     uint8_t characteristicCount;
 
 private:
-    CallChainOfFunctionPointersWithContext<unsigned> onDataSent;
+    CallChainOfFunctionPointersWithContext<unsigned>                                onDataSent;
     CallChainOfFunctionPointersWithContext<const GattCharacteristicWriteCBParams *> onDataWritten;
-    CallChainOfFunctionPointersWithContext<const GattCharacteristicReadCBParams *> onDataRead;
-    EventCallback_t onUpdatesEnabled;
-    EventCallback_t onUpdatesDisabled;
-    EventCallback_t onConfirmationReceived;
+    CallChainOfFunctionPointersWithContext<const GattCharacteristicReadCBParams *>  onDataRead;
+    EventCallback_t                                                                 onUpdatesEnabled;
+    EventCallback_t                                                                 onUpdatesDisabled;
+    EventCallback_t                                                                 onConfirmationReceived;
 
 private:
     /* disallow copy and assignment */
