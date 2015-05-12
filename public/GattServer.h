@@ -27,7 +27,7 @@
 class GattServer {
 public:
     /* Event callback handlers. */
-    typedef void (*EventCallback_t)(uint16_t attributeHandle);
+    typedef void (*EventCallback_t)(GattAttribute::Handle_t attributeHandle);
     typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
 
 protected:
@@ -110,7 +110,7 @@ protected:
         }
     }
 
-    void handleEvent(GattServerEvents::gattEvent_e type, uint16_t charHandle) {
+    void handleEvent(GattServerEvents::gattEvent_e type, GattAttribute::Handle_t charHandle) {
         switch (type) {
             case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
                 if (onUpdatesEnabled) {
