@@ -260,6 +260,21 @@ class URIBeaconConfigService {
             params.txPowerMode = *(writeParams->data);
         } else if (handle == beaconPeriodChar.getValueHandle()) {
             params.beaconPeriod = *((uint16_t *)(writeParams->data));
+
+            /* Re-map beaconPeriod to within permissible bounds if necessary. */
+            if (params.beaconPeriod != 0) {
+                bool paramsUpdated = false;
+                if (params.beaconPeriod < ble.getMinAdvertisingInterval()) {
+                    params.beaconPeriod = ble.getMinAdvertisingInterval();
+                    paramsUpdated = true;
+                } else if (params.beaconPeriod > ble.getMaxAdvertisingInterval()) {
+                    params.beaconPeriod = ble.getMaxAdvertisingInterval();
+                    paramsUpdated = true;
+                }
+                if (paramsUpdated) {
+                    ble.updateCharacteristicValue(beaconPeriodChar.getValueHandle(), reinterpret_cast<uint8_t *>(&params.beaconPeriod), sizeof(uint16_t));
+                }
+            }
         } else if (handle == resetChar.getValueHandle()) {
             resetToDefaults();
         }
