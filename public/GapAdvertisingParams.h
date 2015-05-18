@@ -106,10 +106,6 @@ private:
     AdvertisingType _advType;
     uint16_t        _interval;
     uint16_t        _timeout;
-
-private:
-    /* disallow copy constructor */
-    GapAdvertisingParams(const GapAdvertisingParams &);
 };
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__
