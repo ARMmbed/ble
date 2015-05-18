@@ -141,8 +141,8 @@ public:
 
     typedef void (*EventCallback_t)(void);
     typedef void (*ConnectionEventCallback_t)(Handle_t,
-                                              addr_type_t peerAddrType, const address_t peerAddr,
-                                              addr_type_t ownAddrType,  const address_t ownAddr,
+                                              addr_type_t peerAddrType, const Address_t peerAddr,
+                                              addr_type_t ownAddrType,  const Address_t ownAddr,
                                               const ConnectionParams_t *);
     typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
@@ -163,8 +163,8 @@ public:
 
 private:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(addr_type_t type,   const address_t address)                    = 0;
-    virtual ble_error_t getAddress(addr_type_t *typeP, address_t address)                          = 0;
+    virtual ble_error_t setAddress(addr_type_t type,   const Address_t address)                    = 0;
+    virtual ble_error_t getAddress(addr_type_t *typeP, Address_t address)                          = 0;
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
@@ -271,7 +271,7 @@ protected:
     }
 
 public:
-    void processConnectionEvent(Handle_t handle, addr_type_t peerAddrType, const address_t peerAddr, addr_type_t ownAddrType, const address_t ownAddr, const ConnectionParams_t *params) {
+    void processConnectionEvent(Handle_t handle, addr_type_t peerAddrType, const Address_t peerAddr, addr_type_t ownAddrType, const Address_t ownAddr, const ConnectionParams_t *params) {
         state.connected = 1;
         if (onConnection) {
             onConnection(handle, peerAddrType, peerAddr, ownAddrType, ownAddr, params);
@@ -316,7 +316,7 @@ public:
         }
     }
 
-    void processAdvertisementReport(const address_t      peerAddr,
+    void processAdvertisementReport(const Address_t      peerAddr,
                                     int8_t               rssi,
                                     bool                 isScanResponse,
                                     AdvertisementType_t  type,
