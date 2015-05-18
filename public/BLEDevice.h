@@ -136,6 +136,12 @@ public:
     void        setAdvertisingParams(const GapAdvertisingParams &advParams);
 
     /**
+     * @return  Read back advertising parameters. Useful for storing and
+     *          restoring parameters rapidly.
+     */
+    GapAdvertisingParams getAdvertisingParams(void);
+
+    /**
      * This API is typically used as an internal helper to udpate the transport
      * backend with advertising data before starting to advertise. It may also
      * be explicity used to dynamically reset the accumulated advertising
@@ -144,6 +150,17 @@ public:
      * API.
      */
     ble_error_t setAdvertisingPayload(void);
+
+    /**
+     * Set advertising data using object.
+     */
+    ble_error_t setAdvertisingData(const GapAdvertisingData &advData);
+
+    /**
+     * @return  Read back advertising data. Useful for storing and
+     *          restoring payload.
+     */
+    GapAdvertisingData getAdvertisingData(void);
 
     /**
      * Reset any advertising payload prepared from prior calls to
@@ -679,6 +696,12 @@ BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
     advParams = newAdvParams;
 }
 
+inline GapAdvertisingParams
+BLEDevice::getAdvertisingParams(void)
+{
+    return advParams;
+}
+
 inline void
 BLEDevice::clearAdvertisingPayload(void)
 {
@@ -736,6 +759,19 @@ inline ble_error_t
 BLEDevice::setAdvertisingPayload(void) {
     needToSetAdvPayload = false;
     return transport->getGap().setAdvertisingData(advPayload, scanResponse);
+}
+
+inline ble_error_t
+BLEDevice::setAdvertisingData(const GapAdvertisingData& newPayload)
+{
+    advPayload = newPayload;
+
+    return setAdvertisingPayload();
+}
+
+inline GapAdvertisingData
+BLEDevice::getAdvertisingData(void) {
+    return advPayload;
 }
 
 inline ble_error_t
