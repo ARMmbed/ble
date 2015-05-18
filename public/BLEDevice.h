@@ -269,7 +269,19 @@ public:
      *     every advertisement report. Can be passed in as NULL, in which case
      *     scanning may not be enabled at all.
      */
-    ble_error_t startScan(Gap::AdvertisementReportCallback_t callback);
+    ble_error_t startScan(void (*callback)(const Gap::AdvertisementCallbackParams_t *params));
+
+    /**
+     * Start scanning (Observer Procedure) based on the scan-params currently
+     * in effect.
+     *
+     * @param[in] object
+     * @param[in] callbackMember
+     *                The above pair of parameters define the callback object
+     *                and member function to receive the advertisement params.
+     */
+    template<typename T>
+    ble_error_t startScan(T *object, void (T::*memberCallback)(const Gap::AdvertisementCallbackParams_t *params));
 
     /**
      * Stop scanning. The current scanning parameters remain in effect.
@@ -783,8 +795,14 @@ BLEDevice::setActiveScan(bool activeScanning) {
 }
 
 inline ble_error_t
-BLEDevice::startScan(Gap::AdvertisementReportCallback_t callback) {
+BLEDevice::startScan(void (*callback)(const Gap::AdvertisementCallbackParams_t *params)) {
     return transport->getGap().startScan(scanningParams, callback);
+}
+
+template<typename T>
+inline ble_error_t
+BLEDevice::startScan(T *object, void (T::*memberCallback)(const Gap::AdvertisementCallbackParams_t *params)) {
+    return transport->getGap().startScan(scanningParams, object, memberCallback);
 }
 
 inline ble_error_t

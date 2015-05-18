@@ -21,6 +21,7 @@
 #include "GapAdvertisingParams.h"
 #include "GapEvents.h"
 #include "CallChain.h"
+#include "FunctionPointerWithContext.h"
 
 using namespace mbed;
 
@@ -152,12 +153,15 @@ public:
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
-    typedef void (*AdvertisementReportCallback_t)(const address_t      peerAddr,
-                                                  int8_t               rssi,
-                                                  bool                 isScanResponse,
-                                                  AdvertisementType_t  type,
-                                                  uint8_t              advertisingDataLen,
-                                                  const uint8_t       *advertisingData);
+    struct AdvertisementCallbackParams_t {
+        Address_t            peerAddr;
+        int8_t               rssi;
+        bool                 isScanResponse;
+        AdvertisementType_t  type;
+        uint8_t              advertisingDataLen;
+        const uint8_t       *advertisingData;
+    };
+    typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
     friend class BLEDevice;
 
@@ -168,7 +172,6 @@ private:
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
-    virtual ble_error_t startScan(const GapScanningParams &scanningParams, AdvertisementReportCallback_t callback) = 0;
     virtual ble_error_t stopScan()                                                                 = 0;
     virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
     virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
@@ -186,7 +189,32 @@ private:
     virtual ble_error_t setAppearance(uint16_t appearance)                    = 0;
     virtual ble_error_t getAppearance(uint16_t *appearanceP)                  = 0;
 
+    ble_error_t startScan(const GapScanningParams &scanningParams, void (*callback)(const AdvertisementCallbackParams_t *params)) {
+        ble_error_t err = BLE_ERROR_NONE;
+        if (callback) {
+            if ((err = startRadioScan(scanningParams)) == BLE_ERROR_NONE) {
+                onAdvertisementReport.attach(callback);
+            }
+        }
+
+        return err;
+    }
+
+    template<typename T>
+    ble_error_t startScan(const GapScanningParams &scanningParams, T *object, void (T::*callbackMember)(const AdvertisementCallbackParams_t *params)) {
+        ble_error_t err = BLE_ERROR_NONE;
+        if (object && callbackMember) {
+            if ((err = startRadioScan(scanningParams)) == BLE_ERROR_NONE) {
+                onAdvertisementReport.attach(object, callbackMember);
+            }
+        }
+
+        return err;
+    }
+
 protected:
+    virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) = 0;
+
     /* Event callback handlers */
     void setOnTimeout(EventCallback_t callback) {onTimeout = callback;}
     void setOnConnection(ConnectionEventCallback_t callback) {onConnection = callback;}
@@ -322,9 +350,14 @@ public:
                                     AdvertisementType_t  type,
                                     uint8_t              advertisingDataLen,
                                     const uint8_t       *advertisingData) {
-        if (onAdvertisementReport) {
-            onAdvertisementReport(peerAddr, rssi, isScanResponse, type, advertisingDataLen, advertisingData);
-        }
+        AdvertisementCallbackParams_t params;
+        memcpy(params.peerAddr, peerAddr, ADDR_LEN);
+        params.rssi               = rssi;
+        params.isScanResponse     = isScanResponse;
+        params.type               = type;
+        params.advertisingDataLen = advertisingDataLen;
+        params.advertisingData    = advertisingData;
+        onAdvertisementReport.call(&params);
     }
 
     void processEvent(GapEvents::gapEvent_e type) {
