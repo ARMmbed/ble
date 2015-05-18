@@ -33,8 +33,16 @@ public:
     /**
      * Initialize the BLE controller. This should be called before using
      * anything else in the BLE_API.
+     *
+     * init() hands control to the underlying BLE module to accomplish
+     * initialization. This initialization may tacitly depend on other hardware
+     * setup (such as clocks or power-modes) which happens early on during
+     * system startup. It may not be safe to call init() from global static
+     * context where ordering is compiler specific and can't be guaranteed--it
+     * is safe to call BLEDevice::init() from within main().
      */
     ble_error_t init();
+
     ble_error_t reset(void);
 
     /**
