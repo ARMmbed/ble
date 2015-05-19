@@ -139,7 +139,7 @@ public:
      * @return  Read back advertising parameters. Useful for storing and
      *          restoring parameters rapidly.
      */
-    GapAdvertisingParams getAdvertisingParams(void);
+    const GapAdvertisingParams &getAdvertisingParams(void) const;
 
     /**
      * This API is typically used as an internal helper to udpate the transport
@@ -160,7 +160,7 @@ public:
      * @return  Read back advertising data. Useful for storing and
      *          restoring payload.
      */
-    GapAdvertisingData getAdvertisingData(void);
+    const GapAdvertisingData &getAdvertisingData(void) const;
 
     /**
      * Reset any advertising payload prepared from prior calls to
@@ -696,8 +696,8 @@ BLEDevice::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
     advParams = newAdvParams;
 }
 
-inline GapAdvertisingParams
-BLEDevice::getAdvertisingParams(void)
+inline const GapAdvertisingParams &
+BLEDevice::getAdvertisingParams(void) const
 {
     return advParams;
 }
@@ -769,8 +769,8 @@ BLEDevice::setAdvertisingData(const GapAdvertisingData& newPayload)
     return setAdvertisingPayload();
 }
 
-inline GapAdvertisingData
-BLEDevice::getAdvertisingData(void) {
+inline const GapAdvertisingData &
+BLEDevice::getAdvertisingData(void) const {
     return advPayload;
 }
 
