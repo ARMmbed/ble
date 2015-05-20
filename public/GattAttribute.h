@@ -20,6 +20,7 @@
 class GattAttribute {
 public:
     typedef uint16_t Handle_t;
+    static const Handle_t INVALID_HANDLE = 0x0000;
 
 public:
     /**
