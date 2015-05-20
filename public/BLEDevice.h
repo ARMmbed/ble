@@ -319,6 +319,8 @@ public:
      */
     ble_error_t stopScan(void);
 
+    ble_error_t connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC);
+
     /**
      * This call initiates the disconnection procedure, and its completion will
      * be communicated to the application with an invocation of the
@@ -855,6 +857,11 @@ BLEDevice::startScan(T *object, void (T::*memberCallback)(const Gap::Advertiseme
 inline ble_error_t
 BLEDevice::stopScan(void) {
     return transport->getGap().stopScan();
+}
+
+inline ble_error_t
+BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType) {
+    return transport->getGap().connect(peerAddr, peerAddrType);
 }
 
 inline ble_error_t
