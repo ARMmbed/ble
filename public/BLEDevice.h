@@ -20,8 +20,12 @@
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
-#include "GapScanningParams.h"
 #include "BLEDeviceInstanceBase.h"
+
+#include "GapAdvertisingData.h"
+#include "GapAdvertisingParams.h"
+#include "GapScanningParams.h"
+
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
