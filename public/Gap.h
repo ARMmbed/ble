@@ -17,16 +17,16 @@
 #ifndef __GAP_H__
 #define __GAP_H__
 
-#include "GapAdvertisingData.h"
-#include "GapAdvertisingParams.h"
-#include "GapScanningParams.h"
 #include "GapEvents.h"
 #include "CallChain.h"
 #include "FunctionPointerWithContext.h"
 
 using namespace mbed;
 
-class GapScanningParams; /* forward declaration */
+/* Forward declarations for classes which will only be used for pointers or references in the following. */
+class GapAdvertisingParams;
+class GapScanningParams;
+class GapAdvertisingData;
 
 class Gap {
 public:
