@@ -19,6 +19,7 @@
 
 #include "UUID.h"
 #include "Gap.h"
+#include "GattAttribute.h"
 
 class ServiceDiscovery {
 public:
@@ -32,9 +33,9 @@ public:
             endHandle   = end;
         }
 
-        ShortUUIDBytes_t uuid;        /**< UUID of the service.  */
-        Gap::Handle_t    startHandle; /**< Service Handle Range. */
-        Gap::Handle_t    endHandle;   /**< Service Handle Range. */
+        ShortUUIDBytes_t        uuid;        /**< UUID of the service.  */
+        GattAttribute::Handle_t startHandle; /**< Service Handle Range. */
+        GattAttribute::Handle_t endHandle;   /**< Service Handle Range. */
     };
 
     /**@brief Structure for holding information about the service and the characteristics found during
@@ -74,17 +75,17 @@ public:
             uint8_t auth_signed_wr :1; /**< Writing the value with Signed Write Command permitted. */
         };
 
-        void setup(ShortUUIDBytes_t uuidIn, Properties_t propsIn, Gap::Handle_t declHandleIn, Gap::Handle_t valueHandleIn) {
+        void setup(ShortUUIDBytes_t uuidIn, Properties_t propsIn, GattAttribute::Handle_t declHandleIn, GattAttribute::Handle_t valueHandleIn) {
             uuid        = uuidIn;
             props       = propsIn;
             declHandle  = declHandleIn;
             valueHandle = valueHandleIn;
         }
 
-        ShortUUIDBytes_t uuid;
-        Properties_t     props;
-        Gap::Handle_t    declHandle;
-        Gap::Handle_t    valueHandle;
+        ShortUUIDBytes_t        uuid;
+        Properties_t            props;
+        GattAttribute::Handle_t declHandle;
+        GattAttribute::Handle_t valueHandle;
     };
 
 public:
