@@ -862,11 +862,13 @@ BLEDevice::stopScan(void) {
 
 inline ble_error_t
 BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType) {
-    return transport->getGap().connect(peerAddr, peerAddrType, scanningParams);
+    Gap::ConnectionParams_t connectionParams;
+    return transport->getGap().connect(peerAddr, peerAddrType, scanningParams, connectionParams);
 }
 inline ble_error_t
 BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType, const GapScanningParams &scanParams) {
-    return transport->getGap().connect(peerAddr, peerAddrType, scanParams);
+    Gap::ConnectionParams_t connectionParams;
+    return transport->getGap().connect(peerAddr, peerAddrType, scanParams, connectionParams);
 }
 
 inline ble_error_t
