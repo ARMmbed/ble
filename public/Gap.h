@@ -164,13 +164,6 @@ public:
     };
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
-    typedef void (*AdvertisementReportCallback_t)(const address_t      peerAddr,
-                                                  int8_t               rssi,
-                                                  bool                 isScanResponse,
-                                                  AdvertisementType_t  type,
-                                                  uint8_t              advertisingDataLen,
-                                                  const uint8_t       *advertisingData);
-
     friend class BLEDevice;
 
 private:
