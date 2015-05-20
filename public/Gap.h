@@ -177,7 +177,7 @@ private:
     virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
     virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
     virtual uint16_t    getMaxAdvertisingInterval(void) const                                      = 0;
-    virtual ble_error_t connect(const Address_t peerAddr, Gap::AddressType_t peerAddrType)         = 0;
+    virtual ble_error_t connect(const Address_t peerAddr, Gap::AddressType_t peerAddrType, const GapScanningParams &scanParams) = 0;
     virtual ble_error_t disconnect(DisconnectionReason_t reason)                                   = 0;
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params)                   = 0;
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;

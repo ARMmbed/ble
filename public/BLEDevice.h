@@ -320,6 +320,7 @@ public:
     ble_error_t stopScan(void);
 
     ble_error_t connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC);
+    ble_error_t connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType, const GapScanningParams &scanParams);
 
     /**
      * This call initiates the disconnection procedure, and its completion will
@@ -861,7 +862,11 @@ BLEDevice::stopScan(void) {
 
 inline ble_error_t
 BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType) {
-    return transport->getGap().connect(peerAddr, peerAddrType);
+    return transport->getGap().connect(peerAddr, peerAddrType, scanningParams);
+}
+inline ble_error_t
+BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType, const GapScanningParams &scanParams) {
+    return transport->getGap().connect(peerAddr, peerAddrType, scanParams);
 }
 
 inline ble_error_t
