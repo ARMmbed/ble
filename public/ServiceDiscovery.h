@@ -23,16 +23,38 @@
 
 class ServiceDiscovery {
 public:
-    /**@brief Structure for holding information about the service and the characteristics found during
+    /**@brief Type for holding information about the service and the characteristics found during
      *        the discovery process.
      */
-    struct DiscoveredService {
-        void setup(ShortUUIDBytes_t uuidIn, Gap::Handle_t start, Gap::Handle_t end) {
+    class DiscoveredService {
+    public:
+        void setup(ShortUUIDBytes_t uuidIn, GattAttribute::Handle_t startHandleIn, GattAttribute::Handle_t endHandleIn) {
             uuid        = uuidIn;
-            startHandle = start;
-            endHandle   = end;
+            startHandle = startHandleIn;
+            endHandle   = endHandleIn;
         }
 
+    public:
+        const ShortUUIDBytes_t& getShortUUID(void) const {
+            return uuid;
+        }
+
+        const GattAttribute::Handle_t& getStartHandle(void) const {
+            return startHandle;
+        }
+        const GattAttribute::Handle_t& getEndHandle(void) const {
+            return endHandle;
+        }
+
+    public:
+        DiscoveredService() : uuid(0), startHandle(GattAttribute::INVALID_HANDLE), endHandle(GattAttribute::INVALID_HANDLE) {
+            /* empty */
+        }
+
+    private:
+        DiscoveredService(const DiscoveredService &);
+
+    private:
         ShortUUIDBytes_t        uuid;        /**< UUID of the service.  */
         GattAttribute::Handle_t startHandle; /**< Service Handle Range. */
         GattAttribute::Handle_t endHandle;   /**< Service Handle Range. */
