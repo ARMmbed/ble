@@ -63,7 +63,8 @@ public:
     /**@brief Structure for holding information about the service and the characteristics found during
      *        the discovery process.
      */
-    struct DiscoveredCharacteristic {
+    class DiscoveredCharacteristic {
+    public:
         struct Properties_t {
             static const uint8_t BROADCAST_PROPERTY_MASK         = 0x01;
             static const uint8_t READ_PROPERTY_MASK              = 0x02;
@@ -104,6 +105,28 @@ public:
             valueHandle = valueHandleIn;
         }
 
+    public:
+        const ShortUUIDBytes_t& getShortUUID(void) const {
+            return uuid;
+        }
+
+        const Properties_t& getProperties(void) const {
+            return props;
+        }
+
+        const GattAttribute::Handle_t& getDeclHandle(void) const {
+            return declHandle;
+        }
+        const GattAttribute::Handle_t& getValueHandle(void) const {
+            return valueHandle;
+        }
+
+    public:
+        DiscoveredCharacteristic() : uuid(0), props(), declHandle(GattAttribute::INVALID_HANDLE), valueHandle(GattAttribute::INVALID_HANDLE) {
+            /* empty */
+        }
+
+    private:
         ShortUUIDBytes_t        uuid;
         Properties_t            props;
         GattAttribute::Handle_t declHandle;
