@@ -320,10 +320,18 @@ public:
     ble_error_t stopScan(void);
 
     /**
-     * [connect description]
-     * @param  peerAddr     [description]
-     * @param  peerAddrType [description]
-     * @return              [description]
+     * Create a connection (GAP Link Establishment).
+     * @param peerAddr
+     *          48-bit address, LSB format.
+     * @param peerAddrType
+     *          Address type of the peer.
+     * @param connectionParams
+     *         Connection parameters.
+     * @param scanParams
+     *          Paramters to be used while scanning for the peer.
+     * @return  BLE_ERROR_NONE if connection establishment procedure is started
+     *     successfully. The onConnection callback (if set) will be invoked upon
+     *     a connection event.
      */
     ble_error_t connect(const Gap::Address_t           peerAddr,
                         Gap::AddressType_t             peerAddrType     = Gap::ADDR_TYPE_RANDOM_STATIC,
