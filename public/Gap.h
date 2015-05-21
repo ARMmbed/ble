@@ -62,10 +62,10 @@ public:
     };
 
     /* Describes the current state of the device (more than one bit can be set) */
-    typedef struct GapState_s {
+    struct GapState_t {
         unsigned advertising : 1; /**< peripheral is currently advertising */
         unsigned connected   : 1; /**< peripheral is connected to a central */
-    } GapState_t;
+    };
 
     typedef uint16_t Handle_t;
 
