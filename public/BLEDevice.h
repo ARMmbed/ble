@@ -334,9 +334,9 @@ public:
      *     a connection event.
      */
     ble_error_t connect(const Gap::Address_t           peerAddr,
-                        Gap::AddressType_t             peerAddrType     = Gap::ADDR_TYPE_RANDOM_STATIC,
+                        Gap::AddressType_t             peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC,
                         const Gap::ConnectionParams_t *connectionParams = NULL,
-                        const GapScanningParams       *scanParams       = NULL);
+                        const GapScanningParams       *scanParams = NULL);
 
     /**
      * This call initiates the disconnection procedure, and its completion will
