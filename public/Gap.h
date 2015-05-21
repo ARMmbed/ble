@@ -77,6 +77,11 @@ public:
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
+    enum Role_t {
+        PERIPHERAL  = 0x1, /**< Peripheral Role. */
+        CENTRAL     = 0x2, /**< Central Role.    */
+    };
+
     enum SecurityMode_t {
         SECURITY_MODE_NO_ACCESS,
         SECURITY_MODE_ENCRYPTION_OPEN_LINK, /**< require no protection, open link. */
