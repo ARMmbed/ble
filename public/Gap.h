@@ -173,7 +173,7 @@ public:
 
 private:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(AddressType_t type,   const Address_t address)                  = 0;
+    virtual ble_error_t setAddress(AddressType_t type,  const Address_t address)                  = 0;
     virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address)                        = 0;
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
