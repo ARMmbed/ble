@@ -82,6 +82,16 @@ public:
         CENTRAL     = 0x2, /**< Central Role.    */
     };
 
+    struct AdvertisementCallbackParams_t {
+        Address_t            peerAddr;
+        int8_t               rssi;
+        bool                 isScanResponse;
+        AdvertisementType_t  type;
+        uint8_t              advertisingDataLen;
+        const uint8_t       *advertisingData;
+    };
+    typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
+
     enum SecurityMode_t {
         SECURITY_MODE_NO_ACCESS,
         SECURITY_MODE_ENCRYPTION_OPEN_LINK, /**< require no protection, open link. */
@@ -158,16 +168,6 @@ public:
     typedef void (*SecuritySetupCompletedCallback_t)(Handle_t, SecurityCompletionStatus_t status);
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
-
-    struct AdvertisementCallbackParams_t {
-        Address_t            peerAddr;
-        int8_t               rssi;
-        bool                 isScanResponse;
-        AdvertisementType_t  type;
-        uint8_t              advertisingDataLen;
-        const uint8_t       *advertisingData;
-    };
-    typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
     friend class BLEDevice;
 
