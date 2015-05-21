@@ -56,13 +56,13 @@ public:
      * Set the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t setAddress(Gap::AddressType_t type, const Gap::address_t address);
+    ble_error_t setAddress(Gap::AddressType_t type, const Gap::Address_t address);
 
     /**
      * Fetch the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t getAddress(Gap::AddressType_t *typeP, Gap::address_t address);
+    ble_error_t getAddress(Gap::AddressType_t *typeP, Gap::Address_t address);
 
     /**
      * @param[in] advType
@@ -649,13 +649,13 @@ BLEDevice::shutdown(void)
 }
 
 inline ble_error_t
-BLEDevice::setAddress(Gap::AddressType_t type, const Gap::address_t address)
+BLEDevice::setAddress(Gap::AddressType_t type, const Gap::Address_t address)
 {
     return transport->getGap().setAddress(type, address);
 }
 
 inline ble_error_t
-BLEDevice::getAddress(Gap::AddressType_t *typeP, Gap::address_t address)
+BLEDevice::getAddress(Gap::AddressType_t *typeP, Gap::Address_t address)
 {
     return transport->getGap().getAddress(typeP, address);
 }
