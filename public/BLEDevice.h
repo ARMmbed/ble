@@ -468,7 +468,11 @@ public:
     /**
      * A version of the same as above with connection handle parameter to allow updates for connection-specific multivalued attribtues (such as the CCCDs).
      */
-    ble_error_t updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
+    ble_error_t updateCharacteristicValue(Gap::Handle_t            connectionHandle,
+                                          GattAttribute::Handle_t  attributeHandle,
+                                          const uint8_t           *value,
+                                          uint16_t                 size,
+                                          bool                     localOnly = false);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -985,7 +989,10 @@ inline ble_error_t BLEDevice::readCharacteristicValue(GattAttribute::Handle_t at
     return transport->getGattServer().readValue(attributeHandle, buffer, lengthP);
 }
 
-inline ble_error_t BLEDevice::readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP)
+inline ble_error_t BLEDevice::readCharacteristicValue(Gap::Handle_t            connectionHandle,
+                                                      GattAttribute::Handle_t  attributeHandle,
+                                                      uint8_t                 *buffer,
+                                                      uint16_t                *lengthP)
 {
     return transport->getGattServer().readValue(connectionHandle, attributeHandle, buffer, lengthP);
 }
@@ -997,7 +1004,11 @@ BLEDevice::updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, co
 }
 
 inline ble_error_t
-BLEDevice::updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly)
+BLEDevice::updateCharacteristicValue(Gap::Handle_t            connectionHandle,
+                                     GattAttribute::Handle_t  attributeHandle,
+                                     const uint8_t           *value,
+                                     uint16_t                 size,
+                                     bool                     localOnly)
 {
     return transport->getGattServer().updateValue(connectionHandle, attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
 }
