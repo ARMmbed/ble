@@ -319,8 +319,16 @@ public:
      */
     ble_error_t stopScan(void);
 
-    ble_error_t connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC);
-    ble_error_t connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType, const GapScanningParams &scanParams);
+    /**
+     * [connect description]
+     * @param  peerAddr     [description]
+     * @param  peerAddrType [description]
+     * @return              [description]
+     */
+    ble_error_t connect(const Gap::Address_t           peerAddr,
+                        Gap::AddressType_t             peerAddrType     = Gap::ADDR_TYPE_RANDOM_STATIC,
+                        const Gap::ConnectionParams_t *connectionParams = NULL,
+                        const GapScanningParams       *scanParams       = NULL);
 
     /**
      * This call initiates the disconnection procedure, and its completion will
@@ -861,26 +869,11 @@ BLEDevice::stopScan(void) {
 }
 
 inline ble_error_t
-BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType) {
-    Gap::ConnectionParams_t connectionParams = {
-        .minConnectionInterval = 30,
-        .maxConnectionInterval = 100,
-        .slaveLatency = 0,
-        .connectionSupervisionTimeout = 400
-    };
-
-    return transport->getGap().connect(peerAddr, peerAddrType, scanningParams, connectionParams);
-}
-inline ble_error_t
-BLEDevice::connect(const Gap::Address_t peerAddr, Gap::AddressType_t peerAddrType, const GapScanningParams &scanParams) {
-    Gap::ConnectionParams_t connectionParams = {
-        .minConnectionInterval = 30,
-        .maxConnectionInterval = 100,
-        .slaveLatency = 0,
-        .connectionSupervisionTimeout = 400
-    };
-
-    return transport->getGap().connect(peerAddr, peerAddrType, scanParams, connectionParams);
+BLEDevice::connect(const Gap::Address_t           peerAddr,
+                   Gap::AddressType_t             peerAddrType,
+                   const Gap::ConnectionParams_t *connectionParams,
+                   const GapScanningParams       *scanParams) {
+    return transport->getGap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
 }
 
 inline ble_error_t
