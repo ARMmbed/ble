@@ -92,6 +92,34 @@ public:
     };
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
+    struct ConnectionCallbackParams_t {
+        Handle_t      handle;
+        Role_t        role;
+        AddressType_t peerAddrType;
+        Address_t     peerAddr;
+        AddressType_t ownAddrType;
+        Address_t     ownAddr;
+        const ConnectionParams_t *connectionParams;
+
+        ConnectionCallbackParams_t(Handle_t       handleIn,
+                                   Role_t         roleIn,
+                                   AddressType_t  peerAddrTypeIn,
+                                   const uint8_t *peerAddrIn,
+                                   AddressType_t  ownAddrTypeIn,
+                                   const uint8_t *ownAddrIn,
+                                   const ConnectionParams_t *connectionParamsIn) :
+            handle(handleIn),
+            role(roleIn),
+            peerAddrType(peerAddrTypeIn),
+            peerAddr(),
+            ownAddrType(ownAddrTypeIn),
+            ownAddr(),
+            connectionParams(connectionParamsIn) {
+            memcpy(peerAddr, peerAddrIn, ADDR_LEN);
+            memcpy(ownAddr, ownAddrIn, ADDR_LEN);
+        }
+    };
+
     enum SecurityMode_t {
         SECURITY_MODE_NO_ACCESS,
         SECURITY_MODE_ENCRYPTION_OPEN_LINK, /**< require no protection, open link. */
@@ -157,10 +185,7 @@ public:
     }
 
     typedef void (*EventCallback_t)(void);
-    typedef void (*ConnectionEventCallback_t)(Handle_t,
-                                              AddressType_t peerAddrType, const Address_t peerAddr,
-                                              AddressType_t ownAddrType,  const Address_t ownAddr,
-                                              const ConnectionParams_t *);
+    typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
     typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
@@ -310,14 +335,16 @@ protected:
 
 public:
     void processConnectionEvent(Handle_t                  handle,
+                                Role_t                    role,
                                 AddressType_t             peerAddrType,
                                 const Address_t           peerAddr,
                                 AddressType_t             ownAddrType,
                                 const Address_t           ownAddr,
-                                const ConnectionParams_t *params) {
+                                const ConnectionParams_t *connectionParams) {
         state.connected = 1;
         if (onConnection) {
-            onConnection(handle, peerAddrType, peerAddr, ownAddrType, ownAddr, params);
+            ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
+            onConnection(&callbackParams);
         }
     }
 
