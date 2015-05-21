@@ -138,11 +138,11 @@ public:
     typedef void (*CharacteristicCallback_t)(const DiscoveredCharacteristic &);
 
 public:
-    static ble_error_t launch(Gap::Handle_t            connectionHandle,
-                              ServiceCallback_t        sc = NULL,
-                              CharacteristicCallback_t cc = NULL,
-                              UUID                     matchingServiceUUID = ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
-                              UUID                     matchingCharacteristicUUIDIn = ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
+    static ble_error_t launch(Gap::Handle_t             connectionHandle,
+                              ServiceCallback_t         sc = NULL,
+                              CharacteristicCallback_t  cc = NULL,
+                              const UUID               &matchingServiceUUID = ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                              const UUID               &matchingCharacteristicUUIDIn = ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
 
     static void        terminate(void);
 
