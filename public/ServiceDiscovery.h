@@ -139,13 +139,10 @@ public:
 
 public:
     static ble_error_t launch(Gap::Handle_t            connectionHandle,
-                              ServiceCallback_t        sc,
-                              CharacteristicCallback_t cc = NULL);
-    static ble_error_t launch(Gap::Handle_t            connectionHandle,
-                              UUID                     matchingServiceUUIDIn,
-                              ServiceCallback_t        sc,
-                              UUID                     matchingCharacteristicUUIDIn = ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
-                              CharacteristicCallback_t cc = NULL);
+                              ServiceCallback_t        sc = NULL,
+                              CharacteristicCallback_t cc = NULL,
+                              UUID                     matchingServiceUUID = ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                              UUID                     matchingCharacteristicUUIDIn = ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
 
     static void        terminate(void);
 
