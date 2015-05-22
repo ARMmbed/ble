@@ -28,14 +28,14 @@ public:
      */
     class DiscoveredService {
     public:
-        void setup(ShortUUIDBytes_t uuidIn, GattAttribute::Handle_t startHandleIn, GattAttribute::Handle_t endHandleIn) {
+        void setup(UUID::ShortUUIDBytes_t uuidIn, GattAttribute::Handle_t startHandleIn, GattAttribute::Handle_t endHandleIn) {
             uuid        = uuidIn;
             startHandle = startHandleIn;
             endHandle   = endHandleIn;
         }
 
     public:
-        const ShortUUIDBytes_t& getShortUUID(void) const {
+        const UUID::ShortUUIDBytes_t& getShortUUID(void) const {
             return uuid;
         }
 
@@ -55,7 +55,7 @@ public:
         DiscoveredService(const DiscoveredService &);
 
     private:
-        ShortUUIDBytes_t        uuid;        /**< UUID of the service.  */
+        UUID::ShortUUIDBytes_t  uuid;        /**< UUID of the service.  */
         GattAttribute::Handle_t startHandle; /**< Service Handle Range. */
         GattAttribute::Handle_t endHandle;   /**< Service Handle Range. */
     };
@@ -98,7 +98,7 @@ public:
             uint8_t auth_signed_wr :1; /**< Writing the value with Signed Write Command permitted. */
         };
 
-        void setup(ShortUUIDBytes_t uuidIn, Properties_t propsIn, GattAttribute::Handle_t declHandleIn, GattAttribute::Handle_t valueHandleIn) {
+        void setup(UUID::ShortUUIDBytes_t uuidIn, Properties_t propsIn, GattAttribute::Handle_t declHandleIn, GattAttribute::Handle_t valueHandleIn) {
             uuid        = uuidIn;
             props       = propsIn;
             declHandle  = declHandleIn;
@@ -106,7 +106,7 @@ public:
         }
 
     public:
-        const ShortUUIDBytes_t& getShortUUID(void) const {
+        const UUID::ShortUUIDBytes_t& getShortUUID(void) const {
             return uuid;
         }
 
@@ -127,7 +127,7 @@ public:
         }
 
     private:
-        ShortUUIDBytes_t        uuid;
+        UUID::ShortUUIDBytes_t  uuid;
         Properties_t            props;
         GattAttribute::Handle_t declHandle;
         GattAttribute::Handle_t valueHandle;
@@ -142,8 +142,8 @@ public:
     static ble_error_t launch(Gap::Handle_t             connectionHandle,
                               ServiceCallback_t         sc = NULL,
                               CharacteristicCallback_t  cc = NULL,
-                              const UUID               &matchingServiceUUID = ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
-                              const UUID               &matchingCharacteristicUUIDIn = ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
+                              const UUID               &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                              const UUID               &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
 
     static void        terminate(void);
 
