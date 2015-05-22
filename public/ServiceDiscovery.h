@@ -136,6 +136,7 @@ public:
 public:
     typedef void (*ServiceCallback_t)(const DiscoveredService &);
     typedef void (*CharacteristicCallback_t)(const DiscoveredCharacteristic &);
+    typedef void (*TerminationCallback_t)(Gap::Handle_t connectionHandle);
 
 public:
     static ble_error_t launch(Gap::Handle_t             connectionHandle,
@@ -145,6 +146,9 @@ public:
                               const UUID               &matchingCharacteristicUUIDIn = ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
 
     static void        terminate(void);
+
+    static bool        isActive(void);
+    static void        onTermination(TerminationCallback_t callback);
 
 protected:
     Gap::Handle_t            connHandle; /**< Connection handle as provided by the SoftDevice. */
