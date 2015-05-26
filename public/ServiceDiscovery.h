@@ -28,15 +28,15 @@ public:
      */
     class DiscoveredService {
     public:
-        void setup(UUID::ShortUUIDBytes_t uuidIn, GattAttribute::Handle_t startHandleIn, GattAttribute::Handle_t endHandleIn) {
+        void setup(UUID uuidIn, GattAttribute::Handle_t startHandleIn, GattAttribute::Handle_t endHandleIn) {
             uuid        = uuidIn;
             startHandle = startHandleIn;
             endHandle   = endHandleIn;
         }
 
     public:
-        const UUID::ShortUUIDBytes_t& getShortUUID(void) const {
-            return uuid;
+        UUID::ShortUUIDBytes_t getShortUUID(void) const {
+            return uuid.getShortUUID();
         }
 
         const GattAttribute::Handle_t& getStartHandle(void) const {
@@ -47,7 +47,7 @@ public:
         }
 
     public:
-        DiscoveredService() : uuid(0), startHandle(GattAttribute::INVALID_HANDLE), endHandle(GattAttribute::INVALID_HANDLE) {
+        DiscoveredService() : uuid(UUID::ShortUUIDBytes_t(0)), startHandle(GattAttribute::INVALID_HANDLE), endHandle(GattAttribute::INVALID_HANDLE) {
             /* empty */
         }
 
@@ -55,7 +55,7 @@ public:
         DiscoveredService(const DiscoveredService &);
 
     private:
-        UUID::ShortUUIDBytes_t  uuid;        /**< UUID of the service.  */
+        UUID                    uuid;        /**< UUID of the service.  */
         GattAttribute::Handle_t startHandle; /**< Service Handle Range. */
         GattAttribute::Handle_t endHandle;   /**< Service Handle Range. */
     };
