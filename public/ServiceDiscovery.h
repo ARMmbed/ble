@@ -47,7 +47,9 @@ public:
         }
 
     public:
-        DiscoveredService() : uuid(UUID::ShortUUIDBytes_t(0)), startHandle(GattAttribute::INVALID_HANDLE), endHandle(GattAttribute::INVALID_HANDLE) {
+        DiscoveredService() : uuid(UUID::ShortUUIDBytes_t(0)),
+                              startHandle(GattAttribute::INVALID_HANDLE),
+                              endHandle(GattAttribute::INVALID_HANDLE) {
             /* empty */
         }
 
@@ -98,7 +100,10 @@ public:
             uint8_t auth_signed_wr :1; /**< Writing the value with Signed Write Command permitted. */
         };
 
-        void setup(UUID::ShortUUIDBytes_t uuidIn, Properties_t propsIn, GattAttribute::Handle_t declHandleIn, GattAttribute::Handle_t valueHandleIn) {
+        void setup(UUID::ShortUUIDBytes_t  uuidIn,
+                   Properties_t            propsIn,
+                   GattAttribute::Handle_t declHandleIn,
+                   GattAttribute::Handle_t valueHandleIn) {
             uuid        = uuidIn;
             props       = propsIn;
             declHandle  = declHandleIn;
@@ -122,7 +127,10 @@ public:
         }
 
     public:
-        DiscoveredCharacteristic() : uuid(UUID::ShortUUIDBytes_t(0)), props(), declHandle(GattAttribute::INVALID_HANDLE), valueHandle(GattAttribute::INVALID_HANDLE) {
+        DiscoveredCharacteristic() : uuid(UUID::ShortUUIDBytes_t(0)),
+                                     props(),
+                                     declHandle(GattAttribute::INVALID_HANDLE),
+                                     valueHandle(GattAttribute::INVALID_HANDLE) {
             /* empty */
         }
 
