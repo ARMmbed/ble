@@ -106,8 +106,8 @@ public:
         }
 
     public:
-        const UUID::ShortUUIDBytes_t& getShortUUID(void) const {
-            return uuid;
+        UUID::ShortUUIDBytes_t getShortUUID(void) const {
+            return uuid.getShortUUID();
         }
 
         const Properties_t& getProperties(void) const {
@@ -122,12 +122,12 @@ public:
         }
 
     public:
-        DiscoveredCharacteristic() : uuid(0), props(), declHandle(GattAttribute::INVALID_HANDLE), valueHandle(GattAttribute::INVALID_HANDLE) {
+        DiscoveredCharacteristic() : uuid(UUID::ShortUUIDBytes_t(0)), props(), declHandle(GattAttribute::INVALID_HANDLE), valueHandle(GattAttribute::INVALID_HANDLE) {
             /* empty */
         }
 
     private:
-        UUID::ShortUUIDBytes_t  uuid;
+        UUID                    uuid;
         Properties_t            props;
         GattAttribute::Handle_t declHandle;
         GattAttribute::Handle_t valueHandle;
