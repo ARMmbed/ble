@@ -109,6 +109,18 @@ public:
             uint8_t auth_signed_wr :1; /**< Writing the value with Signed Write Command permitted. */
         };
 
+        struct ReadResponse_t {
+            GattAttribute::Handle_t  handle; /**< Attribute Handle. */
+            uint16_t                 offset; /**< Offset of the attribute data. */
+            uint16_t                 len;    /**< Attribute data length. */
+            const uint8_t           *data;   /**< Attribute data, variable length. */
+        };
+        typedef void (*ReadCallback_t)(const ReadResponse_t *params);
+
+        static void setupOnDataRead(ReadCallback_t callback) {
+            onDataReadCallback = callback;
+        }
+
     public:
         void setup(Properties_t            propsIn,
                    GattAttribute::Handle_t declHandleIn,
@@ -161,6 +173,8 @@ public:
         Properties_t            props;
         GattAttribute::Handle_t declHandle;
         GattAttribute::Handle_t valueHandle;
+
+        static ReadCallback_t   onDataReadCallback;
     };
 
 public:
