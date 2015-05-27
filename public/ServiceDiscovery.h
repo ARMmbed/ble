@@ -44,8 +44,8 @@ public:
         }
 
     public:
-        UUID::ShortUUIDBytes_t getShortUUID(void) const {
-            return uuid.getShortUUID();
+        const UUID &getUUID(void) const {
+            return uuid;
         }
 
         const GattAttribute::Handle_t& getStartHandle(void) const {
