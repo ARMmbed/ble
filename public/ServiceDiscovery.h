@@ -34,6 +34,15 @@ public:
             endHandle   = endHandleIn;
         }
 
+        void setup(GattAttribute::Handle_t startHandleIn, GattAttribute::Handle_t endHandleIn) {
+            startHandle = startHandleIn;
+            endHandle   = endHandleIn;
+        }
+
+        void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
+            uuid.setupLong(longUUID);
+        }
+
     public:
         UUID::ShortUUIDBytes_t getShortUUID(void) const {
             return uuid.getShortUUID();
