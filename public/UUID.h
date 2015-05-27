@@ -43,8 +43,7 @@ public:
      *          The 128-bit (16-byte) UUID value, MSB first (big-endian).
      */
     UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
-        memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
-        shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
+        setupLong(longUUID);
     }
 
     /**
@@ -85,6 +84,15 @@ public:
 
     UUID(void) : type(UUID_TYPE_SHORT), shortUUID(BLE_UUID_UNKNOWN) {
         /* empty */
+    }
+
+    /**
+     * Fill in a 128-bit UUID; this is useful when UUID isn't known at the time of object construction.
+     */
+    void setupLong(const LongUUIDBytes_t longUUID) {
+        type      = UUID_TYPE_LONG;
+        memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
+        shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
     }
 
 public:
