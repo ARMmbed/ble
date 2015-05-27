@@ -70,7 +70,13 @@ public:
         onDataReadCallback = callback;
     }
 
-    // virtual void read(uint16_t offset = 0);
+    /**
+     * Initiate (or continue) a read for the value attribute, optionally at a
+     * given offset. If the Characteristic or Descriptor to be read is longer
+     * than ATT_MTU - 1, this function must be called multiple times with
+     * appropriate offset to read the complete value.
+     */
+    virtual void read(uint16_t offset = 0) = 0;
 
 public:
     void setup(Properties_t            propsIn,
