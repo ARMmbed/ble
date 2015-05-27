@@ -109,6 +109,7 @@ public:
             uint8_t auth_signed_wr :1; /**< Writing the value with Signed Write Command permitted. */
         };
 
+    public:
         void setup(Properties_t            propsIn,
                    GattAttribute::Handle_t declHandleIn,
                    GattAttribute::Handle_t valueHandleIn) {
