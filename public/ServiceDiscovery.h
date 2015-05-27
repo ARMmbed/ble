@@ -109,6 +109,14 @@ public:
             uint8_t auth_signed_wr :1; /**< Writing the value with Signed Write Command permitted. */
         };
 
+        void setup(Properties_t            propsIn,
+                   GattAttribute::Handle_t declHandleIn,
+                   GattAttribute::Handle_t valueHandleIn) {
+            props       = propsIn;
+            declHandle  = declHandleIn;
+            valueHandle = valueHandleIn;
+        }
+
         void setup(UUID::ShortUUIDBytes_t  uuidIn,
                    Properties_t            propsIn,
                    GattAttribute::Handle_t declHandleIn,
@@ -117,6 +125,10 @@ public:
             props       = propsIn;
             declHandle  = declHandleIn;
             valueHandle = valueHandleIn;
+        }
+
+        void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
+            uuid.setupLong(longUUID);
         }
 
     public:
