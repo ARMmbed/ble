@@ -76,7 +76,7 @@ public:
      * than ATT_MTU - 1, this function must be called multiple times with
      * appropriate offset to read the complete value.
      */
-    virtual void read(uint16_t offset = 0) = 0;
+    virtual ble_error_t read(uint16_t offset = 0) = 0;
 
 public:
     void setup(Properties_t            propsIn,
