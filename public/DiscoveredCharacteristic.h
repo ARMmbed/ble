@@ -82,25 +82,6 @@ public:
      */
     virtual ble_error_t read(uint16_t offset = 0) = 0;
 
-public:
-    void setup(Properties_t            propsIn,
-               GattAttribute::Handle_t declHandleIn,
-               GattAttribute::Handle_t valueHandleIn) {
-        props       = propsIn;
-        declHandle  = declHandleIn;
-        valueHandle = valueHandleIn;
-    }
-
-    void setup(UUID::ShortUUIDBytes_t  uuidIn,
-               Properties_t            propsIn,
-               GattAttribute::Handle_t declHandleIn,
-               GattAttribute::Handle_t valueHandleIn) {
-        uuid        = uuidIn;
-        props       = propsIn;
-        declHandle  = declHandleIn;
-        valueHandle = valueHandleIn;
-    }
-
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);
     }
@@ -129,12 +110,15 @@ public:
         /* empty */
     }
 
-private:
+protected:
     UUID                    uuid;
     Properties_t            props;
     GattAttribute::Handle_t declHandle;
     GattAttribute::Handle_t valueHandle;
 
+    Gap::Handle_t           connHandle;
+
+public:
     static ReadCallback_t   onDataReadCallback;
 };
 
