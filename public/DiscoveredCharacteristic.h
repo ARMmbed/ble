@@ -75,6 +75,10 @@ public:
      * given offset. If the Characteristic or Descriptor to be read is longer
      * than ATT_MTU - 1, this function must be called multiple times with
      * appropriate offset to read the complete value.
+     *
+     * @return BLE_ERROR_NONE if a read has been initiated, else
+     *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
+     *         BLE_STACK_BUSY if some client procedure already in progress.
      */
     virtual ble_error_t read(uint16_t offset = 0) = 0;
 
