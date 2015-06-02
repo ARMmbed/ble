@@ -80,7 +80,7 @@ public:
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
      *         BLE_STACK_BUSY if some client procedure already in progress.
      */
-    virtual ble_error_t read(uint16_t offset = 0) = 0;
+    virtual ble_error_t read(uint16_t offset = 0) const = 0;
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);
