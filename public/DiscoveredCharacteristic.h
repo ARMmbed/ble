@@ -82,6 +82,27 @@ public:
      */
     virtual ble_error_t read(uint16_t offset = 0) const = 0;
 
+    /**
+     * Perform a write without response procedure.
+     *
+     * @param  length
+     *           The amount of data being written.
+     * @param  value
+     *           The bytes being written.
+     *
+     * @note   It is important to note that a write without response will
+     *         <b>consume an application buffer</b>, and will therefore
+     *         generate a onDataSent() callback when the packet has been
+     *         transmitted. The application should ensure that the buffer is
+     *         valid until the callback.
+     *
+     * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
+     *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
+     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request.
+     */
+    virtual ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const = 0;
+
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);
     }
