@@ -25,11 +25,59 @@
 
 class ServiceDiscovery {
 public:
+    /*
+     * Exposed application callback types.
+     */
     typedef void (*ServiceCallback_t)(const DiscoveredService *);
     typedef void (*CharacteristicCallback_t)(const DiscoveredCharacteristic *);
     typedef void (*TerminationCallback_t)(Gap::Handle_t connectionHandle);
 
 public:
+    /**
+     * Launch service discovery. Once launched, service discovery will remain
+     * active with callbacks being issued back into the application for matching
+     * services/characteristics. isActive() can be used to determine status; and
+     * a termination callback (if setup) will be invoked at the end. Service
+     * discovery can be terminated prematurely if needed using terminate().
+     *
+     * @param  connectionHandle
+     *           Handle for the connection with the peer.
+     * @param  sc
+     *           This is the application callback for matching service. Taken as
+     *           NULL by default. Note: service discovery may still be active
+     *           when this callback is issued; calling asynchronous BLE-stack
+     *           APIs from within this application callback might cause the
+     *           stack to abort service discovery. If this becomes an issue, it
+     *           may be better to make local copy of the discoveredService and
+     *           wait for service discovery to terminate before operating on the
+     *           service.
+     * @param  cc
+     *           This is the application callback for matching characteristic.
+     *           Taken as NULL by default. Note: service discovery may still be
+     *           active when this callback is issued; calling asynchronous
+     *           BLE-stack APIs from within this application callback might cause
+     *           the stack to abort service discovery. If this becomes an issue,
+     *           it may be better to make local copy of the discoveredCharacteristic
+     *           and wait for service discovery to terminate before operating on the
+     *           characteristic.
+     * @param  matchingServiceUUID
+     *           UUID based filter for specifying a service in which the application is
+     *           interested. By default it is set as the wildcard UUID_UNKNOWN,
+     *           in which case it matches all services. If characteristic-UUID
+     *           filter (below) is set to the wildcard value, then a service
+     *           callback will be invoked for the matching service (or for every
+     *           service if the service filter is a wildcard).
+     * @param  matchingCharacteristicUUIDIn
+     *           UUID based filter for specifying characteristic in which the application
+     *           is interested. By default it is set as the wildcard UUID_UKNOWN
+     *           to match against any characteristic. If both service-UUID
+     *           filter and characteristic-UUID filter are used with non- wildcard
+     *           values, then only a single characteristic callback is
+     *           invoked for the matching characteristic.
+     *
+     * @return
+     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     */
     static ble_error_t launch(Gap::Handle_t             connectionHandle,
                               ServiceCallback_t         sc = NULL,
                               CharacteristicCallback_t  cc = NULL,
