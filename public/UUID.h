@@ -124,6 +124,10 @@ public:
         return false;
     }
 
+    bool operator!= (const UUID &other) const {
+        return !(*this == other);
+    }
+
 private:
     UUID_Type_t      type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
     LongUUIDBytes_t  baseUUID;  /* the base of the long UUID (if
