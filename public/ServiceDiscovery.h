@@ -25,7 +25,7 @@
 
 class ServiceDiscovery {
 public:
-    typedef void (*ServiceCallback_t)(const DiscoveredService &);
+    typedef void (*ServiceCallback_t)(const DiscoveredService *);
     typedef void (*CharacteristicCallback_t)(const DiscoveredCharacteristic *);
     typedef void (*TerminationCallback_t)(Gap::Handle_t connectionHandle);
 
