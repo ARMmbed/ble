@@ -28,8 +28,30 @@ public:
     /*
      * Exposed application callback types.
      */
+
+    /**
+     * Callback type for when a matching Service is found during service-
+     * discovery. The receiving function is passed in a pointer to a
+     * DiscoveredService object which will remain valid for the lifetime of the
+     * callback. Memory for this object is owned by the BLE_API eventing
+     * framework. The application can safely make a persistent shallow-copy of
+     * this object in order to work with the service beyond the callback.
+     */
     typedef void (*ServiceCallback_t)(const DiscoveredService *);
+
+    /**
+     * Callback type for when a matching Characteristic is found during service-
+     * discovery. The receiving function is passed in a pointer to a
+     * DiscoveredCharacteristic object which will remain valid for the lifetime
+     * of the callback. Memory for this object is owned by the BLE_API eventing
+     * framework. The application can safely make a persistent shallow-copy of
+     * this object in order to work with the characteristic beyond the callback.
+     */
     typedef void (*CharacteristicCallback_t)(const DiscoveredCharacteristic *);
+
+    /**
+     * Callback type for when serviceDiscovery terminates.
+     */
     typedef void (*TerminationCallback_t)(Gap::Handle_t connectionHandle);
 
 public:
