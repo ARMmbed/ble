@@ -21,8 +21,6 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
-#include <stddef.h>
 
 /** @defgroup BLE_UUID_VALUES Assigned Values for BLE UUIDs
  * @{ */
@@ -115,8 +113,7 @@ enum {
     \brief  Error codes for the BLE API
 */
 /**************************************************************************/
-typedef enum ble_error_e
-{
+enum ble_error_t {
     BLE_ERROR_NONE                    = 0, /**< No error */
     BLE_ERROR_BUFFER_OVERFLOW         = 1, /**< The requested action would cause a buffer overflow and has been aborted */
     BLE_ERROR_NOT_IMPLEMENTED         = 2, /**< Requested a feature that isn't yet implement or isn't supported by the target HW */
@@ -127,7 +124,7 @@ typedef enum ble_error_e
     BLE_ERROR_NO_MEM                  = 7, /**< Out of Memory */
     BLE_ERROR_OPERATION_NOT_PERMITTED = 8,
     BLE_ERROR_UNSPECIFIED             = 9, /**< Unknown error. */
-} ble_error_t;
+};
 
 #ifdef __cplusplus
 }
