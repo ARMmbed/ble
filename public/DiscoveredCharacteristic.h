@@ -69,7 +69,8 @@ public:
      *
      * @return BLE_ERROR_NONE if a read has been initiated, else
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
-     *         BLE_STACK_BUSY if some client procedure already in progress.
+     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     virtual ble_error_t read(uint16_t offset = 0) const = 0;
 
@@ -90,7 +91,8 @@ public:
      * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
      *         BLE_STACK_BUSY if some client procedure already in progress, or
-     *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request.
+     *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
+     *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     virtual ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const = 0;
 
