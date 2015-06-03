@@ -17,6 +17,9 @@
 #ifndef __BLE_DEVICE_INSTANCE_BASE__
 #define __BLE_DEVICE_INSTANCE_BASE__
 
+#include "Gap.h"
+#include "GattServer.h"
+
 /**
  *  The interface for the transport object to be created by the target library's
  *  createBLEDeviceInstance().
