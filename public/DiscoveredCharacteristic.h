@@ -19,6 +19,7 @@
 
 #include "UUID.h"
 #include "GattAttribute.h"
+#include "GattClient.h"
 
 /**
  * Structure for holding information about the service and the characteristics
@@ -74,8 +75,7 @@ public:
             return BLE_ERROR_OPERATION_NOT_PERMITTED;
         }
 
-        return BLE_ERROR_NONE;
-        // return (ble.getGattClient())->read(connHandle, valueHandle, offset);
+        return gattc->read(connHandle, valueHandle, offset);
     }
 
     /**
@@ -132,12 +132,16 @@ public:
     }
 
 public:
-    DiscoveredCharacteristic() : uuid(UUID::ShortUUIDBytes_t(0)),
+    DiscoveredCharacteristic() : gattc(NULL),
+                                 uuid(UUID::ShortUUIDBytes_t(0)),
                                  props(),
                                  declHandle(GattAttribute::INVALID_HANDLE),
                                  valueHandle(GattAttribute::INVALID_HANDLE) {
         /* empty */
     }
+
+protected:
+    GattClient             *gattc;
 
 protected:
     UUID                    uuid;
