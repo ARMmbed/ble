@@ -19,6 +19,7 @@
 
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
+#include "GapScanningParams.h"
 #include "GapEvents.h"
 #include "CallChain.h"
 #include "FunctionPointerWithContext.h"
