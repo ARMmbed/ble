@@ -75,6 +75,10 @@ public:
      *           values, then only a single characteristic callback is
      *           invoked for the matching characteristic.
      *
+     * @Note     Using wildcard values for both service-UUID and characteristic-
+     *           UUID will result in complete service discovery--callbacks being
+     *           called for every service and characteristic.
+     *
      * @return
      *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
      */
