@@ -57,10 +57,6 @@ public:
     };
     typedef void (*ReadCallback_t)(const ReadResponse_t *params);
 
-    static void setupOnDataRead(ReadCallback_t callback) {
-        onDataReadCallback = callback;
-    }
-
     /**
      * Initiate (or continue) a read for the value attribute, optionally at a
      * given offset. If the Characteristic or Descriptor to be read is longer
@@ -109,6 +105,10 @@ public:
 
         return BLE_ERROR_NONE;
         // return (ble.getGattClient())->write(BLE_GATT_OP_WRITE_CMD, connHandle, length, value);
+    }
+
+    static void setupOnDataRead(ReadCallback_t callback) {
+        onDataReadCallback = callback;
     }
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
