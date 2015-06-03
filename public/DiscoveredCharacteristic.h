@@ -72,7 +72,15 @@ public:
      *         BLE_STACK_BUSY if some client procedure already in progress, or
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
-    virtual ble_error_t read(uint16_t offset = 0) const = 0;
+    ble_error_t read(uint16_t offset = 0) const {
+        printf("DiscoveredCharacteristic::read\r\n");
+        if (!props.read()) {
+            return BLE_ERROR_OPERATION_NOT_PERMITTED;
+        }
+
+        return BLE_ERROR_NONE;
+        // return (ble.getGattClient())->read(connHandle, valueHandle, offset);
+    }
 
     /**
      * Perform a write without response procedure.
@@ -94,7 +102,14 @@ public:
      *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
-    virtual ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const = 0;
+    ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const {
+        if (!props.writeWoResp()) {
+            return BLE_ERROR_OPERATION_NOT_PERMITTED;
+        }
+
+        return BLE_ERROR_NONE;
+        // return (ble.getGattClient())->write(BLE_GATT_OP_WRITE_CMD, connHandle, length, value);
+    }
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);
