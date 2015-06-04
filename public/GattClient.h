@@ -20,11 +20,65 @@
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattAttribute.h"
+#include "ServiceDiscovery.h"
 
 class GattClient {
 public:
+    enum Command_t {
+        OP_WRITE_CMD
+    };
+
+public:
+    /**
+     * Launch service discovery. Once launched, service discovery will remain
+     * active with callbacks being issued back into the application for matching
+     * services/characteristics. isActive() can be used to determine status; and
+     * a termination callback (if setup) will be invoked at the end. Service
+     * discovery can be terminated prematurely if needed using terminate().
+     *
+     * @param  connectionHandle
+     *           Handle for the connection with the peer.
+     * @param  sc
+     *           This is the application callback for matching service.
+     * @param  cc
+     *           This is the application callback for matching characteristic.
+     * @param  matchingServiceUUID
+     *           UUID based filter for specifying a service in which the application is
+     *           interested.
+     * @param  matchingCharacteristicUUIDIn
+     *           UUID based filter for specifying characteristic in which the application
+     *           is interested.
+     *
+     * @Note     Using wildcard values for both service-UUID and characteristic-
+     *           UUID will result in complete service discovery--callbacks being
+     *           called for every service and characteristic.
+     *
+     * @return
+     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     */
+    virtual ble_error_t launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
+                                               ServiceDiscovery::ServiceCallback_t         sc                           = NULL,
+                                               ServiceDiscovery::CharacteristicCallback_t  cc                           = NULL,
+                                               const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                                               const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) = 0;
+
+    virtual void        onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) = 0;
+
+    /**
+     * Is service-discovery currently active?
+     */
+    virtual bool isServiceDiscoveryActive(void) const = 0;
+
+    /**
+     * Terminate an ongoing service-discovery. This should result in an
+     * invocation of the TerminationCallback if service-discovery is active.
+     */
+    virtual void terminateServiceDiscovery(void) = 0;
+
     /* Initiate a Gatt Client read procedure by attribute-handle.*/
     virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const = 0;
+
+    virtual ble_error_t write(GattClient::Command_t cmd, Gap::Handle_t connHandle, size_t length, const uint8_t *value) const = 0;
 
 #if 0
 public:

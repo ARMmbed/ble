@@ -638,6 +638,77 @@ public:
      */
     ble_error_t purgeAllBondingState(void);
 
+    /**
+     * Launch service discovery. Once launched, service discovery will remain
+     * active with callbacks being issued back into the application for matching
+     * services/characteristics. isActive() can be used to determine status; and
+     * a termination callback (if setup) will be invoked at the end. Service
+     * discovery can be terminated prematurely if needed using terminate().
+     *
+     * @param  connectionHandle
+     *           Handle for the connection with the peer.
+     * @param  sc
+     *           This is the application callback for matching service. Taken as
+     *           NULL by default. Note: service discovery may still be active
+     *           when this callback is issued; calling asynchronous BLE-stack
+     *           APIs from within this application callback might cause the
+     *           stack to abort service discovery. If this becomes an issue, it
+     *           may be better to make local copy of the discoveredService and
+     *           wait for service discovery to terminate before operating on the
+     *           service.
+     * @param  cc
+     *           This is the application callback for matching characteristic.
+     *           Taken as NULL by default. Note: service discovery may still be
+     *           active when this callback is issued; calling asynchronous
+     *           BLE-stack APIs from within this application callback might cause
+     *           the stack to abort service discovery. If this becomes an issue,
+     *           it may be better to make local copy of the discoveredCharacteristic
+     *           and wait for service discovery to terminate before operating on the
+     *           characteristic.
+     * @param  matchingServiceUUID
+     *           UUID based filter for specifying a service in which the application is
+     *           interested. By default it is set as the wildcard UUID_UNKNOWN,
+     *           in which case it matches all services. If characteristic-UUID
+     *           filter (below) is set to the wildcard value, then a service
+     *           callback will be invoked for the matching service (or for every
+     *           service if the service filter is a wildcard).
+     * @param  matchingCharacteristicUUIDIn
+     *           UUID based filter for specifying characteristic in which the application
+     *           is interested. By default it is set as the wildcard UUID_UKNOWN
+     *           to match against any characteristic. If both service-UUID
+     *           filter and characteristic-UUID filter are used with non- wildcard
+     *           values, then only a single characteristic callback is
+     *           invoked for the matching characteristic.
+     *
+     * @Note     Using wildcard values for both service-UUID and characteristic-
+     *           UUID will result in complete service discovery--callbacks being
+     *           called for every service and characteristic.
+     *
+     * @return
+     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     */
+    ble_error_t launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
+                                       ServiceDiscovery::ServiceCallback_t         sc = NULL,
+                                       ServiceDiscovery::CharacteristicCallback_t  cc = NULL,
+                                       const UUID                                 &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                                       const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
+
+    /**
+     * Setup callback for when serviceDiscovery terminates.
+     */
+    void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback);
+
+    /**
+     * Is service-discovery currently active?
+     */
+    bool isServiceDiscoveryActive(void);
+
+    /**
+     * Terminate an ongoing service-discovery. This should result in an
+     * invocation of the TerminationCallback if service-discovery is active.
+     */
+    void terminateServiceDiscovery(void);
+
 public:
     BLEDevice() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true), scanningParams() {
         advPayload.clear();
@@ -1128,5 +1199,41 @@ BLEDevice::purgeAllBondingState(void)
 {
     return transport->getGap().purgeAllBondingState();
 }
+
+inline ble_error_t
+BLEDevice::launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
+                                  ServiceDiscovery::ServiceCallback_t         sc,
+                                  ServiceDiscovery::CharacteristicCallback_t  cc,
+                                  const UUID                                 &matchingServiceUUID,
+                                  const UUID                                 &matchingCharacteristicUUID)
+{
+    return transport->getGattClient().launchServiceDiscovery(connectionHandle, sc, cc, matchingServiceUUID, matchingCharacteristicUUID);
+}
+
+inline void
+BLEDevice::onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback)
+{
+    transport->getGattClient().onServiceDiscoveryTermination(callback);
+}
+
+/**
+ * Is service-discovery currently active?
+ */
+inline bool
+BLEDevice::isServiceDiscoveryActive(void)
+{
+    return transport->getGattClient().isServiceDiscoveryActive();
+}
+
+/**
+ * Terminate an ongoing service-discovery. This should result in an
+ * invocation of the TerminationCallback if service-discovery is active.
+ */
+inline void
+BLEDevice::terminateServiceDiscovery(void)
+{
+    transport->getGattClient().terminateServiceDiscovery();
+}
+
 
 #endif // ifndef __BLE_DEVICE__

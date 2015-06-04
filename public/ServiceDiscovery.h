@@ -104,27 +104,27 @@ public:
      * @return
      *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
      */
-    static ble_error_t launch(Gap::Handle_t             connectionHandle,
-                              ServiceCallback_t         sc = NULL,
-                              CharacteristicCallback_t  cc = NULL,
-                              const UUID               &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
-                              const UUID               &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
+    virtual ble_error_t launch(Gap::Handle_t             connectionHandle,
+                               ServiceCallback_t         sc = NULL,
+                               CharacteristicCallback_t  cc = NULL,
+                               const UUID               &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                               const UUID               &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) = 0;
+
+    /**
+     * Is service-discovery currently active?
+     */
+    virtual bool        isActive(void) const = 0;
 
     /**
      * Terminate an ongoing service-discovery. This should result in an
      * invocation of the TerminationCallback if service-discovery is active.
      */
-    static void        terminate(void);
-
-    /**
-     * Is service-discovery currently active?
-     */
-    static bool        isActive(void);
+    virtual void        terminate(void) = 0;
 
     /**
      * Setup callback to be invoked when service discovery is terminated.
      */
-    static void        onTermination(TerminationCallback_t callback);
+    virtual void        onTermination(TerminationCallback_t callback) = 0;
 
 protected:
     Gap::Handle_t            connHandle; /**< Connection handle as provided by the SoftDevice. */
