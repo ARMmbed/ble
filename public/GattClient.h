@@ -17,7 +17,15 @@
 #ifndef __GATT_CLIENT_H__
 #define __GATT_CLIENT_H__
 
+#include "blecommon.h"
+#include "Gap.h"
+#include "GattAttribute.h"
+
 class GattClient {
+public:
+    /* Initiate a Gatt Client read procedure by attribute-handle.*/
+    virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const = 0;
+
 #if 0
 public:
     /* Event callback handlers. */
