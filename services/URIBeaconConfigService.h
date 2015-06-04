@@ -20,18 +20,18 @@
 #include "BLEDevice.h"
 #include "mbed.h"
 
-extern const uint8_t UUID_URI_BEACON_SERVICE[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_LOCK_STATE_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_LOCK_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_UNLOCK_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_URI_DATA_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_FLAGS_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_ADV_POWER_LEVELS_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_TX_POWER_MODE_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_BEACON_PERIOD_CHAR[LENGTH_OF_LONG_UUID];
-extern const uint8_t UUID_RESET_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_URI_BEACON_SERVICE[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_LOCK_STATE_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_LOCK_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_UNLOCK_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_URI_DATA_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_FLAGS_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_ADV_POWER_LEVELS_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_TX_POWER_MODE_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_BEACON_PERIOD_CHAR[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_RESET_CHAR[UUID::LENGTH_OF_LONG_UUID];
 
-extern const uint8_t BEACON_UUID[sizeof(ShortUUIDBytes_t)];
+extern const uint8_t BEACON_UUID[sizeof(UUID::ShortUUIDBytes_t)];
 
 /**
 * @class URIBeaconConfigService
