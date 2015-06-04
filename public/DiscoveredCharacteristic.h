@@ -70,7 +70,6 @@ public:
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t read(uint16_t offset = 0) const {
-        printf("DiscoveredCharacteristic::read\r\n");
         if (!props.read()) {
             return BLE_ERROR_OPERATION_NOT_PERMITTED;
         }
