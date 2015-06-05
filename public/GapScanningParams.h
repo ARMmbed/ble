@@ -49,9 +49,6 @@ public:
         if (_window > SCAN_WINDOW_MAX) {
             _window = SCAN_WINDOW_MAX;
         }
-        if (_timeout > SCAN_TIMEOUT_MAX) {
-            _timeout = SCAN_TIMEOUT_MAX;
-        }
     }
 
     ble_error_t setInterval(uint16_t newIntervalInMS) {
@@ -75,12 +72,8 @@ public:
     }
 
     ble_error_t setTimeout(uint16_t newTimeout)   {
-        if (newTimeout <= SCAN_TIMEOUT_MAX) {
-            _timeout  = newTimeout;
-            return BLE_ERROR_NONE;
-        }
-
-        return BLE_ERROR_PARAM_OUT_OF_RANGE;
+        _timeout  = newTimeout;
+        return BLE_ERROR_NONE;
     }
 
     void setActiveScanning(bool activeScanning) {
