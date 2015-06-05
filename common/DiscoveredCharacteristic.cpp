@@ -17,7 +17,7 @@
 #include "DiscoveredCharacteristic.h"
 #include "GattClient.h"
 
-DiscoveredCharacteristic::ReadCallback_t DiscoveredCharacteristic::onDataReadCallback;
+GattClient::ReadCallback_t DiscoveredCharacteristic::onDataReadCallback;
 
 ble_error_t
 DiscoveredCharacteristic::read(uint16_t offset) const

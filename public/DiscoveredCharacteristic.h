@@ -20,8 +20,8 @@
 #include "UUID.h"
 #include "Gap.h"
 #include "GattAttribute.h"
+#include "GattClient.h"
 
-class GattClient; /* forward declaration */
 
 /**
  * Structure for holding information about the service and the characteristics
@@ -51,14 +51,6 @@ public:
         operator uint8_t()  const; /* disallow implicit conversion into an integer */
         operator unsigned() const; /* disallow implicit conversion into an integer */
     };
-
-    struct ReadResponse_t {
-        GattAttribute::Handle_t  handle; /**< Attribute Handle. */
-        uint16_t                 offset; /**< Offset of the attribute data. */
-        uint16_t                 len;    /**< Attribute data length. */
-        const uint8_t           *data;   /**< Attribute data, variable length. */
-    };
-    typedef void (*ReadCallback_t)(const ReadResponse_t *params);
 
     /**
      * Initiate (or continue) a read for the value attribute, optionally at a

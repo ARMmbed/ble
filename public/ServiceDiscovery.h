@@ -20,8 +20,9 @@
 #include "UUID.h"
 #include "Gap.h"
 #include "GattAttribute.h"
-#include "DiscoveredService.h"
-#include "DiscoveredCharacteristic.h"
+
+class DiscoveredService;
+class DiscoveredCharacteristic;
 
 class ServiceDiscovery {
 public:

@@ -20,6 +20,7 @@
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
+#include "GattClient.h"
 #include "BLEDeviceInstanceBase.h"
 
 #include "GapAdvertisingData.h"

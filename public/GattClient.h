@@ -28,6 +28,14 @@ public:
         OP_WRITE_CMD
     };
 
+    struct ReadResponse_t {
+        GattAttribute::Handle_t  handle; /**< Attribute Handle. */
+        uint16_t                 offset; /**< Offset of the attribute data. */
+        uint16_t                 len;    /**< Attribute data length. */
+        const uint8_t           *data;   /**< Attribute data, variable length. */
+    };
+    typedef void (*ReadCallback_t)(const ReadResponse_t *params);
+
 public:
     /**
      * Launch service discovery. Once launched, service discovery will remain
