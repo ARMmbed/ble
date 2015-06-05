@@ -17,7 +17,8 @@
 #include "DiscoveredCharacteristic.h"
 #include "GattClient.h"
 
-GattClient::ReadCallback_t DiscoveredCharacteristic::onDataReadCallback;
+GattClient::ReadCallback_t  DiscoveredCharacteristic::onDataReadCallback;
+GattClient::WriteCallback_t DiscoveredCharacteristic::onDataWriteCallback;
 
 ble_error_t
 DiscoveredCharacteristic::read(uint16_t offset) const
@@ -34,6 +35,20 @@ DiscoveredCharacteristic::read(uint16_t offset) const
 }
 
 ble_error_t
+DiscoveredCharacteristic::write(uint16_t length, const uint8_t *value) const
+{
+    if (!props.write()) {
+        return BLE_ERROR_OPERATION_NOT_PERMITTED;
+    }
+
+    if (!gattc) {
+        return BLE_ERROR_INVALID_STATE;
+    }
+
+    return gattc->write(GattClient::GATT_OP_WRITE_REQ, connHandle, valueHandle, length, value);
+}
+
+ble_error_t
 DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value) const
 {
     if (!props.writeWoResp()) {
@@ -44,5 +59,5 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
         return BLE_ERROR_INVALID_STATE;
     }
 
-    return gattc->write(GattClient::GATT_OP_WRITE_CMD, connHandle, length, value);
+    return gattc->write(GattClient::GATT_OP_WRITE_CMD, connHandle, valueHandle, length, value);
 }

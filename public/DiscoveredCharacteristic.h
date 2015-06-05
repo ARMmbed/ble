@@ -94,11 +94,8 @@ public:
      * @param  value
      *           The bytes being written.
      *
-     * @note   It is important to note that a write without response will generate
-     *         an onDataSent() callback when the packet has been transmitted. There
-     *         will be a BLE-stack specific limit to the number of pending
-     *         writeWoResponse operations; the user may want to use the onDataSent()
-     *         callback for flow-control.
+     * @note   It is important to note that a write will generate
+     *         an onDataWritten() callback when the peer acknowledges the request.
      *
      * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
@@ -110,6 +107,10 @@ public:
 
     static void setupOnDataRead(GattClient::ReadCallback_t callback) {
         onDataReadCallback = callback;
+    }
+
+    static void setupOnDataWrite(GattClient::WriteCallback_t callback) {
+        onDataWriteCallback = callback;
     }
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
@@ -153,7 +154,8 @@ protected:
     Gap::Handle_t           connHandle;
 
 public:
-    static GattClient::ReadCallback_t onDataReadCallback;
+    static GattClient::ReadCallback_t  onDataReadCallback;
+    static GattClient::WriteCallback_t onDataWriteCallback;
 };
 
 #endif /*__DISCOVERED_CHARACTERISTIC_H__*/
