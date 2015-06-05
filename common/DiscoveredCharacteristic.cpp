@@ -44,5 +44,5 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
         return BLE_ERROR_INVALID_STATE;
     }
 
-    return gattc->write(GattClient::OP_WRITE_CMD, connHandle, length, value);
+    return gattc->write(GattClient::GATT_OP_WRITE_CMD, connHandle, length, value);
 }

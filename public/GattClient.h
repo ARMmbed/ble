@@ -23,10 +23,6 @@
 
 class GattClient {
 public:
-    enum Command_t {
-        OP_WRITE_CMD
-    };
-
     struct ReadResponse_t {
         GattAttribute::Handle_t  handle; /**< Attribute Handle. */
         uint16_t                 offset; /**< Offset of the attribute data. */
@@ -34,6 +30,24 @@ public:
         const uint8_t           *data;   /**< Attribute data, variable length. */
     };
     typedef void (*ReadCallback_t)(const ReadResponse_t *params);
+
+    enum WriteOp_t {
+        GATT_OP_INVALID        = 0x00,  /**< Invalid Operation. */
+        GATT_OP_WRITE_REQ      = 0x01,  /**< Write Request. */
+        GATT_OP_WRITE_CMD      = 0x02,  /**< Write Command. */
+        GATT_OP_SIGN_WRITE_CMD = 0x03,  /**< Signed Write Command. */
+        GATT_OP_PREP_WRITE_REQ = 0x04,  /**< Prepare Write Request. */
+        GATT_OP_EXEC_WRITE_REQ = 0x05,  /**< Execute Write Request. */
+    };
+
+    struct WriteResponse_t {
+        GattAttribute::Handle_t  handle;  /**< Attribute Handle. */
+        WriteOp_t                writeOp;
+        uint16_t                 offset;  /**< Offset of the attribute data. */
+        uint16_t                 len;     /**< Attribute data length. */
+        const uint8_t           *data;    /**< Attribute data, variable length. */
+    };
+    typedef void (*WriteCallback_t)(const WriteResponse_t *params);
 
 public:
     /**
@@ -85,7 +99,7 @@ public:
     /* Initiate a Gatt Client read procedure by attribute-handle.*/
     virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const = 0;
 
-    virtual ble_error_t write(GattClient::Command_t cmd, Gap::Handle_t connHandle, size_t length, const uint8_t *value) const = 0;
+    virtual ble_error_t write(GattClient::WriteOp_t cmd, Gap::Handle_t connHandle, size_t length, const uint8_t *value) const = 0;
 
 #if 0
 public:
