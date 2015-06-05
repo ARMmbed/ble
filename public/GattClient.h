@@ -21,15 +21,11 @@
 #include "GattAttribute.h"
 #include "ServiceDiscovery.h"
 
+#include "GattCharacteristicCallbackParams.h"
+
 class GattClient {
 public:
-    struct ReadResponse_t {
-        GattAttribute::Handle_t  handle; /**< Attribute Handle. */
-        uint16_t                 offset; /**< Offset of the attribute data. */
-        uint16_t                 len;    /**< Attribute data length. */
-        const uint8_t           *data;   /**< Attribute data, variable length. */
-    };
-    typedef void (*ReadCallback_t)(const ReadResponse_t *params);
+    typedef void (*ReadCallback_t)(const GattCharacteristicReadCBParams *params);
 
     enum WriteOp_t {
         GATT_OP_INVALID        = 0x00,  /**< Invalid Operation. */
@@ -40,14 +36,7 @@ public:
         GATT_OP_EXEC_WRITE_REQ = 0x05,  /**< Execute Write Request. */
     };
 
-    struct WriteResponse_t {
-        GattAttribute::Handle_t  handle;  /**< Attribute Handle. */
-        WriteOp_t                writeOp;
-        uint16_t                 offset;  /**< Offset of the attribute data. */
-        uint16_t                 len;     /**< Attribute data length. */
-        const uint8_t           *data;    /**< Attribute data, variable length. */
-    };
-    typedef void (*WriteCallback_t)(const WriteResponse_t *params);
+    typedef void (*WriteCallback_t)(const GattCharacteristicWriteCBParams *params);
 
 public:
     /**

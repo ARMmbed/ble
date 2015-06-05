@@ -22,7 +22,6 @@
 #include "GattAttribute.h"
 #include "GattClient.h"
 
-
 /**
  * Structure for holding information about the service and the characteristics
  * found during the discovery process.
@@ -154,7 +153,7 @@ protected:
     Gap::Handle_t           connHandle;
 
 public:
-    static ReadCallback_t   onDataReadCallback;
+    static GattClient::ReadCallback_t onDataReadCallback;
 };
 
 #endif /*__DISCOVERED_CHARACTERISTIC_H__*/
