@@ -81,11 +81,11 @@ public:
      * @param  value
      *           The bytes being written.
      *
-     * @note   It is important to note that a write without response will
-     *         <b>consume an application buffer</b>, and will therefore
-     *         generate a onDataSent() callback when the packet has been
-     *         transmitted. The application should ensure that the buffer is
-     *         valid until the callback.
+     * @note   It is important to note that a write without response will generate
+     *         an onDataSent() callback when the packet has been transmitted. There
+     *         will be a BLE-stack specific limit to the number of pending
+     *         writeWoResponse operations; the user may want to use the onDataSent()
+     *         callback for flow-control.
      *
      * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
@@ -94,6 +94,7 @@ public:
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const;
+
 
     static void setupOnDataRead(ReadCallback_t callback) {
         onDataReadCallback = callback;
