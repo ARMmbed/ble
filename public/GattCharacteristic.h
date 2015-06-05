@@ -19,7 +19,7 @@
 
 #include "Gap.h"
 #include "GattAttribute.h"
-#include "GattCharacteristicCallbackParams.h"
+#include "GattCallbackParamTypes.h"
 #include "FunctionPointerWithContext.h"
 
 class GattCharacteristic {

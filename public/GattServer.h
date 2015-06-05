@@ -21,7 +21,7 @@
 #include "GattService.h"
 #include "GattAttribute.h"
 #include "GattServerEvents.h"
-#include "GattCharacteristicCallbackParams.h"
+#include "GattCallbackParamTypes.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 
 class GattServer {

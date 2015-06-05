@@ -21,7 +21,7 @@
 #include "GattAttribute.h"
 #include "ServiceDiscovery.h"
 
-#include "GattCharacteristicCallbackParams.h"
+#include "GattCallbackParamTypes.h"
 
 class GattClient {
 public:
