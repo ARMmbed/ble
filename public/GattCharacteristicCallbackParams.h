@@ -27,10 +27,10 @@ struct GattCharacteristicWriteCBParams {
         GATTS_CHAR_OP_PREP_WRITE_REQ        = 0x04,  /**< Prepare Write Request. */
         GATTS_CHAR_OP_EXEC_WRITE_REQ_CANCEL = 0x05,  /**< Execute Write Request: Cancel all prepared writes. */
         GATTS_CHAR_OP_EXEC_WRITE_REQ_NOW    = 0x06,  /**< Execute Write Request: Immediately execute all prepared writes. */
-    } op;                  /**< Type of write operation, */
-    uint16_t       offset; /**< Offset for the write operation. */
-    uint16_t       len;    /**< Length of the incoming data. */
-    const uint8_t *data;   /**< Incoming data, variable length. */
+    } op;                   /**< Type of write operation, */
+    uint16_t       offset;  /**< Offset for the write operation. */
+    uint16_t       len;
+    const uint8_t *data;    /* @note: data might not persist beyond the callback; make a local copy if needed. */
 };
 
 struct GattCharacteristicReadCBParams {
@@ -38,8 +38,8 @@ struct GattCharacteristicReadCBParams {
     enum Type {
         GATTS_CHAR_OP_INVALID               = 0x00,  /**< Invalid Operation. */
         GATTS_CHAR_OP_READ_REQ              = 0x0A,  /**< Read Request. */
-    } op;                  /**< Type of write operation, */
-    uint16_t       offset; /**< Offset for the read operation. */
+    } op;                   /**< Type of write operation, */
+    uint16_t        offset; /**< Offset for the read operation. */
     uint16_t        len;
     const uint8_t  *data;   /* @note: data might not persist beyond the callback; make a local copy if needed. */
 };
