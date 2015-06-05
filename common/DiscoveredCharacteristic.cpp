@@ -37,6 +37,10 @@ DiscoveredCharacteristic::read(uint16_t offset) const
         return BLE_ERROR_OPERATION_NOT_PERMITTED;
     }
 
+    if (!gattc) {
+        return BLE_ERROR_INVALID_STATE;
+    }
+
     return gattc->read(connHandle, valueHandle, offset);
 }
 
