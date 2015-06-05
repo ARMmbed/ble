@@ -87,6 +87,27 @@ public:
      */
     ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const;
 
+    /**
+     * Perform a write procedure.
+     *
+     * @param  length
+     *           The amount of data being written.
+     * @param  value
+     *           The bytes being written.
+     *
+     * @note   It is important to note that a write without response will generate
+     *         an onDataSent() callback when the packet has been transmitted. There
+     *         will be a BLE-stack specific limit to the number of pending
+     *         writeWoResponse operations; the user may want to use the onDataSent()
+     *         callback for flow-control.
+     *
+     * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
+     *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
+     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
+     *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
+     */
+    ble_error_t write(uint16_t length, const uint8_t *value) const;
 
     static void setupOnDataRead(GattClient::ReadCallback_t callback) {
         onDataReadCallback = callback;

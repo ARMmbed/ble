@@ -40,8 +40,8 @@ struct GattCharacteristicReadCBParams {
         GATTS_CHAR_OP_READ_REQ              = 0x0A,  /**< Read Request. */
     } op;                  /**< Type of write operation, */
     uint16_t       offset; /**< Offset for the read operation. */
-    uint16_t       *len;   /**< Length of the outgoing data. */
-    uint8_t        *data;  /**< Outgoing data, variable length. */
+    uint16_t        len;
+    const uint8_t  *data;   /* @note: data might not persist beyond the callback; make a local copy if needed. */
 };
 
 enum GattCharacteristicAuthCBReply_t {
