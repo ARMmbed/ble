@@ -392,8 +392,8 @@ public:
      * @Note: it is also possible to setup a callback into a member function of
      * some object.
      */
-    void onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP));
-    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
+    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP));
+    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context));
 
     /**
      * Setup a callback for when a characteristic is being read by a client.
@@ -413,8 +413,8 @@ public:
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
      *         else BLE_ERROR_NONE.
      */
-    ble_error_t onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP));
-    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context));
+    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP));
+    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context));
 
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
@@ -1001,22 +1001,22 @@ BLEDevice::onDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
 }
 
 inline void
-BLEDevice::onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {
+BLEDevice::onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {
     transport->getGattServer().setOnDataWritten(callback);
 }
 
 template <typename T> inline void
-BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
+BLEDevice::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
     transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
 }
 
 inline ble_error_t
-BLEDevice::onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+BLEDevice::onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
     return transport->getGattServer().setOnDataRead(callback);
 }
 
 template <typename T> inline ble_error_t
-BLEDevice::onDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+BLEDevice::onDataRead(T *objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
     return transport->getGattServer().setOnDataRead(objPtr, memberPtr);
 }
 

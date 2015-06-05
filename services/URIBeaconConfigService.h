@@ -232,8 +232,8 @@ class URIBeaconConfigService {
      * characteristics of this service. Attempts to do so are also applied to
      * the internal state of this service object.
      */
-    void onDataWrittenCallback(const GattCharacteristicWriteCBParams *writeParams) {
-        uint16_t handle = writeParams->charHandle;
+    void onDataWrittenCallback(const GattWriteCallbackParams *writeParams) {
+        uint16_t handle = writeParams->handle;
 
         if (handle == lockChar.getValueHandle()) {
             // Validated earlier
@@ -306,7 +306,7 @@ class URIBeaconConfigService {
     }
 
   private:
-    void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+    void lockAuthorizationCallback(GattWriteAuthCallbackParams *authParams) {
         if (lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
         } else if (authParams->len != sizeof(Lock_t)) {
@@ -319,7 +319,7 @@ class URIBeaconConfigService {
     }
 
 
-    void unlockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+    void unlockAuthorizationCallback(GattWriteAuthCallbackParams *authParams) {
         if (!lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
         } else if (authParams->len != sizeof(Lock_t)) {
@@ -333,7 +333,7 @@ class URIBeaconConfigService {
         }
     }
 
-    void uriDataWriteAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+    void uriDataWriteAuthorizationCallback(GattWriteAuthCallbackParams *authParams) {
         if (lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
         } else if (authParams->offset != 0) {
@@ -343,7 +343,7 @@ class URIBeaconConfigService {
         }
     }
 
-    void powerModeAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+    void powerModeAuthorizationCallback(GattWriteAuthCallbackParams *authParams) {
         if (lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
         } else if (authParams->len != sizeof(uint8_t)) {
@@ -358,7 +358,7 @@ class URIBeaconConfigService {
     }
 
     template <typename T>
-    void basicAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
+    void basicAuthorizationCallback(GattWriteAuthCallbackParams *authParams) {
         if (lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
         } else if (authParams->len != sizeof(T)) {
