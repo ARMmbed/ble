@@ -17,7 +17,6 @@
 #ifndef __GATT_CLIENT_H__
 #define __GATT_CLIENT_H__
 
-#include "blecommon.h"
 #include "Gap.h"
 #include "GattAttribute.h"
 #include "ServiceDiscovery.h"
