@@ -88,7 +88,7 @@ public:
     ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const;
 
 
-    static void setupOnDataRead(ReadCallback_t callback) {
+    static void setupOnDataRead(GattClient::ReadCallback_t callback) {
         onDataReadCallback = callback;
     }
 
