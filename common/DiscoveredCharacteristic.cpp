@@ -40,5 +40,9 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
         return BLE_ERROR_OPERATION_NOT_PERMITTED;
     }
 
+    if (!gattc) {
+        return BLE_ERROR_INVALID_STATE;
+    }
+
     return gattc->write(GattClient::OP_WRITE_CMD, connHandle, length, value);
 }
