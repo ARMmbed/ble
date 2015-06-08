@@ -62,10 +62,10 @@ public:
     };
 
     /* Describes the current state of the device (more than one bit can be set) */
-    typedef struct GapState_s {
+    struct GapState_t {
         unsigned advertising : 1; /**< peripheral is currently advertising */
         unsigned connected   : 1; /**< peripheral is connected to a central */
-    } GapState_t;
+    };
 
     typedef uint16_t Handle_t;
 
@@ -142,8 +142,8 @@ public:
 
     typedef void (*EventCallback_t)(void);
     typedef void (*ConnectionEventCallback_t)(Handle_t,
-                                              addr_type_t peerAddrType, const Address_t peerAddr,
-                                              addr_type_t ownAddrType,  const Address_t ownAddr,
+                                              AddressType_t peerAddrType, const Address_t peerAddr,
+                                              AddressType_t ownAddrType,  const Address_t ownAddr,
                                               const ConnectionParams_t *);
     typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
@@ -167,8 +167,8 @@ public:
 
 private:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(addr_type_t type,   const Address_t address)                    = 0;
-    virtual ble_error_t getAddress(addr_type_t *typeP, Address_t address)                          = 0;
+    virtual ble_error_t setAddress(AddressType_t type,   const Address_t address)                    = 0;
+    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address)                          = 0;
     virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
     virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
@@ -299,7 +299,7 @@ protected:
     }
 
 public:
-    void processConnectionEvent(Handle_t handle, addr_type_t peerAddrType, const Address_t peerAddr, addr_type_t ownAddrType, const Address_t ownAddr, const ConnectionParams_t *params) {
+    void processConnectionEvent(Handle_t handle, AddressType_t peerAddrType, const Address_t peerAddr, AddressType_t ownAddrType, const Address_t ownAddr, const ConnectionParams_t *params) {
         state.connected = 1;
         if (onConnection) {
             onConnection(handle, peerAddrType, peerAddr, ownAddrType, ownAddr, params);

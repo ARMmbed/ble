@@ -20,23 +20,18 @@
 #include "BLEDevice.h"
 #include "mbed.h"
 
-#define UUID_URI_BEACON(FIRST, SECOND) {                         \
-        0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
-        0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
-}
+extern const uint8_t UUID_URI_BEACON_SERVICE[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_LOCK_STATE_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_LOCK_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_UNLOCK_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_URI_DATA_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_FLAGS_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_ADV_POWER_LEVELS_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_TX_POWER_MODE_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_BEACON_PERIOD_CHAR[LENGTH_OF_LONG_UUID];
+extern const uint8_t UUID_RESET_CHAR[LENGTH_OF_LONG_UUID];
 
-static const uint8_t UUID_URI_BEACON_SERVICE[]    = UUID_URI_BEACON(0x20, 0x80);
-static const uint8_t UUID_LOCK_STATE_CHAR[]       = UUID_URI_BEACON(0x20, 0x81);
-static const uint8_t UUID_LOCK_CHAR[]             = UUID_URI_BEACON(0x20, 0x82);
-static const uint8_t UUID_UNLOCK_CHAR[]           = UUID_URI_BEACON(0x20, 0x83);
-static const uint8_t UUID_URI_DATA_CHAR[]         = UUID_URI_BEACON(0x20, 0x84);
-static const uint8_t UUID_FLAGS_CHAR[]            = UUID_URI_BEACON(0x20, 0x85);
-static const uint8_t UUID_ADV_POWER_LEVELS_CHAR[] = UUID_URI_BEACON(0x20, 0x86);
-static const uint8_t UUID_TX_POWER_MODE_CHAR[]    = UUID_URI_BEACON(0x20, 0x87);
-static const uint8_t UUID_BEACON_PERIOD_CHAR[]    = UUID_URI_BEACON(0x20, 0x88);
-static const uint8_t UUID_RESET_CHAR[]            = UUID_URI_BEACON(0x20, 0x89);
-
-static const uint8_t BEACON_UUID[] = {0xD8, 0xFE};
+extern const uint8_t BEACON_UUID[sizeof(ShortUUIDBytes_t)];
 
 /**
 * @class URIBeaconConfigService

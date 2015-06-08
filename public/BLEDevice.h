@@ -33,8 +33,16 @@ public:
     /**
      * Initialize the BLE controller. This should be called before using
      * anything else in the BLE_API.
+     *
+     * init() hands control to the underlying BLE module to accomplish
+     * initialization. This initialization may tacitly depend on other hardware
+     * setup (such as clocks or power-modes) which happens early on during
+     * system startup. It may not be safe to call init() from global static
+     * context where ordering is compiler specific and can't be guaranteed--it
+     * is safe to call BLEDevice::init() from within main().
      */
     ble_error_t init();
+
     ble_error_t reset(void);
 
     /**
@@ -48,13 +56,13 @@ public:
      * Set the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t setAddress(Gap::addr_type_t type, const Gap::address_t address);
+    ble_error_t setAddress(Gap::AddressType_t type, const Gap::Address_t address);
 
     /**
      * Fetch the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
      */
-    ble_error_t getAddress(Gap::addr_type_t *typeP, Gap::address_t address);
+    ble_error_t getAddress(Gap::AddressType_t *typeP, Gap::Address_t address);
 
     /**
      * @param[in] advType
@@ -641,13 +649,13 @@ BLEDevice::shutdown(void)
 }
 
 inline ble_error_t
-BLEDevice::setAddress(Gap::addr_type_t type, const Gap::address_t address)
+BLEDevice::setAddress(Gap::AddressType_t type, const Gap::Address_t address)
 {
     return transport->getGap().setAddress(type, address);
 }
 
 inline ble_error_t
-BLEDevice::getAddress(Gap::addr_type_t *typeP, Gap::address_t address)
+BLEDevice::getAddress(Gap::AddressType_t *typeP, Gap::Address_t address)
 {
     return transport->getGap().getAddress(typeP, address);
 }
@@ -816,7 +824,6 @@ BLEDevice::setScanInterval(uint16_t interval) {
 
 inline ble_error_t
 BLEDevice::setScanWindow(uint16_t window) {
-
     return scanningParams.setWindow(window);
 }
 
@@ -845,7 +852,6 @@ inline ble_error_t
 BLEDevice::stopScan(void) {
     return transport->getGap().stopScan();
 }
-
 
 inline ble_error_t
 BLEDevice::disconnect(Gap::DisconnectionReason_t reason)

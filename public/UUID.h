@@ -21,16 +21,16 @@
 
 #include "blecommon.h"
 
-const unsigned   LENGTH_OF_LONG_UUID = 16;
-typedef uint16_t ShortUUIDBytes_t;
-typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
-
 class UUID {
 public:
     enum UUID_Type_t {
         UUID_TYPE_SHORT = 0,    // Short BLE UUID
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID
     };
+
+    static const unsigned LENGTH_OF_LONG_UUID = 16;
+    typedef uint16_t ShortUUIDBytes_t;
+    typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
 
 public:
     /**
@@ -40,11 +40,10 @@ public:
      *         different service or characteristics on the BLE device.
      *
      * @param longUUID
-     *          The 128-bit (16-byte) UUID value.
+     *          The 128-bit (16-byte) UUID value, MSB first (big-endian).
      */
     UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
-        memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
-        shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
+        setupLong(longUUID);
     }
 
     /**
@@ -77,6 +76,25 @@ public:
         /* empty */
     }
 
+    UUID(const UUID &source) {
+        type      = source.type;
+        shortUUID = source.shortUUID;
+        memcpy(baseUUID, source.baseUUID, LENGTH_OF_LONG_UUID);
+    }
+
+    UUID(void) : type(UUID_TYPE_SHORT), shortUUID(BLE_UUID_UNKNOWN) {
+        /* empty */
+    }
+
+    /**
+     * Fill in a 128-bit UUID; this is useful when UUID isn't known at the time of object construction.
+     */
+    void setupLong(const LongUUIDBytes_t longUUID) {
+        type      = UUID_TYPE_LONG;
+        memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
+        shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
+    }
+
 public:
     UUID_Type_t       shortOrLong(void)  const {return type;     }
     const uint8_t    *getBaseUUID(void)  const {
@@ -104,6 +122,10 @@ public:
         }
 
         return false;
+    }
+
+    bool operator!= (const UUID &other) const {
+        return !(*this == other);
     }
 
 private:
