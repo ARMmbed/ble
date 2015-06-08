@@ -23,16 +23,16 @@
 #include "UUID.h"
 #include "BLEDevice.h"
 
-extern const uint8_t  UARTServiceBaseUUID[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceBaseUUID[UUID::LENGTH_OF_LONG_UUID];
 extern const uint16_t UARTServiceShortUUID;
 extern const uint16_t UARTServiceTXCharacteristicShortUUID;
 extern const uint16_t UARTServiceRXCharacteristicShortUUID;
 
-extern const uint8_t  UARTServiceUUID[LENGTH_OF_LONG_UUID];
-extern const uint8_t  UARTServiceUUID_reversed[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceUUID[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceUUID_reversed[UUID::LENGTH_OF_LONG_UUID];
 
-extern const uint8_t  UARTServiceTXCharacteristicUUID[LENGTH_OF_LONG_UUID];
-extern const uint8_t  UARTServiceRXCharacteristicUUID[LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceTXCharacteristicUUID[UUID::LENGTH_OF_LONG_UUID];
+extern const uint8_t  UARTServiceRXCharacteristicUUID[UUID::LENGTH_OF_LONG_UUID];
 
 /**
 * @class UARTService

@@ -21,16 +21,16 @@
 
 #include "blecommon.h"
 
-const unsigned   LENGTH_OF_LONG_UUID = 16;
-typedef uint16_t ShortUUIDBytes_t;
-typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
-
 class UUID {
 public:
     enum UUID_Type_t {
         UUID_TYPE_SHORT = 0,    // Short BLE UUID
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID
     };
+
+    static const unsigned LENGTH_OF_LONG_UUID = 16;
+    typedef uint16_t ShortUUIDBytes_t;
+    typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
 
 public:
     /**
