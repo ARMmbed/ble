@@ -40,7 +40,7 @@ public:
      *         different service or characteristics on the BLE device.
      *
      * @param longUUID
-     *          The 128-bit (16-byte) UUID value.
+     *          The 128-bit (16-byte) UUID value, MSB first (big-endian).
      */
     UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
         memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
@@ -74,6 +74,16 @@ public:
      * @note we don't yet support 32-bit shortened UUIDs.
      */
     UUID(ShortUUIDBytes_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(shortUUID) {
+        /* empty */
+    }
+
+    UUID(const UUID &source) {
+        type      = source.type;
+        shortUUID = source.shortUUID;
+        memcpy(baseUUID, source.baseUUID, LENGTH_OF_LONG_UUID);
+    }
+
+    UUID(void) : type(UUID_TYPE_SHORT), shortUUID(BLE_UUID_UNKNOWN) {
         /* empty */
     }
 
