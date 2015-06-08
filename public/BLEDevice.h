@@ -642,9 +642,10 @@ public:
     /**
      * Launch service discovery. Once launched, service discovery will remain
      * active with callbacks being issued back into the application for matching
-     * services/characteristics. isActive() can be used to determine status; and
-     * a termination callback (if setup) will be invoked at the end. Service
-     * discovery can be terminated prematurely if needed using terminate().
+     * services/characteristics. isServiceDiscoveryActive() can be used to
+     * determine status; and a termination callback (if setup) will be invoked
+     * at the end. Service discovery can be terminated prematurely if needed
+     * using terminateServiceDiscovery().
      *
      * @param  connectionHandle
      *           Handle for the connection with the peer.
