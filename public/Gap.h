@@ -187,6 +187,9 @@ public:
     virtual ble_error_t setAppearance(uint16_t appearance)                    = 0;
     virtual ble_error_t getAppearance(uint16_t *appearanceP)                  = 0;
 
+    virtual ble_error_t setTxPower(int8_t txPower)                            = 0;
+    virtual void        getPermittedTxPowerValues(const int8_t **, size_t *)  = 0;
+
     ble_error_t startScan(const GapScanningParams &scanningParams, void (*callback)(const AdvertisementCallbackParams_t *params)) {
         ble_error_t err = BLE_ERROR_NONE;
         if (callback) {

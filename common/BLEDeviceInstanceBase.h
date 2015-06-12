@@ -34,8 +34,6 @@ public:
                                            bool                          requireMITM   = true,
                                            Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
                                            const Gap::Passkey_t          passkey       = NULL) = 0;
-    virtual ble_error_t setTxPower(int8_t txPower) = 0;
-    virtual void        getPermittedTxPowerValues(const int8_t **, size_t *) = 0;
     virtual void        waitForEvent(void)         = 0;
 };
 

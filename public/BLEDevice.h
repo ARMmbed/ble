@@ -1027,13 +1027,13 @@ BLEDevice::getAppearance(uint16_t *appearanceP)
 inline ble_error_t
 BLEDevice::setTxPower(int8_t txPower)
 {
-    return transport->setTxPower(txPower);
+    return transport->getGap().setTxPower(txPower);
 }
 
 inline void
 BLEDevice::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
 {
-    transport->getPermittedTxPowerValues(valueArrayPP, countP);
+    transport->getGap().getPermittedTxPowerValues(valueArrayPP, countP);
 }
 
 inline ble_error_t
