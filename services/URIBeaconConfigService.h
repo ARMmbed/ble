@@ -305,7 +305,7 @@ class URIBeaconConfigService {
                                       reinterpret_cast<uint8_t *>(params.advPowerLevels), sizeof(PowerLevels_t));
     }
 
-  private:
+private:
     void lockAuthorizationCallback(GattCharacteristicWriteAuthCBParams *authParams) {
         if (lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
@@ -392,7 +392,7 @@ protected:
     ReadWriteGattCharacteristic<uint16_t>      beaconPeriodChar;
     WriteOnlyGattCharacteristic<uint8_t>       resetChar;
 
-  public:
+public:
     /*
      *  Encode a human-readable URI into the binary format defined by URIBeacon spec (https://github.com/google/uribeacon/tree/master/specification).
      */
