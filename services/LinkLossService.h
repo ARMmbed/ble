@@ -92,7 +92,7 @@ private:
         }
     }
 
-private:
+protected:
     BLEDevice    &ble;
     AlertLevel_t  alertLevel;
     callback_t    callback;

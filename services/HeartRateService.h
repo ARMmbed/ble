@@ -125,7 +125,7 @@ public:
         }
     }
 
-private:
+protected:
     void setupService(void) {
         GattCharacteristic *charTable[] = {&hrmRate, &hrmLocation, &controlPoint};
         GattService         hrmService(GattService::UUID_HEART_RATE_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
@@ -134,7 +134,7 @@ private:
         ble.onDataWritten(this, &HeartRateService::onDataWritten);
     }
 
-private:
+protected:
     /* Private internal representation for the bytes used to work with the vaulue of the heart-rate characteristic. */
     struct HeartRateValueBytes {
         static const unsigned MAX_VALUE_BYTES  = 3; /* FLAGS + up to two bytes for heart-rate */
@@ -180,7 +180,7 @@ private:
         uint8_t valueBytes[MAX_VALUE_BYTES];
     };
 
-private:
+protected:
     BLEDevice           &ble;
 
     HeartRateValueBytes  valueBytes;

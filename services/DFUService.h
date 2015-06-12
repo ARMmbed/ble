@@ -105,13 +105,13 @@ public:
         }
     }
 
-private:
+protected:
     static const unsigned SIZEOF_CONTROL_BYTES = 2;
     static const unsigned SIZEOF_PACKET_BYTES  = 20;
 
     static ResetPrepare_t handoverCallback;  /**< application specific handover callback. */
 
-private:
+protected:
     BLEDevice          &ble;
     uint8_t             controlBytes[SIZEOF_CONTROL_BYTES];
     uint8_t             packetBytes[SIZEOF_PACKET_BYTES];

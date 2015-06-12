@@ -370,6 +370,7 @@ class URIBeaconConfigService {
         }
     }
 
+protected:
     BLEDevice     &ble;
     Params_t      &params;
 

@@ -56,7 +56,7 @@ public:
         ble.updateCharacteristicValue(batteryLevelCharacteristic.getValueAttribute().getHandle(), &batteryLevel, 1);
     }
 
-private:
+protected:
     BLEDevice &ble;
 
     uint8_t    batteryLevel;
