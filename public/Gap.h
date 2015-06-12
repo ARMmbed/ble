@@ -56,9 +56,12 @@ public:
      * transport library.
      */
     enum DisconnectionReason_t {
-        REMOTE_USER_TERMINATED_CONNECTION = 0x13,
-        LOCAL_HOST_TERMINATED_CONNECTION  = 0x16,
-        CONN_INTERVAL_UNACCEPTABLE        = 0x3B,
+        CONNECTION_TIMEOUT                          = 0x08,
+        REMOTE_USER_TERMINATED_CONNECTION           = 0x13,
+        REMOTE_DEV_TERMINATION_DUE_TO_LOW_RESOURCES = 0x14,  /**< Remote Device Terminated Connection due to low resources.*/
+        REMOTE_DEV_TERMINATION_DUE_TO_POWER_OFF     = 0x15,  /**< Remote Device Terminated Connection due to power off. */
+        LOCAL_HOST_TERMINATED_CONNECTION            = 0x16,
+        CONN_INTERVAL_UNACCEPTABLE                  = 0x3B,
     };
 
     /* Describes the current state of the device (more than one bit can be set) */
