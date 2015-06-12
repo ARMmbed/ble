@@ -38,16 +38,10 @@ public:
         batteryLevel(level),
         batteryLevelCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &batteryLevel, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
 
-        static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
-        if (serviceAdded) {
-            return;
-        }
-
         GattCharacteristic *charTable[] = {&batteryLevelCharacteristic};
         GattService         batteryService(GattService::UUID_BATTERY_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(batteryService);
-        serviceAdded = true;
     }
 
     /**

@@ -127,17 +127,10 @@ public:
 
 private:
     void setupService(void) {
-        static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
-        if (serviceAdded) {
-            return;
-        }
-
         GattCharacteristic *charTable[] = {&hrmRate, &hrmLocation, &controlPoint};
         GattService         hrmService(GattService::UUID_HEART_RATE_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.addService(hrmService);
-        serviceAdded = true;
-
         ble.onDataWritten(this, &HeartRateService::onDataWritten);
     }
 
