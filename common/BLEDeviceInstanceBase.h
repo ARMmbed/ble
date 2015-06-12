@@ -24,12 +24,12 @@
 class BLEDeviceInstanceBase
 {
 public:
-    virtual const char *getVersion(void)           = 0;
-    virtual Gap&        getGap()                   = 0;
-    virtual GattServer& getGattServer()            = 0;
     virtual ble_error_t init(void)                 = 0;
     virtual ble_error_t shutdown(void)             = 0;
     virtual ble_error_t reset(void)                = 0;
+    virtual const char *getVersion(void)           = 0;
+    virtual Gap&        getGap()                   = 0;
+    virtual GattServer& getGattServer()            = 0;
     virtual ble_error_t initializeSecurity(bool                          enableBonding = true,
                                            bool                          requireMITM   = true,
                                            Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
