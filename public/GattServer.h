@@ -43,8 +43,7 @@ protected:
         /* empty */
     }
 
-    friend class BLEDevice;
-private:
+public:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t addService(GattService &)                                                               = 0;
     virtual ble_error_t readValue(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) = 0;
