@@ -163,9 +163,7 @@ public:
     };
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
-    friend class BLEDevice;
-
-private:
+public:
     /* These functions must be defined in the sub-class */
     virtual ble_error_t setAddress(AddressType_t type,   const Address_t address)                    = 0;
     virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address)                          = 0;
@@ -212,7 +210,7 @@ private:
         return err;
     }
 
-protected:
+public:
     virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) = 0;
 
     /* Event callback handlers */
@@ -276,7 +274,7 @@ protected:
     template<typename T>
     void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
-private:
+public:
     GapState_t getState(void) const {
         return state;
     }
