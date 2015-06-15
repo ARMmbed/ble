@@ -68,7 +68,7 @@ public:
                                                const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
                                                const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) = 0;
 
-    virtual void        onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) = 0;
+    virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) = 0;
 
     /**
      * Is service-discovery currently active?
@@ -84,7 +84,11 @@ public:
     /* Initiate a Gatt Client read procedure by attribute-handle.*/
     virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const = 0;
 
-    virtual ble_error_t write(GattClient::WriteOp_t cmd, Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, size_t length, const uint8_t *value) const = 0;
+    virtual ble_error_t write(GattClient::WriteOp_t    cmd,
+                              Gap::Handle_t            connHandle,
+                              GattAttribute::Handle_t  attributeHandle,
+                              size_t                   length,
+                              const uint8_t           *value) const = 0;
 
 protected:
     GattClient() {
