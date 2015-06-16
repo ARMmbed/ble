@@ -20,8 +20,13 @@
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
-#include "GapScanningParams.h"
+#include "GattClient.h"
 #include "BLEDeviceInstanceBase.h"
+
+#include "GapAdvertisingData.h"
+#include "GapAdvertisingParams.h"
+#include "GapScanningParams.h"
+
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
@@ -316,6 +321,25 @@ public:
     ble_error_t stopScan(void);
 
     /**
+     * Create a connection (GAP Link Establishment).
+     * @param peerAddr
+     *          48-bit address, LSB format.
+     * @param peerAddrType
+     *          Address type of the peer.
+     * @param connectionParams
+     *         Connection parameters.
+     * @param scanParams
+     *          Paramters to be used while scanning for the peer.
+     * @return  BLE_ERROR_NONE if connection establishment procedure is started
+     *     successfully. The onConnection callback (if set) will be invoked upon
+     *     a connection event.
+     */
+    ble_error_t connect(const Gap::Address_t           peerAddr,
+                        Gap::AddressType_t             peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC,
+                        const Gap::ConnectionParams_t *connectionParams = NULL,
+                        const GapScanningParams       *scanParams = NULL);
+
+    /**
      * This call initiates the disconnection procedure, and its completion will
      * be communicated to the application with an invocation of the
      * onDisconnection callback.
@@ -368,8 +392,8 @@ public:
      * @Note: it is also possible to setup a callback into a member function of
      * some object.
      */
-    void onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP));
-    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context));
+    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP));
+    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context));
 
     /**
      * Setup a callback for when a characteristic is being read by a client.
@@ -389,8 +413,8 @@ public:
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
      *         else BLE_ERROR_NONE.
      */
-    ble_error_t onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP));
-    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context));
+    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP));
+    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context));
 
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
@@ -445,7 +469,11 @@ public:
     /**
      * A version of the same as above with connection handle parameter to allow updates for connection-specific multivalued attribtues (such as the CCCDs).
      */
-    ble_error_t updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
+    ble_error_t updateCharacteristicValue(Gap::Handle_t            connectionHandle,
+                                          GattAttribute::Handle_t  attributeHandle,
+                                          const uint8_t           *value,
+                                          uint16_t                 size,
+                                          bool                     localOnly = false);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -610,6 +638,78 @@ public:
      *                                    application registration.
      */
     ble_error_t purgeAllBondingState(void);
+
+    /**
+     * Launch service discovery. Once launched, service discovery will remain
+     * active with callbacks being issued back into the application for matching
+     * services/characteristics. isServiceDiscoveryActive() can be used to
+     * determine status; and a termination callback (if setup) will be invoked
+     * at the end. Service discovery can be terminated prematurely if needed
+     * using terminateServiceDiscovery().
+     *
+     * @param  connectionHandle
+     *           Handle for the connection with the peer.
+     * @param  sc
+     *           This is the application callback for matching service. Taken as
+     *           NULL by default. Note: service discovery may still be active
+     *           when this callback is issued; calling asynchronous BLE-stack
+     *           APIs from within this application callback might cause the
+     *           stack to abort service discovery. If this becomes an issue, it
+     *           may be better to make local copy of the discoveredService and
+     *           wait for service discovery to terminate before operating on the
+     *           service.
+     * @param  cc
+     *           This is the application callback for matching characteristic.
+     *           Taken as NULL by default. Note: service discovery may still be
+     *           active when this callback is issued; calling asynchronous
+     *           BLE-stack APIs from within this application callback might cause
+     *           the stack to abort service discovery. If this becomes an issue,
+     *           it may be better to make local copy of the discoveredCharacteristic
+     *           and wait for service discovery to terminate before operating on the
+     *           characteristic.
+     * @param  matchingServiceUUID
+     *           UUID based filter for specifying a service in which the application is
+     *           interested. By default it is set as the wildcard UUID_UNKNOWN,
+     *           in which case it matches all services. If characteristic-UUID
+     *           filter (below) is set to the wildcard value, then a service
+     *           callback will be invoked for the matching service (or for every
+     *           service if the service filter is a wildcard).
+     * @param  matchingCharacteristicUUIDIn
+     *           UUID based filter for specifying characteristic in which the application
+     *           is interested. By default it is set as the wildcard UUID_UKNOWN
+     *           to match against any characteristic. If both service-UUID
+     *           filter and characteristic-UUID filter are used with non- wildcard
+     *           values, then only a single characteristic callback is
+     *           invoked for the matching characteristic.
+     *
+     * @Note     Using wildcard values for both service-UUID and characteristic-
+     *           UUID will result in complete service discovery--callbacks being
+     *           called for every service and characteristic.
+     *
+     * @return
+     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     */
+    ble_error_t launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
+                                       ServiceDiscovery::ServiceCallback_t         sc = NULL,
+                                       ServiceDiscovery::CharacteristicCallback_t  cc = NULL,
+                                       const UUID                                 &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
+                                       const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
+
+    /**
+     * Setup callback for when serviceDiscovery terminates.
+     */
+    void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback);
+
+    /**
+     * Is service-discovery currently active?
+     */
+    bool isServiceDiscoveryActive(void);
+
+    /**
+     * Terminate an ongoing service-discovery. This should result in an
+     * invocation of the TerminationCallback if service-discovery is active.
+     */
+    void terminateServiceDiscovery(void);
 
 public:
     BLE() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true), scanningParams() {
@@ -857,6 +957,14 @@ BLE::stopScan(void) {
 }
 
 inline ble_error_t
+BLEDevice::connect(const Gap::Address_t           peerAddr,
+                   Gap::AddressType_t             peerAddrType,
+                   const Gap::ConnectionParams_t *connectionParams,
+                   const GapScanningParams       *scanParams) {
+    return transport->getGap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
+}
+
+inline ble_error_t
 BLE::disconnect(Gap::DisconnectionReason_t reason)
 {
     return transport->getGap().disconnect(reason);
@@ -897,22 +1005,22 @@ BLE::onDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
 }
 
 inline void
-BLE::onDataWritten(void (*callback)(const GattCharacteristicWriteCBParams *eventDataP)) {
+BLE::onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {
     transport->getGattServer().setOnDataWritten(callback);
 }
 
 template <typename T> inline void
-BLE::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattCharacteristicWriteCBParams *context)) {
+BLE::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
     transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
 }
 
 inline ble_error_t
-BLE::onDataRead(void (*callback)(const GattCharacteristicReadCBParams *eventDataP)) {
+BLE::onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
     return transport->getGattServer().setOnDataRead(callback);
 }
 
 template <typename T> inline ble_error_t
-BLE::onDataRead(T *objPtr, void (T::*memberPtr)(const GattCharacteristicReadCBParams *context)) {
+BLE::onDataRead(T *objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
     return transport->getGattServer().setOnDataRead(objPtr, memberPtr);
 }
 
@@ -959,7 +1067,10 @@ BLE::readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *b
 }
 
 inline ble_error_t
-BLE::readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP)
+BLE::readCharacteristicValue(Gap::Handle_t            connectionHandle,
+                             GattAttribute::Handle_t  attributeHandle,
+                             uint8_t                 *buffer,
+                             uint16_t                *lengthP)
 {
     return transport->getGattServer().readValue(connectionHandle, attributeHandle, buffer, lengthP);
 }
@@ -971,7 +1082,11 @@ BLE::updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, const ui
 }
 
 inline ble_error_t
-BLE::updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly)
+BLE::updateCharacteristicValue(Gap::Handle_t            connectionHandle,
+                               GattAttribute::Handle_t  attributeHandle,
+                               const uint8_t           *value,
+                               uint16_t                 size,
+                               bool                     localOnly)
 {
     return transport->getGattServer().updateValue(connectionHandle, attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
 }
@@ -1091,5 +1206,41 @@ BLE::purgeAllBondingState(void)
 {
     return transport->getGap().purgeAllBondingState();
 }
+
+inline ble_error_t
+BLEDevice::launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
+                                  ServiceDiscovery::ServiceCallback_t         sc,
+                                  ServiceDiscovery::CharacteristicCallback_t  cc,
+                                  const UUID                                 &matchingServiceUUID,
+                                  const UUID                                 &matchingCharacteristicUUID)
+{
+    return transport->getGattClient().launchServiceDiscovery(connectionHandle, sc, cc, matchingServiceUUID, matchingCharacteristicUUID);
+}
+
+inline void
+BLEDevice::onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback)
+{
+    transport->getGattClient().onServiceDiscoveryTermination(callback);
+}
+
+/**
+ * Is service-discovery currently active?
+ */
+inline bool
+BLEDevice::isServiceDiscoveryActive(void)
+{
+    return transport->getGattClient().isServiceDiscoveryActive();
+}
+
+/**
+ * Terminate an ongoing service-discovery. This should result in an
+ * invocation of the TerminationCallback if service-discovery is active.
+ */
+inline void
+BLEDevice::terminateServiceDiscovery(void)
+{
+    transport->getGattClient().terminateServiceDiscovery();
+}
+
 
 #endif // ifndef __BLE_DEVICE__

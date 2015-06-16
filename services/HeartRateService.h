@@ -114,8 +114,8 @@ public:
      * @param[in] params
      *     Information about the characterisitc being updated.
      */
-    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        if (params->charHandle == controlPoint.getValueAttribute().getHandle()) {
+    virtual void onDataWritten(const GattWriteCallbackParams *params) {
+        if (params->handle == controlPoint.getValueAttribute().getHandle()) {
             /* Do something here if the new value is 1; else you can override this method by
              * extending this class.
              * @NOTE: if you are extending this class, be sure to also call

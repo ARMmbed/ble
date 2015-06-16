@@ -17,6 +17,12 @@
 #ifndef __BLE_DEVICE_INSTANCE_BASE__
 #define __BLE_DEVICE_INSTANCE_BASE__
 
+#include "Gap.h"
+
+/* forward declarations */
+class GattServer;
+class GattClient;
+
 /**
  *  The interface for the transport object to be created by the target library's
  *  createBLEDeviceInstance().
@@ -30,6 +36,7 @@ public:
     virtual const char *getVersion(void)           = 0;
     virtual Gap&        getGap()                   = 0;
     virtual GattServer& getGattServer()            = 0;
+    virtual GattClient& getGattClient()            = 0;
     virtual ble_error_t initializeSecurity(bool                          enableBonding = true,
                                            bool                          requireMITM   = true,
                                            Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,

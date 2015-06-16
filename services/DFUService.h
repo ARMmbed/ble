@@ -94,8 +94,8 @@ public:
      * @param[in] params
      *     Information about the characterisitc being updated.
      */
-    virtual void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        if (params->charHandle == controlPoint.getValueHandle()) {
+    virtual void onDataWritten(const GattWriteCallbackParams *params) {
+        if (params->handle == controlPoint.getValueHandle()) {
             /* At present, writing anything will do the trick--this needs to be improved. */
             if (handoverCallback) {
                 handoverCallback();

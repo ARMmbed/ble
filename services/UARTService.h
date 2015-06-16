@@ -167,8 +167,8 @@ private:
      * function from the global onDataWritten() callback handler; or if that's
      * not used, this method can be used as a callback directly.
      */
-    void onDataWritten(const GattCharacteristicWriteCBParams *params) {
-        if (params->charHandle == getTXCharacteristicHandle()) {
+    void onDataWritten(const GattWriteCallbackParams *params) {
+        if (params->handle == getTXCharacteristicHandle()) {
             uint16_t bytesRead = params->len;
             if (bytesRead <= BLE_UART_SERVICE_MAX_DATA_LEN) {
                 numBytesReceived   = bytesRead;

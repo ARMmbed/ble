@@ -17,6 +17,8 @@
 #ifndef __GATT_ATTRIBUTE_H__
 #define __GATT_ATTRIBUTE_H__
 
+#include "UUID.h"
+
 class GattAttribute {
 public:
     typedef uint16_t Handle_t;

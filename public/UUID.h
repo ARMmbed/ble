@@ -17,6 +17,7 @@
 #ifndef __UUID_H__
 #define __UUID_H__
 
+#include <stdint.h>
 #include <string.h>
 
 #include "blecommon.h"
@@ -28,9 +29,10 @@ public:
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID
     };
 
+    typedef uint16_t      ShortUUIDBytes_t;
+
     static const unsigned LENGTH_OF_LONG_UUID = 16;
-    typedef uint16_t ShortUUIDBytes_t;
-    typedef uint8_t  LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
+    typedef uint8_t       LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
 
 public:
     /**

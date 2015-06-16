@@ -80,7 +80,7 @@ public:
         _activeScanning = activeScanning;
     }
 
-
+public:
     /* @Note: The following return durations in units of 0.625 ms */
     uint16_t getInterval(void) const {return _interval;}
     uint16_t getWindow(void)   const {return _window;  }
