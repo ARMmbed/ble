@@ -719,7 +719,7 @@ public:
     void terminateServiceDiscovery(void);
 
 public:
-    BLE() : transport(createBLEInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true), scanningParams() {
+    BLE() : transport(createBLEInstance()), advParams(), advPayload(), scanningParams(), scanResponse(), needToSetAdvPayload(true) {
         advPayload.clear();
         scanResponse.clear();
     }
@@ -729,14 +729,13 @@ private:
 
     GapAdvertisingParams advParams;
     GapAdvertisingData   advPayload;
+    GapScanningParams    scanningParams;
     GapAdvertisingData   scanResponse;
 
     /* Accumulation of AD structures in the advertisement payload should
      * eventually result in a call to the target's setAdvertisingData() before
      * the server begins advertising. This flag marks the status of the pending update.*/
     bool                 needToSetAdvPayload;
-
-    GapScanningParams    scanningParams;
 };
 
 typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibilty with older
