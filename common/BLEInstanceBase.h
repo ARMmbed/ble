@@ -35,6 +35,7 @@ public:
     virtual ble_error_t reset(void)                = 0;
     virtual const char *getVersion(void)           = 0;
     virtual Gap&        getGap()                   = 0;
+    virtual const Gap&  getGap() const             = 0;
     virtual GattServer& getGattServer()            = 0;
     virtual GattClient& getGattClient()            = 0;
     virtual ble_error_t initializeSecurity(bool                          enableBonding = true,

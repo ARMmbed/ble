@@ -55,6 +55,13 @@ public:
      */
     ble_error_t shutdown(void);
 
+    const Gap &gap() const {
+        return transport->getGap();
+    }
+    Gap &gap() {
+        return transport->getGap();
+    }
+
     /* GAP specific APIs */
 public:
     /**
