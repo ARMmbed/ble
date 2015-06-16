@@ -17,7 +17,7 @@
 #ifndef __BLE_DEVICE_INFORMATION_SERVICE_H__
 #define __BLE_DEVICE_INFORMATION_SERVICE_H__
 
-#include "BLEDevice.h"
+#include "BLE.h"
 
 /**
 * @class DeviceInformationService
@@ -31,7 +31,7 @@ public:
      * @brief Device Information Service Constructor.
      *
      * @param[ref] _ble
-     *                BLEDevice object for the underlying controller.
+     *                BLE object for the underlying controller.
      * @param[in] manufacturersName
      *                This characteristic represents the name of the
      *                manufacturer of the device. The name is copied into the
@@ -57,7 +57,7 @@ public:
      *                the software within the device. The value is copied
      *                into the BLE stack during this constructor.
      */
-    DeviceInformationService(BLEDevice &_ble,
+    DeviceInformationService(BLE        &_ble,
                              const char *manufacturersName = NULL,
                              const char *modelNumber       = NULL,
                              const char *serialNumber      = NULL,
@@ -115,7 +115,7 @@ public:
     }
 
 protected:
-    BLEDevice          &ble;
+    BLE                &ble;
     GattCharacteristic  manufacturersNameStringCharacteristic;
     GattCharacteristic  modelNumberStringCharacteristic;
     GattCharacteristic  serialNumberStringCharacteristic;

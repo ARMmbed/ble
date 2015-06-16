@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include "BLEDevice.h"
+#include "BLE.h"
 
 #if defined(TARGET_OTA_ENABLED)
 #include "DFUService.h"
 #endif
 
 ble_error_t
-BLEDevice::init()
+BLE::init()
 {
     ble_error_t err = transport->init();
     if (err != BLE_ERROR_NONE) {

@@ -25,9 +25,9 @@ class GattClient;
 
 /**
  *  The interface for the transport object to be created by the target library's
- *  createBLEDeviceInstance().
+ *  createBLEInstance().
  */
-class BLEDeviceInstanceBase
+class BLEInstanceBase
 {
 public:
     virtual ble_error_t init(void)                 = 0;
@@ -45,13 +45,13 @@ public:
 };
 
 /**
- * BLEDevice uses composition to hide an interface object encapsulating the
+ * BLE uses composition to hide an interface object encapsulating the
  * backend transport.
  *
  * The following API is used to create the singleton interface object. An
  * implementation for this function must be provided by the device-specific
  * library, otherwise there will be a linker error.
  */
-extern BLEDeviceInstanceBase *createBLEDeviceInstance(void);
+extern BLEInstanceBase *createBLEInstance(void);
 
 #endif // ifndef __BLE_DEVICE_INSTANCE_BASE__

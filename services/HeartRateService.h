@@ -17,7 +17,7 @@
 #ifndef __BLE_HEART_RATE_SERVICE_H__
 #define __BLE_HEART_RATE_SERVICE_H__
 
-#include "BLEDevice.h"
+#include "BLE.h"
 
 /**
 * @class HeartRateService
@@ -47,13 +47,13 @@ public:
      * @brief Constructor with 8bit HRM Counter value.
      *
      * @param[ref] _ble
-     *               Reference to the underlying BLEDevice.
+     *               Reference to the underlying BLE.
      * @param[in] hrmCounter (8-bit)
      *               initial value for the hrm counter.
      * @param[in] location
      *               Sensor's location.
      */
-    HeartRateService(BLEDevice &_ble, uint8_t hrmCounter, uint8_t location) :
+    HeartRateService(BLE &_ble, uint8_t hrmCounter, uint8_t location) :
         ble(_ble),
         valueBytes(hrmCounter),
         hrmRate(GattCharacteristic::UUID_HEART_RATE_MEASUREMENT_CHAR, valueBytes.getPointer(),
@@ -68,13 +68,13 @@ public:
      * @brief Constructor with a 16-bit HRM Counter value.
      *
      * @param[in] _ble
-     *               Reference to the underlying BLEDevice.
+     *               Reference to the underlying BLE.
      * @param[in] hrmCounter (8-bit)
      *               initial value for the hrm counter.
      * @param[in] location
      *               Sensor's location.
      */
-    HeartRateService(BLEDevice &_ble, uint16_t hrmCounter, uint8_t location) :
+    HeartRateService(BLE &_ble, uint16_t hrmCounter, uint8_t location) :
         ble(_ble),
         valueBytes(hrmCounter),
         hrmRate(GattCharacteristic::UUID_HEART_RATE_MEASUREMENT_CHAR, valueBytes.getPointer(),
@@ -181,7 +181,7 @@ protected:
     };
 
 protected:
-    BLEDevice           &ble;
+    BLE                 &ble;
 
     HeartRateValueBytes  valueBytes;
     uint8_t              controlPointValue;

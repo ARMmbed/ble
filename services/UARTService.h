@@ -21,7 +21,7 @@
 #include "Stream.h"
 
 #include "UUID.h"
-#include "BLEDevice.h"
+#include "BLE.h"
 
 extern const uint8_t  UARTServiceBaseUUID[UUID::LENGTH_OF_LONG_UUID];
 extern const uint16_t UARTServiceShortUUID;
@@ -48,9 +48,9 @@ public:
 
     /**
     * @param[ref] ble
-    *                 BLEDevice object for the underlying controller.
+    *               BLE object for the underlying controller.
     */
-    UARTService(BLEDevice &_ble) :
+    UARTService(BLE &_ble) :
         ble(_ble),
         receiveBuffer(),
         sendBuffer(),
@@ -179,7 +179,7 @@ private:
     }
 
 private:
-    BLEDevice          &ble;
+    BLE                &ble;
 
     uint8_t             receiveBuffer[BLE_UART_SERVICE_MAX_DATA_LEN]; /**< The local buffer into which we receive
                                                                        *   inbound data before forwarding it to the

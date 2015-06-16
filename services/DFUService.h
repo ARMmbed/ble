@@ -17,7 +17,7 @@
 #ifndef __BLE_DFU_SERVICE_H__
 #define __BLE_DFU_SERVICE_H__
 
-#include "BLEDevice.h"
+#include "BLE.h"
 #include "UUID.h"
 
 extern "C" void bootloader_start(void);
@@ -48,11 +48,11 @@ public:
     * @brief Adds Device Firmware Update service to an existing ble object.
     *
     * @param[ref] _ble
-    *               BLEDevice object for the underlying controller.
+    *               BLE object for the underlying controller.
     * @param[in] _handoverCallback
     *                Application specific handover callback.
     */
-    DFUService(BLEDevice &_ble, ResetPrepare_t _handoverCallback = NULL) :
+    DFUService(BLE &_ble, ResetPrepare_t _handoverCallback = NULL) :
         ble(_ble),
         controlPoint(DFUServiceControlCharacteristicUUID, controlBytes, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
         packet(DFUServicePacketCharacteristicUUID, packetBytes, SIZEOF_PACKET_BYTES, SIZEOF_PACKET_BYTES,
@@ -110,7 +110,7 @@ protected:
     static const unsigned SIZEOF_PACKET_BYTES  = 20;
 
 protected:
-    BLEDevice          &ble;
+    BLE          &ble;
 
     /**< Writing to the control characteristic triggers the handover to dfu-
       *  bootloader. At present, writing anything will do the trick--this needs

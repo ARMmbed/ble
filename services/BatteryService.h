@@ -17,7 +17,7 @@
 #ifndef __BLE_BATTERY_SERVICE_H__
 #define __BLE_BATTERY_SERVICE_H__
 
-#include "BLEDevice.h"
+#include "BLE.h"
 
 /**
 * @class BatteryService
@@ -29,11 +29,11 @@ class BatteryService {
 public:
     /**
     * @param[ref] _ble
-    *               BLEDevice object for the underlying controller.
+    *               BLE object for the underlying controller.
     * @param[in] level
     *               8bit batterly level. Usually used to represent percentage of batterly charge remaining.
     */
-    BatteryService(BLEDevice &_ble, uint8_t level = 100) :
+    BatteryService(BLE &_ble, uint8_t level = 100) :
         ble(_ble),
         batteryLevel(level),
         batteryLevelCharacteristic(GattCharacteristic::UUID_BATTERY_LEVEL_CHAR, &batteryLevel, GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY) {
@@ -57,7 +57,7 @@ public:
     }
 
 protected:
-    BLEDevice &ble;
+    BLE &ble;
 
     uint8_t    batteryLevel;
     ReadOnlyGattCharacteristic<uint8_t> batteryLevelCharacteristic;

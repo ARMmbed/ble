@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef __BLE_DEVICE__
-#define __BLE_DEVICE__
+#ifndef __BLE_H__
+#define __BLE_H__
 
 #include "blecommon.h"
 #include "Gap.h"
 #include "GattServer.h"
 #include "GattClient.h"
-#include "BLEDeviceInstanceBase.h"
+#include "BLEInstanceBase.h"
 
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
@@ -712,13 +712,13 @@ public:
     void terminateServiceDiscovery(void);
 
 public:
-    BLE() : transport(createBLEDeviceInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true), scanningParams() {
+    BLE() : transport(createBLEInstance()), advParams(), advPayload(), scanResponse(), needToSetAdvPayload(true), scanningParams() {
         advPayload.clear();
         scanResponse.clear();
     }
 
 private:
-    BLEDeviceInstanceBase *const transport; /* the device specific backend */
+    BLEInstanceBase *const transport; /* the device specific backend */
 
     GapAdvertisingParams advParams;
     GapAdvertisingData   advPayload;
@@ -735,7 +735,7 @@ private:
 typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibilty with older
                         * code. Will be dropped at some point soon.*/
 
-/* BLEDevice methods. Most of these simply forward the calls to the underlying
+/* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
 
 inline ble_error_t
@@ -957,10 +957,10 @@ BLE::stopScan(void) {
 }
 
 inline ble_error_t
-BLEDevice::connect(const Gap::Address_t           peerAddr,
-                   Gap::AddressType_t             peerAddrType,
-                   const Gap::ConnectionParams_t *connectionParams,
-                   const GapScanningParams       *scanParams) {
+BLE::connect(const Gap::Address_t           peerAddr,
+             Gap::AddressType_t             peerAddrType,
+             const Gap::ConnectionParams_t *connectionParams,
+             const GapScanningParams       *scanParams) {
     return transport->getGap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
 }
 
@@ -1208,17 +1208,17 @@ BLE::purgeAllBondingState(void)
 }
 
 inline ble_error_t
-BLEDevice::launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
-                                  ServiceDiscovery::ServiceCallback_t         sc,
-                                  ServiceDiscovery::CharacteristicCallback_t  cc,
-                                  const UUID                                 &matchingServiceUUID,
-                                  const UUID                                 &matchingCharacteristicUUID)
+BLE::launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
+                            ServiceDiscovery::ServiceCallback_t         sc,
+                            ServiceDiscovery::CharacteristicCallback_t  cc,
+                            const UUID                                 &matchingServiceUUID,
+                            const UUID                                 &matchingCharacteristicUUID)
 {
     return transport->getGattClient().launchServiceDiscovery(connectionHandle, sc, cc, matchingServiceUUID, matchingCharacteristicUUID);
 }
 
 inline void
-BLEDevice::onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback)
+BLE::onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback)
 {
     transport->getGattClient().onServiceDiscoveryTermination(callback);
 }
@@ -1227,7 +1227,7 @@ BLEDevice::onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t
  * Is service-discovery currently active?
  */
 inline bool
-BLEDevice::isServiceDiscoveryActive(void)
+BLE::isServiceDiscoveryActive(void)
 {
     return transport->getGattClient().isServiceDiscoveryActive();
 }
@@ -1237,10 +1237,9 @@ BLEDevice::isServiceDiscoveryActive(void)
  * invocation of the TerminationCallback if service-discovery is active.
  */
 inline void
-BLEDevice::terminateServiceDiscovery(void)
+BLE::terminateServiceDiscovery(void)
 {
     transport->getGattClient().terminateServiceDiscovery();
 }
 
-
-#endif // ifndef __BLE_DEVICE__
+#endif // ifndef __BLE_H__

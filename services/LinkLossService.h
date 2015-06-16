@@ -37,9 +37,9 @@ public:
 
     /**
      * @param[ref] ble
-     *                 BLEDevice object for the underlying controller.
+     *               BLE object for the underlying controller.
      */
-    LinkLossService(BLEDevice &bleIn, callback_t callbackIn, AlertLevel_t levelIn = NO_ALERT) :
+    LinkLossService(BLE &bleIn, callback_t callbackIn, AlertLevel_t levelIn = NO_ALERT) :
         ble(bleIn),
         alertLevel(levelIn),
         callback(callbackIn),
@@ -93,7 +93,7 @@ private:
     }
 
 protected:
-    BLEDevice    &ble;
+    BLE          &ble;
     AlertLevel_t  alertLevel;
     callback_t    callback;
 

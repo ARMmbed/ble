@@ -17,7 +17,7 @@
 #ifndef __BLE_HEALTH_THERMOMETER_SERVICE_H__
 #define __BLE_HEALTH_THERMOMETER_SERVICE_H__
 
-#include "BLEDevice.h"
+#include "BLE.h"
 
 /**
 * @class HealthThermometerService
@@ -51,7 +51,7 @@ public:
      * @param[in] initialTemp  initial value in celsius
      * @param[in] _location
      */
-    HealthThermometerService(BLEDevice &_ble, float initialTemp, uint8_t _location) :
+    HealthThermometerService(BLE &_ble, float initialTemp, uint8_t _location) :
         ble(_ble),
         valueBytes(initialTemp),
         tempMeasurement(GattCharacteristic::UUID_TEMPERATURE_MEASUREMENT_CHAR, (TemperatureValueBytes *)valueBytes.getPointer(), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY),
@@ -141,7 +141,7 @@ private:
     };
 
 private:
-    BLEDevice                                         &ble;
+    BLE                                               &ble;
     TemperatureValueBytes                              valueBytes;
     ReadOnlyGattCharacteristic<TemperatureValueBytes>  tempMeasurement;
     ReadOnlyGattCharacteristic<uint8_t>                tempLocation;

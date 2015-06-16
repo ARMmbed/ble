@@ -17,7 +17,7 @@
 #ifndef SERVICES_URIBEACONCONFIGSERVICE_H_
 #define SERVICES_URIBEACONCONFIGSERVICE_H_
 
-#include "BLEDevice.h"
+#include "BLE.h"
 #include "mbed.h"
 
 extern const uint8_t UUID_URI_BEACON_SERVICE[UUID::LENGTH_OF_LONG_UUID];
@@ -71,7 +71,7 @@ class URIBeaconConfigService {
 
     /**
      * @param[ref]    ble
-     *                    BLEDevice object for the underlying controller.
+     *                    BLE object for the underlying controller.
      * @param[in/out] paramsIn
      *                    Reference to application-visible beacon state, loaded
      *                    from persistent storage at startup.
@@ -85,7 +85,7 @@ class URIBeaconConfigService {
      * @param[in]     defaultAdvPowerLevelsIn
      *                    Default power-levels array; applies only if the resetToDefaultsFlag is true.
      */
-    URIBeaconConfigService(BLEDevice     &bleIn,
+    URIBeaconConfigService(BLE          &bleIn,
                            Params_t      &paramsIn,
                            bool          resetToDefaultsFlag,
                            const char   *defaultURIDataIn,
@@ -371,7 +371,7 @@ private:
     }
 
 protected:
-    BLEDevice     &ble;
+    BLE           &ble;
     Params_t      &params;
 
     size_t        defaultUriDataLength;   // Default value that is restored on reset
