@@ -433,7 +433,7 @@ public:
      */
     ble_error_t readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP);
     /**
-     * A version of the same as above with connection handle parameter to allow fetches for connection-specific multivalued attribtues (such as the CCCDs).
+     * A version of the same as above with connection handle parameter to allow fetches for connection-specific multivalued attributes (such as the CCCDs).
      */
     ble_error_t readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP);
 
@@ -443,9 +443,34 @@ public:
      */
     ble_error_t updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
     /**
-     * A version of the same as above with connection handle parameter to allow updates for connection-specific multivalued attribtues (such as the CCCDs).
+     * A version of the same as above with connection handle parameter to allow updates for connection-specific multivalued attributes (such as the CCCDs).
      */
     ble_error_t updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
+
+    /**
+     * Return the updates enabled status for the current connection from the CCCD
+     *
+     * @param  characteristic
+     *           The characteristic
+     *
+     * @return true if the connection and handle are found and updates are
+     *         enabled. false otherwise.
+     */
+    bool updatesEnabled(const GattCharacteristic &characteristic);
+
+    /**
+     * Return the connection-specific updates enabled status from the CCCD
+     *
+     * @param  connectionHandle
+     *           The connection handle
+     *
+     * @param  characteristic
+     *           The characteristic
+     *
+     * @return true if the connection and handle are found and updates are
+     *         enabled. false otherwise.
+     */
+    bool updatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -969,6 +994,18 @@ inline ble_error_t
 BLEDevice::updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly)
 {
     return transport->getGattServer().updateValue(connectionHandle, attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
+}
+
+inline bool
+BLEDevice::updatesEnabled(const GattCharacteristic &characteristic)
+{
+    return transport->getGattServer().updatesEnabled(characteristic);
+}
+
+inline bool
+BLEDevice::updatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic)
+{
+    return transport->getGattServer().updatesEnabled(connectionHandle, characteristic);
 }
 
 inline void

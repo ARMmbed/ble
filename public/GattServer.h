@@ -51,6 +51,8 @@ private:
     virtual ble_error_t readValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) = 0;
     virtual ble_error_t updateValue(GattAttribute::Handle_t, const uint8_t[], uint16_t, bool localOnly = false) = 0;
     virtual ble_error_t updateValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t[], uint16_t, bool localOnly = false) = 0;
+    virtual bool updatesEnabled(const GattCharacteristic &characteristic)                                       = 0;
+    virtual bool updatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic)       = 0;
     virtual ble_error_t initializeGATTDatabase(void)                                                            = 0;
 
     // ToDo: For updateValue, check the CCCD to see if the value we are
