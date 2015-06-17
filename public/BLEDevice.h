@@ -450,13 +450,13 @@ public:
     /**
      * Return the updates enabled status for the current connection from the CCCD
      *
-     * @param  attributeHandle
-     *           The handle of the characteristic's value attribute 
+     * @param  characteristic
+     *           The characteristic
      *
      * @return true if the connection and handle are found and updates are
      *         enabled. false otherwise.
      */
-    bool updatesEnabled(GattAttribute::Handle_t attributeHandle);
+    bool updatesEnabled(const GattCharacteristic &characteristic);
 
     /**
      * Return the connection-specific updates enabled status from the CCCD
@@ -464,13 +464,13 @@ public:
      * @param  connectionHandle
      *           The connection handle
      *
-     * @param  attributeHandle
-     *           The handle of the characteristic's value attribute 
+     * @param  characteristic
+     *           The characteristic
      *
      * @return true if the connection and handle are found and updates are
      *         enabled. false otherwise.
      */
-    bool updatesEnabled(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle);
+    bool updatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic);
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -997,15 +997,15 @@ BLEDevice::updateCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribu
 }
 
 inline bool
-BLEDevice::updatesEnabled(GattAttribute::Handle_t attributeHandle)
+BLEDevice::updatesEnabled(const GattCharacteristic &characteristic)
 {
-    return transport->getGattServer().updatesEnabled(attributeHandle);
+    return transport->getGattServer().updatesEnabled(characteristic);
 }
 
 inline bool
-BLEDevice::updatesEnabled(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle)
+BLEDevice::updatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic)
 {
-    return transport->getGattServer().updatesEnabled(connectionHandle, attributeHandle);
+    return transport->getGattServer().updatesEnabled(connectionHandle, characteristic);
 }
 
 inline void
