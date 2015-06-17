@@ -17,6 +17,7 @@
 #ifndef __GAP_ADVERTISING_DATA_H__
 #define __GAP_ADVERTISING_DATA_H__
 
+#include <stdint.h>
 #include <string.h>
 
 #include "blecommon.h"

@@ -17,6 +17,9 @@
 #ifndef __GAP_H__
 #define __GAP_H__
 
+#include "GapAdvertisingData.h"
+#include "GapAdvertisingParams.h"
+#include "GapScanningParams.h"
 #include "GapEvents.h"
 #include "CallChain.h"
 #include "FunctionPointerWithContext.h"
@@ -199,10 +202,8 @@ public:
 
 public:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t setAddress(AddressType_t type,  const Address_t address)                  = 0;
+    virtual ble_error_t setAddress(AddressType_t type,  const Address_t address)                   = 0;
     virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address)                        = 0;
-    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
-    virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
     virtual ble_error_t stopScan()                                                                 = 0;
     virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
@@ -228,7 +229,25 @@ public:
     virtual ble_error_t setTxPower(int8_t txPower)                            = 0;
     virtual void        getPermittedTxPowerValues(const int8_t **, size_t *)  = 0;
 
-    ble_error_t startScan(const GapScanningParams &scanningParams, void (*callback)(const AdvertisementCallbackParams_t *params)) {
+    ble_error_t startAdvertising(void) {
+        return startAdvertising(advParams);
+    }
+
+    ble_error_t setAdvertisingData(void) {
+        if (needToSetAdvPayload) {
+            needToSetAdvPayload = false;
+            return setAdvertisingData(advPayload, scanResponse);
+        }
+
+        return BLE_ERROR_NONE;
+    }
+
+private:
+    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
+    virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
+
+public:
+    ble_error_t startScan(void (*callback)(const AdvertisementCallbackParams_t *params)) {
         ble_error_t err = BLE_ERROR_NONE;
         if (callback) {
             if ((err = startRadioScan(scanningParams)) == BLE_ERROR_NONE) {
@@ -240,7 +259,7 @@ public:
     }
 
     template<typename T>
-    ble_error_t startScan(const GapScanningParams &scanningParams, T *object, void (T::*callbackMember)(const AdvertisementCallbackParams_t *params)) {
+    ble_error_t startScan(T *object, void (T::*callbackMember)(const AdvertisementCallbackParams_t *params)) {
         ble_error_t err = BLE_ERROR_NONE;
         if (object && callbackMember) {
             if ((err = startRadioScan(scanningParams)) == BLE_ERROR_NONE) {
@@ -315,6 +334,39 @@ public:
     template<typename T>
     void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
+    GapAdvertisingParams &getAdvParams(void) {
+        return advParams;
+    }
+    const GapAdvertisingParams &getAdvParams(void) const {
+        return advParams;
+    }
+    void setAdvParams(const GapAdvertisingParams &newParams) {
+        advParams = newParams;
+    }
+
+    GapAdvertisingData &getAdvPayload(void) {
+        needToSetAdvPayload = true;
+        return advPayload;
+    }
+    const GapAdvertisingData &getAdvPayload(void) const {
+        return advPayload;
+    }
+
+    GapAdvertisingData &getScanResponse(void) {
+        needToSetAdvPayload = true;
+        return scanResponse;
+    }
+    const GapAdvertisingData &getScanResponse(void) const {
+        return scanResponse;
+    }
+
+    GapScanningParams &getScanningParams(void) {
+        return scanningParams;
+    }
+    const GapScanningParams &getScanningParams(void) const {
+        return scanningParams;
+    }
+
 public:
     GapState_t getState(void) const {
         return state;
@@ -322,6 +374,11 @@ public:
 
 protected:
     Gap() :
+        advParams(),
+        advPayload(),
+        needToSetAdvPayload(true),
+        scanningParams(),
+        scanResponse(),
         state(),
         onTimeout(NULL),
         onConnection(NULL),
@@ -334,7 +391,8 @@ protected:
         onPasskeyDisplay(),
         onAdvertisementReport(),
         disconnectionCallChain() {
-        /* empty */
+        advPayload.clear();
+        scanResponse.clear();
     }
 
 public:
@@ -420,6 +478,16 @@ public:
     }
 
 protected:
+    GapAdvertisingParams             advParams;
+    GapAdvertisingData               advPayload;
+    /* Accumulation of AD structures in the advertisement payload should
+     * eventually result in a call to the target's setAdvertisingData() before
+     * the server begins advertising. This flag marks the status of the pending update.*/
+    bool                             needToSetAdvPayload;
+
+    GapScanningParams                scanningParams;
+    GapAdvertisingData               scanResponse;
+
     GapState_t                       state;
 
 protected:

@@ -17,8 +17,6 @@
 #ifndef __GAP_SCANNING_PARAMS_H__
 #define __GAP_SCANNING_PARAMS_H__
 
-#include "Gap.h"
-
 class GapScanningParams {
 public:
     static const unsigned SCAN_INTERVAL_MIN = 0x0004; /**< Minimum Scan interval in 625 us units, i.e. 2.5 ms. */
@@ -29,56 +27,18 @@ public:
     static const unsigned SCAN_TIMEOUT_MAX  = 0xFFFF; /**< Maximum Scan timeout in seconds. */
 
 public:
-    GapScanningParams(uint16_t interval = SCAN_INTERVAL_MAX,
-                      uint16_t window   = SCAN_WINDOW_MAX,
-                      uint16_t timeout  = 0,
-                      bool     activeScanning = false) : _interval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval)),
-                                                         _window(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(window)),
-                                                         _timeout(timeout),
-                                                         _activeScanning(activeScanning) {
-        /* stay within limits */
-        if (_interval < SCAN_INTERVAL_MIN) {
-            _interval = SCAN_INTERVAL_MIN;
-        }
-        if (_interval > SCAN_INTERVAL_MAX) {
-            _interval = SCAN_INTERVAL_MAX;
-        }
-        if (_window < SCAN_WINDOW_MIN) {
-            _window = SCAN_WINDOW_MIN;
-        }
-        if (_window > SCAN_WINDOW_MAX) {
-            _window = SCAN_WINDOW_MAX;
-        }
-    }
+    GapScanningParams(uint16_t interval       = SCAN_INTERVAL_MAX,
+                      uint16_t window         = SCAN_WINDOW_MAX,
+                      uint16_t timeout        = 0,
+                      bool     activeScanning = false);
 
-    ble_error_t setInterval(uint16_t newIntervalInMS) {
-        uint16_t newInterval = Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newIntervalInMS);
-        if ((newInterval >= SCAN_INTERVAL_MIN) && (newInterval < SCAN_INTERVAL_MAX)) {
-            _interval = newInterval;
-            return BLE_ERROR_NONE;
-        }
+    ble_error_t setInterval(uint16_t newIntervalInMS);
 
-        return BLE_ERROR_PARAM_OUT_OF_RANGE;
-    }
+    ble_error_t setWindow(uint16_t newWindowInMS);
 
-    ble_error_t setWindow(uint16_t newWindowInMS)     {
-        uint16_t newWindow = Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newWindowInMS);
-        if ((newWindow >= SCAN_WINDOW_MIN) && (newWindow < SCAN_WINDOW_MAX)) {
-            _window   = newWindow;
-            return BLE_ERROR_NONE;
-        }
+    ble_error_t setTimeout(uint16_t newTimeout);
 
-        return BLE_ERROR_PARAM_OUT_OF_RANGE;
-    }
-
-    ble_error_t setTimeout(uint16_t newTimeout)   {
-        _timeout  = newTimeout;
-        return BLE_ERROR_NONE;
-    }
-
-    void setActiveScanning(bool activeScanning) {
-        _activeScanning = activeScanning;
-    }
+    void        setActiveScanning(bool activeScanning);
 
 public:
     /* @Note: The following return durations in units of 0.625 ms */

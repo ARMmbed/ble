@@ -23,11 +23,6 @@
 #include "GattClient.h"
 #include "BLEInstanceBase.h"
 
-#include "GapAdvertisingData.h"
-#include "GapAdvertisingParams.h"
-#include "GapScanningParams.h"
-
-
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
  * to enable this BLE API to work with any radio transparently.
@@ -55,6 +50,7 @@ public:
      */
     ble_error_t shutdown(void);
 
+    /* Accessors to GAP. Please refer to Gap.h for GAP related functionality. */
     const Gap &gap() const {
         return transport->getGap();
     }
@@ -62,8 +58,8 @@ public:
         return transport->getGap();
     }
 
-    /* GAP specific APIs */
 public:
+    /* GAP specific APIs */
     /**
      * Set the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
@@ -719,23 +715,12 @@ public:
     void terminateServiceDiscovery(void);
 
 public:
-    BLE() : transport(createBLEInstance()), advParams(), advPayload(), scanningParams(), scanResponse(), needToSetAdvPayload(true) {
-        advPayload.clear();
-        scanResponse.clear();
+    BLE() : transport(createBLEInstance()) {
+        /* empty */
     }
 
 private:
     BLEInstanceBase *const transport; /* the device specific backend */
-
-    GapAdvertisingParams advParams;
-    GapAdvertisingData   advPayload;
-    GapScanningParams    scanningParams;
-    GapAdvertisingData   scanResponse;
-
-    /* Accumulation of AD structures in the advertisement payload should
-     * eventually result in a call to the target's setAdvertisingData() before
-     * the server begins advertising. This flag marks the status of the pending update.*/
-    bool                 needToSetAdvPayload;
 };
 
 typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibilty with older
@@ -753,26 +738,26 @@ BLE::reset(void)
 inline ble_error_t
 BLE::shutdown(void)
 {
-    clearAdvertisingPayload();
+    gap().getAdvPayload().clear();
     return transport->shutdown();
 }
 
 inline ble_error_t
 BLE::setAddress(Gap::AddressType_t type, const Gap::Address_t address)
 {
-    return transport->getGap().setAddress(type, address);
+    return gap().setAddress(type, address);
 }
 
 inline ble_error_t
 BLE::getAddress(Gap::AddressType_t *typeP, Gap::Address_t address)
 {
-    return transport->getGap().getAddress(typeP, address);
+    return gap().getAddress(typeP, address);
 }
 
 inline void
 BLE::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
 {
-    advParams.setAdvertisingType(advType);
+    gap().getAdvParams().setAdvertisingType(advType);
 }
 
 inline void
@@ -783,112 +768,103 @@ BLE::setAdvertisingInterval(uint16_t interval)
     } else if (interval < getMinAdvertisingInterval()) {
         interval = getMinAdvertisingInterval();
     }
-    advParams.setInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+    gap().getAdvParams().setInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
 }
 
 inline uint16_t
 BLE::getMinAdvertisingInterval(void) const {
-    return transport->getGap().getMinAdvertisingInterval();
+    return gap().getMinAdvertisingInterval();
 }
 
 inline uint16_t
 BLE::getMinNonConnectableAdvertisingInterval(void) const {
-    return transport->getGap().getMinNonConnectableAdvertisingInterval();
+    return gap().getMinNonConnectableAdvertisingInterval();
 }
 
 inline uint16_t
 BLE::getMaxAdvertisingInterval(void) const {
-    return transport->getGap().getMaxAdvertisingInterval();
+    return gap().getMaxAdvertisingInterval();
 }
 
 inline void
 BLE::setAdvertisingTimeout(uint16_t timeout)
 {
-    advParams.setTimeout(timeout);
+    gap().getAdvParams().setTimeout(timeout);
 }
 
 inline void
 BLE::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
 {
-    advParams = newAdvParams;
+    gap().setAdvParams(newAdvParams);
 }
 
 inline const GapAdvertisingParams &
 BLE::getAdvertisingParams(void) const
 {
-    return advParams;
+    return gap().getAdvParams();
 }
 
 inline void
 BLE::clearAdvertisingPayload(void)
 {
-    needToSetAdvPayload = true;
-    advPayload.clear();
+    gap().getAdvPayload().clear();
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayload(uint8_t flags)
 {
-    needToSetAdvPayload = true;
-    return advPayload.addFlags(flags);
+    return gap().getAdvPayload().addFlags(flags);
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
 {
-    needToSetAdvPayload = true;
-    transport->getGap().setAppearance(app);
-    return advPayload.addAppearance(app);
+    gap().setAppearance(app);
+    return gap().getAdvPayload().addAppearance(app);
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayloadTxPower(int8_t txPower)
 {
-    needToSetAdvPayload = true;
-    return advPayload.addTxPower(txPower);
+    return gap().getAdvPayload().addTxPower(txPower);
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
 {
-    needToSetAdvPayload = true;
     if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
-        transport->getGap().setDeviceName(data);
+        gap().setDeviceName(data);
     }
-    return advPayload.addData(type, data, len);
+    return gap().getAdvPayload().addData(type, data, len);
 }
 
 inline ble_error_t
 BLE::accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
 {
-    needToSetAdvPayload = true;
-    return scanResponse.addData(type, data, len);
+    return gap().getScanResponse().addData(type, data, len);
 }
 
 inline void
 BLE::clearScanResponse(void)
 {
-    needToSetAdvPayload = true;
-    scanResponse.clear();
+    gap().getScanResponse().clear();
 }
 
 inline ble_error_t
 BLE::setAdvertisingPayload(void) {
-    needToSetAdvPayload = false;
-    return transport->getGap().setAdvertisingData(advPayload, scanResponse);
+    return gap().setAdvertisingData();
 }
 
 inline ble_error_t
 BLE::setAdvertisingData(const GapAdvertisingData& newPayload)
 {
-    advPayload = newPayload;
-
+    gap().getAdvPayload() = newPayload;
     return setAdvertisingPayload();
 }
 
 inline const GapAdvertisingData &
 BLE::getAdvertisingData(void) const {
-    return advPayload;
+    return gap().getAdvPayload();
 }
 
 inline ble_error_t
@@ -898,28 +874,26 @@ BLE::startAdvertising(void)
     if ((rc = transport->getGattServer().initializeGATTDatabase()) != BLE_ERROR_NONE) {
         return rc;
     }
-    if (needToSetAdvPayload) {
-        if ((rc = setAdvertisingPayload()) != BLE_ERROR_NONE) {
-            return rc;
-        }
+    if ((rc = setAdvertisingPayload()) != BLE_ERROR_NONE) {
+        return rc;
     }
 
-    return transport->getGap().startAdvertising(advParams);
+    return gap().startAdvertising();
 }
 
 inline ble_error_t
 BLE::stopAdvertising(void)
 {
-    return transport->getGap().stopAdvertising();
+    return gap().stopAdvertising();
 }
 
 inline ble_error_t
 BLE::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout, bool activeScanning) {
     ble_error_t rc;
-    if (((rc = scanningParams.setInterval(interval)) == BLE_ERROR_NONE) &&
-        ((rc = scanningParams.setWindow(window))     == BLE_ERROR_NONE) &&
-        ((rc = scanningParams.setTimeout(timeout))   == BLE_ERROR_NONE)) {
-        scanningParams.setActiveScanning(activeScanning);
+    if (((rc = gap().getScanningParams().setInterval(interval)) == BLE_ERROR_NONE) &&
+        ((rc = gap().getScanningParams().setWindow(window))     == BLE_ERROR_NONE) &&
+        ((rc = gap().getScanningParams().setTimeout(timeout))   == BLE_ERROR_NONE)) {
+        gap().getScanningParams().setActiveScanning(activeScanning);
         return BLE_ERROR_NONE;
     }
 
@@ -928,38 +902,38 @@ BLE::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout, bool ac
 
 inline ble_error_t
 BLE::setScanInterval(uint16_t interval) {
-    return scanningParams.setInterval(interval);
+    return gap().getScanningParams().setInterval(interval);
 }
 
 inline ble_error_t
 BLE::setScanWindow(uint16_t window) {
-    return scanningParams.setWindow(window);
+    return gap().getScanningParams().setWindow(window);
 }
 
 inline ble_error_t
 BLE::setScanTimeout(uint16_t timeout) {
-    return scanningParams.setTimeout(timeout);
+    return gap().getScanningParams().setTimeout(timeout);
 }
 
 inline void
 BLE::setActiveScan(bool activeScanning) {
-    return scanningParams.setActiveScanning(activeScanning);
+    return gap().getScanningParams().setActiveScanning(activeScanning);
 }
 
 inline ble_error_t
 BLE::startScan(void (*callback)(const Gap::AdvertisementCallbackParams_t *params)) {
-    return transport->getGap().startScan(scanningParams, callback);
+    return gap().startScan(callback);
 }
 
 template<typename T>
 inline ble_error_t
 BLE::startScan(T *object, void (T::*memberCallback)(const Gap::AdvertisementCallbackParams_t *params)) {
-    return transport->getGap().startScan(scanningParams, object, memberCallback);
+    return gap().startScan(scanningParams, object, memberCallback);
 }
 
 inline ble_error_t
 BLE::stopScan(void) {
-    return transport->getGap().stopScan();
+    return gap().stopScan();
 }
 
 inline ble_error_t
@@ -967,37 +941,37 @@ BLE::connect(const Gap::Address_t           peerAddr,
              Gap::AddressType_t             peerAddrType,
              const Gap::ConnectionParams_t *connectionParams,
              const GapScanningParams       *scanParams) {
-    return transport->getGap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
+    return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
 }
 
 inline ble_error_t
 BLE::disconnect(Gap::DisconnectionReason_t reason)
 {
-    return transport->getGap().disconnect(reason);
+    return gap().disconnect(reason);
 }
 
 inline void
 BLE::onTimeout(Gap::EventCallback_t timeoutCallback)
 {
-    transport->getGap().setOnTimeout(timeoutCallback);
+    gap().setOnTimeout(timeoutCallback);
 }
 
 inline void
 BLE::onConnection(Gap::ConnectionEventCallback_t connectionCallback)
 {
-    transport->getGap().setOnConnection(connectionCallback);
+    gap().setOnConnection(connectionCallback);
 }
 
 inline void
 BLE::onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback)
 {
-    transport->getGap().setOnDisconnection(disconnectionCallback);
+    gap().setOnDisconnection(disconnectionCallback);
 }
 
 template<typename T>
 inline void
 BLE::addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {
-    transport->getGap().addToDisconnectionCallChain(tptr, mptr);
+    gap().addToDisconnectionCallChain(tptr, mptr);
 }
 
 inline void
@@ -1051,7 +1025,7 @@ BLE::onConfirmationReceived(GattServer::EventCallback_t callback)
 inline void
 BLE::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 {
-    transport->getGap().setOnRadioNotification(callback);
+    gap().setOnRadioNotification(callback);
 }
 
 inline ble_error_t
@@ -1063,7 +1037,7 @@ BLE::addService(GattService &service)
 inline Gap::GapState_t
 BLE::getGapState(void) const
 {
-    return transport->getGap().getState();
+    return gap().getState();
 }
 
 inline ble_error_t
@@ -1106,18 +1080,18 @@ BLE::waitForEvent(void)
 inline ble_error_t
 BLE::getPreferredConnectionParams(Gap::ConnectionParams_t *params)
 {
-    return transport->getGap().getPreferredConnectionParams(params);
+    return gap().getPreferredConnectionParams(params);
 }
 
 inline ble_error_t
 BLE::setPreferredConnectionParams(const Gap::ConnectionParams_t *params)
 {
-    return transport->getGap().setPreferredConnectionParams(params);
+    return gap().setPreferredConnectionParams(params);
 }
 
 inline ble_error_t
 BLE::updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params) {
-    return transport->getGap().updateConnectionParams(handle, params);
+    return gap().updateConnectionParams(handle, params);
 }
 
 inline const char *
@@ -1129,37 +1103,37 @@ BLE::getVersion(void)
 inline ble_error_t
 BLE::setDeviceName(const uint8_t *deviceName)
 {
-    return transport->getGap().setDeviceName(deviceName);
+    return gap().setDeviceName(deviceName);
 }
 
 inline ble_error_t
 BLE::getDeviceName(uint8_t *deviceName, unsigned *lengthP)
 {
-    return transport->getGap().getDeviceName(deviceName, lengthP);
+    return gap().getDeviceName(deviceName, lengthP);
 }
 
 inline ble_error_t
 BLE::setAppearance(uint16_t appearance)
 {
-    return transport->getGap().setAppearance(appearance);
+    return gap().setAppearance(appearance);
 }
 
 inline ble_error_t
 BLE::getAppearance(uint16_t *appearanceP)
 {
-    return transport->getGap().getAppearance(appearanceP);
+    return gap().getAppearance(appearanceP);
 }
 
 inline ble_error_t
 BLE::setTxPower(int8_t txPower)
 {
-    return transport->getGap().setTxPower(txPower);
+    return gap().setTxPower(txPower);
 }
 
 inline void
 BLE::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
 {
-    transport->getGap().getPermittedTxPowerValues(valueArrayPP, countP);
+    gap().getPermittedTxPowerValues(valueArrayPP, countP);
 }
 
 inline ble_error_t
@@ -1174,43 +1148,43 @@ BLE::initializeSecurity(bool                          enableBonding,
 inline void
 BLE::onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
 {
-    transport->getGap().setOnSecuritySetupInitiated(callback);
+    gap().setOnSecuritySetupInitiated(callback);
 }
 
 inline void
 BLE::onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback)
 {
-    transport->getGap().setOnSecuritySetupCompleted(callback);
+    gap().setOnSecuritySetupCompleted(callback);
 }
 
 inline void
 BLE::onLinkSecured(Gap::LinkSecuredCallback_t callback)
 {
-    transport->getGap().setOnLinkSecured(callback);
+    gap().setOnLinkSecured(callback);
 }
 
 inline void
 BLE::onSecurityContextStored(Gap::HandleSpecificEvent_t callback)
 {
-    transport->getGap().setOnSecurityContextStored(callback);
+    gap().setOnSecurityContextStored(callback);
 }
 
 inline void
 BLE::onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback)
 {
-    return transport->getGap().setOnPasskeyDisplay(callback);
+    return gap().setOnPasskeyDisplay(callback);
 }
 
 inline ble_error_t
 BLE::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
 {
-    return transport->getGap().getLinkSecurity(connectionHandle, securityStatusP);
+    return gap().getLinkSecurity(connectionHandle, securityStatusP);
 }
 
 inline ble_error_t
 BLE::purgeAllBondingState(void)
 {
-    return transport->getGap().purgeAllBondingState();
+    return gap().purgeAllBondingState();
 }
 
 inline ble_error_t
