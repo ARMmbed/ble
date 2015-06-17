@@ -334,36 +334,36 @@ public:
     template<typename T>
     void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
-    GapAdvertisingParams &getAdvParams(void) {
+    GapAdvertisingParams &advParams(void) {
         return _advParams;
     }
-    const GapAdvertisingParams &getAdvParams(void) const {
+    const GapAdvertisingParams &advParams(void) const {
         return _advParams;
     }
     void setAdvParams(const GapAdvertisingParams &newParams) {
         _advParams = newParams;
     }
 
-    GapAdvertisingData &getAdvPayload(void) {
+    GapAdvertisingData &advPayload(void) {
         needToSetAdvPayload = true;
         return _advPayload;
     }
-    const GapAdvertisingData &getAdvPayload(void) const {
+    const GapAdvertisingData &advPayload(void) const {
         return _advPayload;
     }
 
-    GapAdvertisingData &getScanResponse(void) {
+    GapAdvertisingData &scanResponse(void) {
         needToSetAdvPayload = true;
         return _scanResponse;
     }
-    const GapAdvertisingData &getScanResponse(void) const {
+    const GapAdvertisingData &scanResponse(void) const {
         return _scanResponse;
     }
 
-    GapScanningParams &getScanningParams(void) {
+    GapScanningParams &scanningParams(void) {
         return _scanningParams;
     }
-    const GapScanningParams &getScanningParams(void) const {
+    const GapScanningParams &scanningParams(void) const {
         return _scanningParams;
     }
 

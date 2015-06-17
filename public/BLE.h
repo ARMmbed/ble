@@ -738,7 +738,7 @@ BLE::reset(void)
 inline ble_error_t
 BLE::shutdown(void)
 {
-    gap().getAdvPayload().clear();
+    gap().advPayload().clear();
     return transport->shutdown();
 }
 
@@ -757,7 +757,7 @@ BLE::getAddress(Gap::AddressType_t *typeP, Gap::Address_t address)
 inline void
 BLE::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
 {
-    gap().getAdvParams().setAdvertisingType(advType);
+    gap().advParams().setAdvertisingType(advType);
 }
 
 inline void
@@ -768,7 +768,7 @@ BLE::setAdvertisingInterval(uint16_t interval)
     } else if (interval < getMinAdvertisingInterval()) {
         interval = getMinAdvertisingInterval();
     }
-    gap().getAdvParams().setInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+    gap().advParams().setInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
 }
 
 inline uint16_t
@@ -789,7 +789,7 @@ BLE::getMaxAdvertisingInterval(void) const {
 inline void
 BLE::setAdvertisingTimeout(uint16_t timeout)
 {
-    gap().getAdvParams().setTimeout(timeout);
+    gap().advParams().setTimeout(timeout);
 }
 
 inline void
@@ -801,32 +801,32 @@ BLE::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
 inline const GapAdvertisingParams &
 BLE::getAdvertisingParams(void) const
 {
-    return gap().getAdvParams();
+    return gap().advParams();
 }
 
 inline void
 BLE::clearAdvertisingPayload(void)
 {
-    gap().getAdvPayload().clear();
+    gap().advPayload().clear();
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayload(uint8_t flags)
 {
-    return gap().getAdvPayload().addFlags(flags);
+    return gap().advPayload().addFlags(flags);
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
 {
     gap().setAppearance(app);
-    return gap().getAdvPayload().addAppearance(app);
+    return gap().advPayload().addAppearance(app);
 }
 
 inline ble_error_t
 BLE::accumulateAdvertisingPayloadTxPower(int8_t txPower)
 {
-    return gap().getAdvPayload().addTxPower(txPower);
+    return gap().advPayload().addTxPower(txPower);
 }
 
 inline ble_error_t
@@ -835,19 +835,19 @@ BLE::accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8
     if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
         gap().setDeviceName(data);
     }
-    return gap().getAdvPayload().addData(type, data, len);
+    return gap().advPayload().addData(type, data, len);
 }
 
 inline ble_error_t
 BLE::accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
 {
-    return gap().getScanResponse().addData(type, data, len);
+    return gap().scanResponse().addData(type, data, len);
 }
 
 inline void
 BLE::clearScanResponse(void)
 {
-    gap().getScanResponse().clear();
+    gap().scanResponse().clear();
 }
 
 inline ble_error_t
@@ -858,13 +858,13 @@ BLE::setAdvertisingPayload(void) {
 inline ble_error_t
 BLE::setAdvertisingData(const GapAdvertisingData& newPayload)
 {
-    gap().getAdvPayload() = newPayload;
+    gap().advPayload() = newPayload;
     return setAdvertisingPayload();
 }
 
 inline const GapAdvertisingData &
 BLE::getAdvertisingData(void) const {
-    return gap().getAdvPayload();
+    return gap().advPayload();
 }
 
 inline ble_error_t
@@ -890,10 +890,10 @@ BLE::stopAdvertising(void)
 inline ble_error_t
 BLE::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout, bool activeScanning) {
     ble_error_t rc;
-    if (((rc = gap().getScanningParams().setInterval(interval)) == BLE_ERROR_NONE) &&
-        ((rc = gap().getScanningParams().setWindow(window))     == BLE_ERROR_NONE) &&
-        ((rc = gap().getScanningParams().setTimeout(timeout))   == BLE_ERROR_NONE)) {
-        gap().getScanningParams().setActiveScanning(activeScanning);
+    if (((rc = gap().scanningParams().setInterval(interval)) == BLE_ERROR_NONE) &&
+        ((rc = gap().scanningParams().setWindow(window))     == BLE_ERROR_NONE) &&
+        ((rc = gap().scanningParams().setTimeout(timeout))   == BLE_ERROR_NONE)) {
+        gap().scanningParams().setActiveScanning(activeScanning);
         return BLE_ERROR_NONE;
     }
 
@@ -902,22 +902,22 @@ BLE::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout, bool ac
 
 inline ble_error_t
 BLE::setScanInterval(uint16_t interval) {
-    return gap().getScanningParams().setInterval(interval);
+    return gap().scanningParams().setInterval(interval);
 }
 
 inline ble_error_t
 BLE::setScanWindow(uint16_t window) {
-    return gap().getScanningParams().setWindow(window);
+    return gap().scanningParams().setWindow(window);
 }
 
 inline ble_error_t
 BLE::setScanTimeout(uint16_t timeout) {
-    return gap().getScanningParams().setTimeout(timeout);
+    return gap().scanningParams().setTimeout(timeout);
 }
 
 inline void
 BLE::setActiveScan(bool activeScanning) {
-    return gap().getScanningParams().setActiveScanning(activeScanning);
+    return gap().scanningParams().setActiveScanning(activeScanning);
 }
 
 inline ble_error_t
