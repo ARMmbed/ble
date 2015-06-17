@@ -201,7 +201,7 @@ public:
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
 public:
-    /* These functions must be defined in the sub-class */
+    /* These functions must be defined in the platform-specific sub-class */
     virtual ble_error_t setAddress(AddressType_t type,  const Address_t address)                   = 0;
     virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address)                        = 0;
     virtual ble_error_t stopAdvertising(void)                                                      = 0;
@@ -229,7 +229,25 @@ public:
     virtual ble_error_t setTxPower(int8_t txPower)                            = 0;
     virtual void        getPermittedTxPowerValues(const int8_t **, size_t *)  = 0;
 
+    /*
+     * APIs with local implementations
+     */
+public:
+    void setAdvertisingType(GapAdvertisingParams::AdvertisingType advType) {
+        _advParams.setAdvertisingType(advType);
+    }
+
+    void setAdvertisingInterval(uint16_t interval) {
+        if (interval == 0) {
+            stopAdvertising();
+        } else if (interval < getMinAdvertisingInterval()) {
+            interval = getMinAdvertisingInterval();
+        }
+        _advParams.setInterval(MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+    }
+
     ble_error_t startAdvertising(void) {
+        setAdvertisingData(); /* update the underlying stack */
         return startAdvertising(_advParams);
     }
 
@@ -240,6 +258,106 @@ public:
         }
 
         return BLE_ERROR_NONE;
+    }
+
+    /**
+     * Reset any advertising payload prepared from prior calls to
+     * accumulateAdvertisingPayload().
+     *
+     * Note: This should be followed by a call to setAdvertisingPayload() or
+     * startAdvertising() before the update takes effect.
+     */
+    void clearAdvertisingPayload(void) {
+        needToSetAdvPayload = true;
+        _advPayload.clear();
+    }
+
+    /**
+     * Accumulate an AD structure in the advertising payload. Please note that
+     * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
+     * as an additional 31 bytes if the advertising payload proves to be too
+     * small.
+     *
+     * @param  flags
+     *         The flags to be added. Multiple flags may be specified in
+     *         combination.
+     */
+    ble_error_t accumulateAdvertisingPayload(uint8_t flags) {
+        needToSetAdvPayload = true;
+        return _advPayload.addFlags(flags);
+    }
+
+    /**
+     * Accumulate an AD structure in the advertising payload. Please note that
+     * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
+     * as an additional 31 bytes if the advertising payload proves to be too
+     * small.
+     *
+     * @param  app
+     *         The appearance of the peripheral.
+     */
+    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
+        needToSetAdvPayload = true;
+        setAppearance(app);
+        return _advPayload.addAppearance(app);
+    }
+
+    /**
+     * Accumulate an AD structure in the advertising payload. Please note that
+     * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
+     * as an additional 31 bytes if the advertising payload proves to be too
+     * small.
+     *
+     * @param  app
+     *         The max transmit power to be used by the controller. This is
+     *         only a hint.
+     */
+    ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
+        needToSetAdvPayload = true;
+        return _advPayload.addTxPower(power);
+    }
+
+    /**
+     * Accumulate a variable length byte-stream as an AD structure in the
+     * advertising payload. Please note that the payload is limited to 31 bytes.
+     * The SCAN_RESPONSE message may be used as an additional 31 bytes if the
+     * advertising payload proves to be too small.
+     *
+     * @param  type The type which describes the variable length data.
+     * @param  data data bytes.
+     * @param  len  length of data.
+     */
+    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        needToSetAdvPayload = true;
+        if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
+            setDeviceName(data);
+        }
+        return _advPayload.addData(type, data, len);
+    }
+
+    /**
+     * Accumulate a variable length byte-stream as an AD structure in the
+     * scanResponse payload.
+     *
+     * @param  type The type which describes the variable length data.
+     * @param  data data bytes.
+     * @param  len  length of data.
+     */
+    ble_error_t accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        needToSetAdvPayload = true;
+        return _scanResponse.addData(type, data, len);
+    }
+
+    /**
+     * Reset any scan response prepared from prior calls to
+     * accumulateScanResponse().
+     *
+     * Note: This should be followed by a call to setAdvertisingPayload() or
+     * startAdvertising() before the update takes effect.
+     */
+    void clearScanResponse(void) {
+        needToSetAdvPayload = true;
+        _scanResponse.clear();
     }
 
 private:
