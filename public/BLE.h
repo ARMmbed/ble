@@ -1080,16 +1080,30 @@ public:
 
     /**
      * Used to setup a callback for GAP disconnection.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onDisconnection(callback) should be replaced with
+     * ble.gap().onDisconnection(callback).
      */
-    void onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback);
+    void onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback) {
+        gap().onDisconnection(disconnectionCallback);
+    }
 
     /**
      * Append to a chain of callbacks to be invoked upon disconnection; these
      * callbacks receive no context and are therefore different from the
      * onDisconnection callback.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.addToDisconnectionCallchain(...) should be replaced with
+     * ble.gap().addToDisconnectionCallchain(...).
      */
     template<typename T>
-    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void));
+    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {
+        gap().addToDisconnectionCallChain(tptr, mptr);
+    }
 
     /**
      * Add a callback for the GATT event DATA_SENT (which is triggered when
@@ -1177,18 +1191,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline void
-BLE::onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback)
-{
-    gap().setOnDisconnection(disconnectionCallback);
-}
-
-template<typename T>
-inline void
-BLE::addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {
-    gap().addToDisconnectionCallChain(tptr, mptr);
-}
 
 inline void
 BLE::onDataSent(void (*callback)(unsigned count)) {

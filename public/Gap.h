@@ -266,7 +266,7 @@ public:
     /**
      * This call initiates the disconnection procedure, and its completion will
      * be communicated to the application with an invocation of the
-     * onDisconnection callback.
+     * disconnectionCallback.
      *
      * @param  reason
      *           The reason for disconnection to be sent back to the peer.
@@ -770,7 +770,17 @@ public:
      * @param callback
      *        Pointer to the unique callback.
      */
-    void setOnDisconnection(DisconnectionEventCallback_t callback) {onDisconnection = callback;}
+    void onDisconnection(DisconnectionEventCallback_t callback) {disconnectionCallback = callback;}
+
+    /**
+     * Append to a chain of callbacks to be invoked upon disconnection; these
+     * callbacks receive no context and are therefore different from the
+     * disconnectionCallback callback.
+     * @param callback
+     *        function pointer to be invoked upon disconnection; receives no context.
+     */
+    template<typename T>
+    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
     /**
      * Set the application callback for radio-notification events.
@@ -807,20 +817,6 @@ public:
      */
     virtual void setOnPasskeyDisplay(PasskeyDisplayCallback_t callback) {onPasskeyDisplay = callback;}
 
-    /**
-     * Append to a chain of callbacks to be invoked upon disconnection; these
-     * callbacks receive no context and are therefore different from the
-     * onDisconnection callback.
-     * @param callback
-     *        function pointer to be invoked upon disconnection; receives no context.
-     *
-     * @note the disconnection CallChain should have been merged with
-     *     onDisconnctionCallback; but this was not possible because
-     *     FunctionPointer (which is a building block for CallChain) doesn't
-     *     accept variadic templates.
-     */
-    template<typename T>
-    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
 protected:
     Gap() :
@@ -831,7 +827,7 @@ protected:
         state(),
         timeoutCallback(NULL),
         connectionCallback(NULL),
-        onDisconnection(NULL),
+        disconnectionCallback(NULL),
         onRadioNotification(),
         onSecuritySetupInitiated(),
         onSecuritySetupCompleted(),
@@ -861,8 +857,8 @@ public:
 
     void processDisconnectionEvent(Handle_t handle, DisconnectionReason_t reason) {
         state.connected = 0;
-        if (onDisconnection) {
-            onDisconnection(handle, reason);
+        if (disconnectionCallback) {
+            disconnectionCallback(handle, reason);
         }
         disconnectionCallChain.call();
     }
@@ -930,7 +926,7 @@ protected:
 protected:
     TimeoutEventCallback_t           timeoutCallback;
     ConnectionEventCallback_t        connectionCallback;
-    DisconnectionEventCallback_t     onDisconnection;
+    DisconnectionEventCallback_t     disconnectionCallback;
     RadioNotificationEventCallback_t onRadioNotification;
     SecuritySetupInitiatedCallback_t onSecuritySetupInitiated;
     SecuritySetupCompletedCallback_t onSecuritySetupCompleted;
