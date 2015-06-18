@@ -1066,7 +1066,18 @@ public:
         gap().onTimeout(timeoutCallback);
     }
 
-    void onConnection(Gap::ConnectionEventCallback_t connectionCallback);
+    /**
+     * Setup a callback for connection events. Refer to Gap::ConnectionEventCallback_t.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onConnection(callback) should be replaced with
+     * ble.gap().onConnection(callback).
+     */
+    void onConnection(Gap::ConnectionEventCallback_t connectionCallback) {
+        gap().onConnection(connectionCallback);
+    }
+
     /**
      * Used to setup a callback for GAP disconnection.
      */
@@ -1166,12 +1177,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline void
-BLE::onConnection(Gap::ConnectionEventCallback_t connectionCallback)
-{
-    gap().setOnConnection(connectionCallback);
-}
 
 inline void
 BLE::onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback)

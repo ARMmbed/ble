@@ -255,7 +255,7 @@ public:
      * @param scanParams
      *          Paramters to be used while scanning for the peer.
      * @return  BLE_ERROR_NONE if connection establishment procedure is started
-     *     successfully. The onConnection callback (if set) will be invoked upon
+     *     successfully. The connectionCallback (if set) will be invoked upon
      *     a connection event.
      */
     virtual ble_error_t connect(const Address_t           peerAddr,
@@ -760,7 +760,10 @@ public:
      */
     void onTimeout(TimeoutEventCallback_t callback) {timeoutCallback = callback;}
 
-    void setOnConnection(ConnectionEventCallback_t callback) {onConnection = callback;}
+    /**
+     * Setup a callback for connection events. Refer to ConnectionEventCallback_t.
+     */
+    void onConnection(ConnectionEventCallback_t callback) {connectionCallback = callback;}
 
     /**
      * Set the application callback for disconnection events.
@@ -827,7 +830,7 @@ protected:
         _scanResponse(),
         state(),
         timeoutCallback(NULL),
-        onConnection(NULL),
+        connectionCallback(NULL),
         onDisconnection(NULL),
         onRadioNotification(),
         onSecuritySetupInitiated(),
@@ -850,9 +853,9 @@ public:
                                 const Address_t           ownAddr,
                                 const ConnectionParams_t *connectionParams) {
         state.connected = 1;
-        if (onConnection) {
+        if (connectionCallback) {
             ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
-            onConnection(&callbackParams);
+            connectionCallback(&callbackParams);
         }
     }
 
@@ -926,7 +929,7 @@ protected:
 
 protected:
     TimeoutEventCallback_t           timeoutCallback;
-    ConnectionEventCallback_t        onConnection;
+    ConnectionEventCallback_t        connectionCallback;
     DisconnectionEventCallback_t     onDisconnection;
     RadioNotificationEventCallback_t onRadioNotification;
     SecuritySetupInitiatedCallback_t onSecuritySetupInitiated;
