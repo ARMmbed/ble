@@ -32,7 +32,6 @@ class BLEInstanceBase
 public:
     virtual ble_error_t init(void)                 = 0;
     virtual ble_error_t shutdown(void)             = 0;
-    virtual ble_error_t reset(void)                = 0;
     virtual const char *getVersion(void)           = 0;
     virtual Gap&        getGap()                   = 0;
     virtual const Gap&  getGap() const             = 0;
