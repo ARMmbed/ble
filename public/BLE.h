@@ -74,6 +74,17 @@ public:
         return transport->getGap();
     }
 
+    /*
+     * Accessors to GATT Server. Please refer to GattServer.h. All GATTServer related
+     * functionality requires going through this accessor.
+     */
+    const GattServer& gattServer() const {
+        return transport->getGattServer();
+    }
+    GattServer& gattServer() {
+        return transport->getGattServer();
+    }
+
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
      * is a sleep function which will return when there is an application
