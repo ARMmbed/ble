@@ -85,6 +85,17 @@ public:
         return transport->getGattServer();
     }
 
+    /*
+     * Accessors to GATT Client. Please refer to GattClient.h. All GATTClient related
+     * functionality requires going through this accessor.
+     */
+    const GattClient& gattClient() const {
+        return transport->getGattClient();
+    }
+    GattClient& gattClient() {
+        return transport->getGattClient();
+    }
+
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
      * is a sleep function which will return when there is an application
@@ -115,6 +126,68 @@ public:
                                    bool                          requireMITM   = true,
                                    Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
                                    const Gap::Passkey_t          passkey       = NULL);
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has started. This will be skipped for bonded
+     * devices. The callback is passed in parameters received from the peer's
+     * security request: bool allowBonding, bool requireMITM, and
+     * SecurityIOCapabilities_t.
+     */
+    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has completed. This will be skipped for bonded
+     * devices. The callback is passed in the success/failure status of the
+     * security setup procedure.
+     */
+    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
+
+    /**
+     * Setup a callback for when a link with the peer is secured. For bonded
+     * devices, subsequent reconnections with bonded peer will result only in
+     * this callback when the link is secured and setup procedures will not
+     * occur unless the bonding information is either lost or deleted on either
+     * or both sides. The callback is passed in a Gap::SecurityMode_t according
+     * to the level of security in effect for the secured link.
+     */
+    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
+
+    /**
+     * Setup a callback for successful bonding; i.e. that link-specific security
+     * context is stored persistently for a peer device.
+     */
+    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
+
+    /**
+     * Setup a callback for when the passkey needs to be displayed on a
+     * peripheral with DISPLAY capability. This happens when security is
+     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
+     * needs to be exchanged between the peers to authenticate the connection
+     * attempt.
+     */
+    void onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback);
+
+    /**
+     * Get the security status of a connection.
+     *
+     * @param[in]  connectionHandle   Handle to identify the connection.
+     * @param[out] securityStatusP    security status.
+     *
+     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     */
+    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
+
+    /**
+     * Delete all peer device context and all related bonding information from
+     * the database within the security manager.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     *                                    application registration.
+     */
+    ble_error_t purgeAllBondingState(void);
 
     /*
      * Deprecation alert!
@@ -848,95 +921,6 @@ public:
         gap().getPermittedTxPowerValues(valueArrayPP, countP);
     }
 
-    /* APIs to set GAP callbacks. */
-    void onTimeout(Gap::EventCallback_t timeoutCallback);
-
-    void onConnection(Gap::ConnectionEventCallback_t connectionCallback);
-    /**
-     * Used to setup a callback for GAP disconnection.
-     */
-    void onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback);
-
-    /**
-     * Append to a chain of callbacks to be invoked upon disconnection; these
-     * callbacks receive no context and are therefore different from the
-     * onDisconnection callback.
-     */
-    template<typename T>
-    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void));
-
-    /**
-     * Add a callback for the GATT event DATA_SENT (which is triggered when
-     * updates are sent out by GATT in the form of notifications).
-     *
-     * @Note: it is possible to chain together multiple onDataSent callbacks
-     * (potentially from different modules of an application) to receive updates
-     * to characteristics.
-     *
-     * @Note: it is also possible to setup a callback into a member function of
-     * some object.
-     */
-    void onDataSent(void (*callback)(unsigned count));
-    template <typename T> void onDataSent(T * objPtr, void (T::*memberPtr)(unsigned count));
-
-    /**
-     * Setup a callback for when a characteristic has its value updated by a
-     * client.
-     *
-     * @Note: it is possible to chain together multiple onDataWritten callbacks
-     * (potentially from different modules of an application) to receive updates
-     * to characteristics. Many services, such as DFU and UART add their own
-     * onDataWritten callbacks behind the scenes to trap interesting events.
-     *
-     * @Note: it is also possible to setup a callback into a member function of
-     * some object.
-     */
-    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP));
-    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context));
-
-    /**
-     * Setup a callback for when a characteristic is being read by a client.
-     *
-     * @Note: this functionality may not be available on all underlying stacks.
-     * You could use GattCharacteristic::setReadAuthorizationCallback() as an
-     * alternative.
-     *
-     * @Note: it is possible to chain together multiple onDataRead callbacks
-     * (potentially from different modules of an application) to receive updates
-     * to characteristics. Services may add their own onDataRead callbacks
-     * behind the scenes to trap interesting events.
-     *
-     * @Note: it is also possible to setup a callback into a member function of
-     * some object.
-     *
-     * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
-     *         else BLE_ERROR_NONE.
-     */
-    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP));
-    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context));
-
-    void onUpdatesEnabled(GattServer::EventCallback_t callback);
-    void onUpdatesDisabled(GattServer::EventCallback_t callback);
-    void onConfirmationReceived(GattServer::EventCallback_t callback);
-
-    /**
-     * Radio Notification is a feature that enables ACTIVE and INACTIVE
-     * (nACTIVE) signals from the stack that notify the application when the
-     * radio is in use. The signal is sent using software interrupt.
-     *
-     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
-     * signal is sent at the end of the Radio Event. These signals can be used
-     * by the application programmer to synchronize application logic with radio
-     * activity. For example, the ACTIVE signal can be used to shut off external
-     * devices to manage peak current drawn during periods when the radio is on,
-     * or to trigger sensor data collection for transmission in the Radio Event.
-     *
-     * @param callback
-     *          The application handler to be invoked in response to a radio
-     *          ACTIVE/INACTIVE event.
-     */
-    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
-
     /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
@@ -1069,139 +1053,93 @@ public:
         return gattServer().write(connectionHandle, attributeHandle, value, size, localOnly);
     }
 
+    void onTimeout(Gap::EventCallback_t timeoutCallback);
+
+    void onConnection(Gap::ConnectionEventCallback_t connectionCallback);
     /**
-     * Setup a callback for when the security setup procedure (key generation
-     * and exchange) for a link has started. This will be skipped for bonded
-     * devices. The callback is passed in parameters received from the peer's
-     * security request: bool allowBonding, bool requireMITM, and
-     * SecurityIOCapabilities_t.
+     * Used to setup a callback for GAP disconnection.
      */
-    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
+    void onDisconnection(Gap::DisconnectionEventCallback_t disconnectionCallback);
 
     /**
-     * Setup a callback for when the security setup procedure (key generation
-     * and exchange) for a link has completed. This will be skipped for bonded
-     * devices. The callback is passed in the success/failure status of the
-     * security setup procedure.
+     * Append to a chain of callbacks to be invoked upon disconnection; these
+     * callbacks receive no context and are therefore different from the
+     * onDisconnection callback.
      */
-    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
+    template<typename T>
+    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void));
 
     /**
-     * Setup a callback for when a link with the peer is secured. For bonded
-     * devices, subsequent reconnections with bonded peer will result only in
-     * this callback when the link is secured and setup procedures will not
-     * occur unless the bonding information is either lost or deleted on either
-     * or both sides. The callback is passed in a Gap::SecurityMode_t according
-     * to the level of security in effect for the secured link.
-     */
-    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
-
-    /**
-     * Setup a callback for successful bonding; i.e. that link-specific security
-     * context is stored persistently for a peer device.
-     */
-    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
-
-    /**
-     * Setup a callback for when the passkey needs to be displayed on a
-     * peripheral with DISPLAY capability. This happens when security is
-     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
-     * needs to be exchanged between the peers to authenticate the connection
-     * attempt.
-     */
-    void onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback);
-
-    /**
-     * Get the security status of a connection.
+     * Add a callback for the GATT event DATA_SENT (which is triggered when
+     * updates are sent out by GATT in the form of notifications).
      *
-     * @param[in]  connectionHandle   Handle to identify the connection.
-     * @param[out] securityStatusP    security status.
+     * @Note: it is possible to chain together multiple onDataSent callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics.
      *
-     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
      */
-    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
+    void onDataSent(void (*callback)(unsigned count));
+    template <typename T> void onDataSent(T * objPtr, void (T::*memberPtr)(unsigned count));
 
     /**
-     * Delete all peer device context and all related bonding information from
-     * the database within the security manager.
+     * Setup a callback for when a characteristic has its value updated by a
+     * client.
      *
-     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
-     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
-     *                                    application registration.
+     * @Note: it is possible to chain together multiple onDataWritten callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Many services, such as DFU and UART add their own
+     * onDataWritten callbacks behind the scenes to trap interesting events.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
      */
-    ble_error_t purgeAllBondingState(void);
+    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP));
+    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context));
 
     /**
-     * Launch service discovery. Once launched, service discovery will remain
-     * active with callbacks being issued back into the application for matching
-     * services/characteristics. isServiceDiscoveryActive() can be used to
-     * determine status; and a termination callback (if setup) will be invoked
-     * at the end. Service discovery can be terminated prematurely if needed
-     * using terminateServiceDiscovery().
+     * Setup a callback for when a characteristic is being read by a client.
      *
-     * @param  connectionHandle
-     *           Handle for the connection with the peer.
-     * @param  sc
-     *           This is the application callback for matching service. Taken as
-     *           NULL by default. Note: service discovery may still be active
-     *           when this callback is issued; calling asynchronous BLE-stack
-     *           APIs from within this application callback might cause the
-     *           stack to abort service discovery. If this becomes an issue, it
-     *           may be better to make local copy of the discoveredService and
-     *           wait for service discovery to terminate before operating on the
-     *           service.
-     * @param  cc
-     *           This is the application callback for matching characteristic.
-     *           Taken as NULL by default. Note: service discovery may still be
-     *           active when this callback is issued; calling asynchronous
-     *           BLE-stack APIs from within this application callback might cause
-     *           the stack to abort service discovery. If this becomes an issue,
-     *           it may be better to make local copy of the discoveredCharacteristic
-     *           and wait for service discovery to terminate before operating on the
-     *           characteristic.
-     * @param  matchingServiceUUID
-     *           UUID based filter for specifying a service in which the application is
-     *           interested. By default it is set as the wildcard UUID_UNKNOWN,
-     *           in which case it matches all services. If characteristic-UUID
-     *           filter (below) is set to the wildcard value, then a service
-     *           callback will be invoked for the matching service (or for every
-     *           service if the service filter is a wildcard).
-     * @param  matchingCharacteristicUUIDIn
-     *           UUID based filter for specifying characteristic in which the application
-     *           is interested. By default it is set as the wildcard UUID_UKNOWN
-     *           to match against any characteristic. If both service-UUID
-     *           filter and characteristic-UUID filter are used with non- wildcard
-     *           values, then only a single characteristic callback is
-     *           invoked for the matching characteristic.
+     * @Note: this functionality may not be available on all underlying stacks.
+     * You could use GattCharacteristic::setReadAuthorizationCallback() as an
+     * alternative.
      *
-     * @Note     Using wildcard values for both service-UUID and characteristic-
-     *           UUID will result in complete service discovery--callbacks being
-     *           called for every service and characteristic.
+     * @Note: it is possible to chain together multiple onDataRead callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Services may add their own onDataRead callbacks
+     * behind the scenes to trap interesting events.
      *
-     * @return
-     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
+     *
+     * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
+     *         else BLE_ERROR_NONE.
      */
-    ble_error_t launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
-                                       ServiceDiscovery::ServiceCallback_t         sc = NULL,
-                                       ServiceDiscovery::CharacteristicCallback_t  cc = NULL,
-                                       const UUID                                 &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
-                                       const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN));
+    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP));
+    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context));
+
+    void onUpdatesEnabled(GattServer::EventCallback_t callback);
+    void onUpdatesDisabled(GattServer::EventCallback_t callback);
+    void onConfirmationReceived(GattServer::EventCallback_t callback);
 
     /**
-     * Setup callback for when serviceDiscovery terminates.
+     * Radio Notification is a feature that enables ACTIVE and INACTIVE
+     * (nACTIVE) signals from the stack that notify the application when the
+     * radio is in use. The signal is sent using software interrupt.
+     *
+     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
+     * signal is sent at the end of the Radio Event. These signals can be used
+     * by the application programmer to synchronize application logic with radio
+     * activity. For example, the ACTIVE signal can be used to shut off external
+     * devices to manage peak current drawn during periods when the radio is on,
+     * or to trigger sensor data collection for transmission in the Radio Event.
+     *
+     * @param callback
+     *          The application handler to be invoked in response to a radio
+     *          ACTIVE/INACTIVE event.
      */
-    void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback);
-
-    /**
-     * Is service-discovery currently active?
-     */
-    bool isServiceDiscoveryActive(void);
-
-    /**
-     * Terminate an ongoing service-discovery. This should result in an
-     * invocation of the TerminationCallback if service-discovery is active.
-     */
-    void terminateServiceDiscovery(void);
+    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
 
 public:
     BLE() : transport(createBLEInstance()) {
@@ -1345,41 +1283,6 @@ inline ble_error_t
 BLE::purgeAllBondingState(void)
 {
     return gap().purgeAllBondingState();
-}
-
-inline ble_error_t
-BLE::launchServiceDiscovery(Gap::Handle_t                               connectionHandle,
-                            ServiceDiscovery::ServiceCallback_t         sc,
-                            ServiceDiscovery::CharacteristicCallback_t  cc,
-                            const UUID                                 &matchingServiceUUID,
-                            const UUID                                 &matchingCharacteristicUUID)
-{
-    return transport->getGattClient().launchServiceDiscovery(connectionHandle, sc, cc, matchingServiceUUID, matchingCharacteristicUUID);
-}
-
-inline void
-BLE::onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback)
-{
-    transport->getGattClient().onServiceDiscoveryTermination(callback);
-}
-
-/**
- * Is service-discovery currently active?
- */
-inline bool
-BLE::isServiceDiscoveryActive(void)
-{
-    return transport->getGattClient().isServiceDiscoveryActive();
-}
-
-/**
- * Terminate an ongoing service-discovery. This should result in an
- * invocation of the TerminationCallback if service-discovery is active.
- */
-inline void
-BLE::terminateServiceDiscovery(void)
-{
-    transport->getGattClient().terminateServiceDiscovery();
 }
 
 #endif // ifndef __BLE_H__

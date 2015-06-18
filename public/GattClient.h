@@ -38,26 +38,54 @@ public:
     /**
      * Launch service discovery. Once launched, service discovery will remain
      * active with callbacks being issued back into the application for matching
-     * services/characteristics. isActive() can be used to determine status; and
-     * a termination callback (if setup) will be invoked at the end. Service
-     * discovery can be terminated prematurely if needed using terminate().
+     * services/characteristics. isServiceDiscoveryActive() can be used to
+     * determine status; and a termination callback (if setup) will be invoked
+     * at the end. Service discovery can be terminated prematurely if needed
+     * using terminateServiceDiscovery().
      *
      * @param  connectionHandle
      *           Handle for the connection with the peer.
      * @param  sc
-     *           This is the application callback for matching service.
+     *           This is the application callback for matching service. Taken as
+     *           NULL by default. Note: service discovery may still be active
+     *           when this callback is issued; calling asynchronous BLE-stack
+     *           APIs from within this application callback might cause the
+     *           stack to abort service discovery. If this becomes an issue, it
+     *           may be better to make local copy of the discoveredService and
+     *           wait for service discovery to terminate before operating on the
+     *           service.
      * @param  cc
      *           This is the application callback for matching characteristic.
+     *           Taken as NULL by default. Note: service discovery may still be
+     *           active when this callback is issued; calling asynchronous
+     *           BLE-stack APIs from within this application callback might cause
+     *           the stack to abort service discovery. If this becomes an issue,
+     *           it may be better to make local copy of the discoveredCharacteristic
+     *           and wait for service discovery to terminate before operating on the
+     *           characteristic.
      * @param  matchingServiceUUID
      *           UUID based filter for specifying a service in which the application is
-     *           interested.
+     *           interested. By default it is set as the wildcard UUID_UNKNOWN,
+     *           in which case it matches all services. If characteristic-UUID
+     *           filter (below) is set to the wildcard value, then a service
+     *           callback will be invoked for the matching service (or for every
+     *           service if the service filter is a wildcard).
      * @param  matchingCharacteristicUUIDIn
      *           UUID based filter for specifying characteristic in which the application
-     *           is interested.
+     *           is interested. By default it is set as the wildcard UUID_UKNOWN
+     *           to match against any characteristic. If both service-UUID
+     *           filter and characteristic-UUID filter are used with non- wildcard
+     *           values, then only a single characteristic callback is
+     *           invoked for the matching characteristic.
      *
-     * @Note     Using wildcard values for both service-UUID and characteristic-
+     * @note     Using wildcard values for both service-UUID and characteristic-
      *           UUID will result in complete service discovery--callbacks being
      *           called for every service and characteristic.
+     *
+
+     * @note     Providing NULL for the characteristic callback will result in
+     *           characteristic discovery being skipped. This allows for an
+     *           inexpensive method to discover services.
      *
      * @return
      *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
@@ -68,6 +96,9 @@ public:
                                                const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
                                                const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) = 0;
 
+    /**
+     * Setup callback for when serviceDiscovery terminates.
+     */
     virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) = 0;
 
     /**
@@ -84,6 +115,22 @@ public:
     /* Initiate a Gatt Client read procedure by attribute-handle.*/
     virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const = 0;
 
+    /**
+     * Initiate a GATT Client write procedure.
+     *
+     * @param[in] cmd
+     *              Command can be either a write-request (which generates a
+     *              matching response from the peripheral), or a write-command,
+     *              which doesn't require the connected peer to respond.
+     * @param[in] connHandle
+     *              Connection handle.
+     * @param[in] attributeHandle
+     *              handle for the target attribtue on the remote GATT server.
+     * @param[in] length
+     *              length of the new value.
+     * @param[in] value
+     *              new value being written.
+     */
     virtual ble_error_t write(GattClient::WriteOp_t    cmd,
                               Gap::Handle_t            connHandle,
                               GattAttribute::Handle_t  attributeHandle,
