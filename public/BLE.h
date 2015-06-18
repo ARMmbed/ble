@@ -43,14 +43,30 @@ public:
      */
     ble_error_t init();
 
-    ble_error_t reset(void);
+    /**
+     * Purge the BLE stack of GATT and GAP state. init() must be called
+     * afterwards to re-instate services and GAP state. This API offers a way to
+     * repopulate the GATT database with new services and characteristics.
+     */
+    ble_error_t shutdown(void) {
+        clearAdvertisingPayload();
+        return transport->shutdown();
+    }
 
     /**
-     * Purge the BLE stack of GATT and GAP state. init() must be called afterwards to re-instate services and GAP state.
+     * This call allows the application to get the BLE stack version information.
+     *
+     * @return  A pointer to a const string representing the version.
+     *          Note: The string is owned by the BLE_API.
      */
-    ble_error_t shutdown(void);
+    const char *getVersion(void) {
+        return transport->getVersion();
+    }
 
-    /* Accessors to GAP. Please refer to Gap.h for GAP related functionality. */
+    /*
+     * Accessors to GAP. Please refer to Gap.h. All GAP related functionality requires
+     * going through this accessor.
+     */
     const Gap &gap() const {
         return transport->getGap();
     }
@@ -58,134 +74,170 @@ public:
         return transport->getGap();
     }
 
+    /**
+     * Yield control to the BLE stack or to other tasks waiting for events. This
+     * is a sleep function which will return when there is an application
+     * specific interrupt, but the MCU might wake up several times before
+     * returning (to service the stack). This is not always interchangeable with
+     * WFE().
+     */
+    void waitForEvent(void) {
+        transport->waitForEvent();
+    }
+
+    /*
+     * Deprecation alert!
+     * All of the following are deprecated and may be dropped in a future
+     * release. Documentation should refer to alternative APIs.
+     */
+
+    /* GAP specific APIs. */
 public:
-    /* GAP specific APIs */
     /**
      * Set the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAddress(...) should be replaced with
+     * ble.gap().setAddress(...).
      */
-    ble_error_t setAddress(Gap::AddressType_t type, const Gap::Address_t address);
+    ble_error_t setAddress(Gap::AddressType_t type, const Gap::Address_t address) {
+        return gap().setAddress(type, address);
+    }
 
     /**
      * Fetch the BTLE MAC address and type.
      * @return BLE_ERROR_NONE on success.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getAddress(...) should be replaced with
+     * ble.gap().getAddress(...).
      */
-    ble_error_t getAddress(Gap::AddressType_t *typeP, Gap::Address_t address);
+    ble_error_t getAddress(Gap::AddressType_t *typeP, Gap::Address_t address) {
+        return gap().getAddress(typeP, address);
+    }
 
     /**
-     * @param[in] advType
-     *              The GAP advertising mode to use for this device. Valid
-     *              values are defined in AdvertisingType:
+     * Set the GAP advertising mode to use for this device.
      *
-     *              \par ADV_NON_CONNECTABLE_UNDIRECTED
-     *              All connections to the peripheral device will be refused.
-     *
-     *              \par ADV_CONNECTABLE_DIRECTED
-     *              Only connections from a pre-defined central device will be
-     *              accepted.
-     *
-     *              \par ADV_CONNECTABLE_UNDIRECTED
-     *              Any central device can connect to this peripheral.
-     *
-     *              \par ADV_SCANNABLE_UNDIRECTED
-     *              Include support for Scan Response payloads.
-     *
-     *              \par
-     *              See Bluetooth Core Specification 4.0 (Vol. 3), Part C,
-     *              Section 9.3 and Core Specification 4.0 (Vol. 6), Part B,
-     *              Section 2.3.1 for further information on GAP connection
-     *              modes
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAdvertisingType(...) should be replaced with
+     * ble.gap().setAdvertisingType(...).
      */
-    void        setAdvertisingType(GapAdvertisingParams::AdvertisingType);
+    void setAdvertisingType(GapAdvertisingParams::AdvertisingType advType) {
+        gap().setAdvertisingType(advType);
+    }
 
     /**
      * @param[in] interval
      *              Advertising interval in units of milliseconds. Advertising
      *              is disabled if interval is 0. If interval is smaller than
      *              the minimum supported value, then the minimum supported
-     *              value is used instead.
+     *              value is used instead. This minimum value can be discovered
+     *              using getMinAdvertisingInterval().
      *
-     *              \par
-     *              Decreasing this value will allow central devices to detect
-     *              your peripheral faster at the expense of more power being
-     *              used by the radio due to the higher data transmit rate.
-     *
-     *              \par
      *              This field must be set to 0 if connectionMode is equal
-     *              to ADV_CONNECTABLE_DIRECTED
+     *              to ADV_CONNECTABLE_DIRECTED.
      *
-     *              \par
-     *              See Bluetooth Core Specification, Vol 3., Part C,
-     *              Appendix A for suggested advertising intervals.
+     * @note: Decreasing this value will allow central devices to detect a
+     * peripheral faster at the expense of more power being used by the radio
+     * due to the higher data transmit rate.
      *
-     * @Note: [WARNING] This API previously used 0.625ms as the unit for its
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAdvertisingInterval(...) should be replaced with
+     * ble.gap().setAdvertisingInterval(...).
+     *
+     * @note: [WARNING] This API previously used 0.625ms as the unit for its
      * 'interval' argument. That required an explicit conversion from
      * milliseconds using Gap::MSEC_TO_GAP_DURATION_UNITS(). This conversion is
      * no longer required as the new units are milliseconds. Any application
      * code depending on the old semantics would need to be updated accordingly.
      */
-    void        setAdvertisingInterval(uint16_t interval);
+    void setAdvertisingInterval(uint16_t interval) {
+        gap().setAdvertisingInterval(interval);
+    }
 
     /**
      * @return Minimum Advertising interval in milliseconds.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getMinAdvertisingInterval(...) should be replaced with
+     * ble.gap().getMinAdvertisingInterval(...).
      */
-    uint16_t    getMinAdvertisingInterval(void) const;
+    uint16_t getMinAdvertisingInterval(void) const {
+        return gap().getMinAdvertisingInterval();
+    }
+
     /**
-     * @return Minimum Advertising interval in milliseconds for non connectible mode.
+     * @return Minimum Advertising interval in milliseconds for non-connectible mode.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getMinNonConnectableAdvertisingInterval(...) should be replaced with
+     * ble.gap().getMinNonConnectableAdvertisingInterval(...).
      */
-    uint16_t    getMinNonConnectableAdvertisingInterval(void) const;
+    uint16_t getMinNonConnectableAdvertisingInterval(void) const {
+        return gap().getMinNonConnectableAdvertisingInterval();
+    }
+
     /**
      * @return Maximum Advertising interval in milliseconds.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getMaxAdvertisingInterval(...) should be replaced with
+     * ble.gap().getMaxAdvertisingInterval(...).
      */
-    uint16_t    getMaxAdvertisingInterval(void) const;
+    uint16_t getMaxAdvertisingInterval(void) const {
+        return gap().getMaxAdvertisingInterval();
+    }
 
     /**
      * @param[in] timeout
-     *              Advertising timeout between 0x1 and 0x3FFF (1 and 16383)
-     *              in seconds.  Enter 0 to disable the advertising timeout.
+     *              Advertising timeout (in seconds) between 0x1 and 0x3FFF (1
+     *              and 16383). Use 0 to disable the advertising timeout.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAdvertisingTimeout(...) should be replaced with
+     * ble.gap().setAdvertisingTimeout(...).
      */
-    void        setAdvertisingTimeout(uint16_t timeout);
+    void setAdvertisingTimeout(uint16_t timeout) {
+        gap().setAdvertisingTimeout(timeout);
+    }
 
     /**
-     * Please refer to the APIs above.
+     * Setup a particular, user-constructed set of advertisement parameters for
+     * the underlying stack. It would be uncommon for this API to be used
+     * directly; there are other APIs to tweak advertisement parameters
+     * individually (see above).
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAdvertisingParams(...) should be replaced with
+     * ble.gap().setAdvertisingParams(...).
      */
-    void        setAdvertisingParams(const GapAdvertisingParams &advParams);
+    void setAdvertisingParams(const GapAdvertisingParams &advParams) {
+        gap().setAdvertisingParams(advParams);
+    }
 
     /**
      * @return  Read back advertising parameters. Useful for storing and
      *          restoring parameters rapidly.
-     */
-    const GapAdvertisingParams &getAdvertisingParams(void) const;
-
-    /**
-     * This API is typically used as an internal helper to udpate the transport
-     * backend with advertising data before starting to advertise. It may also
-     * be explicity used to dynamically reset the accumulated advertising
-     * payload and scanResponse; to do this, the application can clear and re-
-     * accumulate a new advertising payload (and scanResponse) before using this
-     * API.
-     */
-    ble_error_t setAdvertisingPayload(void);
-
-    /**
-     * Set advertising data using object.
-     */
-    ble_error_t setAdvertisingData(const GapAdvertisingData &advData);
-
-    /**
-     * @return  Read back advertising data. Useful for storing and
-     *          restoring payload.
-     */
-    const GapAdvertisingData &getAdvertisingData(void) const;
-
-    /**
-     * Reset any advertising payload prepared from prior calls to
-     * accumulateAdvertisingPayload().
      *
-     * Note: This should be followed by a call to setAdvertisingPayload() or
-     * startAdvertising() before the update takes effect.
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getAdvertisingParams(...) should be replaced with
+     * ble.gap().getAdvertisingParams(...).
      */
-    void        clearAdvertisingPayload(void);
+    const GapAdvertisingParams &getAdvertisingParams(void) const {
+        return gap().getAdvertisingParams();
+    }
 
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
@@ -193,11 +245,19 @@ public:
      * as an additional 31 bytes if the advertising payload proves to be too
      * small.
      *
-     * @param  flags
-     *         The flags to be added. Multiple flags may be specified in
-     *         combination.
+     * @param[in] flags
+     *              The flags to be added. Please refer to
+     *              GapAdvertisingData::Flags for valid flags. Multiple
+     *              flags may be specified in combination.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.accumulateAdvertisingPayload(flags) should be replaced with
+     * ble.gap().accumulateAdvertisingPayload(flags).
      */
-    ble_error_t accumulateAdvertisingPayload(uint8_t flags);
+    ble_error_t accumulateAdvertisingPayload(uint8_t flags) {
+        return gap().accumulateAdvertisingPayload(flags);
+    }
 
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
@@ -205,10 +265,17 @@ public:
      * as an additional 31 bytes if the advertising payload proves to be too
      * small.
      *
-     * @param  app
-     *         The appearance of the peripheral.
+     * @param[in] app
+     *              The appearance of the peripheral.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.accumulateAdvertisingPayload(appearance) should be replaced with
+     * ble.gap().accumulateAdvertisingPayload(appearance).
      */
-    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app);
+    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
+        return gap().accumulateAdvertisingPayload(app);
+    }
 
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
@@ -216,11 +283,18 @@ public:
      * as an additional 31 bytes if the advertising payload proves to be too
      * small.
      *
-     * @param  app
-     *         The max transmit power to be used by the controller. This is
-     *         only a hint.
+     * @param[in] app
+     *              The max transmit power to be used by the controller. This
+     *              is only a hint.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.accumulateAdvertisingPayloadTxPower(txPower) should be replaced with
+     * ble.gap().accumulateAdvertisingPayloadTxPower(txPower).
      */
-    ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power);
+    ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
+        return gap().accumulateAdvertisingPayloadTxPower(power);
+    }
 
     /**
      * Accumulate a variable length byte-stream as an AD structure in the
@@ -231,47 +305,146 @@ public:
      * @param  type The type which describes the variable length data.
      * @param  data data bytes.
      * @param  len  length of data.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.accumulateAdvertisingPayload(...) should be replaced with
+     * ble.gap().accumulateAdvertisingPayload(...).
      */
-    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len);
+    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        return gap().accumulateAdvertisingPayload(type, data, len);
+    }
+
+    /**
+     * Setup a particular, user-constructed advertisement payload for the
+     * underlying stack. It would be uncommon for this API to be used directly;
+     * there are other APIs to build an advertisement payload (see above).
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAdvertisingData(...) should be replaced with
+     * ble.gap().setAdvertisingPayload(...).
+     */
+    ble_error_t setAdvertisingData(const GapAdvertisingData &advData) {
+        return gap().setAdvertisingPayload(advData);
+    }
+
+    /**
+     * @return  Read back advertising data. Useful for storing and
+     *          restoring payload.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getAdvertisingData(...) should be replaced with
+     * ble.gap().getAdvertisingPayload()(...).
+     */
+    const GapAdvertisingData &getAdvertisingData(void) const {
+        return gap().getAdvertisingPayload();
+    }
+
+    /**
+     * Reset any advertising payload prepared from prior calls to
+     * accumulateAdvertisingPayload(). This automatically propagates the re-
+     * initialized adv payload to the underlying stack.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.clearAdvertisingPayload(...) should be replaced with
+     * ble.gap().clearAdvertisingPayload(...).
+     */
+    void clearAdvertisingPayload(void) {
+        gap().clearAdvertisingPayload();
+    }
+
+    /**
+     * This API is *deprecated* and resolves to a no-operation. It is left here
+     * to allow older code to compile. Please avoid using this API in new code.
+     * This API will be dropped in a future release.
+     *
+     * Formerly, it would be used to dynamically reset the accumulated advertising
+     * payload and scanResponse; to do this, the application would clear and re-
+     * accumulate a new advertising payload (and scanResponse) before using this
+     * API. Updates to the underlying advertisement payload now happen
+     * implicitly.
+     */
+    ble_error_t setAdvertisingPayload(void) {
+        return BLE_ERROR_NONE;
+    }
 
     /**
      * Accumulate a variable length byte-stream as an AD structure in the
      * scanResponse payload.
      *
-     * @param  type The type which describes the variable length data.
-     * @param  data data bytes.
-     * @param  len  length of data.
+     * @param[in] type The type which describes the variable length data.
+     * @param[in] data data bytes.
+     * @param[in] len  length of data.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.accumulateScanResponse(...) should be replaced with
+     * ble.gap().accumulateScanResponse(...).
      */
-    ble_error_t accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len);
+    ble_error_t accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        return gap().accumulateScanResponse(type, data, len);
+    }
 
     /**
      * Reset any scan response prepared from prior calls to
      * accumulateScanResponse().
      *
-     * Note: This should be followed by a call to setAdvertisingPayload() or
-     * startAdvertising() before the update takes effect.
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.clearScanResponse(...) should be replaced with
+     * ble.gap().clearScanResponse(...).
      */
-    void        clearScanResponse(void);
+    void clearScanResponse(void) {
+        gap().clearScanResponse();
+    }
 
     /**
-     * Start advertising (GAP Discoverable, Connectable modes, Broadcast
-     * Procedure).
+     * Start advertising.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.startAdvertising(...) should be replaced with
+     * ble.gap().startAdvertising(...).
      */
-    ble_error_t startAdvertising(void);
+    ble_error_t startAdvertising(void) {
+        /* HACK ALERT! the following bit with initializeGATTDatabase() is additional to
+         * gap().startAdvertising(). This was put in place to get some stacks to
+         * work--like CSR. We need to reach a point where this shouldn't be
+         * necessary. */
+        ble_error_t rc;
+        if ((rc = transport->getGattServer().initializeGATTDatabase()) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return gap().startAdvertising();
+    }
 
     /**
-     * Stop advertising (GAP Discoverable, Connectable modes, Broadcast
-     * Procedure).
+     * Stop advertising.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.stopAdvertising(...) should be replaced with
+     * ble.gap().stopAdvertising(...).
      */
-    ble_error_t stopAdvertising(void);
+    ble_error_t stopAdvertising(void) {
+        return gap().stopAdvertising();
+    }
 
     /**
      * Setup parameters for GAP scanning--i.e. observer mode.
-     * @param  interval Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
-     * @param  window   Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
-     * @param  timeout  Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
-     * @param  activeScanning Set to True if active-scanning is required. This is used to fetch the
-     *                        scan response from a peer if possible.
+     * @param[in] interval
+     *              Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     * @param[in] window
+     *              Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     * @param[in] timeout
+     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     * @param[in] activeScanning
+     *              Set to True if active-scanning is required. This is used to fetch the
+     *              scan response from a peer if possible.
      *
      * The scanning window divided by the interval determines the duty cycle for
      * scanning. For example, if the interval is 100ms and the window is 10ms,
@@ -284,34 +457,136 @@ public:
      * enabled by using startScan().
      *
      * @Note: The scan interval and window are recommendations to the BLE stack.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setScanParams(...) should be replaced with
+     * ble.gap().setScanParams(...).
      */
     ble_error_t setScanParams(uint16_t interval       = GapScanningParams::SCAN_INTERVAL_MAX,
                               uint16_t window         = GapScanningParams::SCAN_WINDOW_MAX,
                               uint16_t timeout        = 0,
-                              bool     activeScanning = false);
-    ble_error_t setScanInterval(uint16_t interval);
-    ble_error_t setScanWindow  (uint16_t window);
-    ble_error_t setScanTimeout (uint16_t timeout);
-    void        setActiveScan  (bool     activeScanning);
+                              bool     activeScanning = false) {
+        return gap().setScanParams(interval, window, timeout, activeScanning);
+    }
 
     /**
-     * Start scanning (Observer Procedure) based on the scan-params currently
-     * in effect.
+     * Setup the scanInterval parameter for GAP scanning--i.e. observer mode.
+     * @param[in] interval
+     *              Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      *
-     * @param  callback The application callback to be invoked upon receiving
-     *     every advertisement report. Can be passed in as NULL, in which case
-     *     scanning may not be enabled at all.
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setScanInterval(interval) should be replaced with
+     * ble.gap().setScanInterval(interval).
      */
-    ble_error_t startScan(void (*callback)(const Gap::AdvertisementCallbackParams_t *params));
+    ble_error_t setScanInterval(uint16_t interval) {
+        return gap().setScanInterval(interval);
+    }
 
     /**
-     * Start scanning (Observer Procedure) based on the scan-params currently
-     * in effect.
+     * Setup the scanWindow parameter for GAP scanning--i.e. observer mode.
+     * @param[in] window
+     *              Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      *
-     * @param[in] object
-     * @param[in] callbackMember
-     *                The above pair of parameters define the callback object
-     *                and member function to receive the advertisement params.
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setScanWindow(window) should be replaced with
+     * ble.gap().setScanWindow(window).
+     */
+    ble_error_t setScanWindow(uint16_t window) {
+        return gap().setScanWindow(window);
+    }
+
+    /**
+     * Setup parameters for GAP scanning--i.e. observer mode.
+     * @param[in] timeout
+     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     *
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     *
+     * @Note: The scan interval and window are recommendations to the BLE stack.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setScanTimeout(...) should be replaced with
+     * ble.gap().setScanTimeout(...).
+     */
+    ble_error_t setScanTimeout(uint16_t timeout) {
+        return gap().setScanTimeout(timeout);
+    }
+
+    /**
+     * Setup parameters for GAP scanning--i.e. observer mode.
+     * @param[in] activeScanning
+     *              Set to True if active-scanning is required. This is used to fetch the
+     *              scan response from a peer if possible.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setActiveScan(...) should be replaced with
+     * ble.gap().setActiveScanning(...).
+     */
+    void setActiveScan(bool activeScanning) {
+        gap().setActiveScanning(activeScanning);
+    }
+
+    /**
+     * Start scanning (Observer Procedure) based on the parameters currently in
+     * effect.
+     *
+     * @param[in] callback
+     *              The application specific callback to be invoked upon
+     *              receiving every advertisement report. This can be passed in
+     *              as NULL, in which case scanning may not be enabled at all.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.startScan(callback) should be replaced with
+     * ble.gap().startScan(callback).
+     */
+    ble_error_t startScan(void (*callback)(const Gap::AdvertisementCallbackParams_t *params)) {
+        return gap().startScan(callback);
+    }
+
+    /**
+     * Same as above, but this takes an (object, method) pair for a callback.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.startScan(callback) should be replaced with
+     * ble.gap().startScan(object, callback).
      */
     template<typename T>
     ble_error_t startScan(T *object, void (T::*memberCallback)(const Gap::AdvertisementCallbackParams_t *params));
@@ -320,8 +595,15 @@ public:
      * Stop scanning. The current scanning parameters remain in effect.
      *
      * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.stopScan() should be replaced with
+     * ble.gap().stopScan().
      */
-    ble_error_t stopScan(void);
+    ble_error_t stopScan(void) {
+        return gap().stopScan();
+    }
 
     /**
      * Create a connection (GAP Link Establishment).
@@ -336,11 +618,18 @@ public:
      * @return  BLE_ERROR_NONE if connection establishment procedure is started
      *     successfully. The onConnection callback (if set) will be invoked upon
      *     a connection event.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.connect(...) should be replaced with
+     * ble.gap().connect(...).
      */
     ble_error_t connect(const Gap::Address_t           peerAddr,
                         Gap::AddressType_t             peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC,
                         const Gap::ConnectionParams_t *connectionParams = NULL,
-                        const GapScanningParams       *scanParams = NULL);
+                        const GapScanningParams       *scanParams = NULL) {
+        return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
+    }
 
     /**
      * This call initiates the disconnection procedure, and its completion will
@@ -349,8 +638,184 @@ public:
      *
      * @param  reason
      *           The reason for disconnection to be sent back to the peer.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.disconnect(reason) should be replaced with
+     * ble.gap().disconnect(reason).
      */
-    ble_error_t disconnect(Gap::DisconnectionReason_t reason);
+    ble_error_t disconnect(Gap::DisconnectionReason_t reason) {
+        return gap().disconnect(reason);
+    }
+
+    /**
+     * Returns the current GAP state of the device using a bitmask which
+     * describes whether the device is advertising and/or connected.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getGapState() should be replaced with
+     * ble.gap().getState().
+     */
+    Gap::GapState_t getGapState(void) const {
+        return gap().getState();
+    }
+
+    /**
+     * Get the GAP peripheral preferred connection parameters. These are the
+     * defaults that the peripheral would like to have in a connection. The
+     * choice of the connection parameters is eventually up to the central.
+     *
+     * @param[out] params
+     *               The structure where the parameters will be stored. Memory
+     *               for this is owned by the caller.
+     *
+     * @return BLE_ERROR_NONE if the parameters were successfully filled into
+     * the given structure pointed to by params.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getPreferredConnectionParams() should be replaced with
+     * ble.gap().getPreferredConnectionParams().
+     */
+    ble_error_t getPreferredConnectionParams(Gap::ConnectionParams_t *params) {
+        return gap().getPreferredConnectionParams(params);
+    }
+
+    /**
+     * Set the GAP peripheral preferred connection parameters. These are the
+     * defaults that the peripheral would like to have in a connection. The
+     * choice of the connection parameters is eventually up to the central.
+     *
+     * @param[in] params
+     *               The structure containing the desired parameters.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setPreferredConnectionParams() should be replaced with
+     * ble.gap().setPreferredConnectionParams().
+     */
+    ble_error_t setPreferredConnectionParams(const Gap::ConnectionParams_t *params) {
+        return gap().setPreferredConnectionParams(params);
+    }
+
+    /**
+     * Update connection parameters while in the peripheral role.
+     * @details In the peripheral role, this will send the corresponding L2CAP request to the connected peer and wait for
+     *          the central to perform the procedure.
+     * @param[in] handle
+     *              Connection Handle
+     * @param[in] params
+     *              Pointer to desired connection parameters. If NULL is provided on a peripheral role,
+     *              the parameters in the PPCP characteristic of the GAP service will be used instead.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.updateConnectionParams() should be replaced with
+     * ble.gap().updateConnectionParams().
+     */
+    ble_error_t updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params) {
+        return gap().updateConnectionParams(handle, params);
+    }
+
+    /**
+     * Set the device name characteristic in the GAP service.
+     * @param[in] deviceName
+     *              The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setDeviceName() should be replaced with
+     * ble.gap().setDeviceName().
+     */
+    ble_error_t setDeviceName(const uint8_t *deviceName) {
+        return gap().setDeviceName(deviceName);
+    }
+
+    /**
+     * Get the value of the device name characteristic in the GAP service.
+     * @param[out]    deviceName
+     *                  Pointer to an empty buffer where the UTF-8 *non NULL-
+     *                  terminated* string will be placed. Set this
+     *                  value to NULL in order to obtain the deviceName-length
+     *                  from the 'length' parameter.
+     *
+     * @param[in/out] lengthP
+     *                  (on input) Length of the buffer pointed to by deviceName;
+     *                  (on output) the complete device name length (without the
+     *                     null terminator).
+     *
+     * @note If the device name is longer than the size of the supplied buffer,
+     *     length will return the complete device name length, and not the
+     *     number of bytes actually returned in deviceName. The application may
+     *     use this information to retry with a suitable buffer size.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getDeviceName() should be replaced with
+     * ble.gap().getDeviceName().
+     */
+    ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) {
+        return gap().getDeviceName(deviceName, lengthP);
+    }
+
+    /**
+     * Set the appearance characteristic in the GAP service.
+     * @param[in] appearance
+     *              The new value for the device-appearance.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAppearance() should be replaced with
+     * ble.gap().setAppearance().
+     */
+    ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) {
+        return gap().setAppearance(appearance);
+    }
+
+    /**
+     * Get the appearance characteristic in the GAP service.
+     * @param[out] appearance
+     *               The new value for the device-appearance.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getAppearance() should be replaced with
+     * ble.gap().getAppearance().
+     */
+    ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) {
+        return gap().getAppearance(appearanceP);
+    }
+
+    /**
+     * Set the radio's transmit power.
+     * @param[in] txPower Radio transmit power in dBm.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setTxPower() should be replaced with
+     * ble.gap().setTxPower().
+     */
+    ble_error_t setTxPower(int8_t txPower) {
+        return gap().setTxPower(txPower);
+    }
+
+    /**
+     * Query the underlying stack for permitted arguments for setTxPower().
+     *
+     * @param[out] valueArrayPP
+     *                 Out parameter to receive the immutable array of Tx values.
+     * @param[out] countP
+     *                 Out parameter to receive the array's size.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.getPermittedTxPowerValues() should be replaced with
+     * ble.gap().getPermittedTxPowerValues().
+     */
+    void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP) {
+        gap().getPermittedTxPowerValues(valueArrayPP, countP);
+    }
 
     /* APIs to set GAP callbacks. */
     void onTimeout(Gap::EventCallback_t timeoutCallback);
@@ -448,12 +913,6 @@ public:
     ble_error_t addService(GattService &service);
 
     /**
-     * Returns the current GAP state of the device using a bitmask which
-     * describes whether the device is advertising and/or connected.
-     */
-    Gap::GapState_t getGapState(void) const;
-
-    /**
      * @param[in/out]  lengthP
      *     input:  Length in bytes to be read,
      *     output: Total length of attribute value upon successful return.
@@ -477,88 +936,6 @@ public:
                                           const uint8_t           *value,
                                           uint16_t                 size,
                                           bool                     localOnly = false);
-
-    /**
-     * Yield control to the BLE stack or to other tasks waiting for events. This
-     * is a sleep function which will return when there is an application
-     * specific interrupt, but the MCU might wake up several times before
-     * returning (to service the stack). This is not always interchangeable with
-     * WFE().
-     */
-    void waitForEvent(void);
-
-    ble_error_t getPreferredConnectionParams(Gap::ConnectionParams_t *params);
-    ble_error_t setPreferredConnectionParams(const Gap::ConnectionParams_t *params);
-    ble_error_t updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params);
-
-    /**
-     * This call allows the application to get the BLE stack version information.
-     *
-     * @return  A pointer to a const string representing the version.
-     *          Note: The string is owned by the BLE_API.
-     */
-    const char *getVersion(void);
-
-    /**
-     * Set the device name characteristic in the GAP service.
-     * @param  deviceName The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
-     */
-    ble_error_t setDeviceName(const uint8_t *deviceName);
-
-    /**
-     * Get the value of the device name characteristic in the GAP service.
-     * @param[out]    deviceName Pointer to an empty buffer where the UTF-8 *non NULL-
-     *                           terminated* string will be placed. Set this
-     *                           value to NULL in order to obtain the deviceName-length
-     *                           from the 'length' parameter.
-     *
-     * @param[in/out] lengthP    (on input) Length of the buffer pointed to by deviceName;
-     *                           (on output) the complete device name length (without the
-     *                           null terminator).
-     *
-     * @note          If the device name is longer than the size of the supplied buffer,
-     *                length will return the complete device name length,
-     *                and not the number of bytes actually returned in deviceName.
-     *                The application may use this information to retry with a suitable buffer size.
-     *
-     * Sample use:
-     *     uint8_t deviceName[20];
-     *     unsigned length = sizeof(deviceName);
-     *     ble.getDeviceName(deviceName, &length);
-     *     if (length < sizeof(deviceName)) {
-     *         deviceName[length] = 0;
-     *     }
-     *     DEBUG("length: %u, deviceName: %s\r\n", length, deviceName);
-     */
-    ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP);
-
-    /**
-     * Set the appearance characteristic in the GAP service.
-     * @param[in]  appearance The new value for the device-appearance.
-     */
-    ble_error_t setAppearance(uint16_t appearance);
-
-    /**
-     * Set the appearance characteristic in the GAP service.
-     * @param[out]  appearance The new value for the device-appearance.
-     */
-    ble_error_t getAppearance(uint16_t *appearanceP);
-
-    /**
-     * Set the radio's transmit power.
-     * @param[in] txPower Radio transmit power in dBm.
-     */
-    ble_error_t setTxPower(int8_t txPower);
-
-    /**
-     * Query the underlying stack for permitted arguments for setTxPower().
-     *
-     * @param[out] valueArrayPP
-     *                 Out parameter to receive the immutable array of Tx values.
-     * @param[out] countP
-     *                 Out parameter to receive the array's size.
-     */
-    void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP);
 
     /**
      * Enable the BLE stack's Security Manager. The Security Manager implements
@@ -723,232 +1100,11 @@ private:
     BLEInstanceBase *const transport; /* the device specific backend */
 };
 
-typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibilty with older
+typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibility with older
                         * code. Will be dropped at some point soon.*/
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline ble_error_t
-BLE::reset(void)
-{
-    return transport->reset();
-}
-
-inline ble_error_t
-BLE::shutdown(void)
-{
-    gap().advPayload().clear();
-    return transport->shutdown();
-}
-
-inline ble_error_t
-BLE::setAddress(Gap::AddressType_t type, const Gap::Address_t address)
-{
-    return gap().setAddress(type, address);
-}
-
-inline ble_error_t
-BLE::getAddress(Gap::AddressType_t *typeP, Gap::Address_t address)
-{
-    return gap().getAddress(typeP, address);
-}
-
-inline void
-BLE::setAdvertisingType(GapAdvertisingParams::AdvertisingType advType)
-{
-    gap().advParams().setAdvertisingType(advType);
-}
-
-inline void
-BLE::setAdvertisingInterval(uint16_t interval)
-{
-    if (interval == 0) {
-        stopAdvertising();
-    } else if (interval < getMinAdvertisingInterval()) {
-        interval = getMinAdvertisingInterval();
-    }
-    gap().advParams().setInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
-}
-
-inline uint16_t
-BLE::getMinAdvertisingInterval(void) const {
-    return gap().getMinAdvertisingInterval();
-}
-
-inline uint16_t
-BLE::getMinNonConnectableAdvertisingInterval(void) const {
-    return gap().getMinNonConnectableAdvertisingInterval();
-}
-
-inline uint16_t
-BLE::getMaxAdvertisingInterval(void) const {
-    return gap().getMaxAdvertisingInterval();
-}
-
-inline void
-BLE::setAdvertisingTimeout(uint16_t timeout)
-{
-    gap().advParams().setTimeout(timeout);
-}
-
-inline void
-BLE::setAdvertisingParams(const GapAdvertisingParams &newAdvParams)
-{
-    gap().setAdvParams(newAdvParams);
-}
-
-inline const GapAdvertisingParams &
-BLE::getAdvertisingParams(void) const
-{
-    return gap().advParams();
-}
-
-inline void
-BLE::clearAdvertisingPayload(void)
-{
-    gap().advPayload().clear();
-}
-
-inline ble_error_t
-BLE::accumulateAdvertisingPayload(uint8_t flags)
-{
-    return gap().advPayload().addFlags(flags);
-}
-
-inline ble_error_t
-BLE::accumulateAdvertisingPayload(GapAdvertisingData::Appearance app)
-{
-    gap().setAppearance(app);
-    return gap().advPayload().addAppearance(app);
-}
-
-inline ble_error_t
-BLE::accumulateAdvertisingPayloadTxPower(int8_t txPower)
-{
-    return gap().advPayload().addTxPower(txPower);
-}
-
-inline ble_error_t
-BLE::accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
-{
-    if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
-        gap().setDeviceName(data);
-    }
-    return gap().advPayload().addData(type, data, len);
-}
-
-inline ble_error_t
-BLE::accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len)
-{
-    return gap().scanResponse().addData(type, data, len);
-}
-
-inline void
-BLE::clearScanResponse(void)
-{
-    gap().scanResponse().clear();
-}
-
-inline ble_error_t
-BLE::setAdvertisingPayload(void) {
-    return gap().setAdvertisingData();
-}
-
-inline ble_error_t
-BLE::setAdvertisingData(const GapAdvertisingData& newPayload)
-{
-    gap().advPayload() = newPayload;
-    return setAdvertisingPayload();
-}
-
-inline const GapAdvertisingData &
-BLE::getAdvertisingData(void) const {
-    return gap().advPayload();
-}
-
-inline ble_error_t
-BLE::startAdvertising(void)
-{
-    ble_error_t rc;
-    if ((rc = transport->getGattServer().initializeGATTDatabase()) != BLE_ERROR_NONE) {
-        return rc;
-    }
-    if ((rc = setAdvertisingPayload()) != BLE_ERROR_NONE) {
-        return rc;
-    }
-
-    return gap().startAdvertising();
-}
-
-inline ble_error_t
-BLE::stopAdvertising(void)
-{
-    return gap().stopAdvertising();
-}
-
-inline ble_error_t
-BLE::setScanParams(uint16_t interval, uint16_t window, uint16_t timeout, bool activeScanning) {
-    ble_error_t rc;
-    if (((rc = gap().scanningParams().setInterval(interval)) == BLE_ERROR_NONE) &&
-        ((rc = gap().scanningParams().setWindow(window))     == BLE_ERROR_NONE) &&
-        ((rc = gap().scanningParams().setTimeout(timeout))   == BLE_ERROR_NONE)) {
-        gap().scanningParams().setActiveScanning(activeScanning);
-        return BLE_ERROR_NONE;
-    }
-
-    return rc;
-}
-
-inline ble_error_t
-BLE::setScanInterval(uint16_t interval) {
-    return gap().scanningParams().setInterval(interval);
-}
-
-inline ble_error_t
-BLE::setScanWindow(uint16_t window) {
-    return gap().scanningParams().setWindow(window);
-}
-
-inline ble_error_t
-BLE::setScanTimeout(uint16_t timeout) {
-    return gap().scanningParams().setTimeout(timeout);
-}
-
-inline void
-BLE::setActiveScan(bool activeScanning) {
-    return gap().scanningParams().setActiveScanning(activeScanning);
-}
-
-inline ble_error_t
-BLE::startScan(void (*callback)(const Gap::AdvertisementCallbackParams_t *params)) {
-    return gap().startScan(callback);
-}
-
-template<typename T>
-inline ble_error_t
-BLE::startScan(T *object, void (T::*memberCallback)(const Gap::AdvertisementCallbackParams_t *params)) {
-    return gap().startScan(scanningParams, object, memberCallback);
-}
-
-inline ble_error_t
-BLE::stopScan(void) {
-    return gap().stopScan();
-}
-
-inline ble_error_t
-BLE::connect(const Gap::Address_t           peerAddr,
-             Gap::AddressType_t             peerAddrType,
-             const Gap::ConnectionParams_t *connectionParams,
-             const GapScanningParams       *scanParams) {
-    return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
-}
-
-inline ble_error_t
-BLE::disconnect(Gap::DisconnectionReason_t reason)
-{
-    return gap().disconnect(reason);
-}
 
 inline void
 BLE::onTimeout(Gap::EventCallback_t timeoutCallback)
@@ -1034,12 +1190,6 @@ BLE::addService(GattService &service)
     return transport->getGattServer().addService(service);
 }
 
-inline Gap::GapState_t
-BLE::getGapState(void) const
-{
-    return gap().getState();
-}
-
 inline ble_error_t
 BLE::readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP)
 {
@@ -1069,71 +1219,6 @@ BLE::updateCharacteristicValue(Gap::Handle_t            connectionHandle,
                                bool                     localOnly)
 {
     return transport->getGattServer().updateValue(connectionHandle, attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
-}
-
-inline void
-BLE::waitForEvent(void)
-{
-    transport->waitForEvent();
-}
-
-inline ble_error_t
-BLE::getPreferredConnectionParams(Gap::ConnectionParams_t *params)
-{
-    return gap().getPreferredConnectionParams(params);
-}
-
-inline ble_error_t
-BLE::setPreferredConnectionParams(const Gap::ConnectionParams_t *params)
-{
-    return gap().setPreferredConnectionParams(params);
-}
-
-inline ble_error_t
-BLE::updateConnectionParams(Gap::Handle_t handle, const Gap::ConnectionParams_t *params) {
-    return gap().updateConnectionParams(handle, params);
-}
-
-inline const char *
-BLE::getVersion(void)
-{
-    return transport->getVersion();
-}
-
-inline ble_error_t
-BLE::setDeviceName(const uint8_t *deviceName)
-{
-    return gap().setDeviceName(deviceName);
-}
-
-inline ble_error_t
-BLE::getDeviceName(uint8_t *deviceName, unsigned *lengthP)
-{
-    return gap().getDeviceName(deviceName, lengthP);
-}
-
-inline ble_error_t
-BLE::setAppearance(uint16_t appearance)
-{
-    return gap().setAppearance(appearance);
-}
-
-inline ble_error_t
-BLE::getAppearance(uint16_t *appearanceP)
-{
-    return gap().getAppearance(appearanceP);
-}
-
-inline ble_error_t
-BLE::setTxPower(int8_t txPower)
-{
-    return gap().setTxPower(txPower);
-}
-
-inline void
-BLE::getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP)
-{
-    gap().getPermittedTxPowerValues(valueArrayPP, countP);
 }
 
 inline ble_error_t

@@ -45,13 +45,6 @@ public:
     typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
     typedef Address_t address_t;         /* @Note: deprecated. Use Address_t instead. */
 
-    enum AdvertisementType_t {
-        ADV_IND           = 0x00,   /**< Connectable undirected. */
-        ADV_DIRECT_IND    = 0x01,   /**< Connectable directed. */
-        ADV_SCAN_IND      = 0x02,   /**< Scannable undirected. */
-        ADV_NONCONN_IND   = 0x03,   /**< Non connectable undirected. */
-    };
-
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
      * derived from Nordic's implementation; but the reasons are meant to be
@@ -92,7 +85,7 @@ public:
         Address_t            peerAddr;
         int8_t               rssi;
         bool                 isScanResponse;
-        AdvertisementType_t  type;
+        GapAdvertisingParams::AdvertisingType_t type;
         uint8_t              advertisingDataLen;
         const uint8_t       *advertisingData;
     };
@@ -200,43 +193,220 @@ public:
     typedef void (*LinkSecuredCallback_t)(Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Handle_t handle, const Passkey_t passkey);
 
+    /*
+     * These functions must be defined in the platform-specific sub-class.
+     */
 public:
-    /* These functions must be defined in the platform-specific sub-class */
-    virtual ble_error_t setAddress(AddressType_t type,  const Address_t address)                   = 0;
-    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address)                        = 0;
-    virtual ble_error_t stopAdvertising(void)                                                      = 0;
-    virtual ble_error_t stopScan()                                                                 = 0;
-    virtual uint16_t    getMinAdvertisingInterval(void) const                                      = 0;
-    virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const                        = 0;
-    virtual uint16_t    getMaxAdvertisingInterval(void) const                                      = 0;
+    /**
+     * Set the BTLE MAC address and type. Please note that the address format is
+     * LSB (least significant byte first). Please refer to Address_t.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    virtual ble_error_t setAddress(AddressType_t type,  const Address_t address) = 0;
+
+    /**
+     * Fetch the BTLE MAC address and type.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) = 0;
+
+    /**
+     * @return Minimum Advertising interval in milliseconds.
+     */
+    virtual uint16_t    getMinAdvertisingInterval(void) const = 0;
+
+    /**
+     * @return Minimum Advertising interval in milliseconds for non-connectible mode.
+     */
+    virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const = 0;
+
+    /**
+     * @return Maximum Advertising interval in milliseconds.
+     */
+    virtual uint16_t    getMaxAdvertisingInterval(void) const = 0;
+
+    virtual ble_error_t stopAdvertising(void) = 0;
+
+    /**
+     * Stop scanning. The current scanning parameters remain in effect.
+     *
+     * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
+     */
+    virtual ble_error_t stopScan() = 0;
+
+    /**
+     * Create a connection (GAP Link Establishment).
+     *
+     * @param peerAddr
+     *          48-bit address, LSB format.
+     * @param peerAddrType
+     *          Address type of the peer.
+     * @param connectionParams
+     *         Connection parameters.
+     * @param scanParams
+     *          Paramters to be used while scanning for the peer.
+     * @return  BLE_ERROR_NONE if connection establishment procedure is started
+     *     successfully. The onConnection callback (if set) will be invoked upon
+     *     a connection event.
+     */
     virtual ble_error_t connect(const Address_t           peerAddr,
                                 Gap::AddressType_t        peerAddrType,
                                 const ConnectionParams_t *connectionParams,
                                 const GapScanningParams  *scanParams) = 0;
-    virtual ble_error_t disconnect(DisconnectionReason_t reason)                                   = 0;
-    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params)                   = 0;
-    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params)             = 0;
-    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params)  = 0;
 
-    virtual ble_error_t purgeAllBondingState(void)                                                        = 0;
+    /**
+     * This call initiates the disconnection procedure, and its completion will
+     * be communicated to the application with an invocation of the
+     * onDisconnection callback.
+     *
+     * @param  reason
+     *           The reason for disconnection to be sent back to the peer.
+     */
+    virtual ble_error_t disconnect(DisconnectionReason_t reason) = 0;
+
+    /**
+     * Get the GAP peripheral preferred connection parameters. These are the
+     * defaults that the peripheral would like to have in a connection. The
+     * choice of the connection parameters is eventually up to the central.
+     *
+     * @param[out] params
+     *               The structure where the parameters will be stored. Memory
+     *               for this is owned by the caller.
+     *
+     * @return BLE_ERROR_NONE if the parameters were successfully filled into
+     * the given structure pointed to by params.
+     */
+    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) = 0;
+
+    /**
+     * Set the GAP peripheral preferred connection parameters. These are the
+     * defaults that the peripheral would like to have in a connection. The
+     * choice of the connection parameters is eventually up to the central.
+     *
+     * @param[in] params
+     *               The structure containing the desired parameters.
+     */
+    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) = 0;
+
+    /**
+     * Update connection parameters while in the peripheral role.
+     * @details In the peripheral role, this will send the corresponding L2CAP request to the connected peer and wait for
+     *          the central to perform the procedure.
+     * @param[in] handle
+     *              Connection Handle
+     * @param[in] params
+     *              Pointer to desired connection parameters. If NULL is provided on a peripheral role,
+     *              the parameters in the PPCP characteristic of the GAP service will be used instead.
+     */
+    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) = 0;
+
+    virtual ble_error_t purgeAllBondingState(void) = 0;
     virtual ble_error_t getLinkSecurity(Handle_t connectionHandle, LinkSecurityStatus_t *securityStatusP) = 0;
 
-    virtual ble_error_t setDeviceName(const uint8_t *deviceName)              = 0;
-    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
-    virtual ble_error_t setAppearance(uint16_t appearance)                    = 0;
-    virtual ble_error_t getAppearance(uint16_t *appearanceP)                  = 0;
+    /**
+     * Set the device name characteristic in the GAP service.
+     * @param[in] deviceName
+     *              The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
+     */
+    virtual ble_error_t setDeviceName(const uint8_t *deviceName) = 0;
 
-    virtual ble_error_t setTxPower(int8_t txPower)                            = 0;
-    virtual void        getPermittedTxPowerValues(const int8_t **, size_t *)  = 0;
+    /**
+     * Get the value of the device name characteristic in the GAP service.
+     * @param[out]    deviceName
+     *                  Pointer to an empty buffer where the UTF-8 *non NULL-
+     *                  terminated* string will be placed. Set this
+     *                  value to NULL in order to obtain the deviceName-length
+     *                  from the 'length' parameter.
+     *
+     * @param[in/out] lengthP
+     *                  (on input) Length of the buffer pointed to by deviceName;
+     *                  (on output) the complete device name length (without the
+     *                     null terminator).
+     *
+     * @note If the device name is longer than the size of the supplied buffer,
+     *     length will return the complete device name length, and not the
+     *     number of bytes actually returned in deviceName. The application may
+     *     use this information to retry with a suitable buffer size.
+     */
+    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
+
+    /**
+     * Set the appearance characteristic in the GAP service.
+     * @param[in] appearance
+     *              The new value for the device-appearance.
+     */
+    virtual ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) = 0;
+
+    /**
+     * Get the appearance characteristic in the GAP service.
+     * @param[out] appearance
+     *               The new value for the device-appearance.
+     */
+    virtual ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) = 0;
+
+    /**
+     * Set the radio's transmit power.
+     * @param[in] txPower Radio transmit power in dBm.
+     */
+    virtual ble_error_t setTxPower(int8_t txPower) = 0;
+
+    /**
+     * Query the underlying stack for permitted arguments for setTxPower().
+     *
+     * @param[out] valueArrayPP
+     *                 Out parameter to receive the immutable array of Tx values.
+     * @param[out] countP
+     *                 Out parameter to receive the array's size.
+     */
+    virtual void getPermittedTxPowerValues(const int8_t **, size_t *) = 0;
 
     /*
-     * APIs with local implementations
+     * APIs with non-virtual implementations.
      */
 public:
-    void setAdvertisingType(GapAdvertisingParams::AdvertisingType advType) {
+    /**
+     * Returns the current GAP state of the device using a bitmask which
+     * describes whether the device is advertising and/or connected.
+     */
+    GapState_t getState(void) const {
+        return state;
+    }
+
+    /**
+     * Set the GAP advertising mode to use for this device.
+     */
+    void setAdvertisingType(GapAdvertisingParams::AdvertisingType_t advType) {
         _advParams.setAdvertisingType(advType);
     }
 
+    /**
+     * @param[in] interval
+     *              Advertising interval in units of milliseconds. Advertising
+     *              is disabled if interval is 0. If interval is smaller than
+     *              the minimum supported value, then the minimum supported
+     *              value is used instead. This minimum value can be discovered
+     *              using getMinAdvertisingInterval().
+     *
+     *              This field must be set to 0 if connectionMode is equal
+     *              to ADV_CONNECTABLE_DIRECTED.
+     *
+     * @note: Decreasing this value will allow central devices to detect a
+     * peripheral faster at the expense of more power being used by the radio
+     * due to the higher data transmit rate.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from Gap directly. A former call to
+     * ble.setAdvertisingInterval(...) should now be achieved using
+     * ble.gap().setAdvertisingInterval(...).
+     *
+     * @Note: [WARNING] This API previously used 0.625ms as the unit for its
+     * 'interval' argument. That required an explicit conversion from
+     * milliseconds using Gap::MSEC_TO_GAP_DURATION_UNITS(). This conversion is
+     * no longer required as the new units are milliseconds. Any application
+     * code depending on the old semantics would need to be updated accordingly.
+     */
     void setAdvertisingInterval(uint16_t interval) {
         if (interval == 0) {
             stopAdvertising();
@@ -246,30 +416,34 @@ public:
         _advParams.setInterval(MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
     }
 
+    /**
+     * @param[in] timeout
+     *              Advertising timeout (in seconds) between 0x1 and 0x3FFF (1
+     *              and 16383). Use 0 to disable the advertising timeout.
+     */
+    void setAdvertisingTimeout(uint16_t timeout) {
+        _advParams.setTimeout(timeout);
+    }
+
+    /**
+     * Start advertising.
+     */
     ble_error_t startAdvertising(void) {
         setAdvertisingData(); /* update the underlying stack */
         return startAdvertising(_advParams);
     }
 
-    ble_error_t setAdvertisingData(void) {
-        if (needToSetAdvPayload) {
-            needToSetAdvPayload = false;
-            return setAdvertisingData(_advPayload, _scanResponse);
-        }
-
-        return BLE_ERROR_NONE;
-    }
-
     /**
      * Reset any advertising payload prepared from prior calls to
-     * accumulateAdvertisingPayload().
+     * accumulateAdvertisingPayload(). This automatically propagates the re-
+     * initialized adv payload to the underlying stack.
      *
      * Note: This should be followed by a call to setAdvertisingPayload() or
      * startAdvertising() before the update takes effect.
      */
     void clearAdvertisingPayload(void) {
-        needToSetAdvPayload = true;
         _advPayload.clear();
+        setAdvertisingData();
     }
 
     /**
@@ -278,13 +452,18 @@ public:
      * as an additional 31 bytes if the advertising payload proves to be too
      * small.
      *
-     * @param  flags
-     *         The flags to be added. Multiple flags may be specified in
-     *         combination.
+     * @param[in] flags
+     *              The flags to be added. Please refer to
+     *              GapAdvertisingData::Flags for valid flags. Multiple
+     *              flags may be specified in combination.
      */
     ble_error_t accumulateAdvertisingPayload(uint8_t flags) {
-        needToSetAdvPayload = true;
-        return _advPayload.addFlags(flags);
+        ble_error_t rc;
+        if ((rc = _advPayload.addFlags(flags)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
     }
 
     /**
@@ -297,9 +476,14 @@ public:
      *         The appearance of the peripheral.
      */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
-        needToSetAdvPayload = true;
         setAppearance(app);
-        return _advPayload.addAppearance(app);
+
+        ble_error_t rc;
+        if ((rc =  _advPayload.addAppearance(app)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
     }
 
     /**
@@ -313,8 +497,12 @@ public:
      *         only a hint.
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
-        needToSetAdvPayload = true;
-        return _advPayload.addTxPower(power);
+        ble_error_t rc;
+        if ((rc = _advPayload.addTxPower(power)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
     }
 
     /**
@@ -328,24 +516,51 @@ public:
      * @param  len  length of data.
      */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
-        needToSetAdvPayload = true;
         if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
             setDeviceName(data);
         }
-        return _advPayload.addData(type, data, len);
+
+        ble_error_t rc;
+        if ((rc = _advPayload.addData(type, data, len)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
+    }
+
+    /**
+     * Setup a particular, user-constructed advertisement payload for the
+     * underlying stack. It would be uncommon for this API to be used directly;
+     * there are other APIs to build an advertisement payload (see above).
+     */
+    ble_error_t setAdvertisingPayload(const GapAdvertisingData &payload) {
+        _advPayload = payload;
+        return setAdvertisingData();
+    }
+
+    /**
+     * @return  Read back advertising data. Useful for storing and
+     *          restoring payload.
+     */
+    const GapAdvertisingData &getAdvertisingPayload(void) const {
+        return _advPayload;
     }
 
     /**
      * Accumulate a variable length byte-stream as an AD structure in the
      * scanResponse payload.
      *
-     * @param  type The type which describes the variable length data.
-     * @param  data data bytes.
-     * @param  len  length of data.
+     * @param[in] type The type which describes the variable length data.
+     * @param[in] data data bytes.
+     * @param[in] len  length of data.
      */
     ble_error_t accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
-        needToSetAdvPayload = true;
-        return _scanResponse.addData(type, data, len);
+        ble_error_t rc;
+        if ((rc = _scanResponse.addData(type, data, len)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
     }
 
     /**
@@ -356,15 +571,121 @@ public:
      * startAdvertising() before the update takes effect.
      */
     void clearScanResponse(void) {
-        needToSetAdvPayload = true;
         _scanResponse.clear();
+        setAdvertisingData();
     }
 
-private:
-    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
-    virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
+    /**
+     * Setup parameters for GAP scanning--i.e. observer mode.
+     * @param[in] interval
+     *              Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     * @param[in] window
+     *              Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     * @param[in] timeout
+     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     * @param[in] activeScanning
+     *              Set to True if active-scanning is required. This is used to fetch the
+     *              scan response from a peer if possible.
+     *
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     *
+     * @Note: The scan interval and window are recommendations to the BLE stack.
+     */
+    ble_error_t setScanParams(uint16_t interval       = GapScanningParams::SCAN_INTERVAL_MAX,
+                              uint16_t window         = GapScanningParams::SCAN_WINDOW_MAX,
+                              uint16_t timeout        = 0,
+                              bool     activeScanning = false) {
+        ble_error_t rc;
+        if (((rc = _scanningParams.setInterval(interval)) == BLE_ERROR_NONE) &&
+            ((rc = _scanningParams.setWindow(window))     == BLE_ERROR_NONE) &&
+            ((rc = _scanningParams.setTimeout(timeout))   == BLE_ERROR_NONE)) {
+            _scanningParams.setActiveScanning(activeScanning);
+            return BLE_ERROR_NONE;
+        }
 
-public:
+        return rc;
+    }
+
+    /**
+     * Setup the scanInterval parameter for GAP scanning--i.e. observer mode.
+     * @param[in] interval
+     *              Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     *
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     */
+    ble_error_t setScanInterval(uint16_t interval) {
+        return _scanningParams.setInterval(interval);
+    }
+
+    /**
+     * Setup the scanWindow parameter for GAP scanning--i.e. observer mode.
+     * @param[in] window
+     *              Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
+     *
+     * The scanning window divided by the interval determines the duty cycle for
+     * scanning. For example, if the interval is 100ms and the window is 10ms,
+     * then the controller will scan for 10 percent of the time. It is possible
+     * to have the interval and window set to the same value. In this case,
+     * scanning is continuous, with a change of scanning frequency once every
+     * interval.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     */
+    ble_error_t setScanWindow(uint16_t window) {
+        return _scanningParams.setWindow(window);
+    }
+
+    /**
+     * Setup parameters for GAP scanning--i.e. observer mode.
+     * @param[in] timeout
+     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     */
+    ble_error_t setScanTimeout(uint16_t timeout) {
+        return _scanningParams.setTimeout(timeout);
+    }
+
+    /**
+     * Setup parameters for GAP scanning--i.e. observer mode.
+     * @param[in] activeScanning
+     *              Set to True if active-scanning is required. This is used to fetch the
+     *              scan response from a peer if possible.
+     *
+     * Once the scanning parameters have been configured, scanning can be
+     * enabled by using startScan().
+     */
+    void setActiveScanning(bool activeScanning) {
+        _scanningParams.setActiveScanning(activeScanning);
+    }
+
+    /**
+     * Start scanning (Observer Procedure) based on the parameters currently in
+     * effect.
+     *
+     * @param[in] callback
+     *              The application specific callback to be invoked upon
+     *              receiving every advertisement report. This can be passed in
+     *              as NULL, in which case scanning may not be enabled at all.
+     */
     ble_error_t startScan(void (*callback)(const AdvertisementCallbackParams_t *params)) {
         ble_error_t err = BLE_ERROR_NONE;
         if (callback) {
@@ -376,6 +697,9 @@ public:
         return err;
     }
 
+    /**
+     * Same as above, but this takes an (object, method) pair for a callback.
+     */
     template<typename T>
     ble_error_t startScan(T *object, void (T::*callbackMember)(const AdvertisementCallbackParams_t *params)) {
         ble_error_t err = BLE_ERROR_NONE;
@@ -386,6 +710,36 @@ public:
         }
 
         return err;
+    }
+
+private:
+    ble_error_t setAdvertisingData(void) {
+        return setAdvertisingData(_advPayload, _scanResponse);
+    }
+
+private:
+    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
+    virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
+
+public:
+    /**
+     * Accessors to read back currently active advertising params.
+     */
+    GapAdvertisingParams &getAdvertisingParams(void) {
+        return _advParams;
+    }
+    const GapAdvertisingParams &getAdvertisingParams(void) const {
+        return _advParams;
+    }
+
+    /**
+     * Setup a particular, user-constructed set of advertisement parameters for
+     * the underlying stack. It would be uncommon for this API to be used
+     * directly; there are other APIs to tweak advertisement parameters
+     * individually.
+     */
+    void setAdvertisingParams(const GapAdvertisingParams &newParams) {
+        _advParams = newParams;
     }
 
 public:
@@ -452,49 +806,10 @@ public:
     template<typename T>
     void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {disconnectionCallChain.add(tptr, mptr);}
 
-    GapAdvertisingParams &advParams(void) {
-        return _advParams;
-    }
-    const GapAdvertisingParams &advParams(void) const {
-        return _advParams;
-    }
-    void setAdvParams(const GapAdvertisingParams &newParams) {
-        _advParams = newParams;
-    }
-
-    GapAdvertisingData &advPayload(void) {
-        needToSetAdvPayload = true;
-        return _advPayload;
-    }
-    const GapAdvertisingData &advPayload(void) const {
-        return _advPayload;
-    }
-
-    GapAdvertisingData &scanResponse(void) {
-        needToSetAdvPayload = true;
-        return _scanResponse;
-    }
-    const GapAdvertisingData &scanResponse(void) const {
-        return _scanResponse;
-    }
-
-    GapScanningParams &scanningParams(void) {
-        return _scanningParams;
-    }
-    const GapScanningParams &scanningParams(void) const {
-        return _scanningParams;
-    }
-
-public:
-    GapState_t getState(void) const {
-        return state;
-    }
-
 protected:
     Gap() :
         _advParams(),
         _advPayload(),
-        needToSetAdvPayload(true),
         _scanningParams(),
         _scanResponse(),
         state(),
@@ -566,12 +881,12 @@ public:
         }
     }
 
-    void processAdvertisementReport(const Address_t      peerAddr,
-                                    int8_t               rssi,
-                                    bool                 isScanResponse,
-                                    AdvertisementType_t  type,
-                                    uint8_t              advertisingDataLen,
-                                    const uint8_t       *advertisingData) {
+    void processAdvertisementReport(const Address_t    peerAddr,
+                                    int8_t             rssi,
+                                    bool               isScanResponse,
+                                    GapAdvertisingParams::AdvertisingType_t  type,
+                                    uint8_t            advertisingDataLen,
+                                    const uint8_t     *advertisingData) {
         AdvertisementCallbackParams_t params;
         memcpy(params.peerAddr, peerAddr, ADDR_LEN);
         params.rssi               = rssi;
@@ -598,11 +913,6 @@ public:
 protected:
     GapAdvertisingParams             _advParams;
     GapAdvertisingData               _advPayload;
-    /* Accumulation of AD structures in the advertisement payload should
-     * eventually result in a call to the target's setAdvertisingData() before
-     * the server begins advertising. This flag marks the status of the pending update.*/
-    bool                             needToSetAdvPayload;
-
     GapScanningParams                _scanningParams;
     GapAdvertisingData               _scanResponse;
 
