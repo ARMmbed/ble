@@ -1053,7 +1053,18 @@ public:
         return gattServer().write(connectionHandle, attributeHandle, value, size, localOnly);
     }
 
-    void onTimeout(Gap::EventCallback_t timeoutCallback);
+    /**
+     * Setup a callback for timeout events. Refer to Gap::TimeoutSource_t for
+     * possible event types.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onTimeout(callback) should be replaced with
+     * ble.gap().onTimeout(callback).
+     */
+    void onTimeout(Gap::TimeoutEventCallback_t timeoutCallback) {
+        gap().onTimeout(timeoutCallback);
+    }
 
     void onConnection(Gap::ConnectionEventCallback_t connectionCallback);
     /**
@@ -1155,12 +1166,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline void
-BLE::onTimeout(Gap::EventCallback_t timeoutCallback)
-{
-    gap().setOnTimeout(timeoutCallback);
-}
 
 inline void
 BLE::onConnection(Gap::ConnectionEventCallback_t connectionCallback)

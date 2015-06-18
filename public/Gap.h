@@ -45,6 +45,13 @@ public:
     typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
     typedef Address_t address_t;         /* @Note: deprecated. Use Address_t instead. */
 
+    enum TimeoutSource_t {
+        TIMEOUT_SRC_ADVERTISING      = 0x00, /**< Advertising timeout. */
+        TIMEOUT_SRC_SECURITY_REQUEST = 0x01, /**< Security request timeout. */
+        TIMEOUT_SRC_SCAN             = 0x02, /**< Scanning timeout. */
+        TIMEOUT_SRC_CONN             = 0x03, /**< Connection timeout. */
+    };
+
     /**
      * Enumeration for disconnection reasons. The values for these reasons are
      * derived from Nordic's implementation; but the reasons are meant to be
@@ -183,7 +190,7 @@ public:
         return (gapUnits * UNIT_0_625_MS) / 1000;
     }
 
-    typedef void (*EventCallback_t)(void);
+    typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
     typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
     typedef void (*HandleSpecificEvent_t)(Handle_t handle);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
@@ -742,11 +749,16 @@ public:
         _advParams = newParams;
     }
 
+    /* Event callback handlers */
 public:
     virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) = 0;
 
-    /* Event callback handlers */
-    void setOnTimeout(EventCallback_t callback) {onTimeout = callback;}
+    /**
+     * Setup a callback for timeout events. Refer to TimeoutSource_t for
+     * possible event types.
+     */
+    void onTimeout(TimeoutEventCallback_t callback) {timeoutCallback = callback;}
+
     void setOnConnection(ConnectionEventCallback_t callback) {onConnection = callback;}
 
     /**
@@ -813,7 +825,7 @@ protected:
         _scanningParams(),
         _scanResponse(),
         state(),
-        onTimeout(NULL),
+        timeoutCallback(NULL),
         onConnection(NULL),
         onDisconnection(NULL),
         onRadioNotification(),
@@ -897,16 +909,9 @@ public:
         onAdvertisementReport.call(&params);
     }
 
-    void processEvent(GapEvents::gapEvent_e type) {
-        switch (type) {
-            case GapEvents::GAP_EVENT_TIMEOUT:
-                state.advertising = 0;
-                if (onTimeout) {
-                    onTimeout();
-                }
-                break;
-            default:
-                break;
+    void processTimeoutEvent(TimeoutSource_t source) {
+        if (timeoutCallback) {
+            timeoutCallback(source);
         }
     }
 
@@ -919,7 +924,7 @@ protected:
     GapState_t                       state;
 
 protected:
-    EventCallback_t                  onTimeout;
+    TimeoutEventCallback_t           timeoutCallback;
     ConnectionEventCallback_t        onConnection;
     DisconnectionEventCallback_t     onDisconnection;
     RadioNotificationEventCallback_t onRadioNotification;
