@@ -96,6 +96,26 @@ public:
         transport->waitForEvent();
     }
 
+    /**
+     * Enable the BLE stack's Security Manager. The Security Manager implements
+     * the actual cryptographic algorithms and protocol exchanges that allow two
+     * devices to securely exchange data and privately detect each other.
+     * Calling this API is a prerequisite for encryption and pairing (bonding).
+     *
+     * @param[in]  enableBonding Allow for bonding.
+     * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
+     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
+     *                           such as availability of a display or keyboard to
+     *                           support out-of-band exchanges of security data.
+     * @param[in]  passkey       To specify a static passkey.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    ble_error_t initializeSecurity(bool                          enableBonding = true,
+                                   bool                          requireMITM   = true,
+                                   Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
+                                   const Gap::Passkey_t          passkey       = NULL);
+
     /*
      * Deprecation alert!
      * All of the following are deprecated and may be dropped in a future
@@ -920,53 +940,134 @@ public:
     /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.addService() should be replaced with
+     * ble.gattServer().addService().
      */
-    ble_error_t addService(GattService &service);
+    ble_error_t addService(GattService &service) {
+        return gattServer().addService(service);
+    }
 
     /**
-     * @param[in/out]  lengthP
-     *     input:  Length in bytes to be read,
-     *     output: Total length of attribute value upon successful return.
+     * Read the value of a characteristic from the local GattServer
+     * @param[in]     attributeHandle
+     *                  Attribute handle for the value attribute of the characteristic.
+     * @param[out]    buffer
+     *                  A buffer to hold the value being read.
+     * @param[in/out] lengthP
+     *                  Length of the buffer being supplied. If the attribute
+     *                  value is longer than the size of the supplied buffer,
+     *                  this variable will hold upon return the total attribute value length
+     *                  (excluding offset). The application may use this
+     *                  information to allocate a suitable buffer size.
+     *
+     * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.readCharacteristicValue() should be replaced with
+     * ble.gattServer().read().
      */
-    ble_error_t readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP);
-    /**
-     * A version of the same as above with connection handle parameter to allow fetches for connection-specific multivalued attribtues (such as the CCCDs).
-     */
-    ble_error_t readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP);
+    ble_error_t readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) {
+        return gattServer().read(attributeHandle, buffer, lengthP);
+    }
 
     /**
-     * @param  localOnly
-     *         Only update the characteristic locally regardless of notify/indicate flags in the CCCD.
+     * Read the value of a characteristic from the local GattServer
+     * @param[in]     connectionHandle
+     *                  Connection Handle.
+     * @param[in]     attributeHandle
+     *                  Attribute handle for the value attribute of the characteristic.
+     * @param[out]    buffer
+     *                  A buffer to hold the value being read.
+     * @param[in/out] lengthP
+     *                  Length of the buffer being supplied. If the attribute
+     *                  value is longer than the size of the supplied buffer,
+     *                  this variable will hold upon return the total attribute value length
+     *                  (excluding offset). The application may use this
+     *                  information to allocate a suitable buffer size.
+     *
+     * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
+     *
+     * @note This API is a version of above with an additional connection handle
+     *     parameter to allow fetches for connection-specific multivalued
+     *     attribtues (such as the CCCDs).
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.readCharacteristicValue() should be replaced with
+     * ble.gattServer().read().
      */
-    ble_error_t updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false);
+    ble_error_t readCharacteristicValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) {
+        return gattServer().read(connectionHandle, attributeHandle, buffer, lengthP);
+    }
+
     /**
-     * A version of the same as above with connection handle parameter to allow updates for connection-specific multivalued attribtues (such as the CCCDs).
+     * Update the value of a characteristic on the local GattServer.
+     *
+     * @param[in] attributeHandle
+     *              Handle for the value attribute of the Characteristic.
+     * @param[in] value
+     *              A pointer to a buffer holding the new value
+     * @param[in] size
+     *              Size of the new value (in bytes).
+     * @param[in] localOnly
+     *              Should this update be kept on the local
+     *              GattServer regardless of the state of the
+     *              notify/indicate flag in the CCCD for this
+     *              Characteristic? If set to true, no notification
+     *              or indication is generated.
+     *
+     * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.updateCharacteristicValue() should be replaced with
+     * ble.gattServer().write().
+     */
+    ble_error_t updateCharacteristicValue(GattAttribute::Handle_t  attributeHandle,
+                                          const uint8_t           *value,
+                                          uint16_t                 size,
+                                          bool                     localOnly = false) {
+        return gattServer().write(attributeHandle, value, size, localOnly);
+    }
+
+    /**
+     * Update the value of a characteristic on the local GattServer. A version
+     * of the same as above with connection handle parameter to allow updates
+     * for connection-specific multivalued attribtues (such as the CCCDs).
+     *
+     * @param[in] connectionHandle
+     *              Connection Handle.
+     * @param[in] attributeHandle
+     *              Handle for the value attribute of the Characteristic.
+     * @param[in] value
+     *              A pointer to a buffer holding the new value
+     * @param[in] size
+     *              Size of the new value (in bytes).
+     * @param[in] localOnly
+     *              Should this update be kept on the local
+     *              GattServer regardless of the state of the
+     *              notify/indicate flag in the CCCD for this
+     *              Characteristic? If set to true, no notification
+     *              or indication is generated.
+     *
+     * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.updateCharacteristicValue() should be replaced with
+     * ble.gattServer().write().
      */
     ble_error_t updateCharacteristicValue(Gap::Handle_t            connectionHandle,
                                           GattAttribute::Handle_t  attributeHandle,
                                           const uint8_t           *value,
                                           uint16_t                 size,
-                                          bool                     localOnly = false);
-
-    /**
-     * Enable the BLE stack's Security Manager. The Security Manager implements
-     * the actual cryptographic algorithms and protocol exchanges that allow two
-     * devices to securely exchange data and privately detect each other.
-     * Calling this API is a prerequisite for encryption and pairing (bonding).
-     *
-     * @param[in]  enableBonding Allow for bonding.
-     * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
-     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
-     *                           such as availability of a display or keyboard to
-     *                           support out-of-band exchanges of security data.
-     * @param[in]  passkey       To specify a static passkey.
-     *
-     * @return BLE_ERROR_NONE on success.
-     */
-    ble_error_t initializeSecurity(bool                          enableBonding = true,
-                                   bool                          requireMITM   = true,
-                                   Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
-                                   const Gap::Passkey_t          passkey       = NULL);
+                                          bool                     localOnly = false) {
+        return gattServer().write(connectionHandle, attributeHandle, value, size, localOnly);
+    }
 
     /**
      * Setup a callback for when the security setup procedure (key generation
@@ -1193,43 +1294,6 @@ inline void
 BLE::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
 {
     gap().setOnRadioNotification(callback);
-}
-
-inline ble_error_t
-BLE::addService(GattService &service)
-{
-    return transport->getGattServer().addService(service);
-}
-
-inline ble_error_t
-BLE::readCharacteristicValue(GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP)
-{
-    return transport->getGattServer().readValue(attributeHandle, buffer, lengthP);
-}
-
-inline ble_error_t
-BLE::readCharacteristicValue(Gap::Handle_t            connectionHandle,
-                             GattAttribute::Handle_t  attributeHandle,
-                             uint8_t                 *buffer,
-                             uint16_t                *lengthP)
-{
-    return transport->getGattServer().readValue(connectionHandle, attributeHandle, buffer, lengthP);
-}
-
-inline ble_error_t
-BLE::updateCharacteristicValue(GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly)
-{
-    return transport->getGattServer().updateValue(attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
-}
-
-inline ble_error_t
-BLE::updateCharacteristicValue(Gap::Handle_t            connectionHandle,
-                               GattAttribute::Handle_t  attributeHandle,
-                               const uint8_t           *value,
-                               uint16_t                 size,
-                               bool                     localOnly)
-{
-    return transport->getGattServer().updateValue(connectionHandle, attributeHandle, const_cast<uint8_t *>(value), size, localOnly);
 }
 
 inline ble_error_t

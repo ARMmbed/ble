@@ -45,12 +45,98 @@ protected:
 
 public:
     /* These functions must be defined in the sub-class */
-    virtual ble_error_t addService(GattService &)                                                               = 0;
-    virtual ble_error_t readValue(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) = 0;
-    virtual ble_error_t readValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) = 0;
-    virtual ble_error_t updateValue(GattAttribute::Handle_t, const uint8_t[], uint16_t, bool localOnly = false) = 0;
-    virtual ble_error_t updateValue(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t[], uint16_t, bool localOnly = false) = 0;
-    virtual ble_error_t initializeGATTDatabase(void)                                                            = 0;
+
+    /**
+     * Add a service declaration to the local server ATT table. Also add the
+     * characteristics contained within.
+     */
+    virtual ble_error_t addService(GattService &) = 0;
+
+    /**
+     * Read the value of a characteristic from the local GattServer
+     * @param[in]     attributeHandle
+     *                  Attribute handle for the value attribute of the characteristic.
+     * @param[out]    buffer
+     *                  A buffer to hold the value being read.
+     * @param[in/out] lengthP
+     *                  Length of the buffer being supplied. If the attribute
+     *                  value is longer than the size of the supplied buffer,
+     *                  this variable will hold upon return the total attribute value length
+     *                  (excluding offset). The application may use this
+     *                  information to allocate a suitable buffer size.
+     *
+     * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
+     */
+    virtual ble_error_t read(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) = 0;
+
+    /**
+     * Read the value of a characteristic from the local GattServer
+     * @param[in]     connectionHandle
+     *                  Connection Handle.
+     * @param[in]     attributeHandle
+     *                  Attribute handle for the value attribute of the characteristic.
+     * @param[out]    buffer
+     *                  A buffer to hold the value being read.
+     * @param[in/out] lengthP
+     *                  Length of the buffer being supplied. If the attribute
+     *                  value is longer than the size of the supplied buffer,
+     *                  this variable will hold upon return the total attribute value length
+     *                  (excluding offset). The application may use this
+     *                  information to allocate a suitable buffer size.
+     *
+     * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
+     *
+     * @note This API is a version of above with an additional connection handle
+     *     parameter to allow fetches for connection-specific multivalued
+     *     attribtues (such as the CCCDs).
+     */
+    virtual ble_error_t read(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) = 0;
+
+    /**
+     * Update the value of a characteristic on the local GattServer.
+     *
+     * @param[in] attributeHandle
+     *              Handle for the value attribute of the Characteristic.
+     * @param[in] value
+     *              A pointer to a buffer holding the new value
+     * @param[in] size
+     *              Size of the new value (in bytes).
+     * @param[in] localOnly
+     *              Should this update be kept on the local
+     *              GattServer regardless of the state of the
+     *              notify/indicate flag in the CCCD for this
+     *              Characteristic? If set to true, no notification
+     *              or indication is generated.
+     *
+     * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
+     */
+    virtual ble_error_t write(GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) = 0;
+
+    /**
+     * Update the value of a characteristic on the local GattServer. A version
+     * of the same as above with connection handle parameter to allow updates
+     * for connection-specific multivalued attribtues (such as the CCCDs).
+     *
+     * @param[in] connectionHandle
+     *              Connection Handle.
+     * @param[in] attributeHandle
+     *              Handle for the value attribute of the Characteristic.
+     * @param[in] value
+     *              A pointer to a buffer holding the new value
+     * @param[in] size
+     *              Size of the new value (in bytes).
+     * @param[in] localOnly
+     *              Should this update be kept on the local
+     *              GattServer regardless of the state of the
+     *              notify/indicate flag in the CCCD for this
+     *              Characteristic? If set to true, no notification
+     *              or indication is generated.
+     *
+     * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
+     */
+    virtual ble_error_t write(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) = 0;
+
+    virtual ble_error_t initializeGATTDatabase(void) = 0;
 
     // ToDo: For updateValue, check the CCCD to see if the value we are
     // updating has the notify or indicate bits sent, and if BOTH are set
