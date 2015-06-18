@@ -369,6 +369,9 @@ public:
      */
     virtual void getPermittedTxPowerValues(const int8_t **, size_t *) = 0;
 
+public:
+    virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) = 0;
+
     /*
      * APIs with non-virtual implementations.
      */
@@ -751,8 +754,6 @@ public:
 
     /* Event callback handlers */
 public:
-    virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) = 0;
-
     /**
      * Setup a callback for timeout events. Refer to TimeoutSource_t for
      * possible event types.
