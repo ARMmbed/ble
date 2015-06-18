@@ -784,10 +784,23 @@ public:
 
     /**
      * Set the application callback for radio-notification events.
+     *
+     * Radio Notification is a feature that enables ACTIVE and INACTIVE
+     * (nACTIVE) signals from the stack that notify the application when the
+     * radio is in use. The signal is sent using software interrupt.
+     *
+     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
+     * signal is sent at the end of the Radio Event. These signals can be used
+     * by the application programmer to synchronize application logic with radio
+     * activity. For example, the ACTIVE signal can be used to shut off external
+     * devices to manage peak current drawn during periods when the radio is on,
+     * or to trigger sensor data collection for transmission in the Radio Event.
+     *
      * @param callback
-     *          Handler to be executed in response to a radio notification event.
+     *          The application handler to be invoked in response to a radio
+     *          ACTIVE/INACTIVE event.
      */
-    virtual void setOnRadioNotification(RadioNotificationEventCallback_t callback) {onRadioNotification = callback;}
+    virtual void onRadioNotification(RadioNotificationEventCallback_t callback) {radioNotificationCallback = callback;}
 
     /**
      * To indicate that security procedure for link has started.
@@ -828,7 +841,7 @@ protected:
         timeoutCallback(NULL),
         connectionCallback(NULL),
         disconnectionCallback(NULL),
-        onRadioNotification(),
+        radioNotificationCallback(),
         onSecuritySetupInitiated(),
         onSecuritySetupCompleted(),
         onLinkSecured(),
@@ -927,7 +940,7 @@ protected:
     TimeoutEventCallback_t           timeoutCallback;
     ConnectionEventCallback_t        connectionCallback;
     DisconnectionEventCallback_t     disconnectionCallback;
-    RadioNotificationEventCallback_t onRadioNotification;
+    RadioNotificationEventCallback_t radioNotificationCallback;
     SecuritySetupInitiatedCallback_t onSecuritySetupInitiated;
     SecuritySetupCompletedCallback_t onSecuritySetupCompleted;
     LinkSecuredCallback_t            onLinkSecured;

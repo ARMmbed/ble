@@ -1106,6 +1106,31 @@ public:
     }
 
     /**
+     * Radio Notification is a feature that enables ACTIVE and INACTIVE
+     * (nACTIVE) signals from the stack that notify the application when the
+     * radio is in use. The signal is sent using software interrupt.
+     *
+     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
+     * signal is sent at the end of the Radio Event. These signals can be used
+     * by the application programmer to synchronize application logic with radio
+     * activity. For example, the ACTIVE signal can be used to shut off external
+     * devices to manage peak current drawn during periods when the radio is on,
+     * or to trigger sensor data collection for transmission in the Radio Event.
+     *
+     * @param callback
+     *          The application handler to be invoked in response to a radio
+     *          ACTIVE/INACTIVE event.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onRadioNotification(...) should be replaced with
+     * ble.gap().onRadioNotification(...).
+     */
+    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback) {
+        gap().onRadioNotification(callback);
+    }
+
+    /**
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).
      *
@@ -1158,24 +1183,6 @@ public:
     void onUpdatesEnabled(GattServer::EventCallback_t callback);
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
-
-    /**
-     * Radio Notification is a feature that enables ACTIVE and INACTIVE
-     * (nACTIVE) signals from the stack that notify the application when the
-     * radio is in use. The signal is sent using software interrupt.
-     *
-     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
-     * signal is sent at the end of the Radio Event. These signals can be used
-     * by the application programmer to synchronize application logic with radio
-     * activity. For example, the ACTIVE signal can be used to shut off external
-     * devices to manage peak current drawn during periods when the radio is on,
-     * or to trigger sensor data collection for transmission in the Radio Event.
-     *
-     * @param callback
-     *          The application handler to be invoked in response to a radio
-     *          ACTIVE/INACTIVE event.
-     */
-    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback);
 
 public:
     BLE() : transport(createBLEInstance()) {
@@ -1238,12 +1245,6 @@ inline void
 BLE::onConfirmationReceived(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnConfirmationReceived(callback);
-}
-
-inline void
-BLE::onRadioNotification(Gap::RadioNotificationEventCallback_t callback)
-{
-    gap().setOnRadioNotification(callback);
 }
 
 inline ble_error_t
