@@ -1172,7 +1172,8 @@ public:
     }
 
     /**
-     * Setup a callback for when a characteristic is being read by a client.
+     * Setup a callback to be invoked on the peripheral when an attribute is
+     * being read by a remote client.
      *
      * @Note: this functionality may not be available on all underlying stacks.
      * You could use GattCharacteristic::setReadAuthorizationCallback() as an
@@ -1188,9 +1189,18 @@ public:
      *
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
      *         else BLE_ERROR_NONE.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onDataRead(...) should be replaced with
+     * ble.gattServer().onDataRead(...).
      */
-    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP));
-    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context));
+    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
+        return gattServer().onDataRead(callback);
+    }
+    template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
+        return gattServer().onDataRead(objPtr, memberPtr);
+    }
 
     /**
      * Setup a callback for when notifications/indications are enabled for a
@@ -1299,16 +1309,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline ble_error_t
-BLE::onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
-    return transport->getGattServer().setOnDataRead(callback);
-}
-
-template <typename T> inline ble_error_t
-BLE::onDataRead(T *objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
-    return transport->getGattServer().setOnDataRead(objPtr, memberPtr);
-}
 
 inline void
 BLE::onUpdatesDisabled(GattServer::EventCallback_t callback)

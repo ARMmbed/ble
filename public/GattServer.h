@@ -36,7 +36,7 @@ protected:
         characteristicCount(0),
         dataSentCallChain(),
         dataWrittenCallChain(),
-        onDataRead(),
+        dataReadCallChain(),
         updatesEnabledCallback(NULL),
         onUpdatesDisabled(NULL),
         onConfirmationReceived(NULL) {
@@ -188,21 +188,41 @@ public:
     virtual bool isOnDataReadAvailable() const {
         return false;
     }
-    ble_error_t setOnDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
+
+    /**
+     * Setup a callback to be invoked on the peripheral when an attribute is
+     * being read by a remote client.
+     *
+     * @Note: this functionality may not be available on all underlying stacks.
+     * You could use GattCharacteristic::setReadAuthorizationCallback() as an
+     * alternative.
+     *
+     * @Note: it is possible to chain together multiple onDataRead callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Services may add their own onDataRead callbacks
+     * behind the scenes to trap interesting events.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
+     *
+     * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
+     *         else BLE_ERROR_NONE.
+     */
+    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
         if (!isOnDataReadAvailable()) {
             return BLE_ERROR_NOT_IMPLEMENTED;
         }
 
-        onDataRead.add(callback);
+        dataReadCallChain.add(callback);
         return BLE_ERROR_NONE;
     }
     template <typename T>
-    ble_error_t setOnDataRead(T *objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
+    ble_error_t onDataRead(T *objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
         if (!isOnDataReadAvailable()) {
             return BLE_ERROR_NOT_IMPLEMENTED;
         }
 
-        onDataRead.add(objPtr, memberPtr);
+        dataReadCallChain.add(objPtr, memberPtr);
         return BLE_ERROR_NONE;
     }
 
@@ -223,8 +243,8 @@ protected:
     }
 
     void handleDataReadEvent(const GattReadCallbackParams *params) {
-        if (onDataRead.hasCallbacksAttached()) {
-            onDataRead.call(params);
+        if (dataReadCallChain.hasCallbacksAttached()) {
+            dataReadCallChain.call(params);
         }
     }
 
@@ -263,7 +283,7 @@ protected:
 private:
     CallChainOfFunctionPointersWithContext<unsigned>                        dataSentCallChain;
     CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> dataWrittenCallChain;
-    CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  onDataRead;
+    CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  dataReadCallChain;
     EventCallback_t                                                         updatesEnabledCallback;
     EventCallback_t                                                         onUpdatesDisabled;
     EventCallback_t                                                         onConfirmationReceived;
