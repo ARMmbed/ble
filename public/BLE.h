@@ -96,6 +96,18 @@ public:
         return transport->getGattClient();
     }
 
+    /*
+     * Accessors to Security Manager. Please refer to SecurityManager.h. All
+     * SecurityManager related functionality requires going through this
+     * accessor.
+     */
+    const SecurityManager& securityManager() const {
+        return transport->getSecurityManager();
+    }
+    SecurityManager& securityManager() {
+        return transport->getSecurityManager();
+    }
+
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
      * is a sleep function which will return when there is an application
@@ -106,88 +118,6 @@ public:
     void waitForEvent(void) {
         transport->waitForEvent();
     }
-
-    /**
-     * Enable the BLE stack's Security Manager. The Security Manager implements
-     * the actual cryptographic algorithms and protocol exchanges that allow two
-     * devices to securely exchange data and privately detect each other.
-     * Calling this API is a prerequisite for encryption and pairing (bonding).
-     *
-     * @param[in]  enableBonding Allow for bonding.
-     * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
-     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
-     *                           such as availability of a display or keyboard to
-     *                           support out-of-band exchanges of security data.
-     * @param[in]  passkey       To specify a static passkey.
-     *
-     * @return BLE_ERROR_NONE on success.
-     */
-    ble_error_t initializeSecurity(bool                          enableBonding = true,
-                                   bool                          requireMITM   = true,
-                                   Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
-                                   const Gap::Passkey_t          passkey       = NULL);
-
-    /**
-     * Setup a callback for when the security setup procedure (key generation
-     * and exchange) for a link has started. This will be skipped for bonded
-     * devices. The callback is passed in parameters received from the peer's
-     * security request: bool allowBonding, bool requireMITM, and
-     * SecurityIOCapabilities_t.
-     */
-    void onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback);
-
-    /**
-     * Setup a callback for when the security setup procedure (key generation
-     * and exchange) for a link has completed. This will be skipped for bonded
-     * devices. The callback is passed in the success/failure status of the
-     * security setup procedure.
-     */
-    void onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback);
-
-    /**
-     * Setup a callback for when a link with the peer is secured. For bonded
-     * devices, subsequent reconnections with bonded peer will result only in
-     * this callback when the link is secured and setup procedures will not
-     * occur unless the bonding information is either lost or deleted on either
-     * or both sides. The callback is passed in a Gap::SecurityMode_t according
-     * to the level of security in effect for the secured link.
-     */
-    void onLinkSecured(Gap::LinkSecuredCallback_t callback);
-
-    /**
-     * Setup a callback for successful bonding; i.e. that link-specific security
-     * context is stored persistently for a peer device.
-     */
-    void onSecurityContextStored(Gap::HandleSpecificEvent_t callback);
-
-    /**
-     * Setup a callback for when the passkey needs to be displayed on a
-     * peripheral with DISPLAY capability. This happens when security is
-     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
-     * needs to be exchanged between the peers to authenticate the connection
-     * attempt.
-     */
-    void onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback);
-
-    /**
-     * Get the security status of a connection.
-     *
-     * @param[in]  connectionHandle   Handle to identify the connection.
-     * @param[out] securityStatusP    security status.
-     *
-     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
-     */
-    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP);
-
-    /**
-     * Delete all peer device context and all related bonding information from
-     * the database within the security manager.
-     *
-     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
-     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
-     *                                    application registration.
-     */
-    ble_error_t purgeAllBondingState(void);
 
     /*
      * Deprecation alert!
@@ -1054,6 +984,67 @@ public:
     }
 
     /**
+     * Enable the BLE stack's Security Manager. The Security Manager implements
+     * the actual cryptographic algorithms and protocol exchanges that allow two
+     * devices to securely exchange data and privately detect each other.
+     * Calling this API is a prerequisite for encryption and pairing (bonding).
+     *
+     * @param[in]  enableBonding Allow for bonding.
+     * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
+     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
+     *                           such as availability of a display or keyboard to
+     *                           support out-of-band exchanges of security data.
+     * @param[in]  passkey       To specify a static passkey.
+     *
+     * @return BLE_ERROR_NONE on success.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.initializeSecurity(...) should be replaced with
+     * ble.securityManager().init(...).
+     */
+    ble_error_t initializeSecurity(bool                                      enableBonding = true,
+                                   bool                                      requireMITM   = true,
+                                   SecurityManager::SecurityIOCapabilities_t iocaps        = SecurityManager::IO_CAPS_NONE,
+                                   const SecurityManager::Passkey_t          passkey       = NULL) {
+        return securityManager().init(enableBonding, requireMITM, iocaps, passkey);
+    }
+
+    /**
+     * Get the security status of a connection.
+     *
+     * @param[in]  connectionHandle   Handle to identify the connection.
+     * @param[out] securityStatusP    security status.
+     *
+     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.getLinkSecurity(...) should be replaced with
+     * ble.securityManager().getLinkSecurity(...).
+     */
+    ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, SecurityManager::LinkSecurityStatus_t *securityStatusP) {
+        return securityManager().getLinkSecurity(connectionHandle, securityStatusP);
+    }
+
+    /**
+     * Delete all peer device context and all related bonding information from
+     * the database within the security manager.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     *                                    application registration.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.purgeAllBondingState() should be replaced with
+     * ble.securityManager().purgeAllBondingState().
+     */
+    ble_error_t purgeAllBondingState(void) {
+        return securityManager().purgeAllBondingState();
+    }
+
+    /**
      * Setup a callback for timeout events. Refer to Gap::TimeoutSource_t for
      * possible event types.
      *
@@ -1184,6 +1175,83 @@ public:
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
 
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has started. This will be skipped for bonded
+     * devices. The callback is passed in parameters received from the peer's
+     * security request: bool allowBonding, bool requireMITM, and
+     * SecurityIOCapabilities_t.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.onSecuritySetupInitiated(callback) should be replaced with
+     * ble.securityManager().onSecuritySetupInitiated(callback).
+     */
+    void onSecuritySetupInitiated(SecurityManager::SecuritySetupInitiatedCallback_t callback) {
+        securityManager().onSecuritySetupInitiated(callback);
+    }
+
+    /**
+     * Setup a callback for when the security setup procedure (key generation
+     * and exchange) for a link has completed. This will be skipped for bonded
+     * devices. The callback is passed in the success/failure status of the
+     * security setup procedure.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.onSecuritySetupCompleted(callback) should be replaced with
+     * ble.securityManager().onSecuritySetupCompleted(callback).
+     */
+    void onSecuritySetupCompleted(SecurityManager::SecuritySetupCompletedCallback_t callback) {
+        securityManager().onSecuritySetupCompleted(callback);
+    }
+
+    /**
+     * Setup a callback for when a link with the peer is secured. For bonded
+     * devices, subsequent reconnections with bonded peer will result only in
+     * this callback when the link is secured and setup procedures will not
+     * occur unless the bonding information is either lost or deleted on either
+     * or both sides. The callback is passed in a SecurityManager::SecurityMode_t according
+     * to the level of security in effect for the secured link.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.onLinkSecured(callback) should be replaced with
+     * ble.securityManager().onLinkSecured(callback).
+     */
+    void onLinkSecured(SecurityManager::LinkSecuredCallback_t callback) {
+        securityManager().onLinkSecured(callback);
+    }
+
+    /**
+     * Setup a callback for successful bonding; i.e. that link-specific security
+     * context is stored persistently for a peer device.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.onSecurityContextStored(callback) should be replaced with
+     * ble.securityManager().onSecurityContextStored(callback).
+     */
+    void onSecurityContextStored(SecurityManager::HandleSpecificEvent_t callback) {
+        securityManager().onSecurityContextStored(callback);
+    }
+
+    /**
+     * Setup a callback for when the passkey needs to be displayed on a
+     * peripheral with DISPLAY capability. This happens when security is
+     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
+     * needs to be exchanged between the peers to authenticate the connection
+     * attempt.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from SecurityManager directly. A former
+     * call to ble.onPasskeyDisplay(callback) should be replaced with
+     * ble.securityManager().onPasskeyDisplay(callback).
+     */
+    void onPasskeyDisplay(SecurityManager::PasskeyDisplayCallback_t callback) {
+        return securityManager().onPasskeyDisplay(callback);
+    }
+
 public:
     BLE() : transport(createBLEInstance()) {
         /* empty */
@@ -1245,57 +1313,6 @@ inline void
 BLE::onConfirmationReceived(GattServer::EventCallback_t callback)
 {
     transport->getGattServer().setOnConfirmationReceived(callback);
-}
-
-inline ble_error_t
-BLE::initializeSecurity(bool                          enableBonding,
-                        bool                          requireMITM,
-                        Gap::SecurityIOCapabilities_t iocaps,
-                        const Gap::Passkey_t          passkey)
-{
-    return transport->initializeSecurity(enableBonding, requireMITM, iocaps, passkey);
-}
-
-inline void
-BLE::onSecuritySetupInitiated(Gap::SecuritySetupInitiatedCallback_t callback)
-{
-    gap().setOnSecuritySetupInitiated(callback);
-}
-
-inline void
-BLE::onSecuritySetupCompleted(Gap::SecuritySetupCompletedCallback_t callback)
-{
-    gap().setOnSecuritySetupCompleted(callback);
-}
-
-inline void
-BLE::onLinkSecured(Gap::LinkSecuredCallback_t callback)
-{
-    gap().setOnLinkSecured(callback);
-}
-
-inline void
-BLE::onSecurityContextStored(Gap::HandleSpecificEvent_t callback)
-{
-    gap().setOnSecurityContextStored(callback);
-}
-
-inline void
-BLE::onPasskeyDisplay(Gap::PasskeyDisplayCallback_t callback)
-{
-    return gap().setOnPasskeyDisplay(callback);
-}
-
-inline ble_error_t
-BLE::getLinkSecurity(Gap::Handle_t connectionHandle, Gap::LinkSecurityStatus_t *securityStatusP)
-{
-    return gap().getLinkSecurity(connectionHandle, securityStatusP);
-}
-
-inline ble_error_t
-BLE::purgeAllBondingState(void)
-{
-    return gap().purgeAllBondingState();
 }
 
 #endif // ifndef __BLE_H__

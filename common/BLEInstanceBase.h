@@ -38,10 +38,8 @@ public:
     virtual GattServer& getGattServer()             = 0;
     virtual const GattServer& getGattServer() const = 0;
     virtual GattClient& getGattClient()             = 0;
-    virtual ble_error_t initializeSecurity(bool                          enableBonding = true,
-                                           bool                          requireMITM   = true,
-                                           Gap::SecurityIOCapabilities_t iocaps        = Gap::IO_CAPS_NONE,
-                                           const Gap::Passkey_t          passkey       = NULL) = 0;
+    virtual SecurityManager& getSecurityManager()   = 0;
+    virtual const SecurityManager& getSecurityManager() const = 0;
     virtual void        waitForEvent(void)         = 0;
 };
 
