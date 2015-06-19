@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "DFUService.h"
+#include "ble/services/DFUService.h"
 
 const uint8_t              DFUServiceBaseUUID[] = {
     0x00, 0x00, 0x00, 0x00, 0x12, 0x12, 0xEF, 0xDE,

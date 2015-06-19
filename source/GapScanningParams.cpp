@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "Gap.h"
-#include "GapScanningParams.h"
+#include "ble/Gap.h"
+#include "ble/GapScanningParams.h"
 
 GapScanningParams::GapScanningParams(uint16_t interval, uint16_t window, uint16_t timeout, bool activeScanning) :
     _interval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval)),

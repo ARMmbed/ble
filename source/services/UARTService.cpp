@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "UARTService.h"
+#include "ble/services/UARTService.h"
 
 const uint8_t  UARTServiceBaseUUID[UUID::LENGTH_OF_LONG_UUID] = {
     0x6E, 0x40, 0x00, 0x00, 0xB5, 0xA3, 0xF3, 0x93,

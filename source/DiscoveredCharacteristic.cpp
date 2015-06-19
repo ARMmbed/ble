@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "DiscoveredCharacteristic.h"
-#include "GattClient.h"
+#include "ble/DiscoveredCharacteristic.h"
+#include "ble/GattClient.h"
 
 GattClient::ReadCallback_t  DiscoveredCharacteristic::onDataReadCallback;
 GattClient::WriteCallback_t DiscoveredCharacteristic::onDataWriteCallback;

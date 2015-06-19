@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "URIBeaconConfigService.h"
+#include "ble/services/URIBeaconConfigService.h"
 
 #define UUID_URI_BEACON(FIRST, SECOND) {                         \
         0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "BLE.h"
+#include "ble/BLE.h"
 
 #if defined(TARGET_OTA_ENABLED)
 #include "DFUService.h"
