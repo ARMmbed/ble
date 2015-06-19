@@ -74,7 +74,7 @@ public:
         unsigned connected   : 1; /**< peripheral is connected to a central */
     };
 
-    typedef uint16_t Handle_t;
+    typedef uint16_t Handle_t; /* Type for connection handle. */
 
     typedef struct {
         uint16_t minConnectionInterval;      /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
@@ -229,6 +229,23 @@ public:
      *
      * @param  reason
      *           The reason for disconnection to be sent back to the peer.
+     */
+    virtual ble_error_t disconnect(Handle_t connectionHandle, DisconnectionReason_t reason) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /**
+     * This call initiates the disconnection procedure, and its completion will
+     * be communicated to the application with an invocation of the
+     * disconnectionCallback.
+     *
+     * @param  reason
+     *           The reason for disconnection to be sent back to the peer.
+     *
+     * @note: this version of disconnect() doesn't take a connection handle. It
+     * will work reliably only for stacks which are limited to a single
+     * connection. This API should be considered *deprecated* in favour of the
+     * altertive which takes a connection handle. It will be dropped in the future.
      */
     virtual ble_error_t disconnect(DisconnectionReason_t reason) {
         return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */

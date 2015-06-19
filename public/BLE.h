@@ -661,6 +661,19 @@ public:
      * be communicated to the application with an invocation of the
      * onDisconnection callback.
      *
+     * @param[in] connectionHandle
+     * @param[in] reason
+     *              The reason for disconnection to be sent back to the peer.
+     */
+    ble_error_t disconnect(Gap::Handle_t connectionHandle, Gap::DisconnectionReason_t reason) {
+        return gap().disconnect(connectionHandle, reason);
+    }
+
+    /**
+     * This call initiates the disconnection procedure, and its completion will
+     * be communicated to the application with an invocation of the
+     * onDisconnection callback.
+     *
      * @param  reason
      *           The reason for disconnection to be sent back to the peer.
      *
@@ -668,6 +681,11 @@ public:
      * You should use the parallel API from Gap directly. A former call to
      * ble.disconnect(reason) should be replaced with
      * ble.gap().disconnect(reason).
+     *
+     * @note: this version of disconnect() doesn't take a connection handle. It
+     * will work reliably only for stacks which are limited to a single
+     * connection. This API should be considered *deprecated* in favour of the
+     * alternative which takes a connection handle. It will be dropped in the future.
      */
     ble_error_t disconnect(Gap::DisconnectionReason_t reason) {
         return gap().disconnect(reason);
