@@ -34,6 +34,9 @@ public:
 
     typedef void (*WriteCallback_t)(const GattWriteCallbackParams *params);
 
+    /*
+     * The following functions are meant to be overridden in the platform-specific sub-class.
+     */
 public:
     /**
      * Launch service discovery. Once launched, service discovery will remain
@@ -82,10 +85,11 @@ public:
      *           UUID will result in complete service discovery--callbacks being
      *           called for every service and characteristic.
      *
-
+     *
      * @note     Providing NULL for the characteristic callback will result in
-     *           characteristic discovery being skipped. This allows for an
-     *           inexpensive method to discover services.
+     *           characteristic discovery being skipped for each matching
+     *           service. This allows for an inexpensive method to discover only
+     *           services.
      *
      * @return
      *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
@@ -94,26 +98,29 @@ public:
                                                ServiceDiscovery::ServiceCallback_t         sc                           = NULL,
                                                ServiceDiscovery::CharacteristicCallback_t  cc                           = NULL,
                                                const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
-                                               const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) = 0;
-
-    /**
-     * Setup callback for when serviceDiscovery terminates.
-     */
-    virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) = 0;
+                                               const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Is service-discovery currently active?
      */
-    virtual bool isServiceDiscoveryActive(void) const = 0;
+    virtual bool isServiceDiscoveryActive(void) const {
+        return false; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Terminate an ongoing service-discovery. This should result in an
      * invocation of the TerminationCallback if service-discovery is active.
      */
-    virtual void terminateServiceDiscovery(void) = 0;
+    virtual void terminateServiceDiscovery(void) {
+        /* default implementation; override this API if this capability is supported. */
+    }
 
-    /* Initiate a Gatt Client read procedure by attribute-handle.*/
-    virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const = 0;
+    /* Initiate a Gatt Client read procedure by attribute-handle. */
+    virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Initiate a GATT Client write procedure.
@@ -135,7 +142,16 @@ public:
                               Gap::Handle_t            connHandle,
                               GattAttribute::Handle_t  attributeHandle,
                               size_t                   length,
-                              const uint8_t           *value) const = 0;
+                              const uint8_t           *value) const {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /**
+     * Setup callback for when serviceDiscovery terminates.
+     */
+    virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) {
+        /* default implementation; override this API if this capability is supported. */
+    }
 
 protected:
     GattClient() {
