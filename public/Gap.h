@@ -141,7 +141,7 @@ public:
     typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
     typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
-    typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
+    typedef void (*RadioNotificationEventCallback_t)(bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
 
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
