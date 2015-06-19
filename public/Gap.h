@@ -144,7 +144,7 @@ public:
     typedef void (*RadioNotificationEventCallback_t) (bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
 
     /*
-     * These functions must be defined in the platform-specific sub-class.
+     * The following functions are meant to be overridden in the platform-specific sub-class.
      */
 public:
     /**
@@ -153,38 +153,52 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t setAddress(AddressType_t type,  const Address_t address) = 0;
+    virtual ble_error_t setAddress(AddressType_t type, const Address_t address) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Fetch the BTLE MAC address and type.
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) = 0;
+    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * @return Minimum Advertising interval in milliseconds.
      */
-    virtual uint16_t    getMinAdvertisingInterval(void) const = 0;
+    virtual uint16_t getMinAdvertisingInterval(void) const {
+        return 0; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * @return Minimum Advertising interval in milliseconds for non-connectible mode.
      */
-    virtual uint16_t    getMinNonConnectableAdvertisingInterval(void) const = 0;
+    virtual uint16_t getMinNonConnectableAdvertisingInterval(void) const {
+        return 0; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * @return Maximum Advertising interval in milliseconds.
      */
-    virtual uint16_t    getMaxAdvertisingInterval(void) const = 0;
+    virtual uint16_t getMaxAdvertisingInterval(void) const {
+        return 0xFFFF; /* default implementation; override this API if this capability is supported. */
+    }
 
-    virtual ble_error_t stopAdvertising(void) = 0;
+    virtual ble_error_t stopAdvertising(void) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Stop scanning. The current scanning parameters remain in effect.
      *
      * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
      */
-    virtual ble_error_t stopScan() = 0;
+    virtual ble_error_t stopScan() {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Create a connection (GAP Link Establishment).
@@ -204,7 +218,9 @@ public:
     virtual ble_error_t connect(const Address_t           peerAddr,
                                 Gap::AddressType_t        peerAddrType,
                                 const ConnectionParams_t *connectionParams,
-                                const GapScanningParams  *scanParams) = 0;
+                                const GapScanningParams  *scanParams) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * This call initiates the disconnection procedure, and its completion will
@@ -214,7 +230,9 @@ public:
      * @param  reason
      *           The reason for disconnection to be sent back to the peer.
      */
-    virtual ble_error_t disconnect(DisconnectionReason_t reason) = 0;
+    virtual ble_error_t disconnect(DisconnectionReason_t reason) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Get the GAP peripheral preferred connection parameters. These are the
@@ -228,7 +246,9 @@ public:
      * @return BLE_ERROR_NONE if the parameters were successfully filled into
      * the given structure pointed to by params.
      */
-    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) = 0;
+    virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Set the GAP peripheral preferred connection parameters. These are the
@@ -238,7 +258,9 @@ public:
      * @param[in] params
      *               The structure containing the desired parameters.
      */
-    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) = 0;
+    virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Update connection parameters while in the peripheral role.
@@ -250,14 +272,18 @@ public:
      *              Pointer to desired connection parameters. If NULL is provided on a peripheral role,
      *              the parameters in the PPCP characteristic of the GAP service will be used instead.
      */
-    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) = 0;
+    virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Set the device name characteristic in the GAP service.
      * @param[in] deviceName
      *              The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
      */
-    virtual ble_error_t setDeviceName(const uint8_t *deviceName) = 0;
+    virtual ble_error_t setDeviceName(const uint8_t *deviceName) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Get the value of the device name characteristic in the GAP service.
@@ -277,27 +303,35 @@ public:
      *     number of bytes actually returned in deviceName. The application may
      *     use this information to retry with a suitable buffer size.
      */
-    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) = 0;
+    virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Set the appearance characteristic in the GAP service.
      * @param[in] appearance
      *              The new value for the device-appearance.
      */
-    virtual ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) = 0;
+    virtual ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Get the appearance characteristic in the GAP service.
      * @param[out] appearance
      *               The new value for the device-appearance.
      */
-    virtual ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) = 0;
+    virtual ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Set the radio's transmit power.
      * @param[in] txPower Radio transmit power in dBm.
      */
-    virtual ble_error_t setTxPower(int8_t txPower) = 0;
+    virtual ble_error_t setTxPower(int8_t txPower) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Query the underlying stack for permitted arguments for setTxPower().
@@ -307,10 +341,15 @@ public:
      * @param[out] countP
      *                 Out parameter to receive the array's size.
      */
-    virtual void getPermittedTxPowerValues(const int8_t **, size_t *) = 0;
+    virtual void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP) {
+        *countP = 0; /* default implementation; override this API if this capability is supported. */
+    }
 
-public:
-    virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) = 0;
+protected:
+    /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
+    virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /*
      * APIs with non-virtual implementations.
@@ -429,7 +468,7 @@ public:
         setAppearance(app);
 
         ble_error_t rc;
-        if ((rc =  _advPayload.addAppearance(app)) != BLE_ERROR_NONE) {
+        if ((rc = _advPayload.addAppearance(app)) != BLE_ERROR_NONE) {
             return rc;
         }
 
@@ -692,7 +731,7 @@ public:
         _advParams = newParams;
     }
 
-    /* Event callback handlers */
+    /* Event callback handlers. */
 public:
     /**
      * Setup a callback for timeout events. Refer to TimeoutSource_t for
@@ -759,6 +798,7 @@ protected:
         _scanResponse.clear();
     }
 
+    /* Entry points for the underlying stack to report events back to the user. */
 public:
     void processConnectionEvent(Handle_t                  handle,
                                 Role_t                    role,
