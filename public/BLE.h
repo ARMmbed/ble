@@ -1208,8 +1208,8 @@ public:
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from GattServer directly. A former call
-     * to ble.onUpdatesEnabled(...) should be replaced with
-     * ble.gattServer().onUpdatesEnabled(...).
+     * to ble.onUpdatesEnabled(callback) should be replaced with
+     * ble.gattServer().onUpdatesEnabled(callback).
      */
     void onUpdatesEnabled(GattServer::EventCallback_t callback) {
         gattServer().onUpdatesEnabled(callback);
@@ -1221,8 +1221,8 @@ public:
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from GattServer directly. A former call
-     * to ble.onUpdatesEnabled(...) should be replaced with
-     * ble.gattServer().onUpdatesEnabled(...).
+     * to ble.onUpdatesEnabled(callback) should be replaced with
+     * ble.gattServer().onUpdatesEnabled(callback).
      */
     void onUpdatesDisabled(GattServer::EventCallback_t callback) {
         gattServer().onUpdatesDisabled(callback);
