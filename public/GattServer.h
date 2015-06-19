@@ -136,8 +136,6 @@ public:
      */
     virtual ble_error_t write(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) = 0;
 
-    virtual ble_error_t initializeGATTDatabase(void) = 0;
-
     /**
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).

@@ -444,15 +444,6 @@ public:
      * ble.gap().startAdvertising(...).
      */
     ble_error_t startAdvertising(void) {
-        /* HACK ALERT! the following bit with initializeGATTDatabase() is additional to
-         * gap().startAdvertising(). This was put in place to get some stacks to
-         * work--like CSR. We need to reach a point where this shouldn't be
-         * necessary. */
-        ble_error_t rc;
-        if ((rc = transport->getGattServer().initializeGATTDatabase()) != BLE_ERROR_NONE) {
-            return rc;
-        }
-
         return gap().startAdvertising();
     }
 
