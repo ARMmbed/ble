@@ -39,7 +39,7 @@ protected:
         dataReadCallChain(),
         updatesEnabledCallback(NULL),
         updatesDisabledCallback(NULL),
-        onConfirmationReceived(NULL) {
+        confirmationReceivedCallback(NULL) {
         /* empty */
     }
 
@@ -238,7 +238,11 @@ public:
      */
     void onUpdatesDisabled(EventCallback_t callback) {updatesDisabledCallback = callback;}
 
-    void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
+    /**
+     * Setup a callback for when the GATT server receives a response for an
+     * indication event sent previously.
+     */
+    void onConfirmationReceived(EventCallback_t callback) {confirmationReceivedCallback = callback;}
 
 protected:
     void handleDataWrittenEvent(const GattWriteCallbackParams *params) {
@@ -266,8 +270,8 @@ protected:
                 }
                 break;
             case GattServerEvents::GATT_EVENT_CONFIRMATION_RECEIVED:
-                if (onConfirmationReceived) {
-                    onConfirmationReceived(charHandle);
+                if (confirmationReceivedCallback) {
+                    confirmationReceivedCallback(charHandle);
                 }
                 break;
             default:
@@ -291,7 +295,7 @@ private:
     CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  dataReadCallChain;
     EventCallback_t                                                         updatesEnabledCallback;
     EventCallback_t                                                         updatesDisabledCallback;
-    EventCallback_t                                                         onConfirmationReceived;
+    EventCallback_t                                                         confirmationReceivedCallback;
 
 private:
     /* disallow copy and assignment */

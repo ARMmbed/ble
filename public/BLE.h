@@ -1228,7 +1228,18 @@ public:
         gattServer().onUpdatesDisabled(callback);
     }
 
-    void onConfirmationReceived(GattServer::EventCallback_t callback);
+    /**
+     * Setup a callback for when the GATT server receives a response for an
+     * indication event sent previously.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onConfirmationReceived(callback) should be replaced with
+     * ble.gattServer().onConfirmationReceived(callback).
+     */
+    void onConfirmationReceived(GattServer::EventCallback_t callback) {
+        gattServer().onConfirmationReceived(callback);
+    }
 
     /**
      * Setup a callback for when the security setup procedure (key generation
@@ -1318,14 +1329,5 @@ private:
 
 typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibility with older
                         * code. Will be dropped at some point soon.*/
-
-/* BLE methods. Most of these simply forward the calls to the underlying
- * transport.*/
-
-inline void
-BLE::onConfirmationReceived(GattServer::EventCallback_t callback)
-{
-    transport->getGattServer().setOnConfirmationReceived(callback);
-}
 
 #endif // ifndef __BLE_H__
