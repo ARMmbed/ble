@@ -85,7 +85,6 @@ public:
      *           UUID will result in complete service discovery--callbacks being
      *           called for every service and characteristic.
      *
-     *
      * @note     Providing NULL for the characteristic callback will result in
      *           characteristic discovery being skipped for each matching
      *           service. This allows for an inexpensive method to discover only
@@ -99,6 +98,69 @@ public:
                                                ServiceDiscovery::CharacteristicCallback_t  cc                           = NULL,
                                                const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
                                                const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /**
+     * Launch service discovery for services. Once launched, service discovery will remain
+     * active with service-callbacks being issued back into the application for matching
+     * services. isServiceDiscoveryActive() can be used to
+     * determine status; and a termination callback (if setup) will be invoked
+     * at the end. Service discovery can be terminated prematurely if needed
+     * using terminateServiceDiscovery().
+     *
+     * @param  connectionHandle
+     *           Handle for the connection with the peer.
+     * @param  sc
+     *           This is the application callback for matching service. Note: service discovery may still be active
+     *           when this callback is issued; calling asynchronous BLE-stack
+     *           APIs from within this application callback might cause the
+     *           stack to abort service discovery. If this becomes an issue, it
+     *           may be better to make local copy of the discoveredService and
+     *           wait for service discovery to terminate before operating on the
+     *           service.
+     * @param  matchingServiceUUID
+     *           UUID based filter for specifying a service in which the application is
+     *           interested. By default it is set as the wildcard UUID_UNKNOWN,
+     *           in which case it matches all services.
+     *
+     * @return
+     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     */
+    virtual ble_error_t discoverServices(Gap::Handle_t                        connectionHandle,
+                                         ServiceDiscovery::ServiceCallback_t  callback,
+                                         const UUID                          &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /**
+     * Launch service discovery for services. Once launched, service discovery will remain
+     * active with service-callbacks being issued back into the application for matching
+     * services. isServiceDiscoveryActive() can be used to
+     * determine status; and a termination callback (if setup) will be invoked
+     * at the end. Service discovery can be terminated prematurely if needed
+     * using terminateServiceDiscovery().
+     *
+     * @param  connectionHandle
+     *           Handle for the connection with the peer.
+     * @param  sc
+     *           This is the application callback for matching service. Note: service discovery may still be active
+     *           when this callback is issued; calling asynchronous BLE-stack
+     *           APIs from within this application callback might cause the
+     *           stack to abort service discovery. If this becomes an issue, it
+     *           may be better to make local copy of the discoveredService and
+     *           wait for service discovery to terminate before operating on the
+     *           service.
+     * @param  startHandle, endHandle
+     *           Handle range within which to limit the search
+     *
+     * @return
+     *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
+     */
+    virtual ble_error_t discoverServices(Gap::Handle_t                        connectionHandle,
+                                         ServiceDiscovery::ServiceCallback_t  callback,
+                                         GattAttribute::Handle_t              startHandle,
+                                         GattAttribute::Handle_t              endHandle) {
         return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
     }
 
