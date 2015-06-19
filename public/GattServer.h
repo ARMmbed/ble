@@ -43,14 +43,18 @@ protected:
         /* empty */
     }
 
+    /*
+     * The following functions are meant to be overridden in the platform-specific sub-class.
+     */
 public:
-    /* These functions must be defined in the sub-class */
 
     /**
      * Add a service declaration to the local server ATT table. Also add the
      * characteristics contained within.
      */
-    virtual ble_error_t addService(GattService &) = 0;
+    virtual ble_error_t addService(GattService &) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Read the value of a characteristic from the local GattServer
@@ -67,7 +71,9 @@ public:
      *
      * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
      */
-    virtual ble_error_t read(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) = 0;
+    virtual ble_error_t read(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Read the value of a characteristic from the local GattServer
@@ -90,7 +96,9 @@ public:
      *     parameter to allow fetches for connection-specific multivalued
      *     attribtues (such as the CCCDs).
      */
-    virtual ble_error_t read(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) = 0;
+    virtual ble_error_t read(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Update the value of a characteristic on the local GattServer.
@@ -110,7 +118,9 @@ public:
      *
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
      */
-    virtual ble_error_t write(GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) = 0;
+    virtual ble_error_t write(GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
     /**
      * Update the value of a characteristic on the local GattServer. A version
@@ -134,8 +144,22 @@ public:
      *
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
      */
-    virtual ble_error_t write(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) = 0;
+    virtual ble_error_t write(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
 
+    /**
+     * A virtual function to allow underlying stacks to indicate if they support
+     * onDataRead(). It should be overridden to return true as applicable.
+     */
+    virtual bool isOnDataReadAvailable() const {
+        return false; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /*
+     * APIs with non-virtual implementations.
+     */
+public:
     /**
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).
@@ -172,14 +196,6 @@ public:
     template <typename T>
     void onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
         dataWrittenCallChain.add(objPtr, memberPtr);
-    }
-
-    /**
-     * A virtual function to allow underlying stacks to indicate if they support
-     * onDataRead(). It should be overridden to return true as applicable.
-     */
-    virtual bool isOnDataReadAvailable() const {
-        return false;
     }
 
     /**
@@ -237,6 +253,7 @@ public:
      */
     void onConfirmationReceived(EventCallback_t callback) {confirmationReceivedCallback = callback;}
 
+    /* Entry points for the underlying stack to report events back to the user. */
 protected:
     void handleDataWrittenEvent(const GattWriteCallbackParams *params) {
         if (dataWrittenCallChain.hasCallbacksAttached()) {
