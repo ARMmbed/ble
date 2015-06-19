@@ -1145,8 +1145,11 @@ public:
     }
 
     /**
-     * Setup a callback for when a characteristic has its value updated by a
-     * client.
+     * Setup a callback for when an attribute has its value updated by or at the
+     * connected peer. For a peripheral, this callback triggered when the local
+     * GATT server has an attribute updated by a write command from the peer.
+     * For a Central, this callback is triggered when a response is received for
+     * a write request.
      *
      * @Note: it is possible to chain together multiple onDataWritten callbacks
      * (potentially from different modules of an application) to receive updates
@@ -1155,9 +1158,18 @@ public:
      *
      * @Note: it is also possible to setup a callback into a member function of
      * some object.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onDataWritten(...) should be replaced with
+     * ble.gap().onDataWritten(...).
      */
-    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP));
-    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context));
+    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {
+        gattServer().onDataWritten(callback);
+    }
+    template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
+        gattServer().onDataWritten(objPtr, memberPtr);
+    }
 
     /**
      * Setup a callback for when a characteristic is being read by a client.
@@ -1275,16 +1287,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline void
-BLE::onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {
-    transport->getGattServer().setOnDataWritten(callback);
-}
-
-template <typename T> inline void
-BLE::onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
-    transport->getGattServer().setOnDataWritten(objPtr, memberPtr);
-}
 
 inline ble_error_t
 BLE::onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {

@@ -35,7 +35,7 @@ protected:
         serviceCount(0),
         characteristicCount(0),
         dataSentCallChain(),
-        onDataWritten(),
+        dataWrittenCallChain(),
         onDataRead(),
         onUpdatesEnabled(NULL),
         onUpdatesDisabled(NULL),
@@ -160,10 +160,25 @@ public:
         dataSentCallChain.add(objPtr, memberPtr);
     }
 
-    void setOnDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {onDataWritten.add(callback);}
+    /**
+     * Setup a callback for when an attribute has its value updated by or at the
+     * connected peer. For a peripheral, this callback triggered when the local
+     * GATT server has an attribute updated by a write command from the peer.
+     * For a Central, this callback is triggered when a response is received for
+     * a write request.
+     *
+     * @Note: it is possible to chain together multiple onDataWritten callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics. Many services, such as DFU and UART add their own
+     * onDataWritten callbacks behind the scenes to trap interesting events.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
+     */
+    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {dataWrittenCallChain.add(callback);}
     template <typename T>
-    void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
-        onDataWritten.add(objPtr, memberPtr);
+    void onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
+        dataWrittenCallChain.add(objPtr, memberPtr);
     }
 
     /**
@@ -196,8 +211,8 @@ public:
 
 protected:
     void handleDataWrittenEvent(const GattWriteCallbackParams *params) {
-        if (onDataWritten.hasCallbacksAttached()) {
-            onDataWritten.call(params);
+        if (dataWrittenCallChain.hasCallbacksAttached()) {
+            dataWrittenCallChain.call(params);
         }
     }
 
@@ -240,12 +255,12 @@ protected:
     uint8_t characteristicCount;
 
 private:
-    CallChainOfFunctionPointersWithContext<unsigned>                                dataSentCallChain;
-    CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> onDataWritten;
+    CallChainOfFunctionPointersWithContext<unsigned>                        dataSentCallChain;
+    CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> dataWrittenCallChain;
     CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  onDataRead;
-    EventCallback_t                                                                 onUpdatesEnabled;
-    EventCallback_t                                                                 onUpdatesDisabled;
-    EventCallback_t                                                                 onConfirmationReceived;
+    EventCallback_t                                                         onUpdatesEnabled;
+    EventCallback_t                                                         onUpdatesDisabled;
+    EventCallback_t                                                         onConfirmationReceived;
 
 private:
     /* disallow copy and assignment */
