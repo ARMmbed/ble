@@ -52,6 +52,25 @@ public:
     };
 
     /**
+     * Structure for holding information about the service and the characteristics
+     * found during the discovery process.
+     */
+    struct DiscoveredDescriptor {
+        GattAttribute::Handle_t handle; /**< Descriptor Handle. */
+        UUID                    uuid;   /**< Descriptor UUID. */
+    };
+
+    /**
+     * Callback type for when a characteristic descriptor is found during descriptor-
+     * discovery. The receiving function is passed in a pointer to a
+     * DiscoveredDescriptor object which will remain valid for the lifetime
+     * of the callback. Memory for this object is owned by the BLE_API eventing
+     * framework. The application can safely make a persistent shallow-copy of
+     * this object in order to work with the characteristic beyond the callback.
+     */
+    typedef void (*DescriptorCallback_t)(const DiscoveredDescriptor *);
+
+    /**
      * Initiate (or continue) a read for the value attribute, optionally at a
      * given offset. If the Characteristic or Descriptor to be read is longer
      * than ATT_MTU - 1, this function must be called multiple times with
@@ -85,6 +104,17 @@ public:
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t writeWoResponse(uint16_t length, const uint8_t *value) const;
+
+    /**
+     * Initiate a GATT Characteristic Descriptor Discovery procedure for descriptors within this characteristic.
+     *
+     * @param  callback
+     * @param  matchingUUID
+     *           filter for descriptors. Defaults to wildcard which will discover all descriptors.
+     *
+     * @return  BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
+     */
+    ble_error_t discoverDescriptors(DescriptorCallback_t callback, const UUID &matchingUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) const;
 
     /**
      * Perform a write procedure.
