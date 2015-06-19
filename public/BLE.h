@@ -1135,7 +1135,7 @@ public:
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from GattServer directly. A former call
      * to ble.onDataSent(...) should be replaced with
-     * ble.gap().onDataSent(...).
+     * ble.gattServer().onDataSent(...).
      */
     void onDataSent(void (*callback)(unsigned count)) {
         gattServer().onDataSent(callback);
@@ -1162,7 +1162,7 @@ public:
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from GattServer directly. A former call
      * to ble.onDataWritten(...) should be replaced with
-     * ble.gap().onDataWritten(...).
+     * ble.gattServer().onDataWritten(...).
      */
     void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {
         gattServer().onDataWritten(callback);
