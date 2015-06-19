@@ -38,7 +38,7 @@ protected:
         dataWrittenCallChain(),
         dataReadCallChain(),
         updatesEnabledCallback(NULL),
-        onUpdatesDisabled(NULL),
+        updatesDisabledCallback(NULL),
         onConfirmationReceived(NULL) {
         /* empty */
     }
@@ -230,9 +230,14 @@ public:
      * Setup a callback for when notifications/indications are enabled for a
      * characteristic on the local GattServer.
      */
-    void onUpdatesEnabled(EventCallback_t callback)          {updatesEnabledCallback = callback;}
+    void onUpdatesEnabled(EventCallback_t callback) {updatesEnabledCallback = callback;}
 
-    void setOnUpdatesDisabled(EventCallback_t callback)      {onUpdatesDisabled      = callback;}
+    /**
+     * Setup a callback for when notifications/indications are disabled for a
+     * characteristic on the local GattServer.
+     */
+    void onUpdatesDisabled(EventCallback_t callback) {updatesDisabledCallback = callback;}
+
     void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
 
 protected:
@@ -256,8 +261,8 @@ protected:
                 }
                 break;
             case GattServerEvents::GATT_EVENT_UPDATES_DISABLED:
-                if (onUpdatesDisabled) {
-                    onUpdatesDisabled(charHandle);
+                if (updatesDisabledCallback) {
+                    updatesDisabledCallback(charHandle);
                 }
                 break;
             case GattServerEvents::GATT_EVENT_CONFIRMATION_RECEIVED:
@@ -285,7 +290,7 @@ private:
     CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> dataWrittenCallChain;
     CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  dataReadCallChain;
     EventCallback_t                                                         updatesEnabledCallback;
-    EventCallback_t                                                         onUpdatesDisabled;
+    EventCallback_t                                                         updatesDisabledCallback;
     EventCallback_t                                                         onConfirmationReceived;
 
 private:

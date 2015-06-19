@@ -1215,7 +1215,19 @@ public:
         gattServer().onUpdatesEnabled(callback);
     }
 
-    void onUpdatesDisabled(GattServer::EventCallback_t callback);
+    /**
+     * Setup a callback for when notifications/indications are disabled for a
+     * characteristic on the local GattServer.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onUpdatesEnabled(...) should be replaced with
+     * ble.gattServer().onUpdatesEnabled(...).
+     */
+    void onUpdatesDisabled(GattServer::EventCallback_t callback) {
+        gattServer().onUpdatesDisabled(callback);
+    }
+
     void onConfirmationReceived(GattServer::EventCallback_t callback);
 
     /**
@@ -1309,12 +1321,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline void
-BLE::onUpdatesDisabled(GattServer::EventCallback_t callback)
-{
-    transport->getGattServer().setOnUpdatesDisabled(callback);
-}
 
 inline void
 BLE::onConfirmationReceived(GattServer::EventCallback_t callback)
