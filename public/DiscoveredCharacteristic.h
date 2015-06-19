@@ -173,15 +173,15 @@ public:
     }
 
 protected:
-    GattClient             *gattc;
+    GattClient              *gattc;
 
 protected:
-    UUID                    uuid;
-    Properties_t            props;
-    GattAttribute::Handle_t declHandle;
-    GattAttribute::Handle_t valueHandle;
+    UUID                     uuid;
+    Properties_t             props;
+    GattAttribute::Handle_t  declHandle;
+    GattAttribute::Handle_t  valueHandle;
 
-    Gap::Handle_t           connHandle;
+    Gap::Handle_t            connHandle;
 
 public:
     static GattClient::ReadCallback_t  onDataReadCallback;
