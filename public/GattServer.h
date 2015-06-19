@@ -34,7 +34,7 @@ protected:
     GattServer() :
         serviceCount(0),
         characteristicCount(0),
-        onDataSent(),
+        dataSentCallChain(),
         onDataWritten(),
         onDataRead(),
         onUpdatesEnabled(NULL),
@@ -143,11 +143,23 @@ public:
     // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
     // Strange use case, but valid and must be covered!
 
-    void setOnDataSent(void (*callback)(unsigned count)) {onDataSent.add(callback);}
+    /**
+     * Add a callback for the GATT event DATA_SENT (which is triggered when
+     * updates are sent out by GATT in the form of notifications).
+     *
+     * @Note: it is possible to chain together multiple onDataSent callbacks
+     * (potentially from different modules of an application) to receive updates
+     * to characteristics.
+     *
+     * @Note: it is also possible to setup a callback into a member function of
+     * some object.
+     */
+    void onDataSent(void (*callback)(unsigned count)) {dataSentCallChain.add(callback);}
     template <typename T>
-    void setOnDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
-        onDataSent.add(objPtr, memberPtr);
+    void onDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
+        dataSentCallChain.add(objPtr, memberPtr);
     }
+
     void setOnDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {onDataWritten.add(callback);}
     template <typename T>
     void setOnDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
@@ -218,8 +230,8 @@ protected:
     }
 
     void handleDataSentEvent(unsigned count) {
-        if (onDataSent.hasCallbacksAttached()) {
-            onDataSent.call(count);
+        if (dataSentCallChain.hasCallbacksAttached()) {
+            dataSentCallChain.call(count);
         }
     }
 
@@ -228,7 +240,7 @@ protected:
     uint8_t characteristicCount;
 
 private:
-    CallChainOfFunctionPointersWithContext<unsigned>                                onDataSent;
+    CallChainOfFunctionPointersWithContext<unsigned>                                dataSentCallChain;
     CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> onDataWritten;
     CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  onDataRead;
     EventCallback_t                                                                 onUpdatesEnabled;

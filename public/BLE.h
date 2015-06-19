@@ -1131,9 +1131,18 @@ public:
      *
      * @Note: it is also possible to setup a callback into a member function of
      * some object.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onDataSent(...) should be replaced with
+     * ble.gap().onDataSent(...).
      */
-    void onDataSent(void (*callback)(unsigned count));
-    template <typename T> void onDataSent(T * objPtr, void (T::*memberPtr)(unsigned count));
+    void onDataSent(void (*callback)(unsigned count)) {
+        gattServer().onDataSent(callback);
+    }
+    template <typename T> void onDataSent(T * objPtr, void (T::*memberPtr)(unsigned count)) {
+        gattServer().onDataSent(objPtr, memberPtr);
+    }
 
     /**
      * Setup a callback for when a characteristic has its value updated by a
@@ -1266,16 +1275,6 @@ typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake o
 
 /* BLE methods. Most of these simply forward the calls to the underlying
  * transport.*/
-
-inline void
-BLE::onDataSent(void (*callback)(unsigned count)) {
-    transport->getGattServer().setOnDataSent(callback);
-}
-
-template <typename T> inline void
-BLE::onDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
-    transport->getGattServer().setOnDataSent(objPtr, memberPtr);
-}
 
 inline void
 BLE::onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {
