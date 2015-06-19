@@ -98,9 +98,14 @@ public:
      *           values, then only a single characteristic callback is
      *           invoked for the matching characteristic.
      *
-     * @Note     Using wildcard values for both service-UUID and characteristic-
+     * @note     Using wildcard values for both service-UUID and characteristic-
      *           UUID will result in complete service discovery--callbacks being
      *           called for every service and characteristic.
+     *
+     * @note     Providing NULL for the characteristic callback will result in
+     *           characteristic discovery being skipped for each matching
+     *           service. This allows for an inexpensive method to discover only
+     *           services.
      *
      * @return
      *           BLE_ERROR_NONE if service discovery is launched successfully; else an appropriate error.
