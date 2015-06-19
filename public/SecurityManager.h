@@ -82,6 +82,9 @@ public:
     typedef void (*LinkSecuredCallback_t)(Gap::Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Gap::Handle_t handle, const Passkey_t passkey);
 
+    /*
+     * The following functions are meant to be overridden in the platform-specific sub-class.
+     */
 public:
     /**
      * Enable the BLE stack's Security Manager. The Security Manager implements
@@ -129,6 +132,7 @@ public:
         return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this if security is supported. */
     }
 
+    /* Event callback handlers. */
 public:
     /**
      * To indicate that security procedure for link has started.
@@ -158,6 +162,7 @@ public:
      */
     virtual void onPasskeyDisplay(PasskeyDisplayCallback_t callback) {passkeyDisplayCallback = callback;}
 
+    /* Entry points for the underlying stack to report events back to the user. */
 public:
     void processSecuritySetupInitiatedEvent(Gap::Handle_t handle, bool allowBonding, bool requireMITM, SecurityIOCapabilities_t iocaps) {
         if (securitySetupInitiatedCallback) {
@@ -198,7 +203,6 @@ protected:
         passkeyDisplayCallback() {
         /* empty */
     }
-
 
 protected:
     SecuritySetupInitiatedCallback_t securitySetupInitiatedCallback;
