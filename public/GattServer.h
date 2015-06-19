@@ -37,7 +37,7 @@ protected:
         dataSentCallChain(),
         dataWrittenCallChain(),
         onDataRead(),
-        onUpdatesEnabled(NULL),
+        updatesEnabledCallback(NULL),
         onUpdatesDisabled(NULL),
         onConfirmationReceived(NULL) {
         /* empty */
@@ -205,7 +205,13 @@ public:
         onDataRead.add(objPtr, memberPtr);
         return BLE_ERROR_NONE;
     }
-    void setOnUpdatesEnabled(EventCallback_t callback)       {onUpdatesEnabled       = callback;}
+
+    /**
+     * Setup a callback for when notifications/indications are enabled for a
+     * characteristic on the local GattServer.
+     */
+    void onUpdatesEnabled(EventCallback_t callback)          {updatesEnabledCallback = callback;}
+
     void setOnUpdatesDisabled(EventCallback_t callback)      {onUpdatesDisabled      = callback;}
     void setOnConfirmationReceived(EventCallback_t callback) {onConfirmationReceived = callback;}
 
@@ -225,8 +231,8 @@ protected:
     void handleEvent(GattServerEvents::gattEvent_e type, GattAttribute::Handle_t charHandle) {
         switch (type) {
             case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
-                if (onUpdatesEnabled) {
-                    onUpdatesEnabled(charHandle);
+                if (updatesEnabledCallback) {
+                    updatesEnabledCallback(charHandle);
                 }
                 break;
             case GattServerEvents::GATT_EVENT_UPDATES_DISABLED:
@@ -258,7 +264,7 @@ private:
     CallChainOfFunctionPointersWithContext<unsigned>                        dataSentCallChain;
     CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> dataWrittenCallChain;
     CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  onDataRead;
-    EventCallback_t                                                         onUpdatesEnabled;
+    EventCallback_t                                                         updatesEnabledCallback;
     EventCallback_t                                                         onUpdatesDisabled;
     EventCallback_t                                                         onConfirmationReceived;
 

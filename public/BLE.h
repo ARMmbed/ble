@@ -1192,7 +1192,19 @@ public:
     ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP));
     template <typename T> ble_error_t onDataRead(T * objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context));
 
-    void onUpdatesEnabled(GattServer::EventCallback_t callback);
+    /**
+     * Setup a callback for when notifications/indications are enabled for a
+     * characteristic on the local GattServer.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * You should use the parallel API from GattServer directly. A former call
+     * to ble.onUpdatesEnabled(...) should be replaced with
+     * ble.gattServer().onUpdatesEnabled(...).
+     */
+    void onUpdatesEnabled(GattServer::EventCallback_t callback) {
+        gattServer().onUpdatesEnabled(callback);
+    }
+
     void onUpdatesDisabled(GattServer::EventCallback_t callback);
     void onConfirmationReceived(GattServer::EventCallback_t callback);
 
@@ -1296,12 +1308,6 @@ BLE::onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
 template <typename T> inline ble_error_t
 BLE::onDataRead(T *objPtr, void (T::*memberPtr)(const GattReadCallbackParams *context)) {
     return transport->getGattServer().setOnDataRead(objPtr, memberPtr);
-}
-
-inline void
-BLE::onUpdatesEnabled(GattServer::EventCallback_t callback)
-{
-    transport->getGattServer().setOnUpdatesEnabled(callback);
 }
 
 inline void
