@@ -138,11 +138,6 @@ public:
 
     virtual ble_error_t initializeGATTDatabase(void) = 0;
 
-    // ToDo: For updateValue, check the CCCD to see if the value we are
-    // updating has the notify or indicate bits sent, and if BOTH are set
-    // be sure to call sd_ble_gatts_hvx() twice with notify then indicate!
-    // Strange use case, but valid and must be covered!
-
     /**
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).
