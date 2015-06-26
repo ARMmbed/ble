@@ -1180,6 +1180,8 @@ public:
         gattServer().onDataWritten(objPtr, memberPtr);
     }
 	
+	//Clears the Written CallBack Chain of functions, probably will be depreciated and should
+	//call gattserver().clearWrittenCallChain directly
     void clearWrittenCallChain(){
         gattServer().clearWrittenCallChain();    
     }

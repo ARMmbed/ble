@@ -198,6 +198,7 @@ public:
         dataWrittenCallChain.add(objPtr, memberPtr);
     }
 	
+	//Clears the Written CallBack Chain of functions 
     void clearWrittenCallChain(){
         dataWrittenCallChain.clear();    
     }	
