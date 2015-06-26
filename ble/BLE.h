@@ -1179,6 +1179,11 @@ public:
     template <typename T> void onDataWritten(T * objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
         gattServer().onDataWritten(objPtr, memberPtr);
     }
+	
+    void clearWrittenCallChain(){
+        gattServer().clearWrittenCallChain();    
+    }
+	
 
     /**
      * Setup a callback to be invoked on the peripheral when an attribute is
