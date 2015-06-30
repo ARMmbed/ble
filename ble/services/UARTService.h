@@ -41,7 +41,6 @@ extern const uint8_t  UARTServiceRXCharacteristicUUID[UUID::LENGTH_OF_LONG_UUID]
 class UARTService {
 public:
     /**< Maximum length of data (in bytes) that can be transmitted by the UART service module to the peer. */
-    static const unsigned GATT_MTU_SIZE_DEFAULT         = 23;
     static const unsigned BLE_UART_SERVICE_MAX_DATA_LEN = (GATT_MTU_SIZE_DEFAULT - 3);
 
 public:
