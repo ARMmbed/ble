@@ -28,8 +28,8 @@ public:
     typedef void (*ReadCallback_t)(const GattReadCallbackParams *params);
 
     enum WriteOp_t {
-        GATT_OP_WRITE_REQ      = 0x01,  /**< Write Request. */
-        GATT_OP_WRITE_CMD      = 0x02,  /**< Write Command. */
+        GATT_OP_WRITE_REQ = 0x01,  /**< Write Request. */
+        GATT_OP_WRITE_CMD = 0x02,  /**< Write Command. */
     };
 
     typedef void (*WriteCallback_t)(const GattWriteCallbackParams *params);
@@ -39,12 +39,11 @@ public:
      */
 public:
     /**
-     * Launch service discovery. Once launched, service discovery will remain
-     * active with callbacks being issued back into the application for matching
-     * services/characteristics. isServiceDiscoveryActive() can be used to
-     * determine status; and a termination callback (if setup) will be invoked
-     * at the end. Service discovery can be terminated prematurely if needed
-     * using terminateServiceDiscovery().
+     * Launch service discovery. Once launched, application callbacks will be
+     * invoked for matching services/characteristics. isServiceDiscoveryActive()
+     * can be used to determine status; and a termination callback (if setup)
+     * will be invoked at the end. Service discovery can be terminated prematurely
+     * if needed using terminateServiceDiscovery().
      *
      * @param  connectionHandle
      *           Handle for the connection with the peer.
