@@ -207,6 +207,23 @@ public:
         return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
     }
 
+    /* Event callback handlers. */
+public:
+    /**
+     * Setup a callback for read response events.
+     */
+    void onDataRead(ReadCallback_t callback) {
+        onDataReadCallback = callback;
+    }
+
+    /**
+     * Setup a callback for write response events.
+     * @Note: write commands (issued using writeWoResponse) don't generate a response.
+     */
+    void onDataWrite(WriteCallback_t callback) {
+        onDataWriteCallback = callback;
+    }
+
     /**
      * Setup callback for when serviceDiscovery terminates.
      */
@@ -218,6 +235,24 @@ protected:
     GattClient() {
         /* empty */
     }
+
+    /* Entry points for the underlying stack to report events back to the user. */
+public:
+    void processReadResponse(const GattReadCallbackParams *params) {
+        if (onDataReadCallback) {
+            onDataReadCallback(params);
+        }
+    }
+
+    void processWriteResponse(const GattWriteCallbackParams *params) {
+        if (onDataWriteCallback) {
+            onDataWriteCallback(params);
+        }
+    }
+
+protected:
+    ReadCallback_t  onDataReadCallback;
+    WriteCallback_t onDataWriteCallback;
 
 private:
     /* disallow copy and assignment */
