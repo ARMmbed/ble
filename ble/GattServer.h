@@ -149,6 +149,37 @@ public:
     }
 
     /**
+     * Determine the updates-enabled status (notification/indication) for the current connection from a characteristic's CCCD.
+     *
+     * @param       characteristic
+     *                The characteristic
+     * @param[out]  enabledP
+     *                Upon return, *enabledP is true if updates are enabled, else false.
+     *
+     * @return BLE_ERROR_NONE if the connection and handle are found. false otherwise.
+     */
+    virtual ble_error_t areUpdatesEnabled(const GattCharacteristic &characteristic, bool *enabledP) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /**
+     * Determine the connection-specific updates-enabled status (notification/indication) from a characteristic's CCCD.
+     *
+     * @param       connectionHandle
+     *                The connection handle
+     * @param[out]  enabledP
+     *                Upon return, *enabledP is true if updates are enabled, else false.
+     *
+     * @param  characteristic
+     *           The characteristic
+     *
+     * @return BLE_ERROR_NONE if the connection and handle are found. false otherwise.
+     */
+    virtual ble_error_t areUpdatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic, bool *enabledP) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+    }
+
+    /**
      * A virtual function to allow underlying stacks to indicate if they support
      * onDataRead(). It should be overridden to return true as applicable.
      */
