@@ -127,7 +127,7 @@ enum ble_error_t {
 };
 
 /** @brief Default MTU size. */
-static const unsigned GATT_MTU_SIZE_DEFAULT = 23;
+static const unsigned BLE_GATT_MTU_SIZE_DEFAULT = 23;
 
 #ifdef __cplusplus
 }
