@@ -117,7 +117,7 @@ public:
                 if ((sendBufferIndex == BLE_UART_SERVICE_MAX_DATA_LEN) ||
                     // (sendBuffer[sendBufferIndex - 1] == '\r')          ||
                     (sendBuffer[sendBufferIndex - 1] == '\n')) {
-                    ble.updateCharacteristicValue(getRXCharacteristicHandle(), static_cast<const uint8_t *>(sendBuffer), sendBufferIndex);
+                    ble.gattServer().write(getRXCharacteristicHandle(), static_cast<const uint8_t *>(sendBuffer), sendBufferIndex);
                     sendBufferIndex = 0;
                 }
             }
