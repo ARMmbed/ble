@@ -267,21 +267,21 @@ protected:
         }
     }
 
-    void handleEvent(GattServerEvents::gattEvent_e type, GattAttribute::Handle_t charHandle) {
+    void handleEvent(GattServerEvents::gattEvent_e type, GattAttribute::Handle_t attributeHandle) {
         switch (type) {
             case GattServerEvents::GATT_EVENT_UPDATES_ENABLED:
                 if (updatesEnabledCallback) {
-                    updatesEnabledCallback(charHandle);
+                    updatesEnabledCallback(attributeHandle);
                 }
                 break;
             case GattServerEvents::GATT_EVENT_UPDATES_DISABLED:
                 if (updatesDisabledCallback) {
-                    updatesDisabledCallback(charHandle);
+                    updatesDisabledCallback(attributeHandle);
                 }
                 break;
             case GattServerEvents::GATT_EVENT_CONFIRMATION_RECEIVED:
                 if (confirmationReceivedCallback) {
-                    confirmationReceivedCallback(charHandle);
+                    confirmationReceivedCallback(attributeHandle);
                 }
                 break;
             default:
