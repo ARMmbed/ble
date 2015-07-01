@@ -159,7 +159,7 @@ public:
         return receiveBuffer[receiveBufferIndex++];
     }
 
-private:
+protected:
     /**
      * This callback allows the UART service to receive updates to the
      * txCharacteristic. The application should forward the call to this
@@ -177,7 +177,7 @@ private:
         }
     }
 
-private:
+protected:
     BLE                &ble;
 
     uint8_t             receiveBuffer[BLE_UART_SERVICE_MAX_DATA_LEN]; /**< The local buffer into which we receive

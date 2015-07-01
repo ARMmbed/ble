@@ -73,7 +73,7 @@ public:
         alertLevel = newLevel;
     }
 
-private:
+protected:
     /**
      * This callback allows receiving updates to the AlertLevel Characteristic.
      *

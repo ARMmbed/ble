@@ -140,7 +140,7 @@ private:
         uint8_t bytes[SIZEOF_VALUE_BYTES];
     };
 
-private:
+protected:
     BLE                                               &ble;
     TemperatureValueBytes                              valueBytes;
     ReadOnlyGattCharacteristic<TemperatureValueBytes>  tempMeasurement;

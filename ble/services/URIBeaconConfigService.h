@@ -305,7 +305,7 @@ class URIBeaconConfigService {
                                       reinterpret_cast<uint8_t *>(params.advPowerLevels), sizeof(PowerLevels_t));
     }
 
-private:
+protected:
     void lockAuthorizationCallback(GattWriteAuthCallbackParams *authParams) {
         if (lockedState) {
             authParams->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION;
