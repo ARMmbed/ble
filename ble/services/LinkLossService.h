@@ -81,7 +81,7 @@ protected:
      *     Information about the characterisitc being updated.
      */
     virtual void onDataWritten(const GattWriteCallbackParams *params) {
-        if (params->charHandle == alertLevelChar.getValueHandle()) {
+        if (params->handle == alertLevelChar.getValueHandle()) {
             alertLevel = *reinterpret_cast<const AlertLevel_t *>(params->data);
         }
     }
