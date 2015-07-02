@@ -28,8 +28,8 @@ public:
     typedef void (*ReadCallback_t)(const GattReadCallbackParams *params);
 
     enum WriteOp_t {
-        GATT_OP_WRITE_REQ      = 0x01,  /**< Write Request. */
-        GATT_OP_WRITE_CMD      = 0x02,  /**< Write Command. */
+        GATT_OP_WRITE_REQ = 0x01,  /**< Write Request. */
+        GATT_OP_WRITE_CMD = 0x02,  /**< Write Command. */
     };
 
     typedef void (*WriteCallback_t)(const GattWriteCallbackParams *params);
@@ -39,12 +39,11 @@ public:
      */
 public:
     /**
-     * Launch service discovery. Once launched, service discovery will remain
-     * active with callbacks being issued back into the application for matching
-     * services/characteristics. isServiceDiscoveryActive() can be used to
-     * determine status; and a termination callback (if setup) will be invoked
-     * at the end. Service discovery can be terminated prematurely if needed
-     * using terminateServiceDiscovery().
+     * Launch service discovery. Once launched, application callbacks will be
+     * invoked for matching services/characteristics. isServiceDiscoveryActive()
+     * can be used to determine status; and a termination callback (if setup)
+     * will be invoked at the end. Service discovery can be terminated prematurely
+     * if needed using terminateServiceDiscovery().
      *
      * @param  connectionHandle
      *           Handle for the connection with the peer.
@@ -98,7 +97,7 @@ public:
                                                ServiceDiscovery::CharacteristicCallback_t  cc                           = NULL,
                                                const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
                                                const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -130,7 +129,7 @@ public:
     virtual ble_error_t discoverServices(Gap::Handle_t                        connectionHandle,
                                          ServiceDiscovery::ServiceCallback_t  callback,
                                          const UUID                          &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -161,7 +160,7 @@ public:
                                          ServiceDiscovery::ServiceCallback_t  callback,
                                          GattAttribute::Handle_t              startHandle,
                                          GattAttribute::Handle_t              endHandle) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -181,7 +180,7 @@ public:
 
     /* Initiate a Gatt Client read procedure by attribute-handle. */
     virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -205,7 +204,24 @@ public:
                               GattAttribute::Handle_t  attributeHandle,
                               size_t                   length,
                               const uint8_t           *value) const {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+    }
+
+    /* Event callback handlers. */
+public:
+    /**
+     * Setup a callback for read response events.
+     */
+    void onDataRead(ReadCallback_t callback) {
+        onDataReadCallback = callback;
+    }
+
+    /**
+     * Setup a callback for write response events.
+     * @Note: write commands (issued using writeWoResponse) don't generate a response.
+     */
+    void onDataWrite(WriteCallback_t callback) {
+        onDataWriteCallback = callback;
     }
 
     /**
@@ -219,6 +235,24 @@ protected:
     GattClient() {
         /* empty */
     }
+
+    /* Entry points for the underlying stack to report events back to the user. */
+public:
+    void processReadResponse(const GattReadCallbackParams *params) {
+        if (onDataReadCallback) {
+            onDataReadCallback(params);
+        }
+    }
+
+    void processWriteResponse(const GattWriteCallbackParams *params) {
+        if (onDataWriteCallback) {
+            onDataWriteCallback(params);
+        }
+    }
+
+protected:
+    ReadCallback_t  onDataReadCallback;
+    WriteCallback_t onDataWriteCallback;
 
 private:
     /* disallow copy and assignment */
