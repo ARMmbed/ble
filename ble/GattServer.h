@@ -53,7 +53,7 @@ public:
      * characteristics contained within.
      */
     virtual ble_error_t addService(GattService &) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -72,7 +72,7 @@ public:
      * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
      */
     virtual ble_error_t read(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -97,7 +97,7 @@ public:
      *     attribtues (such as the CCCDs).
      */
     virtual ble_error_t read(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -119,7 +119,7 @@ public:
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
      */
     virtual ble_error_t write(GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -145,7 +145,7 @@ public:
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
      */
     virtual ble_error_t write(Gap::Handle_t connectionHandle, GattAttribute::Handle_t, const uint8_t *, uint16_t, bool localOnly = false) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -159,7 +159,7 @@ public:
      * @return BLE_ERROR_NONE if the connection and handle are found. false otherwise.
      */
     virtual ble_error_t areUpdatesEnabled(const GattCharacteristic &characteristic, bool *enabledP) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -176,7 +176,7 @@ public:
      * @return BLE_ERROR_NONE if the connection and handle are found. false otherwise.
      */
     virtual ble_error_t areUpdatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic, bool *enabledP) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**

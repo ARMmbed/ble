@@ -154,7 +154,7 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t setAddress(AddressType_t type, const Address_t address) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -163,7 +163,7 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -188,7 +188,7 @@ public:
     }
 
     virtual ble_error_t stopAdvertising(void) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -197,7 +197,7 @@ public:
      * @retval BLE_ERROR_NONE if successfully stopped scanning procedure.
      */
     virtual ble_error_t stopScan() {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -219,7 +219,7 @@ public:
                                 Gap::AddressType_t        peerAddrType,
                                 const ConnectionParams_t *connectionParams,
                                 const GapScanningParams  *scanParams) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -231,7 +231,7 @@ public:
      *           The reason for disconnection to be sent back to the peer.
      */
     virtual ble_error_t disconnect(Handle_t connectionHandle, DisconnectionReason_t reason) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -248,7 +248,7 @@ public:
      * altertive which takes a connection handle. It will be dropped in the future.
      */
     virtual ble_error_t disconnect(DisconnectionReason_t reason) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -264,7 +264,7 @@ public:
      * the given structure pointed to by params.
      */
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -276,7 +276,7 @@ public:
      *               The structure containing the desired parameters.
      */
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -290,7 +290,7 @@ public:
      *              the parameters in the PPCP characteristic of the GAP service will be used instead.
      */
     virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -299,7 +299,7 @@ public:
      *              The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
      */
     virtual ble_error_t setDeviceName(const uint8_t *deviceName) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -321,7 +321,7 @@ public:
      *     use this information to retry with a suitable buffer size.
      */
     virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -330,7 +330,7 @@ public:
      *              The new value for the device-appearance.
      */
     virtual ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -339,7 +339,7 @@ public:
      *               The new value for the device-appearance.
      */
     virtual ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -347,7 +347,7 @@ public:
      * @param[in] txPower Radio transmit power in dBm.
      */
     virtual ble_error_t setTxPower(int8_t txPower) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -365,7 +365,7 @@ public:
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
     virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /*
