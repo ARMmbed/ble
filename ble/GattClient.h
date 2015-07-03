@@ -97,6 +97,13 @@ public:
                                                ServiceDiscovery::CharacteristicCallback_t  cc                           = NULL,
                                                const UUID                                 &matchingServiceUUID          = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN),
                                                const UUID                                 &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
+        /* avoid compiler warnings about unused variables */
+        (void)connectionHandle;
+        (void)sc;
+        (void)cc;
+        (void)matchingServiceUUID;
+        (void)matchingCharacteristicUUIDIn;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -129,6 +136,11 @@ public:
     virtual ble_error_t discoverServices(Gap::Handle_t                        connectionHandle,
                                          ServiceDiscovery::ServiceCallback_t  callback,
                                          const UUID                          &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
+        /* avoid compiler warnings about unused variables */
+        (void)connectionHandle;
+        (void)callback;
+        (void)matchingServiceUUID;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -160,6 +172,12 @@ public:
                                          ServiceDiscovery::ServiceCallback_t  callback,
                                          GattAttribute::Handle_t              startHandle,
                                          GattAttribute::Handle_t              endHandle) {
+        /* avoid compiler warnings about unused variables */
+        (void)connectionHandle;
+        (void)callback;
+        (void)startHandle;
+        (void)endHandle;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -180,6 +198,11 @@ public:
 
     /* Initiate a Gatt Client read procedure by attribute-handle. */
     virtual ble_error_t read(Gap::Handle_t connHandle, GattAttribute::Handle_t attributeHandle, uint16_t offset) const {
+        /* avoid compiler warnings about unused variables */
+        (void)connHandle;
+        (void)attributeHandle;
+        (void)offset;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -204,6 +227,13 @@ public:
                               GattAttribute::Handle_t  attributeHandle,
                               size_t                   length,
                               const uint8_t           *value) const {
+        /* avoid compiler warnings about unused variables */
+        (void)cmd;
+        (void)connHandle;
+        (void)attributeHandle;
+        (void)length;
+        (void)value;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -228,6 +258,8 @@ public:
      * Setup callback for when serviceDiscovery terminates.
      */
     virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) {
+        (void)callback; /* avoid compiler warnings about ununsed variables */
+
         /* default implementation; override this API if this capability is supported. */
     }
 
