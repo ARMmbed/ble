@@ -111,7 +111,7 @@ public:
         (void)iocaps;
         (void)passkey;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this if security is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if security is supported. */
     }
 
     /**
@@ -127,7 +127,7 @@ public:
         (void)connectionHandle;
         (void)securityStatusP;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this if security is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if security is supported. */
     }
 
     /**
@@ -139,7 +139,7 @@ public:
      *                                    application registration.
      */
     virtual ble_error_t purgeAllBondingState(void) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* default implementation; override this if security is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if security is supported. */
     }
 
     /* Event callback handlers. */
