@@ -178,21 +178,21 @@ public:
      * @return Minimum Advertising interval in milliseconds.
      */
     virtual uint16_t getMinAdvertisingInterval(void) const {
-        return 0; /* default implementation; override this API if this capability is supported. */
+        return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
      * @return Minimum Advertising interval in milliseconds for non-connectible mode.
      */
     virtual uint16_t getMinNonConnectableAdvertisingInterval(void) const {
-        return 0; /* default implementation; override this API if this capability is supported. */
+        return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
      * @return Maximum Advertising interval in milliseconds.
      */
     virtual uint16_t getMaxAdvertisingInterval(void) const {
-        return 0xFFFF; /* default implementation; override this API if this capability is supported. */
+        return 0xFFFF; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     virtual ble_error_t stopAdvertising(void) {
@@ -410,7 +410,7 @@ public:
         (void)valueArrayPP;
         (void)countP;
 
-        *countP = 0; /* default implementation; override this API if this capability is supported. */
+        *countP = 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
 protected:

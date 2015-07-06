@@ -186,7 +186,7 @@ public:
      * Is service-discovery currently active?
      */
     virtual bool isServiceDiscoveryActive(void) const {
-        return false; /* default implementation; override this API if this capability is supported. */
+        return false; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -194,7 +194,7 @@ public:
      * invocation of the TerminationCallback if service-discovery is active.
      */
     virtual void terminateServiceDiscovery(void) {
-        /* default implementation; override this API if this capability is supported. */
+        /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /* Initiate a Gatt Client read procedure by attribute-handle. */
@@ -261,7 +261,7 @@ public:
     virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) {
         (void)callback; /* avoid compiler warnings about ununsed variables */
 
-        /* default implementation; override this API if this capability is supported. */
+        /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**

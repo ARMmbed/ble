@@ -220,7 +220,7 @@ public:
      * onDataRead(). It should be overridden to return true as applicable.
      */
     virtual bool isOnDataReadAvailable() const {
-        return false; /* default implementation; override this API if this capability is supported. */
+        return false; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /*
