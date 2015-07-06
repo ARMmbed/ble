@@ -138,12 +138,11 @@ public:
     virtual ble_error_t discoverServices(Gap::Handle_t                        connectionHandle,
                                          ServiceDiscovery::ServiceCallback_t  callback,
                                          const UUID                          &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
-        /* avoid compiler warnings about unused variables */
-        (void)connectionHandle;
-        (void)callback;
-        (void)matchingServiceUUID;
-
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return launchServiceDiscovery(connectionHandle, callback, NULL, matchingServiceUUID); /* We take advantage of the property
+                                                                * that providing NULL for the characteristic callback will result in
+                                                                * characteristic discovery being skipped for each matching
+                                                                * service. This allows for an inexpensive method to discover only
+                                                                * services. Porter(s) are free to override this. */
     }
 
     /**
