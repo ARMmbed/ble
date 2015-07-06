@@ -34,6 +34,8 @@ public:
 
     typedef void (*WriteCallback_t)(const GattWriteCallbackParams *params);
 
+    typedef void (*HVXCallback_t)(const GattHVXCallbackParams *params);
+
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
      */
@@ -263,6 +265,15 @@ public:
         /* default implementation; override this API if this capability is supported. */
     }
 
+    /**
+     * Setup a callback for when GattClient receives an update event
+     * corresponding to a change in value of a characteristic on the remote
+     * GattServer.
+     */
+    void onHVX(HVXCallback_t callback) {
+        onHVXCallback = callback;
+    }
+
 protected:
     GattClient() {
         /* empty */
@@ -282,9 +293,16 @@ public:
         }
     }
 
+    void processHVXEvent(const GattHVXCallbackParams *params) {
+        if (onHVXCallback) {
+            onHVXCallback(params);
+        }
+    }
+
 protected:
     ReadCallback_t  onDataReadCallback;
     WriteCallback_t onDataWriteCallback;
+    HVXCallback_t   onHVXCallback;
 
 private:
     /* disallow copy and assignment */
