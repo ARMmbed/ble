@@ -154,6 +154,10 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t setAddress(AddressType_t type, const Address_t address) {
+        /* avoid compiler warnings about unused variables */
+        (void)type;
+        (void)address;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -163,6 +167,10 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) {
+        /* avoid compiler warnings about unused variables */
+        (void)typeP;
+        (void)address;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -219,6 +227,12 @@ public:
                                 Gap::AddressType_t        peerAddrType,
                                 const ConnectionParams_t *connectionParams,
                                 const GapScanningParams  *scanParams) {
+        /* avoid compiler warnings about unused variables */
+        (void)peerAddr;
+        (void)peerAddrType;
+        (void)connectionParams;
+        (void)scanParams;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -231,6 +245,10 @@ public:
      *           The reason for disconnection to be sent back to the peer.
      */
     virtual ble_error_t disconnect(Handle_t connectionHandle, DisconnectionReason_t reason) {
+        /* avoid compiler warnings about unused variables */
+        (void)connectionHandle;
+        (void)reason;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -248,6 +266,9 @@ public:
      * altertive which takes a connection handle. It will be dropped in the future.
      */
     virtual ble_error_t disconnect(DisconnectionReason_t reason) {
+        /* avoid compiler warnings about unused variables */
+        (void)reason;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -264,6 +285,9 @@ public:
      * the given structure pointed to by params.
      */
     virtual ble_error_t getPreferredConnectionParams(ConnectionParams_t *params) {
+        /* avoid compiler warnings about unused variables */
+        (void)params;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -276,6 +300,9 @@ public:
      *               The structure containing the desired parameters.
      */
     virtual ble_error_t setPreferredConnectionParams(const ConnectionParams_t *params) {
+        /* avoid compiler warnings about unused variables */
+        (void)params;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -290,6 +317,10 @@ public:
      *              the parameters in the PPCP characteristic of the GAP service will be used instead.
      */
     virtual ble_error_t updateConnectionParams(Handle_t handle, const ConnectionParams_t *params) {
+        /* avoid compiler warnings about unused variables */
+        (void)handle;
+        (void)params;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -299,6 +330,9 @@ public:
      *              The new value for the device-name. This is a UTF-8 encoded, <b>NULL-terminated</b> string.
      */
     virtual ble_error_t setDeviceName(const uint8_t *deviceName) {
+        /* avoid compiler warnings about unused variables */
+        (void)deviceName;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -321,6 +355,10 @@ public:
      *     use this information to retry with a suitable buffer size.
      */
     virtual ble_error_t getDeviceName(uint8_t *deviceName, unsigned *lengthP) {
+        /* avoid compiler warnings about unused variables */
+        (void)deviceName;
+        (void)lengthP;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -330,6 +368,9 @@ public:
      *              The new value for the device-appearance.
      */
     virtual ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) {
+        /* avoid compiler warnings about unused variables */
+        (void)appearance;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -339,6 +380,9 @@ public:
      *               The new value for the device-appearance.
      */
     virtual ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) {
+        /* avoid compiler warnings about unused variables */
+        (void)appearanceP;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -347,6 +391,9 @@ public:
      * @param[in] txPower Radio transmit power in dBm.
      */
     virtual ble_error_t setTxPower(int8_t txPower) {
+        /* avoid compiler warnings about unused variables */
+        (void)txPower;
+
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -359,6 +406,10 @@ public:
      *                 Out parameter to receive the array's size.
      */
     virtual void getPermittedTxPowerValues(const int8_t **valueArrayPP, size_t *countP) {
+        /* avoid compiler warnings about unused variables */
+        (void)valueArrayPP;
+        (void)countP;
+
         *countP = 0; /* default implementation; override this API if this capability is supported. */
     }
 
