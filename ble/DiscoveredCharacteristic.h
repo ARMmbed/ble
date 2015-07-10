@@ -140,8 +140,8 @@ public:
     }
 
 public:
-    UUID::ShortUUIDBytes_t getShortUUID(void) const {
-        return uuid.getShortUUID();
+    const UUID& getUUID(void) const {
+        return uuid;
     }
 
     const Properties_t& getProperties(void) const {
