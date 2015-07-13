@@ -457,8 +457,9 @@ private:
 template <typename T>
 class ReadOnlyGattCharacteristic : public GattCharacteristic {
 public:
-    ReadOnlyGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
-        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties) {
+    ReadOnlyGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
+                                  GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors) {
         /* empty */
     }
 };
@@ -466,8 +467,9 @@ public:
 template <typename T>
 class WriteOnlyGattCharacteristic : public GattCharacteristic {
 public:
-    WriteOnlyGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
-        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+    WriteOnlyGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
+                                   GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
+        GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T), GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
         /* empty */
     }
 };
@@ -475,9 +477,10 @@ public:
 template <typename T>
 class ReadWriteGattCharacteristic : public GattCharacteristic {
 public:
-    ReadWriteGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+    ReadWriteGattCharacteristic<T>(const UUID &uuid, T *valuePtr, uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
+                                   GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T),
-                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
         /* empty */
     }
 };
@@ -485,9 +488,10 @@ public:
 template <typename T, unsigned NUM_ELEMENTS>
 class WriteOnlyArrayGattCharacteristic : public GattCharacteristic {
 public:
-    WriteOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+    WriteOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
+                                                      GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
         /* empty */
     }
 };
@@ -495,9 +499,10 @@ public:
 template <typename T, unsigned NUM_ELEMENTS>
 class ReadOnlyArrayGattCharacteristic : public GattCharacteristic {
 public:
-    ReadOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+    ReadOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
+                                                     GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties) {
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors) {
         /* empty */
     }
 };
@@ -505,9 +510,10 @@ public:
 template <typename T, unsigned NUM_ELEMENTS>
 class ReadWriteArrayGattCharacteristic : public GattCharacteristic {
 public:
-    ReadWriteArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE) :
+    ReadWriteArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID &uuid, T valuePtr[NUM_ELEMENTS], uint8_t additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
+                                                      GattAttribute *descriptors[] = NULL, unsigned numDescriptors = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties) {
+                           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
         /* empty */
     }
 };
