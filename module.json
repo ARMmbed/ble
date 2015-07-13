@@ -19,11 +19,13 @@
     }
   ],
   "dependencies": {
-    "mbed-classic":"~0.0.1"
   },
   "targetDependencies": {
     "nrf51822": {
       "ble-nrf51822":"~0.4.2"
+    },
+    "mbed-classic": {
+      "mbed-classic":"~0.0.1"
     }
   }
 }
