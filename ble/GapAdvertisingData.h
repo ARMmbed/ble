@@ -88,7 +88,7 @@ public:
         \li \c https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
     */
     /**********************************************************************/
-    enum DataType {
+    enum DataType_t {
         FLAGS                              = 0x01, /**< \ref *Flags */
         INCOMPLETE_LIST_16BIT_SERVICE_IDS  = 0x02, /**< Incomplete list of 16-bit Service IDs */
         COMPLETE_LIST_16BIT_SERVICE_IDS    = 0x03, /**< Complete list of 16-bit Service IDs */
@@ -106,6 +106,7 @@ public:
         ADVERTISING_INTERVAL               = 0x1A, /**< Advertising Interval */
         MANUFACTURER_SPECIFIC_DATA         = 0xFF  /**< Manufacturer Specific Data */
     };
+    typedef enum DataType_t DataType; /* Deprecated type alias. This may be dropped in a future release. */
 
     /**********************************************************************/
     /*!
@@ -120,13 +121,14 @@ public:
         \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 18.1
     */
     /**********************************************************************/
-    enum Flags {
+    enum Flags_t {
         LE_LIMITED_DISCOVERABLE = 0x01, /**< *Peripheral device is discoverable for a limited period of time */
         LE_GENERAL_DISCOVERABLE = 0x02, /**< Peripheral device is discoverable at any moment */
         BREDR_NOT_SUPPORTED     = 0x04, /**< Peripheral device is LE only */
         SIMULTANEOUS_LE_BREDR_C = 0x08, /**< Not relevant - central mode only */
         SIMULTANEOUS_LE_BREDR_H = 0x10  /**< Not relevant - central mode only */
     };
+    typedef enum Flags_t Flags; /* Deprecated type alias. This may be dropped in a future release. */
 
     /**********************************************************************/
     /*!
@@ -140,7 +142,7 @@ public:
         \li \c https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
     */
     /**********************************************************************/
-    enum Appearance {
+    enum Appearance_t {
         UNKNOWN                                        = 0,     /**< Unknown of unspecified appearance type */
         GENERIC_PHONE                                  = 64,    /**< Generic Phone */
         GENERIC_COMPUTER                               = 128,   /**< Generic Computer */
@@ -190,6 +192,7 @@ public:
         OUTDOOR_LOCATION_POD                           = 5187,  /**< Outdoor Location Pod */
         OUTDOOR_LOCATION_AND_NAVIGATION_POD            = 5188   /**< Outdoor Location and Navigation Pod */
     };
+    typedef enum Appearance_t Appearance; /* Deprecated type alias. This may be dropped in a future release. */
 
     GapAdvertisingData(void) : _payload(), _payloadLen(0), _appearance(GENERIC_TAG) {
         /* empty */
