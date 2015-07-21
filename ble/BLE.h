@@ -1058,7 +1058,7 @@ public:
      * possible event types.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from GattServer directly. A former call
+     * You should use the parallel API from Gap directly. A former call
      * to ble.onTimeout(callback) should be replaced with
      * ble.gap().onTimeout(callback).
      */
@@ -1070,7 +1070,7 @@ public:
      * Setup a callback for connection events. Refer to Gap::ConnectionEventCallback_t.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from GattServer directly. A former call
+     * You should use the parallel API from Gap directly. A former call
      * to ble.onConnection(callback) should be replaced with
      * ble.gap().onConnection(callback).
      */
@@ -1082,7 +1082,7 @@ public:
      * Used to setup a callback for GAP disconnection.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from GattServer directly. A former call
+     * You should use the parallel API from Gap directly. A former call
      * to ble.onDisconnection(callback) should be replaced with
      * ble.gap().onDisconnection(callback).
      */
@@ -1096,7 +1096,7 @@ public:
      * onDisconnection callback.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from GattServer directly. A former call
+     * You should use the parallel API from Gap directly. A former call
      * to ble.addToDisconnectionCallchain(...) should be replaced with
      * ble.gap().addToDisconnectionCallchain(...).
      */
@@ -1122,11 +1122,11 @@ public:
      *          ACTIVE/INACTIVE event.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from GattServer directly. A former call
+     * You should use the parallel API from Gap directly. A former call
      * to ble.onRadioNotification(...) should be replaced with
      * ble.gap().onRadioNotification(...).
      */
-    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback) {
+    void onRadioNotification(void (*callback)(bool)) {
         gap().onRadioNotification(callback);
     }
 

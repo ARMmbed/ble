@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __BLE_IBEACON_SERVICE_H__
-#define __BLE_IBEACON_SERVICE_H__
+#ifndef __BLE_IBEACON_H__
+#define __BLE_IBEACON_H__
 
 #include "core_cmInstr.h"
-#include "BLE.h"
+#include "ble/BLE.h"
 
 /**
-* @class iBeaconService
-* @brief iBeacon Service. This service sets up a device to broadcast advertising packets to mimic an iBeacon<br>
+* @class iBeacon
+* @brief iBeacon Service. This sets up a device to broadcast advertising packets to mimic an iBeacon<br>
 */
-
-class iBeaconService
+class iBeacon
 {
 public:
     typedef const uint8_t LocationUUID_t[16];
@@ -49,12 +48,12 @@ public:
     };
 
 public:
-    iBeaconService(BLE            &_ble,
-                   LocationUUID_t  uuid,
-                   uint16_t        majNum,
-                   uint16_t        minNum,
-                   uint8_t         txP    = 0xC8,
-                   uint16_t        compID = 0x004C) :
+    iBeacon(BLE            &_ble,
+            LocationUUID_t  uuid,
+            uint16_t        majNum,
+            uint16_t        minNum,
+            uint8_t         txP    = 0xC8,
+            uint16_t        compID = 0x004C) :
         ble(_ble), data(uuid, majNum, minNum, txP, compID)
     {
         // Generate the 0x020106 part of the iBeacon Prefix
@@ -71,4 +70,6 @@ protected:
     Payload  data;
 };
 
-#endif //__BLE_IBEACON_SERVICE_H__
+typedef iBeacon iBeaconService; /* This type-alias is deprecated. Please use iBeacon directly. This alias may be dropped from a future release. */
+
+#endif //__BLE_IBEACON_H__

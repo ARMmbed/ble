@@ -138,12 +138,11 @@ public:
     virtual ble_error_t discoverServices(Gap::Handle_t                        connectionHandle,
                                          ServiceDiscovery::ServiceCallback_t  callback,
                                          const UUID                          &matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) {
-        /* avoid compiler warnings about unused variables */
-        (void)connectionHandle;
-        (void)callback;
-        (void)matchingServiceUUID;
-
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return launchServiceDiscovery(connectionHandle, callback, NULL, matchingServiceUUID); /* We take advantage of the property
+                                                                * that providing NULL for the characteristic callback will result in
+                                                                * characteristic discovery being skipped for each matching
+                                                                * service. This allows for an inexpensive method to discover only
+                                                                * services. Porter(s) are free to override this. */
     }
 
     /**
@@ -187,7 +186,7 @@ public:
      * Is service-discovery currently active?
      */
     virtual bool isServiceDiscoveryActive(void) const {
-        return false; /* default implementation; override this API if this capability is supported. */
+        return false; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
@@ -195,7 +194,7 @@ public:
      * invocation of the TerminationCallback if service-discovery is active.
      */
     virtual void terminateServiceDiscovery(void) {
-        /* default implementation; override this API if this capability is supported. */
+        /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /* Initiate a Gatt Client read procedure by attribute-handle. */
@@ -262,7 +261,7 @@ public:
     virtual void onServiceDiscoveryTermination(ServiceDiscovery::TerminationCallback_t callback) {
         (void)callback; /* avoid compiler warnings about ununsed variables */
 
-        /* default implementation; override this API if this capability is supported. */
+        /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
