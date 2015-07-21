@@ -867,6 +867,15 @@ public:
      * @param callback
      *          The application handler to be invoked in response to a radio
      *          ACTIVE/INACTIVE event.
+     *
+     * or in the other version:
+     *
+     * @param tptr
+     *          Pointer to the object of a class defining the member callback
+     *          function (mptr).
+     * @param mptr
+     *          The member callback (within the context of an object) to be
+     *          invoked in response to a radio ACTIVE/INACTIVE event.
      */
     void onRadioNotification(void (*callback)(bool param)) {
         radioNotificationCallback.attach(callback);
