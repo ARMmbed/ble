@@ -1126,7 +1126,7 @@ public:
      * to ble.onRadioNotification(...) should be replaced with
      * ble.gap().onRadioNotification(...).
      */
-    void onRadioNotification(Gap::RadioNotificationEventCallback_t callback) {
+    void onRadioNotification(void (*callback)(bool)) {
         gap().onRadioNotification(callback);
     }
 
