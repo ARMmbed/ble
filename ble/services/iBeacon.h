@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __BLE_IBEACON_SERVICE_H__
-#define __BLE_IBEACON_SERVICE_H__
+#ifndef __BLE_IBEACON_H__
+#define __BLE_IBEACON_H__
 
 #include "core_cmInstr.h"
 #include "ble/BLE.h"
@@ -72,4 +72,4 @@ protected:
 
 typedef iBeacon iBeaconService; /* This type-alias is deprecated. Please use iBeacon directly. This alias may be dropped from a future release. */
 
-#endif //__BLE_IBEACON_SERVICE_H__
+#endif //__BLE_IBEACON_H__
