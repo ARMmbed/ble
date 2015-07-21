@@ -141,7 +141,7 @@ public:
     typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
     typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
-    typedef void (*RadioNotificationEventCallback_t)(bool radio_active); /* gets passed true for ACTIVE; false for INACTIVE. */
+    typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
@@ -769,6 +769,27 @@ public:
         return err;
     }
 
+    /**
+     * Initialize radio-notification events to be generated from the stack.
+     * This API doesn't need to be called directly;
+     *
+     * Radio Notification is a feature that enables ACTIVE and INACTIVE
+     * (nACTIVE) signals from the stack that notify the application when the
+     * radio is in use.
+     *
+     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
+     * signal is sent at the end of the Radio Event. These signals can be used
+     * by the application programmer to synchronize application logic with radio
+     * activity. For example, the ACTIVE signal can be used to shut off external
+     * devices to manage peak current drawn during periods when the radio is on,
+     * or to trigger sensor data collection for transmission in the Radio Event.
+     *
+     * @return BLE_ERROR_NONE on successful initialization, otherwise an error code.
+     */
+    virtual ble_error_t initRadioNotification(void) {
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+    }
+
 private:
     ble_error_t setAdvertisingData(void) {
         return setAdvertisingData(_advPayload, _scanResponse);
@@ -834,7 +855,7 @@ public:
      *
      * Radio Notification is a feature that enables ACTIVE and INACTIVE
      * (nACTIVE) signals from the stack that notify the application when the
-     * radio is in use. The signal is sent using software interrupt.
+     * radio is in use.
      *
      * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
      * signal is sent at the end of the Radio Event. These signals can be used
@@ -847,7 +868,15 @@ public:
      *          The application handler to be invoked in response to a radio
      *          ACTIVE/INACTIVE event.
      */
-    virtual void onRadioNotification(RadioNotificationEventCallback_t callback) {radioNotificationCallback = callback;}
+    void onRadioNotification(void (*callback)(bool param)) {
+        radioNotificationCallback.attach(callback);
+        initRadioNotification();
+    }
+    template <typename T>
+    void onRadioNotification(T *tptr, void (T::*mptr)(bool)) {
+        radioNotificationCallback.attach(tptr, mptr);
+        initRadioNotification();
+    }
 
 protected:
     Gap() :
