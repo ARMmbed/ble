@@ -96,7 +96,7 @@ public:
                                              (softwareRevision != NULL) ? strlen(softwareRevision) : 0, /* maxLength */
                                              GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ)
     {
-        static bool serviceAdded = false; /* We should only ever need to add the heart rate service once. */
+        static bool serviceAdded = false; /* We should only ever need to add the information service once. */
         if (serviceAdded) {
             return;
         }
