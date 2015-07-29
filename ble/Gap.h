@@ -538,8 +538,8 @@ public:
      * small.
      *
      * @param  app
-     *         The max transmit power to be used by the controller. This is
-     *         only a hint.
+     *         The max transmit power to be used by the controller (in dBm).
+     *         This is only a hint.
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
         ble_error_t rc;
