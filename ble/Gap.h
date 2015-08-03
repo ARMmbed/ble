@@ -586,12 +586,18 @@ public:
     }
 
     /**
-     * Update the advertising payload filed which has the same adv type as the input
-     * parameter. Total length of the new data must be the same as the old one.
+     * Update a particular ADV field in the advertising payload (based on
+     * matching type and length). Note: the length of the new data must be the
+     * same as the old one.
      *
-     * @param  type The type which describes the variable length data.
-     * @param  data data bytes.
-     * @param  len  length of data.
+     * @param[in] type  The ADV type field which describes the variable length data.
+     * @param[in] data  data bytes.
+     * @param[in] len   length of data.
+     *
+     * @note: If advertisements are enabled, then the update will take effect immediately.
+     *
+     * @return BLE_ERROR_NONE if the advertisement payload was updated based on
+     *         a <type, len> match; else an appropriate error.
      */
     ble_error_t updateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
         if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
