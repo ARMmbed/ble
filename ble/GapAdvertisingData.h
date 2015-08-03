@@ -234,6 +234,33 @@ public:
     }
 
     /**
+     * update one advertising data field with the same AD type (see DataType)
+     *
+     * @param  advDataType The Advertising 'DataType' to add
+     * @param  payload     Pointer to the payload contents
+     * @param  len         Size of the payload in bytes
+     *
+     * @return BLE_ERROR_UNSPECIFIED if the specified field is not found, else
+     * BLE_ERROR_NONE.
+     */
+    ble_error_t updateData(DataType advDataType, const uint8_t *payload, uint8_t len)
+     {
+        uint8_t byteIndex = 0;
+        
+        while (byteIndex < _payloadLen) {
+            if (_payload[byteIndex + 1] == advDataType) { /* Check adv type */
+                if (_payload[byteIndex] == (len + 1)) { /* Check adv field length */
+                    memcpy(&_payload[byteIndex + 2], payload, len);
+                }
+                return BLE_ERROR_NONE;
+            }
+            byteIndex += (_payload[byteIndex] + 1);
+        }
+
+        return BLE_ERROR_UNSPECIFIED;
+    }
+
+    /**
      * Helper function to add APPEARANCE data to the advertising payload
      *
      * @param  appearance
