@@ -586,6 +586,33 @@ public:
     }
 
     /**
+     * Update a particular ADV field in the advertising payload (based on
+     * matching type and length). Note: the length of the new data must be the
+     * same as the old one.
+     *
+     * @param[in] type  The ADV type field which describes the variable length data.
+     * @param[in] data  data bytes.
+     * @param[in] len   length of data.
+     *
+     * @note: If advertisements are enabled, then the update will take effect immediately.
+     *
+     * @return BLE_ERROR_NONE if the advertisement payload was updated based on
+     *         a <type, len> match; else an appropriate error.
+     */
+    ble_error_t updateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
+            setDeviceName(data);
+        }
+
+        ble_error_t rc;
+        if ((rc = _advPayload.updateData(type, data, len)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
+    }
+
+    /**
      * Setup a particular, user-constructed advertisement payload for the
      * underlying stack. It would be uncommon for this API to be used directly;
      * there are other APIs to build an advertisement payload (see above).

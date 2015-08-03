@@ -209,7 +209,7 @@ public:
      * advertising buffer to overflow, else BLE_ERROR_NONE.
      */
     ble_error_t addData(DataType advDataType, const uint8_t *payload, uint8_t len)
-     {
+    {
         /* ToDo: Check if an AD type already exists and if the existing */
         /*       value is exclusive or not (flags, etc.) */
 
@@ -231,6 +231,47 @@ public:
         _payloadLen += len;
 
         return BLE_ERROR_NONE;
+    }
+
+    /**
+     * Update a particular ADV field in the advertising payload (based on
+     * matching type and length). Note: the length of the new data must be the
+     * same as the old one.
+     *
+     * @param[in] advDataType  The Advertising 'DataType' to add.
+     * @param[in] payload      Pointer to the payload contents.
+     * @param[in] len          Size of the payload in bytes.
+     *
+     * @return BLE_ERROR_UNSPECIFIED if the specified field is not found, else
+     * BLE_ERROR_NONE.
+     */
+    ble_error_t updateData(DataType_t advDataType, const uint8_t *payload, uint8_t len)
+    {
+        if ((payload == NULL) || (len == 0)) {
+            return BLE_ERROR_INVALID_PARAM;
+        }
+
+        /* A local struct to describe an ADV field. This definition comes from the Bluetooth Core Spec. (v4.2) Part C, Section 11. */
+        struct ADVField_t {
+            uint8_t  len;      /* Describes the length (in bytes) of the following 'type' and 'bytes'. */
+            uint8_t  type;     /* Should have the same representation of DataType_t (above). */
+            uint8_t  bytes[0]; /* A placeholder for variable length data. */
+        };
+
+        /* Iterate over the adv fields looking for the first match. */
+        uint8_t byteIndex = 0;
+        while (byteIndex < _payloadLen) {
+            ADVField_t *currentADV = (ADVField_t *)&_payload[byteIndex];
+            if ((currentADV->len  == (len + 1)) && /* incoming 'len' only describes the payload, whereas ADV->len describes 'type + payload' */
+                (currentADV->type == advDataType)) {
+                memcpy(currentADV->bytes, payload, len);
+                return BLE_ERROR_NONE;
+            }
+
+            byteIndex += (currentADV->len + 1); /* advance by len+1; '+1' is needed to span the len field itself. */
+        }
+
+        return BLE_ERROR_UNSPECIFIED;
     }
 
     /**
