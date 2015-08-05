@@ -178,7 +178,7 @@ class URIBeaconConfigService {
         ble.gap().setTxPower(params.advPowerLevels[params.txPowerMode]);
         ble.gap().setDeviceName(reinterpret_cast<const uint8_t *>(&DEVICE_NAME));
         ble.gap().setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED);
-        ble.gap().setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
+        ble.gap().setAdvertisingInterval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
     }
 
     /* Helper function to switch to the non-connectible normal mode for URIBeacon. This gets called after a timeout. */
