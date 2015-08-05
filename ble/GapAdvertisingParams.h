@@ -86,8 +86,20 @@ public:
         }
     }
 
+    static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
+    static const uint16_t UNIT_0_625_MS = 625;  /**< Number of microseconds in 0.625 milliseconds. */
+    static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
+        return (durationInMillis * 1000) / UNIT_1_25_MS;
+    }
+    static uint16_t MSEC_TO_ADVERTISEMENT_DURATION_UNITS(uint32_t durationInMillis) {
+        return (durationInMillis * 1000) / UNIT_0_625_MS;
+    }
+    static uint16_t ADVERTISEMENT_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
+        return (gapUnits * UNIT_0_625_MS) / 1000;
+    }
+
     AdvertisingType_t getAdvertisingType(void) const {return _advType; }
-    uint16_t          getInterval(void)        const {return _interval;}
+    uint16_t          getInterval(void)        const {return ADVERTISEMENT_DURATION_UNITS_TO_MS(_interval);}
     uint16_t          getTimeout(void)         const {return _timeout; }
 
     void setAdvertisingType(AdvertisingType_t newAdvType) {_advType = newAdvType;  }

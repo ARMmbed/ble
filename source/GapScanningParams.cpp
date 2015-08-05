@@ -18,8 +18,8 @@
 #include "ble/GapScanningParams.h"
 
 GapScanningParams::GapScanningParams(uint16_t interval, uint16_t window, uint16_t timeout, bool activeScanning) :
-    _interval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval)),
-    _window(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(window)),
+    _interval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval)),
+    _window(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(window)),
     _timeout(timeout),
     _activeScanning(activeScanning) {
     /* stay within limits */
@@ -40,7 +40,7 @@ GapScanningParams::GapScanningParams(uint16_t interval, uint16_t window, uint16_
 ble_error_t
 GapScanningParams::setInterval(uint16_t newIntervalInMS)
 {
-    uint16_t newInterval = Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newIntervalInMS);
+    uint16_t newInterval = GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newIntervalInMS);
     if ((newInterval >= SCAN_INTERVAL_MIN) && (newInterval < SCAN_INTERVAL_MAX)) {
         _interval = newInterval;
         return BLE_ERROR_NONE;
@@ -52,7 +52,7 @@ GapScanningParams::setInterval(uint16_t newIntervalInMS)
 ble_error_t
 GapScanningParams::setWindow(uint16_t newWindowInMS)
 {
-    uint16_t newWindow = Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newWindowInMS);
+    uint16_t newWindow = GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newWindowInMS);
     if ((newWindow >= SCAN_WINDOW_MIN) && (newWindow < SCAN_WINDOW_MAX)) {
         _window   = newWindow;
         return BLE_ERROR_NONE;

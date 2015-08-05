@@ -126,18 +126,6 @@ public:
         }
     };
 
-    static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
-    static const uint16_t UNIT_0_625_MS = 625;  /**< Number of microseconds in 0.625 milliseconds. */
-    static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
-        return (durationInMillis * 1000) / UNIT_1_25_MS;
-    }
-    static uint16_t MSEC_TO_ADVERTISEMENT_DURATION_UNITS(uint32_t durationInMillis) {
-        return (durationInMillis * 1000) / UNIT_0_625_MS;
-    }
-    static uint16_t ADVERTISEMENT_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
-        return (gapUnits * UNIT_0_625_MS) / 1000;
-    }
-
     typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
     typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
     typedef void (*DisconnectionEventCallback_t)(Handle_t, DisconnectionReason_t);
@@ -470,7 +458,7 @@ public:
         } else if (interval < getMinAdvertisingInterval()) {
             interval = getMinAdvertisingInterval();
         }
-        _advParams.setInterval(MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+        _advParams.setInterval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
     }
 
     /**
