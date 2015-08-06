@@ -32,6 +32,11 @@ public:
                       uint16_t timeout        = 0,
                       bool     activeScanning = false);
 
+    static const uint16_t UNIT_0_625_MS = 625;  /**< Number of microseconds in 0.625 milliseconds. */
+    static uint16_t MSEC_TO_SCAN_DURATION_UNITS(uint32_t durationInMillis) {
+        return (durationInMillis * 1000) / UNIT_0_625_MS;
+    }
+
     ble_error_t setInterval(uint16_t newIntervalInMS);
 
     ble_error_t setWindow(uint16_t newWindowInMS);
