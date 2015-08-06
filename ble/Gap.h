@@ -464,7 +464,7 @@ public:
         } else if (interval < getMinAdvertisingInterval()) {
             interval = getMinAdvertisingInterval();
         }
-        _advParams.setInterval(MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+        _advParams.setInterval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
     }
 
     /**
