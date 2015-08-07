@@ -127,16 +127,10 @@ public:
     };
 
     static const uint16_t UNIT_1_25_MS  = 1250; /**< Number of microseconds in 1.25 milliseconds. */
-    static const uint16_t UNIT_0_625_MS = 625;  /**< Number of microseconds in 0.625 milliseconds. */
     static uint16_t MSEC_TO_GAP_DURATION_UNITS(uint32_t durationInMillis) {
         return (durationInMillis * 1000) / UNIT_1_25_MS;
     }
-    static uint16_t MSEC_TO_ADVERTISEMENT_DURATION_UNITS(uint32_t durationInMillis) {
-        return (durationInMillis * 1000) / UNIT_0_625_MS;
-    }
-    static uint16_t ADVERTISEMENT_DURATION_UNITS_TO_MS(uint16_t gapUnits) {
-        return (gapUnits * UNIT_0_625_MS) / 1000;
-    }
+
 
     typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
     typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
@@ -416,6 +410,7 @@ public:
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
     virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) {
+        (void)scanningParams;
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
@@ -470,7 +465,7 @@ public:
         } else if (interval < getMinAdvertisingInterval()) {
             interval = getMinAdvertisingInterval();
         }
-        _advParams.setInterval(MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
+        _advParams.setInterval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(interval));
     }
 
     /**
@@ -550,8 +545,8 @@ public:
      * small.
      *
      * @param  app
-     *         The max transmit power to be used by the controller. This is
-     *         only a hint.
+     *         The max transmit power to be used by the controller (in dBm).
+     *         This is only a hint.
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
         ble_error_t rc;
@@ -579,6 +574,33 @@ public:
 
         ble_error_t rc;
         if ((rc = _advPayload.addData(type, data, len)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        return setAdvertisingData();
+    }
+
+    /**
+     * Update a particular ADV field in the advertising payload (based on
+     * matching type and length). Note: the length of the new data must be the
+     * same as the old one.
+     *
+     * @param[in] type  The ADV type field which describes the variable length data.
+     * @param[in] data  data bytes.
+     * @param[in] len   length of data.
+     *
+     * @note: If advertisements are enabled, then the update will take effect immediately.
+     *
+     * @return BLE_ERROR_NONE if the advertisement payload was updated based on
+     *         a <type, len> match; else an appropriate error.
+     */
+    ble_error_t updateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
+            setDeviceName(data);
+        }
+
+        ble_error_t rc;
+        if ((rc = _advPayload.updateData(type, data, len)) != BLE_ERROR_NONE) {
             return rc;
         }
 
@@ -704,9 +726,22 @@ public:
      *
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
+     *
+     * If scanning is already active, the updated value of scanWindow will be
+     * propagated to the underlying BLE stack.
      */
     ble_error_t setScanWindow(uint16_t window) {
-        return _scanningParams.setWindow(window);
+        ble_error_t rc;
+        if ((rc = _scanningParams.setWindow(window)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        /* If scanning is already active, propagate the new setting to the stack. */
+        if (scanningActive) {
+            return startRadioScan(_scanningParams);
+        }
+
+        return BLE_ERROR_NONE;
     }
 
     /**
@@ -716,9 +751,22 @@ public:
      *
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
+     *
+     * If scanning is already active, the updated value of scanTimeout will be
+     * propagated to the underlying BLE stack.
      */
     ble_error_t setScanTimeout(uint16_t timeout) {
-        return _scanningParams.setTimeout(timeout);
+        ble_error_t rc;
+        if ((rc = _scanningParams.setTimeout(timeout)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        /* If scanning is already active, propagate the new settings to the stack. */
+        if (scanningActive) {
+            return startRadioScan(_scanningParams);
+        }
+
+        return BLE_ERROR_NONE;
     }
 
     /**
@@ -729,9 +777,19 @@ public:
      *
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
+     *
+     * If scanning is already in progress, then active-scanning will be enabled
+     * for the underlying BLE stack.
      */
-    void setActiveScanning(bool activeScanning) {
+    ble_error_t setActiveScanning(bool activeScanning) {
         _scanningParams.setActiveScanning(activeScanning);
+
+        /* If scanning is already active, propagate the new settings to the stack. */
+        if (scanningActive) {
+            return startRadioScan(_scanningParams);
+        }
+
+        return BLE_ERROR_NONE;
     }
 
     /**
@@ -747,6 +805,7 @@ public:
         ble_error_t err = BLE_ERROR_NONE;
         if (callback) {
             if ((err = startRadioScan(_scanningParams)) == BLE_ERROR_NONE) {
+                scanningActive = true;
                 onAdvertisementReport.attach(callback);
             }
         }
@@ -762,6 +821,7 @@ public:
         ble_error_t err = BLE_ERROR_NONE;
         if (object && callbackMember) {
             if ((err = startRadioScan(_scanningParams)) == BLE_ERROR_NONE) {
+                scanningActive = true;
                 onAdvertisementReport.attach(object, callbackMember);
             }
         }
@@ -894,6 +954,7 @@ protected:
         _scanningParams(),
         _scanResponse(),
         state(),
+        scanningActive(false),
         timeoutCallback(NULL),
         connectionCallback(NULL),
         disconnectionCallback(NULL),
@@ -957,6 +1018,7 @@ protected:
     GapAdvertisingData               _scanResponse;
 
     GapState_t                       state;
+    bool                             scanningActive;
 
 protected:
     TimeoutEventCallback_t           timeoutCallback;

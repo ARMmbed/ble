@@ -251,8 +251,19 @@ public:
      * Setup a callback for write response events.
      * @Note: write commands (issued using writeWoResponse) don't generate a response.
      */
-    void onDataWrite(WriteCallback_t callback) {
+    void onDataWritten(WriteCallback_t callback) {
         onDataWriteCallback = callback;
+    }
+
+    /**
+     * Setup a callback for write response events.
+     * @Note: write commands (issued using writeWoResponse) don't generate a response.
+     *
+     * @note: This API is now *deprecated* and will be dropped in the future.
+     * Please use onDataWritten() instead.
+     */
+    void onDataWrite(WriteCallback_t callback) {
+        onDataWritten(callback);
     }
 
     /**

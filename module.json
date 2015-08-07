@@ -8,7 +8,7 @@
   ],
   "author": "Rohit Grover",
   "repository": {
-    "url": "git@github.com:ARMmbed/BLE_API.git",
+    "url": "git@github.com:ARMmbed/ble.git",
     "type": "git"
   },
   "homepage": "http://mbed.org/ble",
@@ -18,14 +18,16 @@
       "type": "Apache-2.0"
     }
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "targetDependencies": {
     "nrf51822": {
-      "ble-nrf51822":"~0.4.3"
+      "ble-nrf51822": "~0.4.4"
     },
     "mbed-classic": {
-      "mbed-classic":"~0.0.1"
+      "mbed-classic": "~0.0.1"
+    },
+    "mbed" : {
+      "mbed-core" : "*"
     }
   }
 }
