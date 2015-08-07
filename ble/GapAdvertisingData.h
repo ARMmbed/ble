@@ -328,7 +328,7 @@ public:
      * Returns a pointer to the the current payload
      */
     const uint8_t *getPayload(void) const {
-        return (_payloadLen > 0) ? _payload : NULL;
+        return _payload;
     }
 
     /**
