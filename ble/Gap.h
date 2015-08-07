@@ -410,6 +410,7 @@ public:
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
     virtual ble_error_t startRadioScan(const GapScanningParams &scanningParams) {
+        (void)scanningParams;
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
