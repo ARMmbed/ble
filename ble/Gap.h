@@ -725,9 +725,22 @@ public:
      *
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
+     *
+     * If scanning is already active, the updated value of scanWindow will be
+     * propagated to the underlying BLE stack.
      */
     ble_error_t setScanWindow(uint16_t window) {
-        return _scanningParams.setWindow(window);
+        ble_error_t rc;
+        if ((rc = _scanningParams.setWindow(window)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        /* If scanning is already active, propagate the new setting to the stack. */
+        if (scanningActive) {
+            return startRadioScan(_scanningParams);
+        }
+
+        return BLE_ERROR_NONE;
     }
 
     /**
@@ -737,9 +750,22 @@ public:
      *
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
+     *
+     * If scanning is already active, the updated value of scanTimeout will be
+     * propagated to the underlying BLE stack.
      */
     ble_error_t setScanTimeout(uint16_t timeout) {
-        return _scanningParams.setTimeout(timeout);
+        ble_error_t rc;
+        if ((rc = _scanningParams.setTimeout(timeout)) != BLE_ERROR_NONE) {
+            return rc;
+        }
+
+        /* If scanning is already active, propagate the new settings to the stack. */
+        if (scanningActive) {
+            return startRadioScan(_scanningParams);
+        }
+
+        return BLE_ERROR_NONE;
     }
 
     /**
@@ -750,9 +776,19 @@ public:
      *
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
+     *
+     * If scanning is already in progress, then active-scanning will be enabled
+     * for the underlying BLE stack.
      */
-    void setActiveScanning(bool activeScanning) {
+    ble_error_t setActiveScanning(bool activeScanning) {
         _scanningParams.setActiveScanning(activeScanning);
+
+        /* If scanning is already active, propagate the new settings to the stack. */
+        if (scanningActive) {
+            return startRadioScan(_scanningParams);
+        }
+
+        return BLE_ERROR_NONE;
     }
 
     /**
@@ -768,6 +804,7 @@ public:
         ble_error_t err = BLE_ERROR_NONE;
         if (callback) {
             if ((err = startRadioScan(_scanningParams)) == BLE_ERROR_NONE) {
+                scanningActive = true;
                 onAdvertisementReport.attach(callback);
             }
         }
@@ -783,6 +820,7 @@ public:
         ble_error_t err = BLE_ERROR_NONE;
         if (object && callbackMember) {
             if ((err = startRadioScan(_scanningParams)) == BLE_ERROR_NONE) {
+                scanningActive = true;
                 onAdvertisementReport.attach(object, callbackMember);
             }
         }
@@ -915,6 +953,7 @@ protected:
         _scanningParams(),
         _scanResponse(),
         state(),
+        scanningActive(false),
         timeoutCallback(NULL),
         connectionCallback(NULL),
         disconnectionCallback(NULL),
@@ -978,6 +1017,7 @@ protected:
     GapAdvertisingData               _scanResponse;
 
     GapState_t                       state;
+    bool                             scanningActive;
 
 protected:
     TimeoutEventCallback_t           timeoutCallback;
