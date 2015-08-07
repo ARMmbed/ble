@@ -8,7 +8,7 @@
   ],
   "author": "Rohit Grover",
   "repository": {
-    "url": "git@github.com:ARMmbed/BLE_API.git",
+    "url": "git@github.com:ARMmbed/ble.git",
     "type": "git"
   },
   "homepage": "http://mbed.org/ble",
