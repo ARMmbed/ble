@@ -108,7 +108,7 @@ public:
     /**
      * @return the advertisement interval in units advertisement duration units--i.e. 0.625ms units.
      */
-    uint16_t getIntervalInAdvUnits(void) const {
+    uint16_t getIntervalInADVUnits(void) const {
         return _interval;
     }
 
