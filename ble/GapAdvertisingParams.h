@@ -17,8 +17,6 @@
 #ifndef __GAP_ADVERTISING_PARAMS_H__
 #define __GAP_ADVERTISING_PARAMS_H__
 
- #include "mbed.h"
-
 /**************************************************************************/
 /*!
     \brief
@@ -96,10 +94,27 @@ public:
         return (gapUnits * UNIT_0_625_MS) / 1000;
     }
 
-    AdvertisingType_t getAdvertisingType(void) const {return _advType; }
-    uint16_t          getInterval(void)        const {return ADVERTISEMENT_DURATION_UNITS_TO_MS(_interval);}
-    uint16_t          getIntervalInAdvUnits(void) const {return _interval;}
-    uint16_t          getTimeout(void)         const {return _timeout; }
+    AdvertisingType_t getAdvertisingType(void) const {
+        return _advType;
+    }
+
+    /**
+     * @return the advertisement interval (in milliseconds)
+     */
+    uint16_t getInterval(void) const {
+        return ADVERTISEMENT_DURATION_UNITS_TO_MS(_interval);
+    }
+
+    /**
+     * @return the advertisement interval in units advertisement duration units--i.e. 0.625ms units.
+     */
+    uint16_t getIntervalInAdvUnits(void) const {
+        return _interval;
+    }
+
+    uint16_t getTimeout(void) const {
+        return _timeout;
+    }
 
     void setAdvertisingType(AdvertisingType_t newAdvType) {_advType = newAdvType;  }
     void setInterval(uint16_t newInterval)                {_interval = MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newInterval);}
@@ -107,8 +122,8 @@ public:
 
 private:
     AdvertisingType_t _advType;
-    uint16_t          _interval;
-    uint16_t          _timeout;
+    uint16_t          _interval; /* in ADV duration units (i.e. 0.625ms) */
+    uint16_t          _timeout;  /* in seconds */
 };
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__
