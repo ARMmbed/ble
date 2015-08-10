@@ -17,6 +17,8 @@
 #ifndef __GAP_ADVERTISING_PARAMS_H__
 #define __GAP_ADVERTISING_PARAMS_H__
 
+ #include "mbed.h"
+
 /**************************************************************************/
 /*!
     \brief
@@ -96,10 +98,11 @@ public:
 
     AdvertisingType_t getAdvertisingType(void) const {return _advType; }
     uint16_t          getInterval(void)        const {return ADVERTISEMENT_DURATION_UNITS_TO_MS(_interval);}
+    uint16_t          getIntervalInAdvUnits(void) const {return _interval;}
     uint16_t          getTimeout(void)         const {return _timeout; }
 
     void setAdvertisingType(AdvertisingType_t newAdvType) {_advType = newAdvType;  }
-    void setInterval(uint16_t newInterval)                {_interval = newInterval;}
+    void setInterval(uint16_t newInterval)                {_interval = MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newInterval);}
     void setTimeout(uint16_t newTimeout)                  {_timeout = newTimeout;  }
 
 private:
