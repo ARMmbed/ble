@@ -28,6 +28,7 @@ struct GattWriteCallbackParams {
         OP_EXEC_WRITE_REQ_NOW    = 0x06,  /**< Execute Write Request: Immediately execute all prepared writes. */
     };
 
+    Gap::Handle_t            connHandle;
     GattAttribute::Handle_t  handle;
     WriteOp_t                writeOp; /**< Type of write operation, */
     uint16_t                 offset;  /**< Offset for the write operation. */
@@ -36,6 +37,7 @@ struct GattWriteCallbackParams {
 };
 
 struct GattReadCallbackParams {
+    Gap::Handle_t            connHandle;
     GattAttribute::Handle_t  handle;
     uint16_t                 offset;  /**< Offset for the read operation. */
     uint16_t                 len;
@@ -58,6 +60,7 @@ enum GattAuthCallbackReply_t {
 };
 
 struct GattWriteAuthCallbackParams {
+    Gap::Handle_t            connHandle;
     GattAttribute::Handle_t  handle;
     uint16_t                 offset; /**< Offset for the write operation. */
     uint16_t                 len;    /**< Length of the incoming data. */
@@ -67,6 +70,7 @@ struct GattWriteAuthCallbackParams {
 };
 
 struct GattReadAuthCallbackParams {
+    Gap::Handle_t            connHandle;
     GattAttribute::Handle_t  handle;
     uint16_t                 offset; /**< Offset for the read operation. */
     uint16_t                 len;    /**< Optional: new length of the outgoing data. */
@@ -77,6 +81,7 @@ struct GattReadAuthCallbackParams {
 
 /* For encapsulating handle-value update events (notifications or indications) generated at the remote server. */
 struct GattHVXCallbackParams {
+  Gap::Handle_t            connHandle;
   GattAttribute::Handle_t  handle; /**< Attribute Handle to which the HVx operation applies. */
   HVXType_t                type;   /**< Indication or Notification, see @ref HVXType_t. */
   uint16_t                 len;    /**< Attribute data length. */
