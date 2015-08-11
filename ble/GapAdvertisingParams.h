@@ -17,21 +17,12 @@
 #ifndef __GAP_ADVERTISING_PARAMS_H__
 #define __GAP_ADVERTISING_PARAMS_H__
 
-/**************************************************************************/
-/*!
-    \brief
-    This class provides a wrapper for the core advertising parameters,
-    including the advertising type (Connectable Undirected,
-    Non Connectable Undirected, etc.), as well as the advertising and
-    timeout intervals.
-
-    \par
-    See the following for more information on advertising types:
-
-    \li \c Bluetooth Core Specification 4.0 (Vol. 6), Part B, Section 2.3.1
-    \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 9.3
-*/
-/**************************************************************************/
+/**
+ *  This class provides a wrapper for the core advertising parameters,
+ *  including the advertising type (Connectable Undirected,
+ *  Non Connectable Undirected, etc.), as well as the advertising and
+ *  timeout intervals.
+ */
 class GapAdvertisingParams {
 public:
     static const unsigned GAP_ADV_PARAMS_INTERVAL_MIN        = 0x0020;
