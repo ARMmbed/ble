@@ -45,18 +45,18 @@ struct GattReadCallbackParams {
 };
 
 enum GattAuthCallbackReply_t {
-    AUTH_CALLBACK_REPLY_SUCCESS =                       0x00,    /**< Success. */
-    AUTH_CALLBACK_REPLY_ATTERR_INVALID_HANDLE =         0x0101,  /**< ATT Error: Invalid Attribute Handle. */
-    AUTH_CALLBACK_REPLY_ATTERR_READ_NOT_PERMITTED =     0x0102,  /**< ATT Error: Read not permitted. */
-    AUTH_CALLBACK_REPLY_ATTERR_WRITE_NOT_PERMITTED =    0x0103,  /**< ATT Error: Write not permitted. */
-    AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHENTICATION =   0x0105,  /**< ATT Error: Authenticated link required. */
-    AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET =         0x0107,  /**< ATT Error: Offset specified was past the end of the attribute. */
-    AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION =    0x0108,  /**< ATT Error: Used in ATT as Insufficient Authorisation. */
-    AUTH_CALLBACK_REPLY_ATTERR_PREPARE_QUEUE_FULL =     0x0109,  /**< ATT Error: Used in ATT as Prepare Queue Full. */
-    AUTH_CALLBACK_REPLY_ATTERR_ATTRIBUTE_NOT_FOUND =    0x010A,  /**< ATT Error: Used in ATT as Attribute not found. */
-    AUTH_CALLBACK_REPLY_ATTERR_ATTRIBUTE_NOT_LONG =     0x010B,  /**< ATT Error: Attribute cannot be read or written using read/write blob requests. */
+    AUTH_CALLBACK_REPLY_SUCCESS                       = 0x00,    /**< Success. */
+    AUTH_CALLBACK_REPLY_ATTERR_INVALID_HANDLE         = 0x0101,  /**< ATT Error: Invalid Attribute Handle. */
+    AUTH_CALLBACK_REPLY_ATTERR_READ_NOT_PERMITTED     = 0x0102,  /**< ATT Error: Read not permitted. */
+    AUTH_CALLBACK_REPLY_ATTERR_WRITE_NOT_PERMITTED    = 0x0103,  /**< ATT Error: Write not permitted. */
+    AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHENTICATION   = 0x0105,  /**< ATT Error: Authenticated link required. */
+    AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET         = 0x0107,  /**< ATT Error: Offset specified was past the end of the attribute. */
+    AUTH_CALLBACK_REPLY_ATTERR_INSUF_AUTHORIZATION    = 0x0108,  /**< ATT Error: Used in ATT as Insufficient Authorisation. */
+    AUTH_CALLBACK_REPLY_ATTERR_PREPARE_QUEUE_FULL     = 0x0109,  /**< ATT Error: Used in ATT as Prepare Queue Full. */
+    AUTH_CALLBACK_REPLY_ATTERR_ATTRIBUTE_NOT_FOUND    = 0x010A,  /**< ATT Error: Used in ATT as Attribute not found. */
+    AUTH_CALLBACK_REPLY_ATTERR_ATTRIBUTE_NOT_LONG     = 0x010B,  /**< ATT Error: Attribute cannot be read or written using read/write blob requests. */
     AUTH_CALLBACK_REPLY_ATTERR_INVALID_ATT_VAL_LENGTH = 0x010D,  /**< ATT Error: Invalid value size. */
-    AUTH_CALLBACK_REPLY_ATTERR_INSUF_RESOURCES =        0x0111,  /**< ATT Error: Encrypted link required. */
+    AUTH_CALLBACK_REPLY_ATTERR_INSUF_RESOURCES        = 0x0111,  /**< ATT Error: Encrypted link required. */
 };
 
 struct GattWriteAuthCallbackParams {
