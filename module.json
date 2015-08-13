@@ -26,7 +26,7 @@
     "mbed-classic": {
       "mbed-classic": "~0.0.1"
     },
-    "mbed": {
+    "mbed-os": {
       "mbed-drivers": "*"
     }
   }
