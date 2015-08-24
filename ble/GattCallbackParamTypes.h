@@ -65,8 +65,9 @@ struct GattWriteAuthCallbackParams {
     uint16_t                 offset; /**< Offset for the write operation. */
     uint16_t                 len;    /**< Length of the incoming data. */
     const uint8_t           *data;   /**< Incoming data, variable length. */
-    GattAuthCallbackReply_t  authorizationReply; /* This is the out parameter which needs to be set to true by the callback if the
-                                                  * request is to proceed; false otherwise. */
+    GattAuthCallbackReply_t  authorizationReply; /* This is the out parameter which needs to be set to
+                                                  * AUTH_CALLBACK_REPLY_SUCCESS by the callback if the
+                                                  * request is to proceed. */
 };
 
 struct GattReadAuthCallbackParams {
@@ -75,8 +76,9 @@ struct GattReadAuthCallbackParams {
     uint16_t                 offset; /**< Offset for the read operation. */
     uint16_t                 len;    /**< Optional: new length of the outgoing data. */
     uint8_t                 *data;   /**< Optional: new outgoing data. Leave at NULL if data is unchanged. */
-    GattAuthCallbackReply_t  authorizationReply; /* This is the out parameter which needs to be set to true by the callback if the
-                                                  * request is to proceed; false otherwise. */
+    GattAuthCallbackReply_t  authorizationReply; /* This is the out parameter which needs to be set to
+                                                  * AUTH_CALLBACK_REPLY_SUCCESS by the callback if the
+                                                  * request is to proceed. */
 };
 
 /* For encapsulating handle-value update events (notifications or indications) generated at the remote server. */
