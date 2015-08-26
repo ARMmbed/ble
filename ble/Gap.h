@@ -301,9 +301,11 @@ public:
     }
 
     /**
-     * Update connection parameters while in the peripheral role.
-     * @details In the peripheral role, this will send the corresponding L2CAP request to the connected peer and wait for
-     *          the central to perform the procedure.
+     * Update connection parameters.
+     * In the central role this will initiate a Link Layer connection parameter update procedure,
+     * otherwise in the peripheral role, this will send the corresponding L2CAP request and wait for
+     * the central to perform the procedure.
+     *
      * @param[in] handle
      *              Connection Handle
      * @param[in] params
