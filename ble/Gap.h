@@ -901,6 +901,16 @@ public:
     void onDisconnection(DisconnectionEventCallback_t callback) {disconnectionCallback = callback;}
 
     /**
+     * Append to a chain of callbacks to be invoked upon connection; these
+     * callbacks receive no context and are therefore different from the
+     * connectionCallback callback.
+     * @param callback
+     *        function pointer to be invoked upon connection; receives no context.
+     */
+    template<typename T>
+    void addToConnectionCallChain(T *tptr, void (T::*mptr)(void)) {connectionCallChain.add(tptr, mptr);}
+
+    /**
      * Append to a chain of callbacks to be invoked upon disconnection; these
      * callbacks receive no context and are therefore different from the
      * disconnectionCallback callback.
@@ -960,6 +970,7 @@ protected:
         disconnectionCallback(NULL),
         radioNotificationCallback(),
         onAdvertisementReport(),
+        connectionCallChain(),
         disconnectionCallChain() {
         _advPayload.clear();
         _scanResponse.clear();
@@ -979,6 +990,7 @@ public:
             ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
             connectionCallback(&callbackParams);
         }
+        connectionCallChain.call();
     }
 
     void processDisconnectionEvent(Handle_t handle, DisconnectionReason_t reason) {
@@ -1026,6 +1038,7 @@ protected:
     DisconnectionEventCallback_t     disconnectionCallback;
     RadioNotificationEventCallback_t radioNotificationCallback;
     AdvertisementReportCallback_t    onAdvertisementReport;
+    CallChain                        connectionCallChain;
     CallChain                        disconnectionCallChain;
 
 private:
