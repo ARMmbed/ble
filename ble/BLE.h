@@ -154,6 +154,43 @@ public:
         transport->waitForEvent();
     }
 
+public:
+    typedef unsigned InstanceID_t;
+    static const InstanceID_t DEFAULT_INSTANCE = 0;
+#ifndef YOTTA_CFG_BLE_INSTANCES_COUNT
+    static const InstanceID_t NUM_INSTANCES = 1;
+#else
+    static const InstanceID_t NUM_INSTANCES = YOTTA_CFG_BLE_INSTANCES_COUNT;
+#endif
+
+    /**
+     * Get a reference to the BLE singleton corresponding to a given interface.
+     * There is a static array of BLE singletons.
+     *
+     * @Note: Calling Instance() is preferred over constructing a BLE object
+     * directly, as it returns references to singletons.
+     *
+     * @param[in] id
+     *              Instance-ID. This should be less than NUM_INSTANCES in order
+     *              for the returned BLE singleton to be useful.
+     *
+     * @return a reference to a single object
+     */
+    static BLE &Instance(InstanceID_t id = DEFAULT_INSTANCE);
+
+    /**
+     * Constructor for a handle to a BLE instance (i.e. BLE stack). BLE handles
+     * are thin wrappers around a transport object (i.e. ptr. to
+     * BLEInstanceBase).
+     *
+     * BLE objects are are better created as singletons accessed through the
+     * Instance() method. If multiple BLE handles are constructed for the same
+     * interface (using this constructor), they will share the same underlying
+     * transport object.
+     */
+    BLE(InstanceID_t instanceID = DEFAULT_INSTANCE);
+
+
     /*
      * Deprecation alert!
      * All of the following are deprecated and may be dropped in a future
@@ -1362,17 +1399,12 @@ public:
         return securityManager().onPasskeyDisplay(callback);
     }
 
-public:
-    BLE() : transport(createBLEInstance()) {
-        /* empty */
-    }
-
 private:
     BLE(const BLE&);
     BLE &operator=(const BLE &);
 
 private:
-    BLEInstanceBase *const transport; /* the device specific backend */
+    BLEInstanceBase *transport; /* the device specific backend */
 };
 
 typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibility with older
