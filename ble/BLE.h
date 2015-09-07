@@ -1333,6 +1333,10 @@ public:
     }
 
 private:
+    BLE(const BLE&);
+    BLE &operator=(const BLE &);
+
+private:
     BLEInstanceBase *const transport; /* the device specific backend */
 };
 
