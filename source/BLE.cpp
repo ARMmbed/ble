@@ -79,7 +79,7 @@ static const InstanceConstructor_t instanceConstructors[BLE::NUM_INSTANCES] = {
 #endif
 };
 
-BLE::BLE &
+BLE &
 BLE::Instance(InstanceID_t id)
 {
     static BLE *singletons[NUM_INSTANCES];
