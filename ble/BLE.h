@@ -23,6 +23,8 @@
 #include "GattClient.h"
 #include "BLEInstanceBase.h"
 
+#include "mbed_error.h"
+
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
  * to enable this BLE API to work with any radio transparently.
@@ -50,6 +52,9 @@ public:
      */
     ble_error_t shutdown(void) {
         clearAdvertisingPayload();
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->shutdown();
     }
 
@@ -60,6 +65,9 @@ public:
      *          Note: The string is owned by the BLE_API.
      */
     const char *getVersion(void) {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getVersion();
     }
 
@@ -68,9 +76,15 @@ public:
      * going through this accessor.
      */
     const Gap &gap() const {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getGap();
     }
     Gap &gap() {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getGap();
     }
 
@@ -79,9 +93,15 @@ public:
      * functionality requires going through this accessor.
      */
     const GattServer& gattServer() const {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getGattServer();
     }
     GattServer& gattServer() {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getGattServer();
     }
 
@@ -90,9 +110,15 @@ public:
      * functionality requires going through this accessor.
      */
     const GattClient& gattClient() const {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getGattClient();
     }
     GattClient& gattClient() {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getGattClient();
     }
 
@@ -102,9 +128,15 @@ public:
      * accessor.
      */
     const SecurityManager& securityManager() const {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getSecurityManager();
     }
     SecurityManager& securityManager() {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         return transport->getSecurityManager();
     }
 
@@ -116,6 +148,9 @@ public:
      * WFE().
      */
     void waitForEvent(void) {
+        if (!transport) {
+            error("bad handle to underlying transport");
+        }
         transport->waitForEvent();
     }
 
