@@ -68,12 +68,19 @@ BLE::init()
 /* ... add more of the above if ever needed */
 
 #define INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS(N) EXPAND(CONCATENATE(INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS_, N))
+#elif !defined(INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS)
+/*
+ * The following applies when building without yotta. By default BLE_API provides
+ * a trivial initializer list containing a single constructor: createBLEInstance.
+ * This may be overridden.
+ */
+#define INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS createBLEInstance
 #endif /* YOTTA_CFG_BLE_INSTANCES_COUNT */
 
 typedef BLEInstanceBase *(*InstanceConstructor_t)(void);
 static const InstanceConstructor_t instanceConstructors[BLE::NUM_INSTANCES] = {
 #ifndef YOTTA_CFG_BLE_INSTANCES_COUNT
-    createBLEInstance
+    INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS
 #else
     INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS(YOTTA_CFG_BLE_INSTANCES_COUNT)
 #endif
