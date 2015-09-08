@@ -1151,7 +1151,7 @@ public:
     }
 
     /**
-     * Used to setup a callback for GAP disconnection.
+     * Append to a chain of callbacks to be invoked upon GAP disconnection.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call
@@ -1162,19 +1162,9 @@ public:
         gap().onDisconnection(disconnectionCallback);
     }
 
-    /**
-     * Append to a chain of callbacks to be invoked upon disconnection; these
-     * callbacks receive no context and are therefore different from the
-     * onDisconnection callback.
-     *
-     * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from Gap directly. A former call
-     * to ble.addToDisconnectionCallchain(...) should be replaced with
-     * ble.gap().addToDisconnectionCallchain(...).
-     */
     template<typename T>
-    void addToDisconnectionCallChain(T *tptr, void (T::*mptr)(void)) {
-        gap().addToDisconnectionCallChain(tptr, mptr);
+    void onDisconnection(T *tptr, void (T::*mptr)(const Gap::DisconnectionCallbackParams_t*)) {
+        gap().onDisconnection(tptr, mptr);
     }
 
     /**
