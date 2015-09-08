@@ -41,7 +41,8 @@ BLE::init()
  * BLE::Instance() and BLE constructor rely upon a static array of initializers
  * to create actual BLE transport instances. A description of these instances
  * and initializers is supposed to be put in some .json file contributing to
- * yotta's configuration (typically the target.json). Here's a sample:
+ * yotta's configuration (typically in the target definition described by
+ * target.json). Here's a sample:
  *
  *  "config": {
  *    ...
@@ -51,6 +52,7 @@ BLE::init()
  *        "initializer" : "createBLEInstance"
  *      }
  *    }
+ *    ...
  *  }
  *
  * The following macros result in translating the above config into a static
