@@ -57,6 +57,7 @@ public:
         UUID_HEART_RATE_MEASUREMENT_CHAR                  = 0x2A37,
         UUID_HID_CONTROL_POINT_CHAR                       = 0x2A4C,
         UUID_HID_INFORMATION_CHAR                         = 0x2A4A,
+        UUID_HUMIDITY_CHAR                                = 0x2A6F,
         UUID_IEEE_REGULATORY_CERTIFICATION_DATA_LIST_CHAR = 0x2A2A,
         UUID_INTERMEDIATE_CUFF_PRESSURE_CHAR              = 0x2A36,
         UUID_INTERMEDIATE_TEMPERATURE_CHAR                = 0x2A1E,
@@ -67,6 +68,7 @@ public:
         UUID_UNREAD_ALERT_CHAR                            = 0x2A45,
         UUID_NEW_ALERT_CHAR                               = 0x2A46,
         UUID_PNP_ID_CHAR                                  = 0x2A50,
+        UUID_PRESSURE_CHAR                                = 0x2A6D,
         UUID_PROTOCOL_MODE_CHAR                           = 0x2A4E,
         UUID_RECORD_ACCESS_CONTROL_POINT_CHAR             = 0x2A52,
         UUID_REFERENCE_TIME_INFORMATION_CHAR              = 0x2A14,
@@ -81,6 +83,7 @@ public:
         UUID_SUPPORTED_NEW_ALERT_CATEGORY_CHAR            = 0x2A47,
         UUID_SUPPORTED_UNREAD_ALERT_CATEGORY_CHAR         = 0x2A48,
         UUID_SYSTEM_ID_CHAR                               = 0x2A23,
+        UUID_TEMPERATURE_CHAR                             = 0x2A6E,
         UUID_TEMPERATURE_MEASUREMENT_CHAR                 = 0x2A1C,
         UUID_TEMPERATURE_TYPE_CHAR                        = 0x2A1D,
         UUID_TIME_ACCURACY_CHAR                           = 0x2A12,
@@ -93,7 +96,7 @@ public:
         UUID_CSC_FEATURE_CHAR                             = 0x2A5C,
         UUID_CSC_MEASUREMENT_CHAR                         = 0x2A5B,
         UUID_RSC_FEATURE_CHAR                             = 0x2A54,
-        UUID_RSC_MEASUREMENT_CHAR                         = 0x2A53,
+        UUID_RSC_MEASUREMENT_CHAR                         = 0x2A53
     };
 
     /**************************************************************************/
