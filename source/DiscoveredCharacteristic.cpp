@@ -58,6 +58,28 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
 
     return gattc->write(GattClient::GATT_OP_WRITE_CMD, connHandle, valueHandle, length, value);
 }
+ble_error_t
+
+DiscoveredCharacteristic::requestHVX(HVXType_t type) const
+{
+    if (type == BLE_HVX_NOTIFICATION && !props.notify()) {
+        return BLE_ERROR_OPERATION_NOT_PERMITTED;
+    }
+
+    if (type == BLE_HVX_INDICATION && !props.indicate()) {
+        return BLE_ERROR_OPERATION_NOT_PERMITTED;
+    }
+
+    if (!gattc) {
+        return BLE_ERROR_INVALID_STATE;
+    }
+
+    /* Cargo Culted from: https://developer.mbed.org/teams/Bluetooth-Low-Energy/code/BLE_ButtonSense/file/2dec89c76f68/main.cpp */
+    /* HACK. We're assuming that CCCD descriptor immediately follows the value attribute. */
+    /* TODO actually discover the handle for the CCCD descriptor */
+    uint16_t value = (uint16_t)type;
+    return gattc->write(GattClient::GATT_OP_WRITE_REQ, connHandle, valueHandle + 1, sizeof(value), (const uint8_t*)(&value));
+}
 
 ble_error_t
 DiscoveredCharacteristic::discoverDescriptors(DescriptorCallback_t callback, const UUID &matchingUUID) const
