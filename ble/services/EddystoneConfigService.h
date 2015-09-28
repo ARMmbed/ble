@@ -241,10 +241,8 @@ public:
         if (defaultUriDataLength > URI_DATA_MAX) {
             return;
         }
-        memcpy(defaultUriData,uriIn,URI_DATA_MAX);
-        //defaultUriDataLength = strlen(uriIn);
-        INFO("\t default URI = %s : %d", uriIn, defaultUriDataLength);
-//              defaultUriData = (UriData_t *)uriIn;
+        INFO("\t  URI input = %s : %d", uriIn, defaultUriDataLength);
+        INFO("\t default URI = %s : %d ",defaultUriData,defaultUriDataLength );
         defaultUriAdvPeriod = advPeriod;
         urlIsSet = true; // flag to add this to eddystone service when config is done
     }
