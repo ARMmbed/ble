@@ -55,7 +55,7 @@ public:
         ble.addService(linkLossService);
         serviceAdded = true;
 
-        ble.addToDisconnectionCallChain(this, &LinkLossService::onDisconnectionFilter);
+        ble.onDisconnection(this, &LinkLossService::onDisconnectionFilter);
         ble.onDataWritten(this, &LinkLossService::onDataWritten);
     }
 
@@ -86,7 +86,7 @@ protected:
         }
     }
 
-    void onDisconnectionFilter(void) {
+    void onDisconnectionFilter(const Gap::DisconnectionCallbackParams_t *params) {
         if (alertLevel != NO_ALERT) {
             callback(alertLevel);
         }
