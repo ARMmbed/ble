@@ -20,6 +20,9 @@
   ],
   "dependencies": {},
   "targetDependencies": {
+    "st-ble-shield": {
+      "x-nucleo-idb0xa1": "ARMmbed/ble-x-nucleo-idb0xa1"
+    },
     "nrf51822": {
       "ble-nrf51822": "~0.4.7"
     },
