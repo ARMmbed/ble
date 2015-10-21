@@ -185,6 +185,29 @@ public:
         return false;
     }
 
+    /**
+     *  Set Eddystone URL Frame information.
+     *  @param[in] power          TX Power in dB measured at 0 meters from the device.
+     *  @param[in] url            Encoded URL
+     *  @param[in] urlAdvPeriodIn How long to advertise the URL frame (measured in # of adv periods)
+     *  @return false on success, true on failure.
+     */
+    bool setURLFrameEncodedData(int8_t power, const char *encodedUrlIn, uint8_t encodedUriInLength, uint32_t urlAdvPeriodIn) {
+        if (0 == urlAdvPeriodIn) {
+            urlIsSet = false;
+            return false;
+        }
+        defaultUrlPower = power;
+        memcpy(defaultUriData, encodedUrlIn, URI_DATA_MAX);
+        defaultUriDataLength = encodedUriInLength;
+        if (defaultUriDataLength > URI_DATA_MAX) {
+            return true;                                        // error, URL is too big
+        }
+        urlAdvPeriod = urlAdvPeriodIn;
+        urlIsSet     = true;
+        return false;
+    }
+
     /*
     *  Construct URL frame from private variables
     *  @param[in/out] Data pointer to array to store constructed frame in
