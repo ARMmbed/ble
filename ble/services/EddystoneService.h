@@ -18,7 +18,7 @@
 #define SERVICES_EDDYSTONEBEACON_H_
 
 #include "ble/BLE.h"
-#include "mbed.h"
+#include "mbed-drivers/mbed.h"
 #include "CircularBuffer.h"
 static const uint8_t BEACON_EDDYSTONE[] = {0xAA, 0xFE};
 

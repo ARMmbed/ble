@@ -18,7 +18,7 @@
 #define SERVICES_URIBEACONCONFIGSERVICE_H_
 
 #include "ble/BLE.h"
-#include "mbed.h"
+#include "mbed-drivers/mbed.h"
 
 extern const uint8_t UUID_URI_BEACON_SERVICE[UUID::LENGTH_OF_LONG_UUID];
 extern const uint8_t UUID_LOCK_STATE_CHAR[UUID::LENGTH_OF_LONG_UUID];

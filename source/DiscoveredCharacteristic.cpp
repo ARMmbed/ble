@@ -62,5 +62,9 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
 ble_error_t
 DiscoveredCharacteristic::discoverDescriptors(DescriptorCallback_t callback, const UUID &matchingUUID) const
 {
+    // betzw: avoid warnings
+    (void) callback;
+    (void) matchingUUID;
+
     return BLE_ERROR_NOT_IMPLEMENTED; /* TODO: this needs to be filled in. */
 }

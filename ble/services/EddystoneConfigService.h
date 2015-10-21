@@ -17,7 +17,7 @@
 #ifndef SERVICES_EDDYSTONE_BEACON_CONFIG_SERVICE_H_
 #define SERVICES_EDDYSTONE_BEACON_CONFIG_SERVICE_H_
 
-#include "mbed.h"
+#include "mbed-drivers/mbed.h"
 #include "ble/BLE.h"
 #include "ble/services/EddystoneService.h"
 
