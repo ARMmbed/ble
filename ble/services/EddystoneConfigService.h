@@ -306,7 +306,7 @@ public:
             eddyServ.setTLMFrameData(params.tlmVersion, params.tlmBeaconPeriod);
         }
         if (params.uriEnabled) {
-            eddyServ.setURLFrameData(params.advPowerLevels[params.txPowerMode], (const char *) params.uriData, params.uriBeaconPeriod);
+            eddyServ.setURLFrameEncodedData(params.advPowerLevels[params.txPowerMode], (const char *) params.uriData, params.uriDataLength, params.uriBeaconPeriod);
         }
         if (params.uidEnabled) {
             eddyServ.setUIDFrameData(params.advPowerLevels[params.txPowerMode],
