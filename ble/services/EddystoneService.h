@@ -175,11 +175,11 @@ public:
             urlIsSet = false;
             return false;
         }
-        defaultUrlPower = power;
         encodeURL(urlIn, defaultUriData, defaultUriDataLength); // encode URL to URL Formatting
         if (defaultUriDataLength > URI_DATA_MAX) {
             return true;                                        // error, URL is too big
         }
+        defaultUrlPower = power;
         urlAdvPeriod = urlAdvPeriodIn;
         urlIsSet     = true;
         return false;
@@ -187,24 +187,25 @@ public:
 
     /**
      *  Set Eddystone URL Frame information.
-     *  @param[in] power          TX Power in dB measured at 0 meters from the device.
-     *  @param[in] url            Encoded URL
-     *  @param[in] urlAdvPeriodIn How long to advertise the URL frame (measured in # of adv periods)
+     *  @param[in] power              TX Power in dB measured at 0 meters from the device.
+     *  @param[in] encodedUrlIn       Encoded URL
+     *  @param[in] encodedUrlInLength Length of the encoded URL
+     *  @param[in] urlAdvPeriodIn     How long to advertise the URL frame (measured in # of adv periods)
      *  @return false on success, true on failure.
      */
-    bool setURLFrameEncodedData(int8_t power, const char *encodedUrlIn, uint8_t encodedUriInLength, uint32_t urlAdvPeriodIn) {
+    bool setURLFrameEncodedData(int8_t power, const char *encodedUrlIn, uint8_t encodedUrlInLength, uint32_t urlAdvPeriodIn) {
         if (0 == urlAdvPeriodIn) {
             urlIsSet = false;
             return false;
         }
-        defaultUrlPower = power;
-        memcpy(defaultUriData, encodedUrlIn, URI_DATA_MAX);
-        defaultUriDataLength = encodedUriInLength;
+        memcpy(defaultUriData, encodedUrlIn, encodedUrlInLength);
         if (defaultUriDataLength > URI_DATA_MAX) {
             return true;                                        // error, URL is too big
         }
-        urlAdvPeriod = urlAdvPeriodIn;
-        urlIsSet     = true;
+        defaultUrlPower      = power;
+        defaultUriDataLength = encodedUrlInLength;
+        urlAdvPeriod         = urlAdvPeriodIn;
+        urlIsSet             = true;
         return false;
     }
 
