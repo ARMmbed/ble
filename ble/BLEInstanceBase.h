@@ -18,6 +18,7 @@
 #define __BLE_DEVICE_INSTANCE_BASE__
 
 #include "Gap.h"
+#include "ble/SecurityManager.h"
 
 /* forward declarations */
 class GattServer;
