@@ -1,10 +1,12 @@
 {
   "name": "ble",
-  "version": "0.4.8",
+  "version": "1.0.0",
   "description": "The BLE module offers a high level abstraction for using Bluetooth Low Energy on multiple platforms.",
   "keywords": [
     "Bluetooth",
-    "BLE"
+    "BLE",
+    "mbed",
+    "mbed-official"
   ],
   "author": "Rohit Grover",
   "repository": {
@@ -20,8 +22,11 @@
   ],
   "dependencies": {},
   "targetDependencies": {
+    "st-ble-shield": {
+      "x-nucleo-idb0xa1": "ARMmbed/ble-x-nucleo-idb0xa1"
+    },
     "nrf51822": {
-      "ble-nrf51822": "~0.4.7"
+      "ble-nrf51822": "^1.0.0"
     },
     "cordio": {
       "ble-wicentric": "~0.0.0"
