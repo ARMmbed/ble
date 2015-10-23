@@ -17,8 +17,13 @@
 #ifndef __BLE_UART_SERVICE_H__
 #define __BLE_UART_SERVICE_H__
 
+#ifdef YOTTA_CFG_MBED_OS
+#include "mbed-drivers/mbed.h"
+#include "mbed-drivers/Stream.h"
+#else
 #include "mbed.h"
 #include "Stream.h"
+#endif
 
 #include "ble/UUID.h"
 #include "ble/BLE.h"

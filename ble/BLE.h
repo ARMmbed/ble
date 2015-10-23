@@ -23,7 +23,11 @@
 #include "GattClient.h"
 #include "BLEInstanceBase.h"
 
+#ifdef YOTTA_CFG_MBED_OS
+#include "mbed-drivers/mbed_error.h"
+#else
 #include "mbed_error.h"
+#endif
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
