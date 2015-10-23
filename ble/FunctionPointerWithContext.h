@@ -130,15 +130,12 @@ private:
         class UndefinedClass;
         typedef void (UndefinedClass::*UndefinedMemberFunction)(ContextType);
 
-
         void* _object;
         union {
             char _memberFunction[sizeof(UndefinedMemberFunction)];
             UndefinedMemberFunction _allignement;            
         };
     };
-
-
 
     union {
         void (*_function)(ContextType context);             /**< static function pointer - NULL if none attached */        
