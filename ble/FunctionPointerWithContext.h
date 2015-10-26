@@ -105,8 +105,8 @@ public:
 
 private:
     template<typename T>
-    static void membercaller(FunctionPointerWithContext* self, ContextType context) {
-        if(self->_memberFunctionAndPointer._object) {
+    static void membercaller(pFunctionPointerWithContext_t self, ContextType context) {
+        if (self->_memberFunctionAndPointer._object) {
             T *o = static_cast<T *>(self->_memberFunctionAndPointer._object);        
             void (T::*m)(ContextType);
             memcpy((char*) &m, self->_memberFunctionAndPointer._memberFunction, sizeof(m));
@@ -114,8 +114,8 @@ private:
         }
     }
 
-    static void functioncaller(FunctionPointerWithContext* self, ContextType context) {
-        if(self->_function) {
+    static void functioncaller(pFunctionPointerWithContext_t self, ContextType context) {
+        if (self->_function) {
             self->_function(context);
         }
     }
@@ -123,9 +123,9 @@ private:
     struct MemberFunctionAndPtr {
         /*
          * forward declaration of a class and a member function to this class. 
-         * Because the compiler doesnt know anything about the member function, it 
-         * will always take the biggest size that a member function can take.
-         * This also guarantee that the proper alignement will be chosen 
+         * Because the compiler doesn't know anything about the forwarded member 
+         * function, it will always use the biggest size and the biggest alignment 
+         * that a member function can take for objects of type UndefinedMemberFunction.
          */
         class UndefinedClass;
         typedef void (UndefinedClass::*UndefinedMemberFunction)(ContextType);
@@ -133,12 +133,12 @@ private:
         void* _object;
         union {
             char _memberFunction[sizeof(UndefinedMemberFunction)];
-            UndefinedMemberFunction _allignement;            
+            UndefinedMemberFunction _alignment;            
         };
     };
 
     union {
-        void (*_function)(ContextType context);             /**< static function pointer - NULL if none attached */        
+        pvoidfcontext_t _function;                      /**< static function pointer - NULL if none attached */
         /** 
          * object this pointer and pointer to member - 
          * _memberFunctionAndPointer._object will be NULL if none attached 
