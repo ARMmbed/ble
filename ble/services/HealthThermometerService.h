@@ -17,7 +17,7 @@
 #ifndef __BLE_HEALTH_THERMOMETER_SERVICE_H__
 #define __BLE_HEALTH_THERMOMETER_SERVICE_H__
 
-#include "BLE.h"
+#include "ble/BLE.h"
 
 /**
 * @class HealthThermometerService

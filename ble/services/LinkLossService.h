@@ -17,7 +17,7 @@
 #ifndef __BLE_LINK_LOSS_SERVICE_H__
 #define __BLE_LINK_LOSS_SERVICE_H__
 
-#include "Gap.h"
+#include "ble/Gap.h"
 
 /**
 * @class LinkLossService
