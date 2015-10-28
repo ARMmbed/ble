@@ -38,8 +38,19 @@ class BLEInstanceBase;
 class BLE
 {
 public:
-    typedef unsigned InstanceID_t;
-    typedef void (*InitializationCompleteCallback_t)(BLE &bleInstance);
+    typedef unsigned InstanceID_t; /** The type returned by BLE::getInstanceID(). */
+
+    /**
+     * The function signature for callbacks for initialization completion.
+     * @param  ble
+     *             A reference to the BLE instance being initialized.
+     * @param  error
+     *             This captures the result of initialization. It is set to
+     *             BLE_ERROR_NONE if initialization completed successfully. Else
+     *             the error value is implementation specific.
+     *
+     */
+    typedef void (*InitializationCompleteCallback_t)(BLE &ble, ble_error_t error);
 
     /**
      * Initialize the BLE controller. This should be called before using
@@ -60,6 +71,12 @@ public:
      *
      * @return  BLE_ERROR_NONE if the initialization procedure was started
      *     successfully.
+     *
+     * @note The underlying stack must invoke the initialization completion
+     *     callback in response to init(). In some cases, initialization is
+     *     instantaneous (or blocking); if so, it is acceptable for the stack-
+     *     specific implementation of init() to invoke the completion callback
+     *     directly--i.e. within its own context.
      *
      * @note Nearly all BLE APIs would return
      *     BLE_ERROR_INITIALIZATION_INCOMPLETE if used on an instance before the
