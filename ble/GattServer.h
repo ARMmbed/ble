@@ -264,6 +264,11 @@ public:
     void onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
         dataWrittenCallChain.add(objPtr, memberPtr);
     }
+	
+	//Clears the Written CallBack Chain of functions 
+    void clearWrittenCallChain(){
+        dataWrittenCallChain.clear();    
+    }	
 
     /**
      * Setup a callback to be invoked on the peripheral when an attribute is
