@@ -52,11 +52,11 @@ public:
         GattCharacteristic *charTable[] = {&alertLevelChar};
         GattService         linkLossService(GattService::UUID_LINK_LOSS_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
-        ble.addService(linkLossService);
+        ble.gattServer().addService(linkLossService);
         serviceAdded = true;
 
-        ble.onDisconnection(this, &LinkLossService::onDisconnectionFilter);
-        ble.onDataWritten(this, &LinkLossService::onDataWritten);
+        ble.gap().onDisconnection(this, &LinkLossService::onDisconnectionFilter);
+        ble.gattServer().onDataWritten(this, &LinkLossService::onDataWritten);
     }
 
     /**
