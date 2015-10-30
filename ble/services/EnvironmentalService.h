@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef __BLE_ENVIRONMENTAL_SERVICE_H__
 #define __BLE_ENVIRONMENTAL_SERVICE_H__
 
 #include "ble/BLE.h"
 
- /**
+/**
 * @class EnvironmentalService
 * @brief BLE Environmental Service. This service provides the location of the thermometer and the temperature.  <br>
 * Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.environmental_sensing.xml <br>
@@ -42,21 +42,21 @@ public:
                          bool pressure_en = false) :
         ble(_ble),
         temperatureCharacteristic(GattCharacteristic::UUID_TEMPERATURE_CHAR,
-                              (uint8_t *) &temperature,
-                              (temperature_en) ? 2 : 0, // minLength
-                              (temperature_en) ? 2 : 0, // maxLength
-                              GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
+                                  (uint8_t *) &temperature,
+                                  (temperature_en) ? 2 : 0, // minLength
+                                  (temperature_en) ? 2 : 0, // maxLength
+                                  GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         humidityCharacteristic(GattCharacteristic::UUID_HUMIDITY_CHAR,
-                              (uint8_t *) &humidity,
-                              (humidity_en) ? 2 : 0, // minLength
-                              (humidity_en) ? 2 : 0, // maxLength
-                              GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
+                               (uint8_t *) &humidity,
+                               (humidity_en) ? 2 : 0, // minLength
+                               (humidity_en) ? 2 : 0, // maxLength
+                               GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
         pressureCharacteristic(GattCharacteristic::UUID_PRESSURE_CHAR,
-                              (uint8_t *) &pressure,
-                              (pressure_en) ? 4 : 0, // minLength
-                              (pressure_en) ? 4 : 0, // maxLength
-                              GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ)
-        {
+                               (uint8_t *) &pressure,
+                               (pressure_en) ? 4 : 0, // minLength
+                               (pressure_en) ? 4 : 0, // maxLength
+                               GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ)
+    {
         static bool serviceAdded = false; /* We should only ever need to add the information service once. */
         if (serviceAdded) {
             return;
@@ -66,9 +66,9 @@ public:
                                             &pressureCharacteristic,
                                             &temperatureCharacteristic };
 
-        GattService environmentalService(GattService::UUID_ENVIRONMENTAL_SERVICE, charTable,
-                                                     sizeof(charTable) / sizeof(GattCharacteristic *));
-        
+        GattService         environmentalService(GattService::UUID_ENVIRONMENTAL_SERVICE, charTable,
+                                                 sizeof(charTable) / sizeof(GattCharacteristic *));
+
         ble.gattServer().addService(environmentalService);
         serviceAdded = true;
     }
@@ -79,7 +79,7 @@ public:
      */
     void updateHumidity(uint16_t newHumidityVal)
     {
-        humidity = (uint32_t) (newHumidityVal*100);                
+        humidity = (uint32_t) (newHumidityVal * 100);
         ble.gattServer().write(humidityCharacteristic.getValueHandle(), (uint8_t *) &humidity, 2);
     }
 
@@ -89,7 +89,7 @@ public:
      */
     void updatePressure(uint32_t newPressureVal)
     {
-        pressure = (uint32_t) (newPressureVal*10);        
+        pressure = (uint32_t) (newPressureVal * 10);
         ble.gattServer().write(pressureCharacteristic.getValueHandle(), (uint8_t *) &pressure, 4);
     }
 
@@ -99,18 +99,18 @@ public:
      */
     void updateTemperature(float newTemperatureVal)
     {
-        temperature = (int16_t) (newTemperatureVal*100);
+        temperature = (int16_t) (newTemperatureVal * 100);
         ble.gattServer().write(temperatureCharacteristic.getValueHandle(), (uint8_t *) &temperature, 2);
     }
 
 private:
-    BLE &ble;
+    BLE &              ble;
 
-    int16_t temperature;
+    int16_t            temperature;
     GattCharacteristic temperatureCharacteristic;
-    uint16_t humidity;
+    uint16_t           humidity;
     GattCharacteristic humidityCharacteristic;
-    uint32_t pressure;
+    uint32_t           pressure;
     GattCharacteristic pressureCharacteristic;
 };
 
