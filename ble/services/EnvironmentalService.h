@@ -40,26 +40,11 @@ public:
      * @param   humidity_en Enable this characteristic.
      * @param   pressure_en Enable this characteristic.
      */
-    EnvironmentalService(BLE &_ble,
-                         bool temperature_en = false,
-                         bool humidity_en = false,
-                         bool pressure_en = false) :
+    EnvironmentalService(BLE& _ble) :
         ble(_ble),
-        temperatureCharacteristic(GattCharacteristic::UUID_TEMPERATURE_CHAR,
-                                  (uint8_t *) &temperature,
-                                  (temperature_en) ? 2 : 0, // minLength
-                                  (temperature_en) ? 2 : 0, // maxLength
-                                  GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        humidityCharacteristic(GattCharacteristic::UUID_HUMIDITY_CHAR,
-                               (uint8_t *) &humidity,
-                               (humidity_en) ? 2 : 0, // minLength
-                               (humidity_en) ? 2 : 0, // maxLength
-                               GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ),
-        pressureCharacteristic(GattCharacteristic::UUID_PRESSURE_CHAR,
-                               (uint8_t *) &pressure,
-                               (pressure_en) ? 4 : 0, // minLength
-                               (pressure_en) ? 4 : 0, // maxLength
-                               GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ)
+        temperatureCharacteristic(GattCharacteristic::UUID_TEMPERATURE_CHAR, &temperature),
+        humidityCharacteristic(GattCharacteristic::UUID_HUMIDITY_CHAR, &humidity),
+        pressureCharacteristic(GattCharacteristic::UUID_PRESSURE_CHAR, &pressure)
     {
         static bool serviceAdded = false; /* We should only ever need to add the information service once. */
         if (serviceAdded) {
@@ -70,8 +55,7 @@ public:
                                             &pressureCharacteristic,
                                             &temperatureCharacteristic };
 
-        GattService         environmentalService(GattService::UUID_ENVIRONMENTAL_SERVICE, charTable,
-                                                 sizeof(charTable) / sizeof(GattCharacteristic *));
+        GattService environmentalService(GattService::UUID_ENVIRONMENTAL_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
         ble.gattServer().addService(environmentalService);
         serviceAdded = true;
@@ -108,14 +92,15 @@ public:
     }
 
 private:
-    BLE &              ble;
+    BLE& ble;
 
-    int16_t            temperature;
-    GattCharacteristic temperatureCharacteristic;
-    uint16_t           humidity;
-    GattCharacteristic humidityCharacteristic;
-    uint32_t           pressure;
-    GattCharacteristic pressureCharacteristic;
+    TemperatureType_t temperature;
+    HumidityType_t    humidity;
+    PressureType_t    pressure;
+
+    ReadOnlyGattCharacteristic<TemperatureType_t> temperatureCharacteristic;
+    ReadOnlyGattCharacteristic<HumidityType_t>    humidityCharacteristic;
+    ReadOnlyGattCharacteristic<PressureType_t>    pressureCharacteristic;
 };
 
 #endif /* #ifndef __BLE_ENVIRONMENTAL_SERVICE_H__*/
