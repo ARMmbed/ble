@@ -430,6 +430,20 @@ protected:
      */
 public:
     /**
+     * Returns the current GAP role for the device.
+     */
+    Role_t getRole(void) const {
+        return _role;
+    }
+    
+    /**
+     * Set the GAP role for the device.
+     */
+    void setRole(const Role_t role) {
+        _role = role;
+    }
+    
+    /**
      * Returns the current GAP state of the device using a bitmask which
      * describes whether the device is advertising and/or connected.
      */
@@ -954,6 +968,7 @@ public:
 
 protected:
     Gap() :
+        _role(PERIPHERAL),
         _advParams(),
         _advPayload(),
         _scanningParams(),
@@ -1012,6 +1027,7 @@ public:
     }
 
 protected:
+    Role_t                           _role;
     GapAdvertisingParams             _advParams;
     GapAdvertisingData               _advPayload;
     GapScanningParams                _scanningParams;
