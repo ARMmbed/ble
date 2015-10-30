@@ -29,6 +29,10 @@
 */
 class EnvironmentalService {
 public:
+    typedef int16_t  TemperatureType_t;
+    typedef uint16_t HumidityType_t;
+    typedef uint32_t PressureType_t;
+
     /**
      * @brief   EnvironmentalService constructor.
      * @param   ble Reference to BLE device.
@@ -77,20 +81,20 @@ public:
      * @brief   Update humidity characteristic.
      * @param   newHumidityVal New humidity measurement.
      */
-    void updateHumidity(uint16_t newHumidityVal)
+    void updateHumidity(HumidityType_t newHumidityVal)
     {
-        humidity = (uint32_t) (newHumidityVal * 100);
-        ble.gattServer().write(humidityCharacteristic.getValueHandle(), (uint8_t *) &humidity, 2);
+        humidity = (HumidityType_t) (newHumidityVal * 100);
+        ble.gattServer().write(humidityCharacteristic.getValueHandle(), (uint8_t *) &humidity, sizeof(HumidityType_t));
     }
 
     /**
      * @brief   Update pressure characteristic.
      * @param   newPressureVal New pressure measurement.
      */
-    void updatePressure(uint32_t newPressureVal)
+    void updatePressure(PressureType_t newPressureVal)
     {
-        pressure = (uint32_t) (newPressureVal * 10);
-        ble.gattServer().write(pressureCharacteristic.getValueHandle(), (uint8_t *) &pressure, 4);
+        pressure = (PressureType_t) (newPressureVal * 10);
+        ble.gattServer().write(pressureCharacteristic.getValueHandle(), (uint8_t *) &pressure, sizeof(PressureType_t));
     }
 
     /**
@@ -99,8 +103,8 @@ public:
      */
     void updateTemperature(float newTemperatureVal)
     {
-        temperature = (int16_t) (newTemperatureVal * 100);
-        ble.gattServer().write(temperatureCharacteristic.getValueHandle(), (uint8_t *) &temperature, 2);
+        temperature = (TemperatureType_t) (newTemperatureVal * 100);
+        ble.gattServer().write(temperatureCharacteristic.getValueHandle(), (uint8_t *) &temperature, sizeof(TemperatureType_t));
     }
 
 private:
