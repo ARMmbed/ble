@@ -186,13 +186,12 @@ class URIBeaconConfigService {
         ble.gap().setAdvertisingInterval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
     }
 
-    /* Helper function to switch to the non-connectible normal mode for URIBeacon. This gets called after a timeout. */
+    /* 
+     * Helper function to switch to the non-connectible normal mode for URIBeacon. This gets called after a timeout. 
+     * The stack should be clear of any existing services and advertising states before calling this function. 
+     */
     void setupURIBeaconAdvertisements()
     {
-        /* Reinitialize the BLE stack. This will clear away the existing services and advertising state. */
-        ble.shutdown();
-        ble.init();
-
         // Fields from the Service
         unsigned beaconPeriod                                 = params.beaconPeriod;
         unsigned txPowerMode                                  = params.txPowerMode;
