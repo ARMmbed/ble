@@ -74,7 +74,7 @@ public:
      *
      * @note we don't yet support 32-bit shortened UUIDs.
      */
-    UUID(ShortUUIDBytes_t shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(shortUUID) {
+    UUID(ShortUUIDBytes_t _shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(_shortUUID) {
         /* empty */
     }
 

@@ -20,6 +20,7 @@
 #include <string.h>
 
 
+
 /** A class for storing and calling a pointer to a static or member void function
  *  which takes a context.
  */
@@ -34,7 +35,7 @@ public:
      *  @param function The void static function to attach (default is none)
      */
     FunctionPointerWithContext(void (*function)(ContextType context) = NULL) :
-        _function(NULL), _object(NULL), _member(), _membercaller(NULL), _next(NULL) {
+        _function(NULL), _caller(NULL), _next(NULL) {
         attach(function);
     }
 
@@ -45,7 +46,7 @@ public:
      */
     template<typename T>
     FunctionPointerWithContext(T *object, void (T::*member)(ContextType context)) :
-        _function(NULL), _object(NULL), _member(), _membercaller(NULL), _next(NULL) {
+        _memberFunctionAndPointer(), _caller(NULL), _next(NULL) {
         attach(object, member);
     }
 
@@ -55,6 +56,7 @@ public:
      */
     void attach(void (*function)(ContextType context) = NULL) {
         _function = function;
+        _caller = functioncaller;
     }
 
     /** Attach a member function
@@ -64,9 +66,9 @@ public:
      */
     template<typename T>
     void attach(T *object, void (T::*member)(ContextType context)) {
-        _object = static_cast<void *>(object);
-        memcpy(_member, (char *)&member, sizeof(member));
-        _membercaller = &FunctionPointerWithContext::membercaller<T>;
+        _memberFunctionAndPointer._object = static_cast<void *>(object);
+        memcpy(_memberFunctionAndPointer._memberFunction, (char*) &member, sizeof(member));
+        _caller = &FunctionPointerWithContext::membercaller<T>;
     }
 
     /** Call the attached static or member function; and if there are chained
@@ -74,11 +76,7 @@ public:
      *  @Note: all chained callbacks stack up; so hopefully there won't be too
      *  many FunctionPointers in a chain. */
     void call(ContextType context) {
-        if (_function) {
-            _function(context);
-        } else if (_object && _membercaller) {
-            _membercaller(_object, _member, context);
-        }
+        _caller(this, context);
 
         /* Propagate the call to next in the chain. */
         if (_next) {
@@ -107,19 +105,49 @@ public:
 
 private:
     template<typename T>
-    static void membercaller(void *object, char *member, ContextType context) {
-        T *o = static_cast<T *>(object);
-        void (T::*m)(ContextType);
-        memcpy((char *)&m, member, sizeof(m));
-        (o->*m)(context);
+    static void membercaller(pFunctionPointerWithContext_t self, ContextType context) {
+        if (self->_memberFunctionAndPointer._object) {
+            T *o = static_cast<T *>(self->_memberFunctionAndPointer._object);        
+            void (T::*m)(ContextType);
+            memcpy((char*) &m, self->_memberFunctionAndPointer._memberFunction, sizeof(m));
+            (o->*m)(context);            
+        }
     }
 
-    void (*_function)(ContextType context);             /**< static function pointer - NULL if none attached */
-    void *_object;                                      /**< object this pointer - NULL if none attached */
-    char _member[16];                                   /**< raw member function pointer storage - converted back by
-                                                         *   registered _membercaller */
-    void (*_membercaller)(void *, char *, ContextType); /**< registered membercaller function to convert back and call
-                                                         *   _member on _object passing the context. */
+    static void functioncaller(pFunctionPointerWithContext_t self, ContextType context) {
+        if (self->_function) {
+            self->_function(context);
+        }
+    }
+
+    struct MemberFunctionAndPtr {
+        /*
+         * forward declaration of a class and a member function to this class. 
+         * Because the compiler doesn't know anything about the forwarded member 
+         * function, it will always use the biggest size and the biggest alignment 
+         * that a member function can take for objects of type UndefinedMemberFunction.
+         */
+        class UndefinedClass;
+        typedef void (UndefinedClass::*UndefinedMemberFunction)(ContextType);
+
+        void* _object;
+        union {
+            char _memberFunction[sizeof(UndefinedMemberFunction)];
+            UndefinedMemberFunction _alignment;            
+        };
+    };
+
+    union {
+        pvoidfcontext_t _function;                      /**< static function pointer - NULL if none attached */
+        /** 
+         * object this pointer and pointer to member - 
+         * _memberFunctionAndPointer._object will be NULL if none attached 
+         */        
+        MemberFunctionAndPtr _memberFunctionAndPointer;      
+    };
+
+    void (*_caller)(FunctionPointerWithContext*, ContextType);
+
     pFunctionPointerWithContext_t _next;                /**< Optional link to make a chain out of functionPointers; this
                                                          *   allows chaining function pointers without requiring
                                                          *   external memory to manage the chain. Also refer to

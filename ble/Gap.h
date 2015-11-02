@@ -867,8 +867,8 @@ private:
     }
 
 private:
-    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &, const GapAdvertisingData &) = 0;
-    virtual ble_error_t startAdvertising(const GapAdvertisingParams &)                             = 0;
+    virtual ble_error_t setAdvertisingData(const GapAdvertisingData &advData, const GapAdvertisingData &scanResponse) = 0;
+    virtual ble_error_t startAdvertising(const GapAdvertisingParams &) = 0;
 
 public:
     /**

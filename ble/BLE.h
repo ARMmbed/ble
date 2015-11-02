@@ -21,9 +21,15 @@
 #include "Gap.h"
 #include "GattServer.h"
 #include "GattClient.h"
-#include "BLEInstanceBase.h"
 
+#ifdef YOTTA_CFG_MBED_OS
+#include "mbed-drivers/mbed_error.h"
+#else
 #include "mbed_error.h"
+#endif
+
+/* forward declaration for the implementation class */
+class BLEInstanceBase;
 
 /**
  * The base class used to abstract away BLE capable radio transceivers or SOCs,
@@ -32,6 +38,20 @@
 class BLE
 {
 public:
+    typedef unsigned InstanceID_t; /** The type returned by BLE::getInstanceID(). */
+
+    /**
+     * The function signature for callbacks for initialization completion.
+     * @param  ble
+     *             A reference to the BLE instance being initialized.
+     * @param  error
+     *             This captures the result of initialization. It is set to
+     *             BLE_ERROR_NONE if initialization completed successfully. Else
+     *             the error value is implementation specific.
+     *
+     */
+    typedef void (*InitializationCompleteCallback_t)(BLE &ble, ble_error_t error);
+
     /**
      * Initialize the BLE controller. This should be called before using
      * anything else in the BLE_API.
@@ -42,21 +62,44 @@ public:
      * system startup. It may not be safe to call init() from global static
      * context where ordering is compiler specific and can't be guaranteed--it
      * is safe to call BLE::init() from within main().
+     *
+     * @param  callback
+     *           A callback for when initialization completes for a BLE
+     *           instance. This is an optional parameter, if no callback is
+     *           setup the application can still determine the status of
+     *           initialization using BLE::hasInitialized() (see below).
+     *
+     * @return  BLE_ERROR_NONE if the initialization procedure was started
+     *     successfully.
+     *
+     * @note The underlying stack must invoke the initialization completion
+     *     callback in response to init(). In some cases, initialization is
+     *     instantaneous (or blocking); if so, it is acceptable for the stack-
+     *     specific implementation of init() to invoke the completion callback
+     *     directly--i.e. within its own context.
+     *
+     * @note Nearly all BLE APIs would return
+     *     BLE_ERROR_INITIALIZATION_INCOMPLETE if used on an instance before the
+     *     corresponding transport is initialized.
      */
-    ble_error_t init();
+    ble_error_t init(InitializationCompleteCallback_t callback = NULL);
+
+    /**
+     * @return true if initialization has completed for the underlying BLE
+     *     transport.
+     *
+     * The application can setup a callback to signal completion of
+     * initialization when using init(). Otherwise, this method can be used to
+     * poll the state of initialization.
+     */
+    bool hasInitialized(void) const;
 
     /**
      * Purge the BLE stack of GATT and GAP state. init() must be called
      * afterwards to re-instate services and GAP state. This API offers a way to
      * repopulate the GATT database with new services and characteristics.
      */
-    ble_error_t shutdown(void) {
-        clearAdvertisingPayload();
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->shutdown();
-    }
+    ble_error_t shutdown(void);
 
     /**
      * This call allows the application to get the BLE stack version information.
@@ -64,81 +107,36 @@ public:
      * @return  A pointer to a const string representing the version.
      *          Note: The string is owned by the BLE_API.
      */
-    const char *getVersion(void) {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getVersion();
-    }
+    const char *getVersion(void);
 
     /*
      * Accessors to GAP. Please refer to Gap.h. All GAP related functionality requires
      * going through this accessor.
      */
-    const Gap &gap() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGap();
-    }
-    Gap &gap() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGap();
-    }
+    const Gap &gap() const;
+    Gap &gap();
 
     /*
      * Accessors to GATT Server. Please refer to GattServer.h. All GATTServer related
      * functionality requires going through this accessor.
      */
-    const GattServer& gattServer() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattServer();
-    }
-    GattServer& gattServer() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattServer();
-    }
+    const GattServer& gattServer() const;
+    GattServer& gattServer();
 
     /*
      * Accessors to GATT Client. Please refer to GattClient.h. All GATTClient related
      * functionality requires going through this accessor.
      */
-    const GattClient& gattClient() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattClient();
-    }
-    GattClient& gattClient() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattClient();
-    }
+    const GattClient& gattClient() const;
+    GattClient& gattClient();
 
     /*
      * Accessors to Security Manager. Please refer to SecurityManager.h. All
      * SecurityManager related functionality requires going through this
      * accessor.
      */
-    const SecurityManager& securityManager() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getSecurityManager();
-    }
-    SecurityManager& securityManager() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getSecurityManager();
-    }
+    const SecurityManager& securityManager() const;
+    SecurityManager& securityManager();
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
@@ -147,15 +145,9 @@ public:
      * returning (to service the stack). This is not always interchangeable with
      * WFE().
      */
-    void waitForEvent(void) {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        transport->waitForEvent();
-    }
+    void waitForEvent(void);
 
 public:
-    typedef unsigned InstanceID_t;
     static const InstanceID_t DEFAULT_INSTANCE = 0;
 #ifndef YOTTA_CFG_BLE_INSTANCES_COUNT
     static const InstanceID_t NUM_INSTANCES = 1;
@@ -190,6 +182,12 @@ public:
      */
     BLE(InstanceID_t instanceID = DEFAULT_INSTANCE);
 
+    /**
+     * Fetch the ID of a BLE instance. Typically there would only be the DEFAULT_INSTANCE.
+     */
+    InstanceID_t getInstanceID(void) const {
+        return instanceID;
+    }
 
     /*
      * Deprecation alert!
@@ -1394,6 +1392,7 @@ private:
     BLE &operator=(const BLE &);
 
 private:
+    InstanceID_t     instanceID;
     BLEInstanceBase *transport; /* the device specific backend */
 };
 

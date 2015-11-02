@@ -285,7 +285,7 @@ public:
         ble.setTxPower(radioPowerLevels[params.txPowerMode]);
         ble.setDeviceName(reinterpret_cast<const uint8_t *>(&DEVICE_NAME));
         ble.setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED);
-        ble.setAdvertisingInterval(GapAdvertisingParams::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(ADVERTISING_INTERVAL_MSEC));
+        ble.setAdvertisingInterval(ADVERTISING_INTERVAL_MSEC);
     }
 
     /*
@@ -306,7 +306,7 @@ public:
             eddyServ.setTLMFrameData(params.tlmVersion, params.tlmBeaconPeriod);
         }
         if (params.uriEnabled) {
-            eddyServ.setURLFrameData(params.advPowerLevels[params.txPowerMode], (const char *) params.uriData, params.uriBeaconPeriod);
+            eddyServ.setURLFrameEncodedData(params.advPowerLevels[params.txPowerMode], (const char *) params.uriData, params.uriDataLength, params.uriBeaconPeriod);
         }
         if (params.uidEnabled) {
             eddyServ.setUIDFrameData(params.advPowerLevels[params.txPowerMode],
@@ -340,7 +340,7 @@ private:
         } else if (handle == uriDataChar.getValueHandle()) {
             params.uriDataLength = writeParams->len;
             memset(params.uriData, 0x00, URI_DATA_MAX);                      // clear URI string
-            memcpy(params.uriData, writeParams->data, params.uriDataLength); // set URI string
+            memcpy(params.uriData, writeParams->data, writeParams->len); // set URI string
             params.uriEnabled = true;
             INFO("URI = %s, URILen = %d", writeParams->data, writeParams->len);
         } else if (handle == flagsChar.getValueHandle()) {

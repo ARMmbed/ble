@@ -175,13 +175,37 @@ public:
             urlIsSet = false;
             return false;
         }
-        defaultUrlPower = power;
         encodeURL(urlIn, defaultUriData, defaultUriDataLength); // encode URL to URL Formatting
         if (defaultUriDataLength > URI_DATA_MAX) {
             return true;                                        // error, URL is too big
         }
+        defaultUrlPower = power;
         urlAdvPeriod = urlAdvPeriodIn;
         urlIsSet     = true;
+        return false;
+    }
+
+    /**
+     *  Set Eddystone URL Frame information.
+     *  @param[in] power              TX Power in dB measured at 0 meters from the device.
+     *  @param[in] encodedUrlIn       Encoded URL
+     *  @param[in] encodedUrlInLength Length of the encoded URL
+     *  @param[in] urlAdvPeriodIn     How long to advertise the URL frame (measured in # of adv periods)
+     *  @return false on success, true on failure.
+     */
+    bool setURLFrameEncodedData(int8_t power, const char *encodedUrlIn, uint8_t encodedUrlInLength, uint32_t urlAdvPeriodIn) {
+        if (0 == urlAdvPeriodIn) {
+            urlIsSet = false;
+            return false;
+        }
+        memcpy(defaultUriData, encodedUrlIn, encodedUrlInLength);
+        if (defaultUriDataLength > URI_DATA_MAX) {
+            return true;                                        // error, URL is too big
+        }
+        defaultUrlPower      = power;
+        defaultUriDataLength = encodedUrlInLength;
+        urlAdvPeriod         = urlAdvPeriodIn;
+        urlIsSet             = true;
         return false;
     }
 
@@ -236,6 +260,10 @@ public:
     *  @return number of bytes used. negative number indicates error message.
     */
     int constructTLMFrame(uint8_t *Data, uint8_t maxSize) {
+        uint32_t now = timeSinceBootTimer.read_ms();
+        TlmTimeSinceBoot += (now - lastBootTimerRead) / 100;
+        lastBootTimerRead = now;
+
         int index = 0;
         Data[index++] = FRAME_TYPE_TLM;                    // Eddystone frame type = Telemetry
         Data[index++] = TlmVersion;                        // TLM Version Number
@@ -289,14 +317,6 @@ public:
     */
     void updateTlmTimeSinceBoot(uint32_t timeSinceBoot) {
         TlmTimeSinceBoot = timeSinceBoot;
-    }
-
-    /*
-    *  callback function, called every 0.1s, incriments the TimeSinceBoot field in the TLM frame
-    *  @return nothing
-    */
-    void tsbCallback(void) {
-        TlmTimeSinceBoot++;
     }
 
     /*
@@ -500,7 +520,8 @@ public:
             // Make double sure the PDUCount and TimeSinceBoot fields are set to zero at reset
             updateTlmPduCount(0);
             updateTlmTimeSinceBoot(0);
-            timeSinceBootTick.attach(this, &EddystoneService::tsbCallback, 0.1); // incriment the TimeSinceBoot ticker every 0.1s
+            lastBootTimerRead = 0;
+            timeSinceBootTimer.start();
             tlmTicker.attach(this, &EddystoneService::tlmCallback, TlmAdvPeriod);
             DBG("attached tlmCallback every %d seconds", TlmAdvPeriod);
         }
@@ -519,7 +540,8 @@ private:
     BLEDevice           &ble;
     uint16_t            advPeriodus;
     uint8_t             txPower;
-    Ticker              timeSinceBootTick;  // counter that counts time since boot
+    Timer               timeSinceBootTimer;
+    volatile uint32_t   lastBootTimerRead;
     volatile bool       advLock;
     volatile FrameTypes frameIndex;
     Timeout             stopAdv;
