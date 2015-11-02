@@ -215,7 +215,7 @@ public:
         DBG("Setting Default TLM Data, version = %d, advPeriodInMind= %f", tlmVersionIn, advPeriodInSec);
         defaultTlmVersion   = tlmVersionIn;
         TlmBatteryVoltage   = 0;
-        TlmBeaconTemp       = 0;
+        TlmBeaconTemp       = 0x8000;
         TlmPduCount         = 0;
         TlmTimeSinceBoot    = 0;
         defaultTlmAdvPeriod = advPeriodInSec;

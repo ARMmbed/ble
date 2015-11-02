@@ -237,7 +237,7 @@ public:
     void setTLMFrameData(uint8_t  version        = 0,
                          float    advPeriod      = 60.0f,
                          uint16_t batteryVoltage = 0,
-                         uint16_t beaconTemp     = 0,
+                         uint16_t beaconTemp     = 0x8000,
                          uint32_t pduCount       = 0,
                          uint32_t timeSinceBoot  = 0) {
         if (0.0f == advPeriod) {
