@@ -32,7 +32,8 @@ class GattClient;
 class BLEInstanceBase
 {
 public:
-    virtual ble_error_t            init(BLE::InstanceID_t instanceID, BLE::InitializationCompleteCallback_t) = 0;
+    virtual ble_error_t            init(BLE::InstanceID_t instanceID,
+                                        FunctionPointerWithContext<BLE::InitializationCompleteCallbackContext *> initCallback) = 0;
     virtual bool                   hasInitialized(void) const = 0;
     virtual ble_error_t            shutdown(void)             = 0;
     virtual const char *           getVersion(void)           = 0;

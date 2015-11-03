@@ -22,8 +22,28 @@
 #endif
 
 ble_error_t
-BLE::init(BLE::InitializationCompleteCallback_t callback)
+BLE::init(BLE::InitializationCompleteCallback_t initCompleteCallback)
 {
+    FunctionPointerWithContext<InitializationCompleteCallbackContext *>callback(initCompleteCallback);
+    ble_error_t err = transport->init(instanceID, callback);
+    if (err != BLE_ERROR_NONE) {
+        return err;
+    }
+
+    /* Platforms enabled for DFU should introduce the DFU Service into
+     * applications automatically. */
+#if defined(TARGET_OTA_ENABLED)
+    static DFUService dfu(*this); // defined static so that the object remains alive
+#endif // TARGET_OTA_ENABLED
+
+    return BLE_ERROR_NONE;
+}
+
+template <typename T>
+ble_error_t
+BLE::init(T *object, void (T::*initCompleteCallback)(InitializationCompleteCallbackContext *))
+{
+    FunctionPointerWithContext<InitializationCompleteCallbackContext *>callback(object, initCompleteCallback);
     ble_error_t err = transport->init(instanceID, callback);
     if (err != BLE_ERROR_NONE) {
         return err;
