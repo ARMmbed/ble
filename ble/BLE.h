@@ -1421,7 +1421,7 @@ public:
     }
 
 private:
-    ble_error_t BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback);
+    ble_error_t initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback);
 
 private:
     BLE(const BLE&);
