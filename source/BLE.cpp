@@ -22,7 +22,7 @@
 #endif
 
 ble_error_t
-BLE::init(BLE::InitializationCompleteCallback_t callback)
+BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback)
 {
     ble_error_t err = transport->init(instanceID, callback);
     if (err != BLE_ERROR_NONE) {
