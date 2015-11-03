@@ -19,8 +19,6 @@
 
 #include <string.h>
 
-
-
 /** A class for storing and calling a pointer to a static or member void function
  *  which takes a context.
  */
@@ -107,10 +105,10 @@ private:
     template<typename T>
     static void membercaller(pFunctionPointerWithContext_t self, ContextType context) {
         if (self->_memberFunctionAndPointer._object) {
-            T *o = static_cast<T *>(self->_memberFunctionAndPointer._object);        
+            T *o = static_cast<T *>(self->_memberFunctionAndPointer._object);
             void (T::*m)(ContextType);
             memcpy((char*) &m, self->_memberFunctionAndPointer._memberFunction, sizeof(m));
-            (o->*m)(context);            
+            (o->*m)(context);
         }
     }
 
@@ -122,9 +120,9 @@ private:
 
     struct MemberFunctionAndPtr {
         /*
-         * forward declaration of a class and a member function to this class. 
-         * Because the compiler doesn't know anything about the forwarded member 
-         * function, it will always use the biggest size and the biggest alignment 
+         * forward declaration of a class and a member function to this class.
+         * Because the compiler doesn't know anything about the forwarded member
+         * function, it will always use the biggest size and the biggest alignment
          * that a member function can take for objects of type UndefinedMemberFunction.
          */
         class UndefinedClass;
@@ -133,17 +131,17 @@ private:
         void* _object;
         union {
             char _memberFunction[sizeof(UndefinedMemberFunction)];
-            UndefinedMemberFunction _alignment;            
+            UndefinedMemberFunction _alignment;
         };
     };
 
     union {
         pvoidfcontext_t _function;                      /**< static function pointer - NULL if none attached */
-        /** 
-         * object this pointer and pointer to member - 
-         * _memberFunctionAndPointer._object will be NULL if none attached 
-         */        
-        MemberFunctionAndPtr _memberFunctionAndPointer;      
+        /**
+         * object this pointer and pointer to member -
+         * _memberFunctionAndPointer._object will be NULL if none attached
+         */
+        MemberFunctionAndPtr _memberFunctionAndPointer;
     };
 
     void (*_caller)(FunctionPointerWithContext*, ContextType);
