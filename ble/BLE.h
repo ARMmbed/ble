@@ -1421,6 +1421,12 @@ public:
     }
 
 private:
+    /**
+     * Implementation of init() [internal to BLE_API].
+     *
+     * The implementation is separated into a private method because it isn't
+     * suitable to be included in the header.
+     */
     ble_error_t initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback);
 
 private:
