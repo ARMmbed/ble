@@ -22,6 +22,8 @@
 #include "GattServer.h"
 #include "GattClient.h"
 
+#include "ble/FunctionPointerWithContext.h"
+
 #ifdef YOTTA_CFG_MBED_OS
 #include "mbed-drivers/mbed_error.h"
 #else
@@ -75,7 +77,7 @@ public:
      * context where ordering is compiler specific and can't be guaranteed--it
      * is safe to call BLE::init() from within main().
      *
-     * @param  callback
+     * @param  initCompleteCallback
      *           A callback for when initialization completes for a BLE
      *           instance. This is an optional parameter, if no callback is
      *           setup the application can still determine the status of
@@ -100,14 +102,20 @@ public:
      *     function-pointer, init() can also take an <Object, member> tuple as its
      *     callback target.
      */
-    ble_error_t init(InitializationCompleteCallback_t callback = NULL);
+    ble_error_t init(InitializationCompleteCallback_t initCompleteCallback = NULL) {
+        FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(initCompleteCallback);
+        initImplementation(callback);
+    }
 
     /**
      * An alternate declaration for init(). This one takes an <Object, member> tuple as its
      * callback target.
      */
     template<typename T>
-    ble_error_t init(T *object, void (T::*initCompleteCallback)(InitializationCompleteCallbackContext *context));
+    ble_error_t init(T *object, void (T::*initCompleteCallback)(InitializationCompleteCallbackContext *context)) {
+        FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(object, initCompleteCallback);
+        initImplementation(callback);
+    }
 
     /**
      * @return true if initialization has completed for the underlying BLE
@@ -1411,6 +1419,9 @@ public:
     void onPasskeyDisplay(SecurityManager::PasskeyDisplayCallback_t callback) {
         return securityManager().onPasskeyDisplay(callback);
     }
+
+private:
+    ble_error_t BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback);
 
 private:
     BLE(const BLE&);
