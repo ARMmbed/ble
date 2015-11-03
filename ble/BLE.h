@@ -104,7 +104,7 @@ public:
      */
     ble_error_t init(InitializationCompleteCallback_t initCompleteCallback = NULL) {
         FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(initCompleteCallback);
-        initImplementation(callback);
+        return initImplementation(callback);
     }
 
     /**
@@ -114,7 +114,7 @@ public:
     template<typename T>
     ble_error_t init(T *object, void (T::*initCompleteCallback)(InitializationCompleteCallbackContext *context)) {
         FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(object, initCompleteCallback);
-        initImplementation(callback);
+        return initImplementation(callback);
     }
 
     /**
