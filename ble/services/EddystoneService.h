@@ -101,9 +101,9 @@ public:
     void setUIDFrameData(int8_t           power,
                          UIDNamespaceID_t namespaceID,
                          UIDInstanceID_t  instanceID,
-                         uint32_t         uidAdvPeriodIn,
+                         float            uidAdvPeriodIn,
                          uint16_t         RFU = 0x0000) {
-        if (0 == uidAdvPeriodIn) {
+        if (0.0f == uidAdvPeriodIn) {
             uidIsSet = false;
             return;
         }
@@ -170,8 +170,8 @@ public:
      *  @param[in] urlAdvPeriodIn How long to advertise the URL frame (measured in # of adv periods)
      *  @return false on success, true on failure.
      */
-    bool setURLFrameData(int8_t power, const char *urlIn, uint32_t urlAdvPeriodIn) {
-        if (0 == urlAdvPeriodIn) {
+    bool setURLFrameData(int8_t power, const char *urlIn, float urlAdvPeriodIn) {
+        if (0.0f == urlAdvPeriodIn) {
             urlIsSet = false;
             return false;
         }
@@ -193,8 +193,8 @@ public:
      *  @param[in] urlAdvPeriodIn     How long to advertise the URL frame (measured in # of adv periods)
      *  @return false on success, true on failure.
      */
-    bool setURLFrameEncodedData(int8_t power, const char *encodedUrlIn, uint8_t encodedUrlInLength, uint32_t urlAdvPeriodIn) {
-        if (0 == urlAdvPeriodIn) {
+    bool setURLFrameEncodedData(int8_t power, const char *encodedUrlIn, uint8_t encodedUrlInLength, float urlAdvPeriodIn) {
+        if (0.0f == urlAdvPeriodIn) {
             urlIsSet = false;
             return false;
         }
@@ -235,12 +235,12 @@ public:
     *
     */
     void setTLMFrameData(uint8_t  version        = 0,
-                         uint32_t advPeriod      = 60,
+                         float    advPeriod      = 60.0f,
                          uint16_t batteryVoltage = 0,
-                         uint16_t beaconTemp     = 0,
+                         uint16_t beaconTemp     = 0x8000,
                          uint32_t pduCount       = 0,
                          uint32_t timeSinceBoot  = 0) {
-        if (0 == advPeriod) {
+        if (0.0f == advPeriod) {
             tlmIsSet = false;
             return;
         }
@@ -507,7 +507,7 @@ public:
         // Initialize Frame transition, start with URL to pass eddystone validator app on first try
         if (urlIsSet) {
             frameIndex = url;
-            urlTicker.attach(this, &EddystoneService::urlCallback, urlAdvPeriod);
+            urlTicker.attach(this, &EddystoneService::urlCallback, (float) advPeriodus / 1000.0f);
             DBG("attached urlCallback every %d seconds", urlAdvPeriod);
         }
         if (uidIsSet) {
@@ -552,7 +552,7 @@ private:
     UriData_t           defaultUriData;
     int8_t              defaultUrlPower;
     bool                urlIsSet;       // flag that enables / disable URI Frames
-    uint32_t            urlAdvPeriod;   // how long the url frame will be advertised for
+    float               urlAdvPeriod;   // how long the url frame will be advertised for
     Ticker              urlTicker;
 
     // UID Frame Variables
@@ -561,7 +561,7 @@ private:
     int8_t              defaultUidPower;
     uint16_t            uidRFU;
     bool                uidIsSet;       // flag that enables / disable UID Frames
-    uint32_t            uidAdvPeriod;   // how long the uid frame will be advertised for
+    float               uidAdvPeriod;   // how long the uid frame will be advertised for
     Ticker              uidTicker;
 
     // TLM Frame Variables
@@ -571,7 +571,7 @@ private:
     volatile uint32_t   TlmPduCount;
     volatile uint32_t   TlmTimeSinceBoot;
     bool                tlmIsSet;          // flag that enables / disables TLM frames
-    uint32_t            TlmAdvPeriod;      // number of minutes between adv frames
+    float               TlmAdvPeriod;      // number of minutes between adv frames
     Ticker              tlmTicker;
 
 public:

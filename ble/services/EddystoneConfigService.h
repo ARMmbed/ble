@@ -215,7 +215,7 @@ public:
         DBG("Setting Default TLM Data, version = %d, advPeriodInMind= %f", tlmVersionIn, advPeriodInSec);
         defaultTlmVersion   = tlmVersionIn;
         TlmBatteryVoltage   = 0;
-        TlmBeaconTemp       = 0;
+        TlmBeaconTemp       = 0x8000;
         TlmPduCount         = 0;
         TlmTimeSinceBoot    = 0;
         defaultTlmAdvPeriod = advPeriodInSec;
@@ -389,7 +389,7 @@ private:
         params.flags = 0x10;
         memcpy(params.advPowerLevels, defaultAdvPowerLevels, sizeof(PowerLevels_t));
         params.txPowerMode  = TX_POWER_MODE_LOW;
-        params.beaconPeriod = 1000;
+        params.beaconPeriod = (uint16_t) defaultUriAdvPeriod * 1000;
 
         // TLM Frame
         params.tlmVersion      = defaultTlmVersion;

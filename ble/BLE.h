@@ -22,6 +22,8 @@
 #include "GattServer.h"
 #include "GattClient.h"
 
+#include "ble/FunctionPointerWithContext.h"
+
 #ifdef YOTTA_CFG_MBED_OS
 #include "mbed-drivers/mbed_error.h"
 #else
@@ -41,16 +43,28 @@ public:
     typedef unsigned InstanceID_t; /** The type returned by BLE::getInstanceID(). */
 
     /**
-     * The function signature for callbacks for initialization completion.
+     * The context provided to init-completion-callbacks (see init() below).
+     *
      * @param  ble
      *             A reference to the BLE instance being initialized.
      * @param  error
      *             This captures the result of initialization. It is set to
      *             BLE_ERROR_NONE if initialization completed successfully. Else
      *             the error value is implementation specific.
-     *
      */
-    typedef void (*InitializationCompleteCallback_t)(BLE &ble, ble_error_t error);
+    struct InitializationCompleteCallbackContext {
+        BLE&        ble;   /* Reference to the BLE object which has been initialized */
+        ble_error_t error; /* Error status of the initialization. It is set to BLE_ERROR_NONE initialization completed successfully. */
+    };
+
+    /**
+     * The signature for function-pointer like callbacks for initialization-completion.
+     *
+     * @note There are two versions of init(). In addition to the simple
+     *     function-pointer, init() can also take a <Object, member> tuple as its
+     *     callback target. In case of the latter, the following declaration doesn't apply.
+     */
+    typedef void (*InitializationCompleteCallback_t)(InitializationCompleteCallbackContext *context);
 
     /**
      * Initialize the BLE controller. This should be called before using
@@ -63,7 +77,7 @@ public:
      * context where ordering is compiler specific and can't be guaranteed--it
      * is safe to call BLE::init() from within main().
      *
-     * @param  callback
+     * @param  initCompleteCallback
      *           A callback for when initialization completes for a BLE
      *           instance. This is an optional parameter, if no callback is
      *           setup the application can still determine the status of
@@ -72,17 +86,36 @@ public:
      * @return  BLE_ERROR_NONE if the initialization procedure was started
      *     successfully.
      *
-     * @note The underlying stack must invoke the initialization completion
-     *     callback in response to init(). In some cases, initialization is
-     *     instantaneous (or blocking); if so, it is acceptable for the stack-
-     *     specific implementation of init() to invoke the completion callback
-     *     directly--i.e. within its own context.
+     * @note If init() returns BLE_ERROR_NONE, the underlying stack must invoke
+     *     the initialization completion callback at some point.
+     *
+     * @note In some cases, initialization is instantaneous (or blocking); if
+     *     so, it is acceptable for the stack-specific implementation of init()
+     *     to invoke the completion callback directly--i.e. within its own
+     *     context.
      *
      * @note Nearly all BLE APIs would return
      *     BLE_ERROR_INITIALIZATION_INCOMPLETE if used on an instance before the
      *     corresponding transport is initialized.
+     *
+     * @note There are two versions of init(). In addition to the simple
+     *     function-pointer, init() can also take an <Object, member> tuple as its
+     *     callback target.
      */
-    ble_error_t init(InitializationCompleteCallback_t callback = NULL);
+    ble_error_t init(InitializationCompleteCallback_t initCompleteCallback = NULL) {
+        FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(initCompleteCallback);
+        return initImplementation(callback);
+    }
+
+    /**
+     * An alternate declaration for init(). This one takes an <Object, member> tuple as its
+     * callback target.
+     */
+    template<typename T>
+    ble_error_t init(T *object, void (T::*initCompleteCallback)(InitializationCompleteCallbackContext *context)) {
+        FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(object, initCompleteCallback);
+        return initImplementation(callback);
+    }
 
     /**
      * @return true if initialization has completed for the underlying BLE
@@ -1386,6 +1419,15 @@ public:
     void onPasskeyDisplay(SecurityManager::PasskeyDisplayCallback_t callback) {
         return securityManager().onPasskeyDisplay(callback);
     }
+
+private:
+    /**
+     * Implementation of init() [internal to BLE_API].
+     *
+     * The implementation is separated into a private method because it isn't
+     * suitable to be included in the header.
+     */
+    ble_error_t initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback);
 
 private:
     BLE(const BLE&);
