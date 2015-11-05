@@ -101,6 +101,7 @@ public:
         TX_POWER_LEVEL                     = 0x0A, /**< TX Power Level (in dBm) */
         DEVICE_ID                          = 0x10, /**< Device ID */
         SLAVE_CONNECTION_INTERVAL_RANGE    = 0x12, /**< Slave Connection Interval Range */
+        LIST_128BIT_SOLICITATION_IDS       = 0x15, /**< List of 128 bit service UUIDs the device is looking for */
         SERVICE_DATA                       = 0x16, /**< Service Data */
         APPEARANCE                         = 0x19, /**< \ref Appearance */
         ADVERTISING_INTERVAL               = 0x1A, /**< Advertising Interval */
@@ -210,9 +211,94 @@ public:
      */
     ble_error_t addData(DataType advDataType, const uint8_t *payload, uint8_t len)
     {
-        /* ToDo: Check if an AD type already exists and if the existing */
-        /*       value is exclusive or not (flags, etc.) */
+        ble_error_t result = BLE_ERROR_BUFFER_OVERFLOW;
 
+        // find field
+        uint8_t* field = findField(advDataType);
+
+        // Field type already exist, either add to field or replace
+        if (field) {
+            switch(advDataType) {
+                case FLAGS:
+                case SHORTENED_LOCAL_NAME:
+                case COMPLETE_LOCAL_NAME:
+                case TX_POWER_LEVEL:
+                case DEVICE_ID:
+                case SLAVE_CONNECTION_INTERVAL_RANGE:
+                case SERVICE_DATA:
+                case APPEARANCE:
+                case ADVERTISING_INTERVAL:
+                case MANUFACTURER_SPECIFIC_DATA: {
+                    // current field length, with the type subtracted
+                    uint8_t dataLength = field[0] - 1;
+
+                    // new data has same length, do in-order replacement
+                    if (len == dataLength) {
+                        for (uint8_t idx = 0; idx < dataLength; idx++) {
+                            field[2 + idx] = payload[idx];
+                        }
+                    } else {
+                        // check if data fits
+                        if ((_payloadLen - dataLength + len) <= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
+                            // remove old field
+                            while (field + dataLength < &_payload[GAP_ADVERTISING_DATA_MAX_PAYLOAD]) {
+                                *field = field[dataLength];
+                                field++;
+                            }
+                            // add new field
+                            result = appendField(advDataType, payload, len);
+                        }
+                    }
+
+                    break;
+                }
+                case INCOMPLETE_LIST_16BIT_SERVICE_IDS:
+                case COMPLETE_LIST_16BIT_SERVICE_IDS:
+                case INCOMPLETE_LIST_32BIT_SERVICE_IDS:
+                case COMPLETE_LIST_32BIT_SERVICE_IDS:
+                case INCOMPLETE_LIST_128BIT_SERVICE_IDS:
+                case COMPLETE_LIST_128BIT_SERVICE_IDS:
+                case LIST_128BIT_SOLICITATION_IDS: {
+                    // check if data fits
+                    if ((_payloadLen + len) <= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
+                        // make room for new field
+                        uint8_t* end = &_payload[_payloadLen];
+
+                        while (field < end) {
+                            end[len] = *end;
+                            end--;
+                        }
+
+                        // insert new data
+                        for (uint8_t idx = 0; idx < len; idx++) {
+                            field[2 + idx] = payload[idx];
+                        }
+
+                        // increment lengths
+                        field[0] += len;
+                        _payloadLen += len;
+
+                        result = BLE_ERROR_NONE;
+                    }
+
+                    break;
+                }
+                default:
+                    break;
+            }
+        } else {
+            // field doesn't exists, insert new
+            result = appendField(advDataType, payload, len);
+        }
+
+        return result;
+    }
+
+    /**
+     * Append advertising data based on the specified AD type (see DataType)
+     */
+    ble_error_t appendField(DataType advDataType, const uint8_t *payload, uint8_t len)
+    {
         /* Make sure we don't exceed the 31 byte payload limit */
         if (_payloadLen + len + 2 > GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
             return BLE_ERROR_BUFFER_OVERFLOW;
@@ -343,6 +429,27 @@ public:
      */
     uint16_t    getAppearance(void) const {
         return (uint16_t)_appearance;
+    }
+
+    /**
+     * Search advertisement data for field.
+     * Returns pointer to field if found, NULL otherwise.
+     */
+    uint8_t* findField(DataType_t type) {
+        // scan through advertisement data
+        for (uint8_t idx = 0; idx < _payloadLen; ) {
+            uint8_t fieldType = _payload[idx + 1];
+
+            if (fieldType == type) {
+                return &_payload[idx];
+            }
+
+            // advance to next field
+            idx += _payload[idx] + 1;
+        }
+
+        // field not found
+        return NULL;
     }
 
 private:
