@@ -152,4 +152,23 @@ private:
                                                          *   'CallChain' as an alternative. */
 };
 
+/**
+ * @brief Create a new FunctionPointerWithContext which bind an instance and a  
+ * a member function together.
+ * @details This little helper is a just here to eliminate the need to write the
+ * FunctionPointerWithContext type each time you want to create one by kicking 
+ * automatic type deduction of function templates. With this function, it is easy 
+ * to write only one entry point for functions which expect a FunctionPointer 
+ * in parameters.
+ * 
+ * @param object to bound with member function
+ * @param member The member function called
+ * @return a new FunctionPointerWithContext
+ */
+template<typename T, typename ContextType>
+FunctionPointerWithContext<ContextType> makeFunctionPointer(T *object, void (T::*member)(ContextType context)) 
+{
+    return FunctionPointerWithContext<ContextType>(object, member);
+}
+
 #endif // ifndef MBED_FUNCTIONPOINTER_WITH_CONTEXT_H
