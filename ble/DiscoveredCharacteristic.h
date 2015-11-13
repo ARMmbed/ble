@@ -135,6 +135,20 @@ public:
      */
     ble_error_t write(uint16_t length, const uint8_t *value) const;
 
+ /**
+     * Request Server to send notify/inform messages for the characteristic
+     *
+     * @param  type
+     *           BLE_HVX_NOTIFICATION or BLE_HVX_INDICATION.
+     *
+     * @retval BLE_ERROR_NONE Successfully requested notification/informa messages
+     *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
+     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
+     *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
+     */
+    ble_error_t requestHVX(HVXType_t type) const;
+
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);
     }
