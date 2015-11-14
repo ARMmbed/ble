@@ -96,7 +96,7 @@ public:
      *  @param[in] power       TX Power in dB measured at 0 meters from the device. Range of -100 to +20 dB.
      *  @param[in] namespaceID 10B namespace ID
      *  @param[in] instanceID  6B instance ID
-     *  @param[in] RFU         2B of RFU, initialized to 0x0000 and not broadcast, included for future reference.
+     *  @param[in] RFU         2B of RFU, initialized to 0x0000
      */
     void setUIDFrameData(int8_t           power,
                          UIDNamespaceID_t namespaceID,
@@ -155,10 +155,9 @@ public:
         }
         DBG("'\r\n");
 
-        if (0 != uidRFU) {                                  // 2B RFU, include if non-zero, otherwise ignore
-            Data[index++] = (uint8_t)(uidRFU >> 0);
-            Data[index++] = (uint8_t)(uidRFU >> 8);
-        }
+        Data[index++] = (uint8_t)(uidRFU >> 0);
+        Data[index++] = (uint8_t)(uidRFU >> 8);
+
         DBG("construcUIDFrame %d, %d", maxSize, index);
         return index;
     }
