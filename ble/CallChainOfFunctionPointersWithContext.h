@@ -61,9 +61,9 @@ public:
     typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
 
 public:
-    /** Create an empty chain
+    /** Create an empty chain.
      *
-     *  @param size (optional) Initial size of the chain
+     *  @param size (optional) Initial size of the chain.
      */
     CallChainOfFunctionPointersWithContext() : chainHead(NULL) {
         /* empty */
@@ -73,24 +73,24 @@ public:
         clear();
     }
 
-    /** Add a function at the front of the chain
+    /** Add a function at the front of the chain.
      *
-     *  @param function A pointer to a void function
+     *  @param function A pointer to a void function.
      *
      *  @returns
-     *  The function object created for 'function'
+     *  The function object created for 'function'.
      */
     pFunctionPointerWithContext_t add(void (*function)(ContextType context)) {
         return common_add(new FunctionPointerWithContext<ContextType>(function));
     }
 
-    /** Add a function at the front of the chain
+    /** Add a function at the front of the chain.
      *
-     *  @param tptr pointer to the object to call the member function on
-     *  @param mptr pointer to the member function to be called
+     *  @param tptr Pointer to the object to call the member function on.
+     *  @param mptr Pointer to the member function to be called.
      *
      *  @returns
-     *  The function object created for 'tptr' and 'mptr'
+     *  The function object created for 'tptr' and 'mptr'.
      */
     template<typename T>
     pFunctionPointerWithContext_t add(T *tptr, void (T::*mptr)(ContextType context)) {
@@ -115,7 +115,7 @@ public:
     }
 
     /** Call all the functions in the chain in sequence
-     * @Note: the stack frames of all the callbacks within the chained
+     * @Note: The stack frames of all the callbacks within the chained
      *        FunctionPointers will stack up. Hopefully there won't be too many
      *        chained FunctionPointers.
      */
@@ -140,7 +140,7 @@ private:
 private:
     pFunctionPointerWithContext_t chainHead;
 
-    /* disallow copy constructor and assignment operators */
+    /* Disallow copy constructor and assignment operators. */
 private:
     CallChainOfFunctionPointersWithContext(const CallChainOfFunctionPointersWithContext &);
     CallChainOfFunctionPointersWithContext & operator = (const CallChainOfFunctionPointersWithContext &);

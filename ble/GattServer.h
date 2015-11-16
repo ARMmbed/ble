@@ -28,7 +28,7 @@ class GattServer {
 public:
     /* Event callback handlers. */
     typedef void (*EventCallback_t)(GattAttribute::Handle_t attributeHandle);
-    typedef void (*ServerEventCallback_t)(void);                    /**< independent of any particular attribute */
+    typedef void (*ServerEventCallback_t)(void);                    /**< Independent of any particular attribute. */
 
 protected:
     GattServer() :
@@ -53,14 +53,14 @@ public:
      * characteristics contained within.
      */
     virtual ble_error_t addService(GattService &service) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)service;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
-     * Read the value of a characteristic from the local GattServer
+     * Read the value of a characteristic from the local GATT server.
      * @param[in]     attributeHandle
      *                  Attribute handle for the value attribute of the characteristic.
      * @param[out]    buffer
@@ -75,18 +75,18 @@ public:
      * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
      */
     virtual ble_error_t read(GattAttribute::Handle_t attributeHandle, uint8_t buffer[], uint16_t *lengthP) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)attributeHandle;
         (void)buffer;
         (void)lengthP;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
-     * Read the value of a characteristic from the local GattServer
+     * Read the value of a characteristic from the local GATT server.
      * @param[in]     connectionHandle
-     *                  Connection Handle.
+     *                  Connection handle.
      * @param[in]     attributeHandle
      *                  Attribute handle for the value attribute of the characteristic.
      * @param[out]    buffer
@@ -100,32 +100,32 @@ public:
      *
      * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
      *
-     * @note This API is a version of above with an additional connection handle
+     * @note This API is a version of the above, with an additional connection handle
      *     parameter to allow fetches for connection-specific multivalued
      *     attributes (such as the CCCDs).
      */
     virtual ble_error_t read(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, uint8_t *buffer, uint16_t *lengthP) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)connectionHandle;
         (void)attributeHandle;
         (void)buffer;
         (void)lengthP;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
-     * Update the value of a characteristic on the local GattServer.
+     * Update the value of a characteristic on the local GATT server.
      *
      * @param[in] attributeHandle
-     *              Handle for the value attribute of the Characteristic.
+     *              Handle for the value attribute of the characteristic.
      * @param[in] value
-     *              A pointer to a buffer holding the new value
+     *              A pointer to a buffer holding the new value.
      * @param[in] size
      *              Size of the new value (in bytes).
      * @param[in] localOnly
      *              Should this update be kept on the local
-     *              GattServer regardless of the state of the
+     *              GATT server regardless of the state of the
      *              notify/indicate flag in the CCCD for this
      *              Characteristic? If set to true, no notification
      *              or indication is generated.
@@ -133,26 +133,26 @@ public:
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
      */
     virtual ble_error_t write(GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)attributeHandle;
         (void)value;
         (void)size;
         (void)localOnly;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
-     * Update the value of a characteristic on the local GattServer. A version
-     * of the same as above with connection handle parameter to allow updates
+     * Update the value of a characteristic on the local GATT server. A version
+     * of the same as the above, with a connection handle parameter to allow updates
      * for connection-specific multivalued attributes (such as the CCCDs).
      *
      * @param[in] connectionHandle
-     *              Connection Handle.
+     *              Connection handle.
      * @param[in] attributeHandle
-     *              Handle for the value attribute of the Characteristic.
+     *              Handle for the value attribute of the characteristic.
      * @param[in] value
-     *              A pointer to a buffer holding the new value
+     *              A pointer to a buffer holding the new value.
      * @param[in] size
      *              Size of the new value (in bytes).
      * @param[in] localOnly
@@ -165,54 +165,54 @@ public:
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
      */
     virtual ble_error_t write(Gap::Handle_t connectionHandle, GattAttribute::Handle_t attributeHandle, const uint8_t *value, uint16_t size, bool localOnly = false) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)connectionHandle;
         (void)attributeHandle;
         (void)value;
         (void)size;
         (void)localOnly;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
-     * Determine the updates-enabled status (notification/indication) for the current connection from a characteristic's CCCD.
+     * Determine the updates-enabled status (notification or indication) for the current connection from a characteristic's CCCD.
      *
      * @param       characteristic
-     *                The characteristic
+     *                The characteristic.
      * @param[out]  enabledP
      *                Upon return, *enabledP is true if updates are enabled, else false.
      *
-     * @return BLE_ERROR_NONE if the connection and handle are found. false otherwise.
+     * @return BLE_ERROR_NONE if the connection and handle are found. False otherwise.
      */
     virtual ble_error_t areUpdatesEnabled(const GattCharacteristic &characteristic, bool *enabledP) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)characteristic;
         (void)enabledP;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
-     * Determine the connection-specific updates-enabled status (notification/indication) from a characteristic's CCCD.
+     * Determine the connection-specific updates-enabled status (notification or indication) from a characteristic's CCCD.
      *
      * @param       connectionHandle
-     *                The connection handle
+     *                The connection handle.
      * @param[out]  enabledP
      *                Upon return, *enabledP is true if updates are enabled, else false.
      *
      * @param  characteristic
-     *           The characteristic
+     *           The characteristic.
      *
-     * @return BLE_ERROR_NONE if the connection and handle are found. false otherwise.
+     * @return BLE_ERROR_NONE if the connection and handle are found. False otherwise.
      */
     virtual ble_error_t areUpdatesEnabled(Gap::Handle_t connectionHandle, const GattCharacteristic &characteristic, bool *enabledP) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)connectionHandle;
         (void)characteristic;
         (void)enabledP;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /**
@@ -220,7 +220,7 @@ public:
      * onDataRead(). It should be overridden to return true as applicable.
      */
     virtual bool isOnDataReadAvailable() const {
-        return false; /* Requesting action from porter(s): override this API if this capability is supported. */
+        return false; /* Requesting action from porters: override this API if this capability is supported. */
     }
 
     /*
@@ -231,11 +231,11 @@ public:
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).
      *
-     * @Note: it is possible to chain together multiple onDataSent callbacks
+     * @Note: It is possible to chain together multiple onDataSent callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics.
      *
-     * @Note: it is also possible to setup a callback into a member function of
+     * @Note: It is also possible to set up a callback into a member function of
      * some object.
      */
     void onDataSent(void (*callback)(unsigned count)) {dataSentCallChain.add(callback);}
@@ -245,18 +245,18 @@ public:
     }
 
     /**
-     * Setup a callback for when an attribute has its value updated by or at the
-     * connected peer. For a peripheral, this callback triggered when the local
+     * Set up a callback for when an attribute has its value updated by or at the
+     * connected peer. For a peripheral, this callback is triggered when the local
      * GATT server has an attribute updated by a write command from the peer.
-     * For a Central, this callback is triggered when a response is received for
+     * For a central, this callback is triggered when a response is received for
      * a write request.
      *
-     * @Note: it is possible to chain together multiple onDataWritten callbacks
+     * @Note: It is possible to chain together multiple onDataWritten callbacks
      * (potentially from different modules of an application) to receive updates
-     * to characteristics. Many services, such as DFU and UART add their own
+     * to characteristics. Many services, such as DFU and UART, add their own
      * onDataWritten callbacks behind the scenes to trap interesting events.
      *
-     * @Note: it is also possible to setup a callback into a member function of
+     * @Note: It is also possible to set up a callback into a member function of
      * some object.
      */
     void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {dataWrittenCallChain.add(callback);}
@@ -269,16 +269,16 @@ public:
      * Setup a callback to be invoked on the peripheral when an attribute is
      * being read by a remote client.
      *
-     * @Note: this functionality may not be available on all underlying stacks.
+     * @Note: This functionality may not be available on all underlying stacks.
      * You could use GattCharacteristic::setReadAuthorizationCallback() as an
      * alternative. Refer to isOnDataReadAvailable().
      *
-     * @Note: it is possible to chain together multiple onDataRead callbacks
+     * @Note: It is possible to chain together multiple onDataRead callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics. Services may add their own onDataRead callbacks
      * behind the scenes to trap interesting events.
      *
-     * @Note: it is also possible to setup a callback into a member function of
+     * @Note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
@@ -303,19 +303,19 @@ public:
     }
 
     /**
-     * Setup a callback for when notifications/indications are enabled for a
-     * characteristic on the local GattServer.
+     * Set up a callback for when notifications or indications are enabled for a
+     * characteristic on the local GATT server.
      */
     void onUpdatesEnabled(EventCallback_t callback) {updatesEnabledCallback = callback;}
 
     /**
-     * Setup a callback for when notifications/indications are disabled for a
-     * characteristic on the local GattServer.
+     * Set up a callback for when notifications or indications are disabled for a
+     * characteristic on the local GATT server.
      */
     void onUpdatesDisabled(EventCallback_t callback) {updatesDisabledCallback = callback;}
 
     /**
-     * Setup a callback for when the GATT server receives a response for an
+     * Set up a callback for when the GATT server receives a response for an
      * indication event sent previously.
      */
     void onConfirmationReceived(EventCallback_t callback) {confirmationReceivedCallback = callback;}
@@ -375,7 +375,7 @@ private:
     EventCallback_t                                                         confirmationReceivedCallback;
 
 private:
-    /* disallow copy and assignment */
+    /* Disallow copy and assignment. */
     GattServer(const GattServer &);
     GattServer& operator=(const GattServer &);
 };

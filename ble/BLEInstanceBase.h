@@ -21,7 +21,7 @@
 #include "ble/SecurityManager.h"
 #include "ble/BLE.h"
 
-/* forward declarations */
+/* Forward declarations. */
 class GattServer;
 class GattClient;
 

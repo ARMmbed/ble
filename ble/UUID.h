@@ -25,8 +25,8 @@
 class UUID {
 public:
     enum UUID_Type_t {
-        UUID_TYPE_SHORT = 0,    // Short BLE UUID
-        UUID_TYPE_LONG  = 1     // Full 128-bit UUID
+        UUID_TYPE_SHORT = 0,    // Short BLE UUID.
+        UUID_TYPE_LONG  = 1     // Full 128-bit UUID.
     };
 
     typedef uint16_t      ShortUUIDBytes_t;
@@ -36,7 +36,7 @@ public:
 
 public:
     /**
-     * Creates a new 128-bit UUID
+     * Creates a new 128-bit UUID.
      *
      * @note   The UUID is a unique 128-bit (16 byte) ID used to identify
      *         different service or characteristics on the BLE device.
@@ -49,7 +49,7 @@ public:
     }
 
     /**
-     * Creates a new 16-bit UUID
+     * Creates a new 16-bit UUID.
      *
      * @note The UUID is a unique 16-bit (2 byte) ID used to identify
      *       different service or characteristics on the BLE device.
@@ -58,7 +58,7 @@ public:
      * 27-byte data payload length of the Link Layer, the BLE specification adds
      * two additional UUID formats: 16-bit and 32-bit UUIDs. These shortened
      * formats can be used only with UUIDs that are defined in the Bluetooth
-     * specification (i.e., that are listed by the Bluetooth SIG as standard
+     * specification (listed by the Bluetooth SIG as standard
      * Bluetooth UUIDs).
      *
      * To reconstruct the full 128-bit UUID from the shortened version, insert
@@ -72,10 +72,10 @@ public:
      *       vendor-specific UUIDs. In these cases, you’ll need to use the full
      *       128-bit UUID value at all times.
      *
-     * @note we don't yet support 32-bit shortened UUIDs.
+     * @note We don't yet support 32-bit shortened UUIDs.
      */
     UUID(ShortUUIDBytes_t _shortUUID) : type(UUID_TYPE_SHORT), baseUUID(), shortUUID(_shortUUID) {
-        /* empty */
+        /* Empty */
     }
 
     UUID(const UUID &source) {
@@ -89,7 +89,7 @@ public:
     }
 
     /**
-     * Fill in a 128-bit UUID; this is useful when UUID isn't known at the time of object construction.
+     * Fill in a 128-bit UUID; this is useful when the UUID isn't known at the time of the object construction.
      */
     void setupLong(const LongUUIDBytes_t longUUID) {
         type      = UUID_TYPE_LONG;
@@ -132,12 +132,12 @@ public:
 
 private:
     UUID_Type_t      type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
-    LongUUIDBytes_t  baseUUID;  /* the base of the long UUID (if
+    LongUUIDBytes_t  baseUUID;  /* The base of the long UUID (if
                             * used). Note: bytes 12 and 13 (counting from LSB)
                             * are zeroed out to allow comparison with other long
-                            * UUIDs which differ only in the 16-bit relative
+                            * UUIDs, which differ only in the 16-bit relative
                             * part.*/
-    ShortUUIDBytes_t shortUUID; // 16 bit uuid (byte 2-3 using with base)
+    ShortUUIDBytes_t shortUUID; // 16 bit UUID (byte 2-3 using with base).
 };
 
 #endif // ifndef __UUID_H__
