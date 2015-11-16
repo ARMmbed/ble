@@ -552,9 +552,8 @@ public:
      * as an additional 31 bytes if the advertising payload proves to be too
      * small.
      *
-     * @param  app
+     * @param  power
      *         The max transmit power to be used by the controller (in dBm).
-     *         This is only a hint.
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
         ble_error_t rc;
