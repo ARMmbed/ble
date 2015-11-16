@@ -500,9 +500,6 @@ public:
      * Reset any advertising payload prepared from prior calls to
      * accumulateAdvertisingPayload(). This automatically propagates the re-
      * initialized adv payload to the underlying stack.
-     *
-     * Note: This should be followed by a call to setAdvertisingPayload() or
-     * startAdvertising() before the update takes effect.
      */
     void clearAdvertisingPayload(void) {
         _advPayload.clear();
