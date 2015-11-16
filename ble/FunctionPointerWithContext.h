@@ -20,7 +20,7 @@
 #include <string.h>
 
 /** A class for storing and calling a pointer to a static or member void function
- *  which takes a context.
+ *  that takes a context.
  */
 template <typename ContextType>
 class FunctionPointerWithContext {
@@ -28,19 +28,19 @@ public:
     typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
     typedef void (*pvoidfcontext_t)(ContextType context);
 
-    /** Create a FunctionPointerWithContext, attaching a static function
+    /** Create a FunctionPointerWithContext, attaching a static function.
      *
-     *  @param function The void static function to attach (default is none)
+     *  @param function The void static function to attach (default is none).
      */
     FunctionPointerWithContext(void (*function)(ContextType context) = NULL) :
         _function(NULL), _caller(NULL), _next(NULL) {
         attach(function);
     }
 
-    /** Create a FunctionPointerWithContext, attaching a member function
+    /** Create a FunctionPointerWithContext, attaching a member function.
      *
-     *  @param object The object pointer to invoke the member function on (i.e. the this pointer)
-     *  @param function The address of the void member function to attach
+     *  @param object The object pointer to invoke the member function on (the "this" pointer).
+     *  @param function The address of the void member function to attach.
      */
     template<typename T>
     FunctionPointerWithContext(T *object, void (T::*member)(ContextType context)) :
@@ -48,19 +48,19 @@ public:
         attach(object, member);
     }
 
-    /** Attach a static function
+    /** Attach a static function.
      *
-     *  @param function The void static function to attach (default is none)
+     *  @param function The void static function to attach (default is none).
      */
     void attach(void (*function)(ContextType context) = NULL) {
         _function = function;
         _caller = functioncaller;
     }
 
-    /** Attach a member function
+    /** Attach a member function.
      *
-     *  @param object The object pointer to invoke the member function on (i.e. the this pointer)
-     *  @param function The address of the void member function to attach
+     *  @param object The object pointer to invoke the member function on (the "this" pointer).
+     *  @param function The address of the void member function to attach.
      */
     template<typename T>
     void attach(T *object, void (T::*member)(ContextType context)) {
@@ -69,9 +69,9 @@ public:
         _caller = &FunctionPointerWithContext::membercaller<T>;
     }
 
-    /** Call the attached static or member function; and if there are chained
+    /** Call the attached static or member function; if there are chained
      *  FunctionPointers their callbacks are invoked as well.
-     *  @Note: all chained callbacks stack up; so hopefully there won't be too
+     *  @Note: All chained callbacks stack up, so hopefully there won't be too
      *  many FunctionPointers in a chain. */
     void call(ContextType context) {
         _caller(this, context);
@@ -83,7 +83,7 @@ public:
     }
 
     /**
-     * Setup an external FunctionPointer as a next in the chain of related
+     * Set up an external FunctionPointer as a next in the chain of related
      * callbacks. Invoking call() on the head FunctionPointer will invoke all
      * chained callbacks.
      *
@@ -120,7 +120,7 @@ private:
 
     struct MemberFunctionAndPtr {
         /*
-         * forward declaration of a class and a member function to this class.
+         * Forward declaration of a class and a member function to this class.
          * Because the compiler doesn't know anything about the forwarded member
          * function, it will always use the biggest size and the biggest alignment
          * that a member function can take for objects of type UndefinedMemberFunction.
@@ -136,7 +136,7 @@ private:
     };
 
     union {
-        pvoidfcontext_t _function;                      /**< static function pointer - NULL if none attached */
+        pvoidfcontext_t _function;                      /**< Static function pointer - NULL if none attached */
         /**
          * object this pointer and pointer to member -
          * _memberFunctionAndPointer._object will be NULL if none attached
@@ -146,9 +146,9 @@ private:
 
     void (*_caller)(FunctionPointerWithContext*, ContextType);
 
-    pFunctionPointerWithContext_t _next;                /**< Optional link to make a chain out of functionPointers; this
+    pFunctionPointerWithContext_t _next;                /**< Optional link to make a chain out of functionPointers. This
                                                          *   allows chaining function pointers without requiring
-                                                         *   external memory to manage the chain. Also refer to
+                                                         *   external memory to manage the chain. Refer to
                                                          *   'CallChain' as an alternative. */
 };
 

@@ -28,10 +28,10 @@
 /*!
     \brief
     This class provides several helper functions to generate properly
-    formatted GAP Advertising and Scan Response data payloads
+    formatted GAP Advertising and Scan Response data payloads.
 
     \note
-    See Bluetooth Specification 4.0 (Vol. 3), Part C, Section 11 and 18
+    See Bluetooth Specification 4.0 (Vol. 3), Part C, Sections 11 and 18
     for further information on Advertising and Scan Response data.
 
     \par Advertising and Scan Response Payloads
@@ -40,22 +40,22 @@
     Specification v4.0, Vol. 3, Part C, Sections 11 and 18).
 
     \par
-    Each AD type has it's own standardized 'assigned number', as defined
+    Each AD type has its own standardized assigned number, as defined
     by the Bluetooth SIG:
     https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
 
     \par
-    For convenience sake, all appropriate AD types have been encapsulated
-    into GapAdvertisingData::DataType.
+    For convenience, all appropriate AD types are encapsulated
+    in GapAdvertisingData::DataType.
 
     \par
     Before the AD Types and their payload (if any) can be inserted into
     the Advertising or Scan Response frames, they need to be formatted as
     follows:
 
-    \li \c Record length (1 byte)
-    \li \c AD Type (1 byte)
-    \li \c AD payload (optional, only present if record length > 1)
+    \li \c Record length (1 byte).
+    \li \c AD Type (1 byte).
+    \li \c AD payload (optional; only present if record length > 1).
 
     \par
     This class takes care of properly formatting the payload, performs
@@ -80,7 +80,7 @@ public:
         \brief
         A list of Advertising Data types commonly used by peripherals.
         These AD types are used to describe the capabilities of the
-        peripheral, and get inserted inside the advertising or scan
+        peripheral, and are inserted inside the advertising or scan
         response payloads.
 
         \par Source
@@ -89,29 +89,29 @@ public:
     */
     /**********************************************************************/
     enum DataType_t {
-        FLAGS                              = 0x01, /**< \ref *Flags */
-        INCOMPLETE_LIST_16BIT_SERVICE_IDS  = 0x02, /**< Incomplete list of 16-bit Service IDs */
-        COMPLETE_LIST_16BIT_SERVICE_IDS    = 0x03, /**< Complete list of 16-bit Service IDs */
-        INCOMPLETE_LIST_32BIT_SERVICE_IDS  = 0x04, /**< Incomplete list of 32-bit Service IDs (not relevant for Bluetooth 4.0) */
-        COMPLETE_LIST_32BIT_SERVICE_IDS    = 0x05, /**< Complete list of 32-bit Service IDs (not relevant for Bluetooth 4.0) */
-        INCOMPLETE_LIST_128BIT_SERVICE_IDS = 0x06, /**< Incomplete list of 128-bit Service IDs */
-        COMPLETE_LIST_128BIT_SERVICE_IDS   = 0x07, /**< Complete list of 128-bit Service IDs */
-        SHORTENED_LOCAL_NAME               = 0x08, /**< Shortened Local Name */
-        COMPLETE_LOCAL_NAME                = 0x09, /**< Complete Local Name */
-        TX_POWER_LEVEL                     = 0x0A, /**< TX Power Level (in dBm) */
-        DEVICE_ID                          = 0x10, /**< Device ID */
-        SLAVE_CONNECTION_INTERVAL_RANGE    = 0x12, /**< Slave Connection Interval Range */
-        SERVICE_DATA                       = 0x16, /**< Service Data */
-        APPEARANCE                         = 0x19, /**< \ref Appearance */
-        ADVERTISING_INTERVAL               = 0x1A, /**< Advertising Interval */
-        MANUFACTURER_SPECIFIC_DATA         = 0xFF  /**< Manufacturer Specific Data */
+        FLAGS                              = 0x01, /**< \ref *Flags. */
+        INCOMPLETE_LIST_16BIT_SERVICE_IDS  = 0x02, /**< Incomplete list of 16-bit service IDs. */
+        COMPLETE_LIST_16BIT_SERVICE_IDS    = 0x03, /**< Complete list of 16-bit service IDs. */
+        INCOMPLETE_LIST_32BIT_SERVICE_IDS  = 0x04, /**< Incomplete list of 32-bit service IDs (not relevant for Bluetooth 4.0). */
+        COMPLETE_LIST_32BIT_SERVICE_IDS    = 0x05, /**< Complete list of 32-bit service IDs (not relevant for Bluetooth 4.0). */
+        INCOMPLETE_LIST_128BIT_SERVICE_IDS = 0x06, /**< Incomplete list of 128-bit service IDs. */
+        COMPLETE_LIST_128BIT_SERVICE_IDS   = 0x07, /**< Complete list of 128-bit service IDs. */
+        SHORTENED_LOCAL_NAME               = 0x08, /**< Shortened local name. */
+        COMPLETE_LOCAL_NAME                = 0x09, /**< Complete local name. */
+        TX_POWER_LEVEL                     = 0x0A, /**< TX power level (in dBm). */
+        DEVICE_ID                          = 0x10, /**< Device ID. */
+        SLAVE_CONNECTION_INTERVAL_RANGE    = 0x12, /**< Slave connection interval range. */
+        SERVICE_DATA                       = 0x16, /**< Service data. */
+        APPEARANCE                         = 0x19, /**< \ref Appearance. */
+        ADVERTISING_INTERVAL               = 0x1A, /**< Advertising interval. */
+        MANUFACTURER_SPECIFIC_DATA         = 0xFF  /**< Manufacturer specific data. */
     };
     typedef enum DataType_t DataType; /* Deprecated type alias. This may be dropped in a future release. */
 
     /**********************************************************************/
     /*!
         \brief
-        A list of values for the FLAGS AD Type
+        A list of values for the FLAGS AD Type.
 
         \note
         You can use more than one value in the FLAGS AD Type (ex.
@@ -122,11 +122,11 @@ public:
     */
     /**********************************************************************/
     enum Flags_t {
-        LE_LIMITED_DISCOVERABLE = 0x01, /**< *Peripheral device is discoverable for a limited period of time */
-        LE_GENERAL_DISCOVERABLE = 0x02, /**< Peripheral device is discoverable at any moment */
-        BREDR_NOT_SUPPORTED     = 0x04, /**< Peripheral device is LE only */
-        SIMULTANEOUS_LE_BREDR_C = 0x08, /**< Not relevant - central mode only */
-        SIMULTANEOUS_LE_BREDR_H = 0x10  /**< Not relevant - central mode only */
+        LE_LIMITED_DISCOVERABLE = 0x01, /**< *Peripheral device is discoverable for a limited period of time. */
+        LE_GENERAL_DISCOVERABLE = 0x02, /**< Peripheral device is discoverable at any moment. */
+        BREDR_NOT_SUPPORTED     = 0x04, /**< Peripheral device is LE only. */
+        SIMULTANEOUS_LE_BREDR_C = 0x08, /**< Not relevant - central mode only. */
+        SIMULTANEOUS_LE_BREDR_H = 0x10  /**< Not relevant - central mode only. */
     };
     typedef enum Flags_t Flags; /* Deprecated type alias. This may be dropped in a future release. */
 
@@ -134,7 +134,7 @@ public:
     /*!
         \brief
         A list of values for the APPEARANCE AD Type, which describes the
-        physical shape or appearance of the device
+        physical shape or appearance of the device.
 
         \par Source
         \li \c Bluetooth Core Specification Supplement, Part A, Section 1.12
@@ -143,54 +143,54 @@ public:
     */
     /**********************************************************************/
     enum Appearance_t {
-        UNKNOWN                                        = 0,     /**< Unknown of unspecified appearance type */
-        GENERIC_PHONE                                  = 64,    /**< Generic Phone */
-        GENERIC_COMPUTER                               = 128,   /**< Generic Computer */
-        GENERIC_WATCH                                  = 192,   /**< Generic Watch */
-        WATCH_SPORTS_WATCH                             = 193,   /**< Sports Watch */
-        GENERIC_CLOCK                                  = 256,   /**< Generic Clock */
-        GENERIC_DISPLAY                                = 320,   /**< Generic Display */
-        GENERIC_REMOTE_CONTROL                         = 384,   /**< Generic Remote Control */
-        GENERIC_EYE_GLASSES                            = 448,   /**< Generic Eye Glasses */
-        GENERIC_TAG                                    = 512,   /**< Generic Tag */
-        GENERIC_KEYRING                                = 576,   /**< Generic Keyring */
-        GENERIC_MEDIA_PLAYER                           = 640,   /**< Generic Media Player */
-        GENERIC_BARCODE_SCANNER                        = 704,   /**< Generic Barcode Scanner */
-        GENERIC_THERMOMETER                            = 768,   /**< Generic Thermometer */
-        THERMOMETER_EAR                                = 769,   /**< Ear Thermometer */
-        GENERIC_HEART_RATE_SENSOR                      = 832,   /**< Generic Heart Rate Sensor */
-        HEART_RATE_SENSOR_HEART_RATE_BELT              = 833,   /**< Belt Heart Rate Sensor */
-        GENERIC_BLOOD_PRESSURE                         = 896,   /**< Generic Blood Pressure */
-        BLOOD_PRESSURE_ARM                             = 897,   /**< Arm Blood Pressure */
-        BLOOD_PRESSURE_WRIST                           = 898,   /**< Wrist Blood Pressure */
-        HUMAN_INTERFACE_DEVICE_HID                     = 960,   /**< Human Interface Device (HID) */
-        KEYBOARD                                       = 961,   /**< Keyboard */
-        MOUSE                                          = 962,   /**< Mouse */
-        JOYSTICK                                       = 963,   /**< Joystick */
-        GAMEPAD                                        = 964,   /**< Gamepad */
-        DIGITIZER_TABLET                               = 965,   /**< Digitizer Tablet */
-        CARD_READER                                    = 966,   /**< Card Read */
-        DIGITAL_PEN                                    = 967,   /**< Digital Pen */
-        BARCODE_SCANNER                                = 968,   /**< Barcode Scanner */
-        GENERIC_GLUCOSE_METER                          = 1024,  /**< Generic Glucose Meter */
-        GENERIC_RUNNING_WALKING_SENSOR                 = 1088,  /**< Generic Running/Walking Sensor */
-        RUNNING_WALKING_SENSOR_IN_SHOE                 = 1089,  /**< In Shoe Running/Walking Sensor */
-        RUNNING_WALKING_SENSOR_ON_SHOE                 = 1090,  /**< On Shoe Running/Walking Sensor */
-        RUNNING_WALKING_SENSOR_ON_HIP                  = 1091,  /**< On Hip Running/Walking Sensor */
-        GENERIC_CYCLING                                = 1152,  /**< Generic Cycling */
-        CYCLING_CYCLING_COMPUTER                       = 1153,  /**< Cycling Computer */
-        CYCLING_SPEED_SENSOR                           = 1154,  /**< Cycling Speed Senspr */
-        CYCLING_CADENCE_SENSOR                         = 1155,  /**< Cycling Cadence Sensor */
-        CYCLING_POWER_SENSOR                           = 1156,  /**< Cycling Power Sensor */
-        CYCLING_SPEED_AND_CADENCE_SENSOR               = 1157,  /**< Cycling Speed and Cadence Sensor */
-        PULSE_OXIMETER_GENERIC                         = 3136,  /**< Generic Pulse Oximeter */
-        PULSE_OXIMETER_FINGERTIP                       = 3137,  /**< Fingertip Pulse Oximeter */
-        PULSE_OXIMETER_WRIST_WORN                      = 3138,  /**< Wrist Worn Pulse Oximeter */
-        OUTDOOR_GENERIC                                = 5184,  /**< Generic Outdoor */
-        OUTDOOR_LOCATION_DISPLAY_DEVICE                = 5185,  /**< Outdoor Location Display Device */
-        OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE = 5186,  /**< Outdoor Location and Navigation Display Device */
-        OUTDOOR_LOCATION_POD                           = 5187,  /**< Outdoor Location Pod */
-        OUTDOOR_LOCATION_AND_NAVIGATION_POD            = 5188   /**< Outdoor Location and Navigation Pod */
+        UNKNOWN                                        = 0,     /**< Unknown or unspecified appearance type. */
+        GENERIC_PHONE                                  = 64,    /**< Generic Phone. */
+        GENERIC_COMPUTER                               = 128,   /**< Generic Computer. */
+        GENERIC_WATCH                                  = 192,   /**< Generic Watch. */
+        WATCH_SPORTS_WATCH                             = 193,   /**< Sports Watch. */
+        GENERIC_CLOCK                                  = 256,   /**< Generic Clock. */
+        GENERIC_DISPLAY                                = 320,   /**< Generic Display. */
+        GENERIC_REMOTE_CONTROL                         = 384,   /**< Generic Remote Control. */
+        GENERIC_EYE_GLASSES                            = 448,   /**< Generic Eye Glasses. */
+        GENERIC_TAG                                    = 512,   /**< Generic Tag. */
+        GENERIC_KEYRING                                = 576,   /**< Generic Keyring. */
+        GENERIC_MEDIA_PLAYER                           = 640,   /**< Generic Media Player. */
+        GENERIC_BARCODE_SCANNER                        = 704,   /**< Generic Barcode Scanner. */
+        GENERIC_THERMOMETER                            = 768,   /**< Generic Thermometer. */
+        THERMOMETER_EAR                                = 769,   /**< Ear Thermometer. */
+        GENERIC_HEART_RATE_SENSOR                      = 832,   /**< Generic Heart Rate Sensor. */
+        HEART_RATE_SENSOR_HEART_RATE_BELT              = 833,   /**< Belt Heart Rate Sensor. */
+        GENERIC_BLOOD_PRESSURE                         = 896,   /**< Generic Blood Pressure. */
+        BLOOD_PRESSURE_ARM                             = 897,   /**< Arm Blood Pressure. */
+        BLOOD_PRESSURE_WRIST                           = 898,   /**< Wrist Blood Pressure. */
+        HUMAN_INTERFACE_DEVICE_HID                     = 960,   /**< Human Interface Device (HID). */
+        KEYBOARD                                       = 961,   /**< Keyboard. */
+        MOUSE                                          = 962,   /**< Mouse. */
+        JOYSTICK                                       = 963,   /**< Joystick. */
+        GAMEPAD                                        = 964,   /**< Gamepad. */
+        DIGITIZER_TABLET                               = 965,   /**< Digitizer Tablet. */
+        CARD_READER                                    = 966,   /**< Card Reader. */
+        DIGITAL_PEN                                    = 967,   /**< Digital Pen. */
+        BARCODE_SCANNER                                = 968,   /**< Barcode Scanner. */
+        GENERIC_GLUCOSE_METER                          = 1024,  /**< Generic Glucose Meter. */
+        GENERIC_RUNNING_WALKING_SENSOR                 = 1088,  /**< Generic Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_IN_SHOE                 = 1089,  /**< In Shoe Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_ON_SHOE                 = 1090,  /**< On Shoe Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_ON_HIP                  = 1091,  /**< On Hip Running/Walking Sensor. */
+        GENERIC_CYCLING                                = 1152,  /**< Generic Cycling. */
+        CYCLING_CYCLING_COMPUTER                       = 1153,  /**< Cycling Computer. */
+        CYCLING_SPEED_SENSOR                           = 1154,  /**< Cycling Speed Sensor. */
+        CYCLING_CADENCE_SENSOR                         = 1155,  /**< Cycling Cadence Sensor. */
+        CYCLING_POWER_SENSOR                           = 1156,  /**< Cycling Power Sensor. */
+        CYCLING_SPEED_AND_CADENCE_SENSOR               = 1157,  /**< Cycling Speed and Cadence Sensor. */
+        PULSE_OXIMETER_GENERIC                         = 3136,  /**< Generic Pulse Oximeter. */
+        PULSE_OXIMETER_FINGERTIP                       = 3137,  /**< Fingertip Pulse Oximeter. */
+        PULSE_OXIMETER_WRIST_WORN                      = 3138,  /**< Wrist Worn Pulse Oximeter. */
+        OUTDOOR_GENERIC                                = 5184,  /**< Generic Outdoor. */
+        OUTDOOR_LOCATION_DISPLAY_DEVICE                = 5185,  /**< Outdoor Location Display Device. */
+        OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE = 5186,  /**< Outdoor Location and Navigation Display Device. */
+        OUTDOOR_LOCATION_POD                           = 5187,  /**< Outdoor Location Pod. */
+        OUTDOOR_LOCATION_AND_NAVIGATION_POD            = 5188   /**< Outdoor Location and Navigation Pod. */
     };
     typedef enum Appearance_t Appearance; /* Deprecated type alias. This may be dropped in a future release. */
 
@@ -199,34 +199,34 @@ public:
     }
 
     /**
-     * Adds advertising data based on the specified AD type (see DataType)
+     * Adds advertising data based on the specified AD type (see DataType).
      *
-     * @param  advDataType The Advertising 'DataType' to add
-     * @param  payload     Pointer to the payload contents
-     * @param  len         Size of the payload in bytes
+     * @param  advDataType The Advertising 'DataType' to add.
+     * @param  payload     Pointer to the payload contents.
+     * @param  len         Size of the payload in bytes.
      *
      * @return BLE_ERROR_BUFFER_OVERFLOW if the specified data would cause the
      * advertising buffer to overflow, else BLE_ERROR_NONE.
      */
     ble_error_t addData(DataType advDataType, const uint8_t *payload, uint8_t len)
     {
-        /* ToDo: Check if an AD type already exists and if the existing */
-        /*       value is exclusive or not (flags, etc.) */
+        /* To Do: Check if an AD type already exists and if the existing */
+        /*       value is exclusive or not (flags and so on). */
 
-        /* Make sure we don't exceed the 31 byte payload limit */
+        /* Make sure we don't exceed the 31 byte payload limit. */
         if (_payloadLen + len + 2 > GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
             return BLE_ERROR_BUFFER_OVERFLOW;
         }
 
-        /* Field length */
+        /* Field length. */
         memset(&_payload[_payloadLen], len + 1, 1);
         _payloadLen++;
 
-        /* Field ID */
+        /* Field ID. */
         memset(&_payload[_payloadLen], (uint8_t)advDataType, 1);
         _payloadLen++;
 
-        /* Payload */
+        /* Payload. */
         memcpy(&_payload[_payloadLen], payload, len);
         _payloadLen += len;
 
@@ -253,7 +253,7 @@ public:
 
         /* A local struct to describe an ADV field. This definition comes from the Bluetooth Core Spec. (v4.2) Part C, Section 11. */
         struct ADVField_t {
-            uint8_t  len;      /* Describes the length (in bytes) of the following 'type' and 'bytes'. */
+            uint8_t  len;      /* Describes the length (in bytes) of the following type and bytes. */
             uint8_t  type;     /* Should have the same representation of DataType_t (above). */
             uint8_t  bytes[0]; /* A placeholder for variable length data. */
         };
@@ -262,23 +262,23 @@ public:
         uint8_t byteIndex = 0;
         while (byteIndex < _payloadLen) {
             ADVField_t *currentADV = (ADVField_t *)&_payload[byteIndex];
-            if ((currentADV->len  == (len + 1)) && /* incoming 'len' only describes the payload, whereas ADV->len describes 'type + payload' */
+            if ((currentADV->len  == (len + 1)) && /* Incoming len only describes the payload, whereas ADV->len describes [type + payload]. */
                 (currentADV->type == advDataType)) {
                 memcpy(currentADV->bytes, payload, len);
                 return BLE_ERROR_NONE;
             }
 
-            byteIndex += (currentADV->len + 1); /* advance by len+1; '+1' is needed to span the len field itself. */
+            byteIndex += (currentADV->len + 1); /* Advance by len+1; '+1' is needed to span the len field itself. */
         }
 
         return BLE_ERROR_UNSPECIFIED;
     }
 
     /**
-     * Helper function to add APPEARANCE data to the advertising payload
+     * Helper function to add APPEARANCE data to the advertising payload.
      *
      * @param  appearance
-     *           The APPEARANCE value to add
+     *           The APPEARANCE value to add.
      *
      * @return BLE_ERROR_BUFFER_OVERFLOW if the specified data would cause the
      * advertising buffer to overflow, else BLE_ERROR_NONE.
@@ -306,18 +306,18 @@ public:
     }
 
     /**
-     * Helper function to add TX_POWER_LEVEL data to the advertising payload
+     * Helper function to add TX_POWER_LEVEL data to the advertising payload.
      *
      * @return BLE_ERROR_BUFFER_OVERFLOW if the specified data would cause the
      * advertising buffer to overflow, else BLE_ERROR_NONE.
      */
     ble_error_t addTxPower(int8_t txPower) {
-        /* ToDo: Basic error checking to make sure txPower is in range */
+        /* To Do: Basic error checking to make sure txPower is in range. */
         return addData(GapAdvertisingData::TX_POWER_LEVEL, (uint8_t *)&txPower, 1);
     }
 
     /**
-     * Clears the payload and resets the payload length counter
+     * Clears the payload and resets the payload length counter.
      */
     void        clear(void) {
         memset(&_payload, 0, GAP_ADVERTISING_DATA_MAX_PAYLOAD);
@@ -325,21 +325,21 @@ public:
     }
 
     /**
-     * Returns a pointer to the the current payload
+     * Returns a pointer to the current payload.
      */
     const uint8_t *getPayload(void) const {
         return _payload;
     }
 
     /**
-     * Returns the current payload length (0..31 bytes)
+     * Returns the current payload length (0..31 bytes).
      */
     uint8_t     getPayloadLen(void) const {
         return _payloadLen;
     }
 
     /**
-     * Returns the 16-bit appearance value for this device
+     * Returns the 16-bit appearance value for this device.
      */
     uint16_t    getAppearance(void) const {
         return (uint16_t)_appearance;
