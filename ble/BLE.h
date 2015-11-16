@@ -21,141 +21,166 @@
 #include "Gap.h"
 #include "GattServer.h"
 #include "GattClient.h"
-#include "BLEInstanceBase.h"
 
+#include "ble/FunctionPointerWithContext.h"
+
+#ifdef YOTTA_CFG_MBED_OS
+#include "mbed-drivers/mbed_error.h"
+#else
 #include "mbed_error.h"
+#endif
+
+/* Forward declaration for the implementation class */
+class BLEInstanceBase;
 
 /**
- * The base class used to abstract away BLE capable radio transceivers or SOCs,
- * to enable this BLE API to work with any radio transparently.
+ * The base class used to abstract away BLE-capable radio transceivers or SOCs,
+ * so that the BLE API can work with any radio transparently.
  */
 class BLE
 {
 public:
+    typedef unsigned InstanceID_t; /** The type returned by BLE::getInstanceID(). */
+
+    /**
+     * The context provided to init-completion-callbacks (see init() below).
+     *
+     * @param  ble
+     *             A reference to the BLE instance being initialized.
+     * @param  error
+     *             Captures the result of initialization. It is set to
+     *             BLE_ERROR_NONE if initialization completed successfully. Else
+     *             the error value is implementation specific.
+     */
+    struct InitializationCompleteCallbackContext {
+        BLE&        ble;   /* Reference to the BLE object that has been initialized */
+        ble_error_t error; /* Error status of the initialization. It is set to BLE_ERROR_NONE if initialization completed successfully. */
+    };
+
+    /**
+     * The signature for function-pointer like callbacks for initialization-completion.
+     *
+     * @note There are two versions of init(). In addition to the simple
+     *     function-pointer, init() can also take a <Object, member> tuple as its
+     *     callback target. In case of the latter, the following declaration doesn't apply.
+     */
+    typedef void (*InitializationCompleteCallback_t)(InitializationCompleteCallbackContext *context);
+
     /**
      * Initialize the BLE controller. This should be called before using
      * anything else in the BLE_API.
      *
      * init() hands control to the underlying BLE module to accomplish
      * initialization. This initialization may tacitly depend on other hardware
-     * setup (such as clocks or power-modes) which happens early on during
-     * system startup. It may not be safe to call init() from global static
-     * context where ordering is compiler specific and can't be guaranteed--it
+     * setup (such as clocks or power-modes) that happens early on during
+     * system startup. It may not be safe to call init() from a global static
+     * context where ordering is compiler-specific and can't be guaranteed - it
      * is safe to call BLE::init() from within main().
+     *
+     * @param  initCompleteCallback
+     *           A callback for when initialization completes for a BLE
+     *           instance. This is an optional parameter; if no callback is
+     *           set up the application can still determine the status of
+     *           initialization using BLE::hasInitialized() (see below).
+     *
+     * @return  BLE_ERROR_NONE if the initialization procedure was started
+     *     successfully.
+     *
+     * @note If init() returns BLE_ERROR_NONE, the underlying stack must invoke
+     *     the initialization completion callback at some point.
+     *
+     * @note In some cases, initialization is instantaneous (or blocking); if
+     *     so, it is acceptable for the stack-specific implementation of init()
+     *     to invoke the completion callback directly (within its own
+     *     context).
+     *
+     * @note Nearly all BLE APIs would return
+     *     BLE_ERROR_INITIALIZATION_INCOMPLETE if used on an instance before the
+     *     corresponding transport is initialized.
+     *
+     * @note There are two versions of init(). In addition to the simple
+     *     function-pointer, init() can also take an <Object, member> tuple as its
+     *     callback target.
      */
-    ble_error_t init();
+    ble_error_t init(InitializationCompleteCallback_t initCompleteCallback = NULL) {
+        FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(initCompleteCallback);
+        return initImplementation(callback);
+    }
+
+    /**
+     * An alternate declaration for init(). This one takes an <Object, member> tuple as its
+     * callback target.
+     */
+    template<typename T>
+    ble_error_t init(T *object, void (T::*initCompleteCallback)(InitializationCompleteCallbackContext *context)) {
+        FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback(object, initCompleteCallback);
+        return initImplementation(callback);
+    }
+
+    /**
+     * @return true if initialization has completed for the underlying BLE
+     *     transport.
+     *
+     * The application can set up a callback to signal completion of
+     * initialization when using init(). Otherwise, this method can be used to
+     * poll the state of initialization.
+     */
+    bool hasInitialized(void) const;
 
     /**
      * Purge the BLE stack of GATT and GAP state. init() must be called
      * afterwards to re-instate services and GAP state. This API offers a way to
      * repopulate the GATT database with new services and characteristics.
      */
-    ble_error_t shutdown(void) {
-        clearAdvertisingPayload();
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->shutdown();
-    }
+    ble_error_t shutdown(void);
 
     /**
      * This call allows the application to get the BLE stack version information.
      *
      * @return  A pointer to a const string representing the version.
-     *          Note: The string is owned by the BLE_API.
+     *          Note: The string is owned by BLE_API.
      */
-    const char *getVersion(void) {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getVersion();
-    }
+    const char *getVersion(void);
 
     /*
      * Accessors to GAP. Please refer to Gap.h. All GAP related functionality requires
      * going through this accessor.
      */
-    const Gap &gap() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGap();
-    }
-    Gap &gap() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGap();
-    }
+    const Gap &gap() const;
+    Gap &gap();
 
     /*
      * Accessors to GATT Server. Please refer to GattServer.h. All GATTServer related
      * functionality requires going through this accessor.
      */
-    const GattServer& gattServer() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattServer();
-    }
-    GattServer& gattServer() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattServer();
-    }
+    const GattServer& gattServer() const;
+    GattServer& gattServer();
 
     /*
      * Accessors to GATT Client. Please refer to GattClient.h. All GATTClient related
      * functionality requires going through this accessor.
      */
-    const GattClient& gattClient() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattClient();
-    }
-    GattClient& gattClient() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getGattClient();
-    }
+    const GattClient& gattClient() const;
+    GattClient& gattClient();
 
     /*
      * Accessors to Security Manager. Please refer to SecurityManager.h. All
      * SecurityManager related functionality requires going through this
      * accessor.
      */
-    const SecurityManager& securityManager() const {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getSecurityManager();
-    }
-    SecurityManager& securityManager() {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        return transport->getSecurityManager();
-    }
+    const SecurityManager& securityManager() const;
+    SecurityManager& securityManager();
 
     /**
      * Yield control to the BLE stack or to other tasks waiting for events. This
-     * is a sleep function which will return when there is an application
-     * specific interrupt, but the MCU might wake up several times before
+     * is a sleep function that will return when there is an application-specific
+     * interrupt, but the MCU might wake up several times before
      * returning (to service the stack). This is not always interchangeable with
      * WFE().
      */
-    void waitForEvent(void) {
-        if (!transport) {
-            error("bad handle to underlying transport");
-        }
-        transport->waitForEvent();
-    }
+    void waitForEvent(void);
 
 public:
-    typedef unsigned InstanceID_t;
     static const InstanceID_t DEFAULT_INSTANCE = 0;
 #ifndef YOTTA_CFG_BLE_INSTANCES_COUNT
     static const InstanceID_t NUM_INSTANCES = 1;
@@ -171,25 +196,31 @@ public:
      * directly, as it returns references to singletons.
      *
      * @param[in] id
-     *              Instance-ID. This should be less than NUM_INSTANCES in order
+     *              Instance-ID. This should be less than NUM_INSTANCES 
      *              for the returned BLE singleton to be useful.
      *
-     * @return a reference to a single object
+     * @return a reference to a single object.
      */
     static BLE &Instance(InstanceID_t id = DEFAULT_INSTANCE);
 
     /**
-     * Constructor for a handle to a BLE instance (i.e. BLE stack). BLE handles
-     * are thin wrappers around a transport object (i.e. ptr. to
+     * Constructor for a handle to a BLE instance (the BLE stack). BLE handles
+     * are thin wrappers around a transport object (that is, ptr. to
      * BLEInstanceBase).
      *
-     * BLE objects are are better created as singletons accessed through the
+     * It is better to create BLE objects as singletons accessed through the
      * Instance() method. If multiple BLE handles are constructed for the same
      * interface (using this constructor), they will share the same underlying
      * transport object.
      */
     BLE(InstanceID_t instanceID = DEFAULT_INSTANCE);
 
+    /**
+     * Fetch the ID of a BLE instance. Typically there would only be the DEFAULT_INSTANCE.
+     */
+    InstanceID_t getInstanceID(void) const {
+        return instanceID;
+    }
 
     /*
      * Deprecation alert!
@@ -248,8 +279,8 @@ public:
      *              This field must be set to 0 if connectionMode is equal
      *              to ADV_CONNECTABLE_DIRECTED.
      *
-     * @note: Decreasing this value will allow central devices to detect a
-     * peripheral faster at the expense of more power being used by the radio
+     * @note: Decreasing this value allows central devices to detect a
+     * peripheral faster, at the expense of more power being used by the radio
      * due to the higher data transmit rate.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -261,7 +292,7 @@ public:
      * 'interval' argument. That required an explicit conversion from
      * milliseconds using Gap::MSEC_TO_GAP_DURATION_UNITS(). This conversion is
      * no longer required as the new units are milliseconds. Any application
-     * code depending on the old semantics would need to be updated accordingly.
+     * code depending on the old semantics needs to be updated accordingly.
      */
     void setAdvertisingInterval(uint16_t interval) {
         gap().setAdvertisingInterval(interval);
@@ -318,7 +349,7 @@ public:
     }
 
     /**
-     * Setup a particular, user-constructed set of advertisement parameters for
+     * Set up a particular, user-constructed set of advertisement parameters for
      * the underlying stack. It would be uncommon for this API to be used
      * directly; there are other APIs to tweak advertisement parameters
      * individually (see above).
@@ -348,11 +379,11 @@ public:
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
      * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
-     * as an additional 31 bytes if the advertising payload proves to be too
+     * as an additional 31 bytes if the advertising payload is too
      * small.
      *
      * @param[in] flags
-     *              The flags to be added. Please refer to
+     *              The flags to add. Please refer to
      *              GapAdvertisingData::Flags for valid flags. Multiple
      *              flags may be specified in combination.
      *
@@ -368,7 +399,7 @@ public:
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
      * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
-     * as an additional 31 bytes if the advertising payload proves to be too
+     * as an additional 31 bytes if the advertising payload is too
      * small.
      *
      * @param[in] app
@@ -386,7 +417,7 @@ public:
     /**
      * Accumulate an AD structure in the advertising payload. Please note that
      * the payload is limited to 31 bytes. The SCAN_RESPONSE message may be used
-     * as an additional 31 bytes if the advertising payload proves to be too
+     * as an additional 31 bytes if the advertising payload is too
      * small.
      *
      * @param[in] app
@@ -406,11 +437,11 @@ public:
      * Accumulate a variable length byte-stream as an AD structure in the
      * advertising payload. Please note that the payload is limited to 31 bytes.
      * The SCAN_RESPONSE message may be used as an additional 31 bytes if the
-     * advertising payload proves to be too small.
+     * advertising payload is too small.
      *
-     * @param  type The type which describes the variable length data.
-     * @param  data data bytes.
-     * @param  len  length of data.
+     * @param  type The type that describes the variable length data.
+     * @param  data Data bytes.
+     * @param  len  Data length.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
@@ -451,7 +482,7 @@ public:
     /**
      * Reset any advertising payload prepared from prior calls to
      * accumulateAdvertisingPayload(). This automatically propagates the re-
-     * initialized adv payload to the underlying stack.
+     * initialized advertising payload to the underlying stack.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
@@ -481,9 +512,9 @@ public:
      * Accumulate a variable length byte-stream as an AD structure in the
      * scanResponse payload.
      *
-     * @param[in] type The type which describes the variable length data.
-     * @param[in] data data bytes.
-     * @param[in] len  length of data.
+     * @param[in] type The type that describes the variable length data.
+     * @param[in] data Data bytes.
+     * @param[in] len  Data length.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
@@ -532,13 +563,13 @@ public:
     }
 
     /**
-     * Setup parameters for GAP scanning--i.e. observer mode.
+     * Set up parameters for GAP scanning (observer mode).
      * @param[in] interval
      *              Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      * @param[in] window
      *              Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      * @param[in] timeout
-     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF; 0x0000 disables timeout.
      * @param[in] activeScanning
      *              Set to True if active-scanning is required. This is used to fetch the
      *              scan response from a peer if possible.
@@ -568,7 +599,7 @@ public:
     }
 
     /**
-     * Setup the scanInterval parameter for GAP scanning--i.e. observer mode.
+     * Set up the scanInterval parameter for GAP scanning (observer mode).
      * @param[in] interval
      *              Scan interval (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      *
@@ -592,7 +623,7 @@ public:
     }
 
     /**
-     * Setup the scanWindow parameter for GAP scanning--i.e. observer mode.
+     * Set up the scanWindow parameter for GAP scanning (observer mode).
      * @param[in] window
      *              Scan Window (in milliseconds) [valid values lie between 2.5ms and 10.24s].
      *
@@ -616,9 +647,9 @@ public:
     }
 
     /**
-     * Setup parameters for GAP scanning--i.e. observer mode.
+     * Set up parameters for GAP scanning (observer mode).
      * @param[in] timeout
-     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF, 0x0000 disables timeout.
+     *              Scan timeout (in seconds) between 0x0001 and 0xFFFF; 0x0000 disables timeout.
      *
      * The scanning window divided by the interval determines the duty cycle for
      * scanning. For example, if the interval is 100ms and the window is 10ms,
@@ -642,7 +673,7 @@ public:
     }
 
     /**
-     * Setup parameters for GAP scanning--i.e. observer mode.
+     * Set up parameters for GAP scanning (observer mode).
      * @param[in] activeScanning
      *              Set to True if active-scanning is required. This is used to fetch the
      *              scan response from a peer if possible.
@@ -664,7 +695,7 @@ public:
      * effect.
      *
      * @param[in] callback
-     *              The application specific callback to be invoked upon
+     *              The application-specific callback to be invoked upon
      *              receiving every advertisement report. This can be passed in
      *              as NULL, in which case scanning may not be enabled at all.
      *
@@ -711,9 +742,9 @@ public:
      * @param connectionParams
      *         Connection parameters.
      * @param scanParams
-     *          Paramters to be used while scanning for the peer.
+     *          Paramters to use while scanning for the peer.
      * @return  BLE_ERROR_NONE if connection establishment procedure is started
-     *     successfully. The onConnection callback (if set) will be invoked upon
+     *     successfully. The onConnection callback (if set) is invoked upon
      *     a connection event.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -729,43 +760,43 @@ public:
     }
 
     /**
-     * This call initiates the disconnection procedure, and its completion will
-     * be communicated to the application with an invocation of the
+     * This call initiates the disconnection procedure, and its completion is
+     * communicated to the application with an invocation of the
      * onDisconnection callback.
      *
      * @param[in] connectionHandle
      * @param[in] reason
-     *              The reason for disconnection to be sent back to the peer.
+     *              The reason for disconnection; sent back to the peer.
      */
     ble_error_t disconnect(Gap::Handle_t connectionHandle, Gap::DisconnectionReason_t reason) {
         return gap().disconnect(connectionHandle, reason);
     }
 
     /**
-     * This call initiates the disconnection procedure, and its completion will
-     * be communicated to the application with an invocation of the
+     * This call initiates the disconnection procedure, and its completion 
+     * is communicated to the application with an invocation of the
      * onDisconnection callback.
      *
      * @param  reason
-     *           The reason for disconnection to be sent back to the peer.
+     *           The reason for disconnection; sent back to the peer.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
      * ble.disconnect(reason) should be replaced with
      * ble.gap().disconnect(reason).
      *
-     * @note: this version of disconnect() doesn't take a connection handle. It
-     * will work reliably only for stacks which are limited to a single
+     * @note: This version of disconnect() doesn't take a connection handle. It
+     * works reliably only for stacks that are limited to a single
      * connection. This API should be considered *deprecated* in favour of the
-     * alternative which takes a connection handle. It will be dropped in the future.
+     * alternative, which takes a connection handle. It will be dropped in the future.
      */
     ble_error_t disconnect(Gap::DisconnectionReason_t reason) {
         return gap().disconnect(reason);
     }
 
     /**
-     * Returns the current GAP state of the device using a bitmask which
-     * describes whether the device is advertising and/or connected.
+     * Returns the current GAP state of the device using a bitmask that
+     * describes whether the device is advertising or connected.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
@@ -777,7 +808,7 @@ public:
     }
 
     /**
-     * Get the GAP peripheral preferred connection parameters. These are the
+     * Get the GAP peripheral's preferred connection parameters. These are the
      * defaults that the peripheral would like to have in a connection. The
      * choice of the connection parameters is eventually up to the central.
      *
@@ -798,7 +829,7 @@ public:
     }
 
     /**
-     * Set the GAP peripheral preferred connection parameters. These are the
+     * Set the GAP peripheral's preferred connection parameters. These are the
      * defaults that the peripheral would like to have in a connection. The
      * choice of the connection parameters is eventually up to the central.
      *
@@ -946,7 +977,7 @@ public:
     }
 
     /**
-     * Read the value of a characteristic from the local GattServer
+     * Read the value of a characteristic from the local GattServer.
      * @param[in]     attributeHandle
      *                  Attribute handle for the value attribute of the characteristic.
      * @param[out]    buffer
@@ -954,7 +985,7 @@ public:
      * @param[in/out] lengthP
      *                  Length of the buffer being supplied. If the attribute
      *                  value is longer than the size of the supplied buffer,
-     *                  this variable will hold upon return the total attribute value length
+     *                  this variable will return the total attribute value length
      *                  (excluding offset). The application may use this
      *                  information to allocate a suitable buffer size.
      *
@@ -970,7 +1001,7 @@ public:
     }
 
     /**
-     * Read the value of a characteristic from the local GattServer
+     * Read the value of a characteristic from the local GattServer.
      * @param[in]     connectionHandle
      *                  Connection Handle.
      * @param[in]     attributeHandle
@@ -980,13 +1011,13 @@ public:
      * @param[in/out] lengthP
      *                  Length of the buffer being supplied. If the attribute
      *                  value is longer than the size of the supplied buffer,
-     *                  this variable will hold upon return the total attribute value length
+     *                  this variable will return the total attribute value length
      *                  (excluding offset). The application may use this
      *                  information to allocate a suitable buffer size.
      *
      * @return BLE_ERROR_NONE if a value was read successfully into the buffer.
      *
-     * @note This API is a version of above with an additional connection handle
+     * @note This API is a version of the above, with an additional connection handle
      *     parameter to allow fetches for connection-specific multivalued
      *     attributes (such as the CCCDs).
      *
@@ -1003,16 +1034,16 @@ public:
      * Update the value of a characteristic on the local GattServer.
      *
      * @param[in] attributeHandle
-     *              Handle for the value attribute of the Characteristic.
+     *              Handle for the value attribute of the characteristic.
      * @param[in] value
-     *              A pointer to a buffer holding the new value
+     *              A pointer to a buffer holding the new value.
      * @param[in] size
      *              Size of the new value (in bytes).
      * @param[in] localOnly
      *              Should this update be kept on the local
      *              GattServer regardless of the state of the
      *              notify/indicate flag in the CCCD for this
-     *              Characteristic? If set to true, no notification
+     *              characteristic? If set to true, no notification
      *              or indication is generated.
      *
      * @return BLE_ERROR_NONE if we have successfully set the value of the attribute.
@@ -1031,7 +1062,7 @@ public:
 
     /**
      * Update the value of a characteristic on the local GattServer. A version
-     * of the same as above with connection handle parameter to allow updates
+     * of the above, with a connection handle parameter to allow updates
      * for connection-specific multivalued attributes (such as the CCCDs).
      *
      * @param[in] connectionHandle
@@ -1039,7 +1070,7 @@ public:
      * @param[in] attributeHandle
      *              Handle for the value attribute of the Characteristic.
      * @param[in] value
-     *              A pointer to a buffer holding the new value
+     *              A pointer to a buffer holding the new value.
      * @param[in] size
      *              Size of the new value (in bytes).
      * @param[in] localOnly
@@ -1066,14 +1097,14 @@ public:
 
     /**
      * Enable the BLE stack's Security Manager. The Security Manager implements
-     * the actual cryptographic algorithms and protocol exchanges that allow two
+     * the cryptographic algorithms and protocol exchanges that allow two
      * devices to securely exchange data and privately detect each other.
      * Calling this API is a prerequisite for encryption and pairing (bonding).
      *
      * @param[in]  enableBonding Allow for bonding.
-     * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
-     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
-     *                           such as availability of a display or keyboard to
+     * @param[in]  requireMITM   Require protection against man-in-the-middle attacks.
+     * @param[in]  iocaps        To specify the I/O capabilities of this peripheral,
+     *                           such as availability of a display or keyboard, to
      *                           support out-of-band exchanges of security data.
      * @param[in]  passkey       To specify a static passkey.
      *
@@ -1095,9 +1126,9 @@ public:
      * Get the security status of a connection.
      *
      * @param[in]  connectionHandle   Handle to identify the connection.
-     * @param[out] securityStatusP    security status.
+     * @param[out] securityStatusP    Security status.
      *
-     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     * @return BLE_SUCCESS or appropriate error code indicating the reason of failure.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from SecurityManager directly. A former
@@ -1112,8 +1143,8 @@ public:
      * Delete all peer device context and all related bonding information from
      * the database within the security manager.
      *
-     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
-     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     * @retval BLE_ERROR_NONE             On success; else returns an error code indicating the reason for the failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization or
      *                                    application registration.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1126,7 +1157,7 @@ public:
     }
 
     /**
-     * Setup a callback for timeout events. Refer to Gap::TimeoutSource_t for
+     * Set up a callback for timeout events. Refer to Gap::TimeoutSource_t for
      * possible event types.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1139,7 +1170,7 @@ public:
     }
 
     /**
-     * Setup a callback for connection events. Refer to Gap::ConnectionEventCallback_t.
+     * Set up a callback for connection events. Refer to Gap::ConnectionEventCallback_t.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call
@@ -1169,15 +1200,15 @@ public:
 
     /**
      * Radio Notification is a feature that enables ACTIVE and INACTIVE
-     * (nACTIVE) signals from the stack that notify the application when the
+     * (nACTIVE) signals from the stack. These notify the application when the
      * radio is in use. The signal is sent using software interrupt.
      *
-     * The ACTIVE signal is sent before the Radio Event starts. The nACTIVE
-     * signal is sent at the end of the Radio Event. These signals can be used
+     * The ACTIVE signal is sent before the radio event starts. The nACTIVE
+     * signal is sent at the end of the radio event. These signals can be used
      * by the application programmer to synchronize application logic with radio
      * activity. For example, the ACTIVE signal can be used to shut off external
      * devices to manage peak current drawn during periods when the radio is on,
-     * or to trigger sensor data collection for transmission in the Radio Event.
+     * or to trigger sensor data collection for transmission in the radio event.
      *
      * @param callback
      *          The application handler to be invoked in response to a radio
@@ -1196,11 +1227,11 @@ public:
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).
      *
-     * @Note: it is possible to chain together multiple onDataSent callbacks
+     * @Note: It is possible to chain together multiple onDataSent callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics.
      *
-     * @Note: it is also possible to setup a callback into a member function of
+     * @Note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1216,18 +1247,18 @@ public:
     }
 
     /**
-     * Setup a callback for when an attribute has its value updated by or at the
-     * connected peer. For a peripheral, this callback triggered when the local
+     * Set up a callback for when an attribute has its value updated by or at the
+     * connected peer. For a peripheral, this callback is triggered when the local
      * GATT server has an attribute updated by a write command from the peer.
      * For a Central, this callback is triggered when a response is received for
      * a write request.
      *
-     * @Note: it is possible to chain together multiple onDataWritten callbacks
+     * @Note: It is possible to chain together multiple onDataWritten callbacks
      * (potentially from different modules of an application) to receive updates
-     * to characteristics. Many services, such as DFU and UART add their own
+     * to characteristics. Many services, such as DFU and UART, add their own
      * onDataWritten callbacks behind the scenes to trap interesting events.
      *
-     * @Note: it is also possible to setup a callback into a member function of
+     * @Note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1243,19 +1274,19 @@ public:
     }
 
     /**
-     * Setup a callback to be invoked on the peripheral when an attribute is
+     * Set up a callback to be invoked on the peripheral when an attribute is
      * being read by a remote client.
      *
-     * @Note: this functionality may not be available on all underlying stacks.
+     * @Note: This functionality may not be available on all underlying stacks.
      * You could use GattCharacteristic::setReadAuthorizationCallback() as an
      * alternative.
      *
-     * @Note: it is possible to chain together multiple onDataRead callbacks
+     * @Note: It is possible to chain together multiple onDataRead callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics. Services may add their own onDataRead callbacks
      * behind the scenes to trap interesting events.
      *
-     * @Note: it is also possible to setup a callback into a member function of
+     * @Note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
@@ -1274,7 +1305,7 @@ public:
     }
 
     /**
-     * Setup a callback for when notifications/indications are enabled for a
+     * Set up a callback for when notifications or indications are enabled for a
      * characteristic on the local GattServer.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1287,7 +1318,7 @@ public:
     }
 
     /**
-     * Setup a callback for when notifications/indications are disabled for a
+     * Set up a callback for when notifications or indications are disabled for a
      * characteristic on the local GattServer.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1300,7 +1331,7 @@ public:
     }
 
     /**
-     * Setup a callback for when the GATT server receives a response for an
+     * Set up a callback for when the GATT server receives a response for an
      * indication event sent previously.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1313,7 +1344,7 @@ public:
     }
 
     /**
-     * Setup a callback for when the security setup procedure (key generation
+     * Set up a callback for when the security setup procedure (key generation
      * and exchange) for a link has started. This will be skipped for bonded
      * devices. The callback is passed in parameters received from the peer's
      * security request: bool allowBonding, bool requireMITM, and
@@ -1329,7 +1360,7 @@ public:
     }
 
     /**
-     * Setup a callback for when the security setup procedure (key generation
+     * Set up a callback for when the security setup procedure (key generation
      * and exchange) for a link has completed. This will be skipped for bonded
      * devices. The callback is passed in the success/failure status of the
      * security setup procedure.
@@ -1344,9 +1375,9 @@ public:
     }
 
     /**
-     * Setup a callback for when a link with the peer is secured. For bonded
-     * devices, subsequent reconnections with bonded peer will result only in
-     * this callback when the link is secured and setup procedures will not
+     * Set up a callback for when a link with the peer is secured. For bonded
+     * devices, subsequent reconnections with a bonded peer will result only in
+     * this callback when the link is secured, and setup procedures will not
      * occur unless the bonding information is either lost or deleted on either
      * or both sides. The callback is passed in a SecurityManager::SecurityMode_t according
      * to the level of security in effect for the secured link.
@@ -1361,7 +1392,7 @@ public:
     }
 
     /**
-     * Setup a callback for successful bonding; i.e. that link-specific security
+     * Set up a callback for successful bonding, meaning that link-specific security
      * context is stored persistently for a peer device.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1374,10 +1405,10 @@ public:
     }
 
     /**
-     * Setup a callback for when the passkey needs to be displayed on a
+     * Set up a callback for when the passkey needs to be displayed on a
      * peripheral with DISPLAY capability. This happens when security is
-     * configured to prevent Man-In-The-Middle attacks, and a PIN (or passkey)
-     * needs to be exchanged between the peers to authenticate the connection
+     * configured to prevent Man-In-The-Middle attacks, and the peers need to exchange 
+     * a passkey (or PIN) to authenticate the connection
      * attempt.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1390,11 +1421,21 @@ public:
     }
 
 private:
+    /**
+     * Implementation of init() [internal to BLE_API].
+     *
+     * The implementation is separated into a private method because it isn't
+     * suitable to be included in the header.
+     */
+    ble_error_t initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback);
+
+private:
     BLE(const BLE&);
     BLE &operator=(const BLE &);
 
 private:
-    BLEInstanceBase *transport; /* the device specific backend */
+    InstanceID_t     instanceID;
+    BLEInstanceBase *transport; /* The device-specific backend */
 };
 
 typedef BLE BLEDevice; /* DEPRECATED. This type alias is retained for the sake of compatibility with older
