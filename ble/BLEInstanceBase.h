@@ -18,8 +18,10 @@
 #define __BLE_DEVICE_INSTANCE_BASE__
 
 #include "Gap.h"
+#include "ble/SecurityManager.h"
+#include "ble/BLE.h"
 
-/* forward declarations */
+/* Forward declarations. */
 class GattServer;
 class GattClient;
 
@@ -30,17 +32,19 @@ class GattClient;
 class BLEInstanceBase
 {
 public:
-    virtual ble_error_t init(void)                  = 0;
-    virtual ble_error_t shutdown(void)              = 0;
-    virtual const char *getVersion(void)            = 0;
-    virtual Gap&        getGap()                    = 0;
-    virtual const Gap&  getGap() const              = 0;
-    virtual GattServer& getGattServer()             = 0;
-    virtual const GattServer& getGattServer() const = 0;
-    virtual GattClient& getGattClient()             = 0;
-    virtual SecurityManager& getSecurityManager()   = 0;
+    virtual ble_error_t            init(BLE::InstanceID_t instanceID,
+                                        FunctionPointerWithContext<BLE::InitializationCompleteCallbackContext *> initCallback) = 0;
+    virtual bool                   hasInitialized(void) const = 0;
+    virtual ble_error_t            shutdown(void)             = 0;
+    virtual const char *           getVersion(void)           = 0;
+    virtual Gap&                   getGap()                   = 0;
+    virtual const Gap&             getGap() const             = 0;
+    virtual GattServer&            getGattServer()            = 0;
+    virtual const GattServer&      getGattServer() const      = 0;
+    virtual GattClient&            getGattClient()            = 0;
+    virtual SecurityManager&       getSecurityManager()       = 0;
     virtual const SecurityManager& getSecurityManager() const = 0;
-    virtual void        waitForEvent(void)         = 0;
+    virtual void                   waitForEvent(void)         = 0;
 };
 
 /**
