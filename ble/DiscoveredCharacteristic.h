@@ -154,6 +154,10 @@ public:
         return lastHandle;
     }
 
+    void setLastHandle(GattAttribute::Handle_t last) { 
+        lastHandle = last;
+    }
+
     GattClient* getGattClient() { 
         return gattc;
     }
@@ -167,13 +171,17 @@ public:
     }
 
     friend bool operator==(const DiscoveredCharacteristic& rhs, const DiscoveredCharacteristic& lhs) {
-        return rhs.gattc == rhs.gattc && 
+        return rhs.gattc == lhs.gattc && 
                rhs.uuid == lhs.uuid &&
-               rhs.props == rhs.props &&
+               rhs.props == lhs.props &&
                rhs.declHandle == lhs.declHandle &&
                rhs.valueHandle == lhs.valueHandle &&
                rhs.lastHandle == lhs.lastHandle &&
                rhs.connHandle == lhs.connHandle;
+    }
+
+    friend bool operator !=(const DiscoveredCharacteristic& rhs, const DiscoveredCharacteristic& lhs) {
+        return !(rhs == lhs);
     }
 
 public:
@@ -182,7 +190,8 @@ public:
                                  props(),
                                  declHandle(GattAttribute::INVALID_HANDLE),
                                  valueHandle(GattAttribute::INVALID_HANDLE),
-                                 lastHandle(GattAttribute::INVALID_HANDLE) {
+                                 lastHandle(GattAttribute::INVALID_HANDLE),
+                                 connHandle() {
         /* empty */
     }
 

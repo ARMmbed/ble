@@ -34,7 +34,7 @@ public:
      *  @param function The void static function to attach (default is none)
      */
     FunctionPointerWithContext(void (*function)(ContextType context) = NULL) :
-        _function(NULL), _caller(NULL), _next(NULL) {
+        _memberFunctionAndPointer(), _caller(NULL), _next(NULL) {
         attach(function);
     }
 
@@ -47,6 +47,17 @@ public:
     FunctionPointerWithContext(T *object, void (T::*member)(ContextType context)) :
         _memberFunctionAndPointer(), _caller(NULL), _next(NULL) {
         attach(object, member);
+    }
+
+    FunctionPointerWithContext(const FunctionPointerWithContext& that) : 
+        _memberFunctionAndPointer(that._memberFunctionAndPointer), _caller(that._caller), _next(NULL) {
+    }
+
+    FunctionPointerWithContext& operator=(const FunctionPointerWithContext& that) {
+        _memberFunctionAndPointer = that._memberFunctionAndPointer;
+        _caller = that._caller; 
+        _next = NULL;
+        return *this;
     }
 
     /** Attach a static function
