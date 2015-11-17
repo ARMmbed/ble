@@ -28,24 +28,25 @@ public:
      * Exposed application callback types.
      */
     struct DiscoveryCallbackParams_t {
-        DiscoveredCharacteristic& characteristic;
-        DiscoveredCharacteristicDescriptor& descriptor;
+        const DiscoveredCharacteristic& characteristic;
+        const DiscoveredCharacteristicDescriptor& descriptor;
     };
 
     struct TerminationCallbackParams_t { 
-        DiscoveredCharacteristic& characteristic;
+        const DiscoveredCharacteristic& characteristic;
+        ble_error_t status;
     };
 
     /**
      * Callback type for when a matching characteristic descriptor is found during 
      * characteristic descriptor discovery. The receiving function is passed in a 
-     * pointer to a DiscoveredCharacteristicDescriptor object which will remain 
+     * pointer to a DiscoveryCallbackParams_t object which will remain 
      * valid for the lifetime of the callback. Memory for this object is owned by 
      * the BLE_API eventing framework. The application can safely make a persistent 
      * shallow-copy of this object in order to work with the service beyond the 
      * callback.
      */
-    typedef FunctionPointerWithContext<const DiscoveredCharacteristicDescriptor*> DiscoveryCallback_t;
+    typedef FunctionPointerWithContext<const DiscoveryCallbackParams_t*> DiscoveryCallback_t;
 
     /**
      * Callback type for when characteristic descriptor discovery terminates.

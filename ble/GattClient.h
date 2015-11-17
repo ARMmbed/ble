@@ -20,6 +20,7 @@
 #include "Gap.h"
 #include "GattAttribute.h"
 #include "ServiceDiscovery.h"
+#include "CharacteristicDescriptorDiscovery.h"
 
 #include "GattCallbackParamTypes.h"
 
@@ -273,6 +274,52 @@ public:
         (void)callback; /* avoid compiler warnings about ununsed variables */
 
         /* Requesting action from porter(s): override this API if this capability is supported. */
+    }
+
+    /**
+     * @brief launch discovery of descriptors for a given characteristic
+     * @details This function will discover all descriptors available for a 
+     * specific characteristic. 
+     * 
+     * @param characteristic The characteristic targeted by this discovery
+     * @param callback This is the application callback for each descriptors 
+     * found. 
+     * @note service discovery may still be active when the callback is issued; 
+     * calling asynchronous BLE-stack APIs from within this application callback 
+     * might cause the stack to abort the discovery. If this becomes an issue, 
+     * it may be better to make local copy of the DiscoveredCharacteristicDescriptor 
+     * and wait for characteristic descriptor discovery to terminate before 
+     * operating on the descriptor.
+     * 
+     * @return 
+     *   BLE_ERROR_NONE if characteristic descriptor discovery is launched 
+     *   successfully; else an appropriate error.
+     */
+    virtual ble_error_t discoverCharacteristicDescriptors(
+        const DiscoveredCharacteristic& characteristic,
+        CharacteristicDescriptorDiscovery::DiscoveryCallback_t discoveryCallback,
+        CharacteristicDescriptorDiscovery::TerminationCallback_t terminationCallback) {
+        (void) characteristic;
+        (void) discoveryCallback;
+        (void) terminationCallback;
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+    }
+
+    /**
+     * Is characteristic descriptor discovery currently active?
+     */
+    virtual bool isCharacteristicDiscoveryActive(const DiscoveredCharacteristic& characteristic) const {
+        (void) characteristic;
+        return false; /* Requesting action from porter(s): override this API if this capability is supported. */
+    }
+
+    /**
+     * Terminate an ongoing characteristic descriptor discovery. This should result 
+     * in an invocation of the TerminationCallback if characteristic descriptor discovery is active.
+     */
+    virtual void terminateCharacteristicDiscovery(const DiscoveredCharacteristic& characteristic) {
+        /* Requesting action from porter(s): override this API if this capability is supported. */
+        (void) characteristic;
     }
 
     /**

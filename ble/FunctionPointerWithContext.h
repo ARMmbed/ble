@@ -26,6 +26,7 @@ template <typename ContextType>
 class FunctionPointerWithContext {
 public:
     typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
+    typedef const FunctionPointerWithContext<ContextType> *cpFunctionPointerWithContext_t;
     typedef void (*pvoidfcontext_t)(ContextType context);
 
     /** Create a FunctionPointerWithContext, attaching a static function
@@ -73,7 +74,7 @@ public:
      *  FunctionPointers their callbacks are invoked as well.
      *  @Note: all chained callbacks stack up; so hopefully there won't be too
      *  many FunctionPointers in a chain. */
-    void call(ContextType context) {
+    void call(ContextType context) const {
         _caller(this, context);
 
         /* Propagate the call to next in the chain. */
@@ -101,9 +102,18 @@ public:
         return (pvoidfcontext_t)_function;
     }
 
+    friend bool operator==(const FunctionPointerWithContext& lhs, const FunctionPointerWithContext& rhs) {
+        return rhs._caller == lhs._caller &&
+               memcmp(
+                   &rhs._memberFunctionAndPointer, 
+                   &lhs._memberFunctionAndPointer, 
+                   sizeof(rhs._memberFunctionAndPointer)
+               ) == 0;
+    }
+
 private:
     template<typename T>
-    static void membercaller(pFunctionPointerWithContext_t self, ContextType context) {
+    static void membercaller(cpFunctionPointerWithContext_t self, ContextType context) {
         if (self->_memberFunctionAndPointer._object) {
             T *o = static_cast<T *>(self->_memberFunctionAndPointer._object);
             void (T::*m)(ContextType);
@@ -112,7 +122,7 @@ private:
         }
     }
 
-    static void functioncaller(pFunctionPointerWithContext_t self, ContextType context) {
+    static void functioncaller(cpFunctionPointerWithContext_t self, ContextType context) {
         if (self->_function) {
             self->_function(context);
         }
@@ -141,10 +151,10 @@ private:
          * object this pointer and pointer to member -
          * _memberFunctionAndPointer._object will be NULL if none attached
          */
-        MemberFunctionAndPtr _memberFunctionAndPointer;
+        mutable MemberFunctionAndPtr _memberFunctionAndPointer;
     };
 
-    void (*_caller)(FunctionPointerWithContext*, ContextType);
+    void (*_caller)(const FunctionPointerWithContext*, ContextType);
 
     pFunctionPointerWithContext_t _next;                /**< Optional link to make a chain out of functionPointers; this
                                                          *   allows chaining function pointers without requiring

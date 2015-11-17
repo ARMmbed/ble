@@ -21,6 +21,9 @@
 #include "Gap.h"
 #include "GattAttribute.h"
 #include "GattClient.h"
+#include "CharacteristicDescriptorDiscovery.h"
+#include "ble/DiscoveredCharacteristicDescriptor.h"
+
 
 /**
  * Structure for holding information about the service and the characteristics
@@ -46,29 +49,20 @@ public:
         bool indicate(void)        const {return _indicate;       }
         bool authSignedWrite(void) const {return _authSignedWrite;}
 
+        friend bool operator==(Properties_t rhs, Properties_t lhs) {
+            return rhs._broadcast == lhs._broadcast &&
+                   rhs._read == lhs._read &&
+                   rhs._writeWoResp == lhs._writeWoResp &&
+                   rhs._write == lhs._write &&
+                   rhs._notify == lhs._notify &&
+                   rhs._indicate == lhs._indicate &&
+                   rhs._authSignedWrite == lhs._authSignedWrite;
+        }
+
     private:
         operator uint8_t()  const; /* disallow implicit conversion into an integer */
         operator unsigned() const; /* disallow implicit conversion into an integer */
     };
-
-    /**
-     * Structure for holding information about the service and the characteristics
-     * found during the discovery process.
-     */
-    struct DiscoveredDescriptor {
-        GattAttribute::Handle_t handle; /**< Descriptor Handle. */
-        UUID                    uuid;   /**< Descriptor UUID. */
-    };
-
-    /**
-     * Callback type for when a characteristic descriptor is found during descriptor-
-     * discovery. The receiving function is passed in a pointer to a
-     * DiscoveredDescriptor object which will remain valid for the lifetime
-     * of the callback. Memory for this object is owned by the BLE_API eventing
-     * framework. The application can safely make a persistent shallow-copy of
-     * this object in order to work with the characteristic beyond the callback.
-     */
-    typedef void (*DescriptorCallback_t)(const DiscoveredDescriptor *);
 
     /**
      * Initiate (or continue) a read for the value attribute, optionally at a
@@ -108,13 +102,13 @@ public:
     /**
      * Initiate a GATT Characteristic Descriptor Discovery procedure for descriptors within this characteristic.
      *
-     * @param  callback
-     * @param  matchingUUID
-     *           filter for descriptors. Defaults to wildcard which will discover all descriptors.
+     * @param onCharacteristicDiscovered This callback will be called every time a descriptor is discovered
+     * @param onTermination This callback will be called when the discovery process is over.
      *
      * @return  BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
      */
-    ble_error_t discoverDescriptors(DescriptorCallback_t callback, const UUID &matchingUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) const;
+    ble_error_t discoverDescriptors(CharacteristicDescriptorDiscovery::DiscoveryCallback_t onCharacteristicDiscovered, 
+                                    CharacteristicDescriptorDiscovery::TerminationCallback_t onTermination) const;
 
     /**
      * Perform a write procedure.
@@ -148,11 +142,38 @@ public:
         return props;
     }
 
-    const GattAttribute::Handle_t& getDeclHandle(void) const {
+    GattAttribute::Handle_t getDeclHandle(void) const {
         return declHandle;
     }
-    const GattAttribute::Handle_t& getValueHandle(void) const {
+
+    GattAttribute::Handle_t getValueHandle(void) const {
         return valueHandle;
+    }
+
+    GattAttribute::Handle_t getLastHandle(void) const {
+        return lastHandle;
+    }
+
+    GattClient* getGattClient() { 
+        return gattc;
+    }
+
+    const GattClient* getGattClient() const { 
+        return gattc;
+    }
+
+    Gap::Handle_t getConnectionHandle() const {
+        return connHandle;
+    }
+
+    friend bool operator==(const DiscoveredCharacteristic& rhs, const DiscoveredCharacteristic& lhs) {
+        return rhs.gattc == rhs.gattc && 
+               rhs.uuid == lhs.uuid &&
+               rhs.props == rhs.props &&
+               rhs.declHandle == lhs.declHandle &&
+               rhs.valueHandle == lhs.valueHandle &&
+               rhs.lastHandle == lhs.lastHandle &&
+               rhs.connHandle == lhs.connHandle;
     }
 
 public:
@@ -160,7 +181,8 @@ public:
                                  uuid(UUID::ShortUUIDBytes_t(0)),
                                  props(),
                                  declHandle(GattAttribute::INVALID_HANDLE),
-                                 valueHandle(GattAttribute::INVALID_HANDLE) {
+                                 valueHandle(GattAttribute::INVALID_HANDLE),
+                                 lastHandle(GattAttribute::INVALID_HANDLE) {
         /* empty */
     }
 
@@ -172,6 +194,7 @@ protected:
     Properties_t             props;
     GattAttribute::Handle_t  declHandle;
     GattAttribute::Handle_t  valueHandle;
+    GattAttribute::Handle_t  lastHandle;
 
     Gap::Handle_t            connHandle;
 };
