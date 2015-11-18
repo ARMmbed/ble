@@ -94,6 +94,16 @@ public:
         }
     }
 
+    /** Same as above, workaround for mbed os FunctionPointer implementation. */
+    void call(ContextType context) {
+        _caller(this, context);
+
+        /* Propagate the call to next in the chain. */
+        if (_next) {
+            _next->call(context);
+        }
+    }
+
     /**
      * Set up an external FunctionPointer as a next in the chain of related
      * callbacks. Invoking call() on the head FunctionPointer will invoke all
