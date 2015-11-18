@@ -107,8 +107,8 @@ public:
      *
      * @return  BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
      */
-    ble_error_t discoverDescriptors(CharacteristicDescriptorDiscovery::DiscoveryCallback_t onCharacteristicDiscovered, 
-                                    CharacteristicDescriptorDiscovery::TerminationCallback_t onTermination) const;
+    ble_error_t discoverDescriptors(const CharacteristicDescriptorDiscovery::DiscoveryCallback_t& onCharacteristicDiscovered, 
+                                    const CharacteristicDescriptorDiscovery::TerminationCallback_t& onTermination) const;
 
     /**
      * Perform a write procedure.

@@ -60,8 +60,8 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
 }
 
 ble_error_t DiscoveredCharacteristic::discoverDescriptors(
-    CharacteristicDescriptorDiscovery::DiscoveryCallback_t onCharacteristicDiscovered, 
-    CharacteristicDescriptorDiscovery::TerminationCallback_t onTermination) const {
+    const CharacteristicDescriptorDiscovery::DiscoveryCallback_t& onCharacteristicDiscovered, 
+    const CharacteristicDescriptorDiscovery::TerminationCallback_t& onTermination) const {
 
     if(!gattc) {
         return BLE_ERROR_INVALID_STATE;
