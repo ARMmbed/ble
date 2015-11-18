@@ -308,7 +308,8 @@ public:
     /**
      * Is characteristic descriptor discovery currently active?
      */
-    virtual bool isCharacteristicDiscoveryActive(const DiscoveredCharacteristic& characteristic) const {
+    virtual bool isCharacteristicDescriptorsDiscoveryActive(const DiscoveredCharacteristic& characteristic) const 
+     {
         (void) characteristic;
         return false; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
@@ -317,7 +318,7 @@ public:
      * Terminate an ongoing characteristic descriptor discovery. This should result 
      * in an invocation of the TerminationCallback if characteristic descriptor discovery is active.
      */
-    virtual void terminateCharacteristicDiscovery(const DiscoveredCharacteristic& characteristic) {
+    virtual void terminateCharacteristicDescriptorsDiscovery(const DiscoveredCharacteristic& characteristic) {
         /* Requesting action from porter(s): override this API if this capability is supported. */
         (void) characteristic;
     }
