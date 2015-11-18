@@ -59,6 +59,10 @@ public:
                    rhs._authSignedWrite == lhs._authSignedWrite;
         }
 
+        friend bool operator!=(Properties_t rhs, Properties_t lhs) { 
+            return !(rhs == lhs);
+        }
+
     private:
         operator uint8_t()  const; /* Disallow implicit conversion into an integer. */
         operator unsigned() const; /* Disallow implicit conversion into an integer. */
