@@ -97,6 +97,34 @@ public:
         return common_add(new FunctionPointerWithContext<ContextType>(tptr, mptr));
     }
 
+    /** 
+     * Detach a function pointer from a callchain
+     * 
+     * @oaram toDetach FunctionPointerWithContext to detach from this callchain
+     * 
+     * @return true if a function pointer has been detached and false otherwise
+     */ 
+    void detach(const FunctionPointerWithContext<ContextType>& toDetach) { 
+        pFunctionPointerWithContext_t current = chainHead;
+        pFunctionPointerWithContext_t previous = NULL;
+
+        while (current) {
+            if(*current == toDetach) { 
+                if(previous == NULL) { 
+                    chainHead = current->getNext();
+                } else {
+                    previous->chainAsNext(current->getNext());
+                }
+                delete current;
+                return true;
+            }
+
+            previous = current;
+            current = current->getNext();
+        }
+        return false;
+    }
+
     /** Clear the call chain (remove all functions in the chain).
      */
     void clear(void) {
