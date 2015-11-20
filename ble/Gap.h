@@ -959,11 +959,14 @@ public:
      */
     void onRadioNotification(void (*callback)(bool param)) {
         radioNotificationCallback.attach(callback);
+        // why does it start radio notification ? It is not even indicated in the 
+        // doc that it start the listening process
         initRadioNotification();
     }
     template <typename T>
     void onRadioNotification(T *tptr, void (T::*mptr)(bool)) {
         radioNotificationCallback.attach(tptr, mptr);
+        // why does it start radio notification ?
         initRadioNotification();
     }
 
@@ -1036,10 +1039,10 @@ protected:
     bool                             scanningActive;
 
 protected:
-    TimeoutEventCallbackChain_t           timeoutCallbackChain;
-    RadioNotificationEventCallback_t radioNotificationCallback;
-    AdvertisementReportCallback_t    onAdvertisementReport;
-    ConnectionEventCallbackChain_t connectionCallChain;
+    TimeoutEventCallbackChain_t       timeoutCallbackChain;
+    RadioNotificationEventCallback_t  radioNotificationCallback;
+    AdvertisementReportCallback_t     onAdvertisementReport;
+    ConnectionEventCallbackChain_t    connectionCallChain;
     DisconnectionEventCallbackChain_t disconnectionCallChain;
 
 private:
