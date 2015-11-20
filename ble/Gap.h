@@ -140,8 +140,9 @@ public:
         return (durationInMillis * 1000) / UNIT_1_25_MS;
     }
 
+    typedef FunctionPointerWithContext<TimeoutSource_t> TimeoutEventCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<TimeoutSource_t> TimeoutEventCallbackChain_t;
 
-    typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
     typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
     typedef void (*DisconnectionEventCallback_t)(const DisconnectionCallbackParams_t *params);
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
@@ -893,7 +894,13 @@ public:
      * Set up a callback for timeout events. Refer to TimeoutSource_t for
      * possible event types.
      */
-    void onTimeout(TimeoutEventCallback_t callback) {timeoutCallback = callback;}
+    void onTimeout(TimeoutEventCallback_t callback) {
+        timeoutCallbackChain.add(callback);
+    }
+
+    TimeoutEventCallbackChain_t& onTimeout() {
+        return timeoutCallbackChain;
+    }
 
     /**
      * Append to a chain of callbacks to be invoked upon GAP connection.
@@ -956,7 +963,7 @@ protected:
         _scanResponse(),
         state(),
         scanningActive(false),
-        timeoutCallback(NULL),
+        timeoutCallbackChain(),
         radioNotificationCallback(),
         onAdvertisementReport(),
         connectionCallChain(),
@@ -1002,8 +1009,8 @@ public:
     }
 
     void processTimeoutEvent(TimeoutSource_t source) {
-        if (timeoutCallback) {
-            timeoutCallback(source);
+        if (timeoutCallbackChain) {
+            timeoutCallbackChain(source);
         }
     }
 
@@ -1017,7 +1024,7 @@ protected:
     bool                             scanningActive;
 
 protected:
-    TimeoutEventCallback_t           timeoutCallback;
+    TimeoutEventCallbackChain_t           timeoutCallbackChain;
     RadioNotificationEventCallback_t radioNotificationCallback;
     AdvertisementReportCallback_t    onAdvertisementReport;
     CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t*>    connectionCallChain;

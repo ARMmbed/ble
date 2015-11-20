@@ -97,6 +97,14 @@ public:
         return common_add(new FunctionPointerWithContext<ContextType>(tptr, mptr));
     }
 
+    /** Add a function at the front of the chain.
+     *
+     *  @param func The FunctionPointerWithContext to add.
+     */
+    void add(const FunctionPointerWithContext<ContextType>& func) {
+        common_add(new FunctionPointerWithContext<ContextType>(func));
+    }
+
     /** 
      * Detach a function pointer from a callchain
      * 
@@ -151,6 +159,29 @@ public:
         if (chainHead) {
             chainHead->call(context);
         }
+    }
+
+    /**
+     * @brief same as above but const 
+     */
+    void call(ContextType context) const {
+        if (chainHead) {
+            chainHead->call(context);
+        }
+    }
+
+    /**
+     * @brief same as above but with function call operator
+     */
+    void operator()(ContextType context) const {
+        call(context);
+    }
+
+    typedef void (CallChainOfFunctionPointersWithContext::*bool_type)() const;
+    void True() const {}
+
+    operator bool_type() const {
+        return chainHead == NULL ? 0 : &CallChainOfFunctionPointersWithContext::True;
     }
 
 private:

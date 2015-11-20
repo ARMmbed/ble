@@ -94,6 +94,13 @@ public:
         }
     }
 
+    /**
+     * @brief Same as above
+     */
+    void operator()(ContextType context) const {
+        call(context);
+    }
+
     /** Same as above, workaround for mbed os FunctionPointer implementation. */
     void call(ContextType context) {
         _caller(this, context);
