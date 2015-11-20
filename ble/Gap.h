@@ -146,7 +146,9 @@ public:
     typedef FunctionPointerWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallback_t;
     typedef CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallbackChain_t;
 
-    typedef void (*DisconnectionEventCallback_t)(const DisconnectionCallbackParams_t *params);
+    typedef FunctionPointerWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallbackChain_t;    
+
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
     /*
@@ -924,6 +926,10 @@ public:
     template<typename T>
     void onDisconnection(T *tptr, void (T::*mptr)(const DisconnectionCallbackParams_t*)) {disconnectionCallChain.add(tptr, mptr);}
 
+    DisconnectionEventCallbackChain_t& onDisconnection() {
+        return disconnectionCallChain;
+    }
+
     /**
      * Set the application callback for radio-notification events.
      *
@@ -1034,7 +1040,7 @@ protected:
     RadioNotificationEventCallback_t radioNotificationCallback;
     AdvertisementReportCallback_t    onAdvertisementReport;
     ConnectionEventCallbackChain_t connectionCallChain;
-    CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> disconnectionCallChain;
+    DisconnectionEventCallbackChain_t disconnectionCallChain;
 
 private:
     /* Disallow copy and assignment. */
