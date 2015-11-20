@@ -143,7 +143,9 @@ public:
     typedef FunctionPointerWithContext<TimeoutSource_t> TimeoutEventCallback_t;
     typedef CallChainOfFunctionPointersWithContext<TimeoutSource_t> TimeoutEventCallbackChain_t;
 
-    typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
+    typedef FunctionPointerWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallbackChain_t;
+
     typedef void (*DisconnectionEventCallback_t)(const DisconnectionCallbackParams_t *params);
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
@@ -910,6 +912,10 @@ public:
     template<typename T>
     void onConnection(T *tptr, void (T::*mptr)(const ConnectionCallbackParams_t*)) {connectionCallChain.add(tptr, mptr);}
 
+    ConnectionEventCallbackChain_t& onconnection() { 
+        return connectionCallChain;
+    }
+
     /**
      * Append to a chain of callbacks to be invoked upon GAP disconnection.
      */
@@ -1027,7 +1033,7 @@ protected:
     TimeoutEventCallbackChain_t           timeoutCallbackChain;
     RadioNotificationEventCallback_t radioNotificationCallback;
     AdvertisementReportCallback_t    onAdvertisementReport;
-    CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t*>    connectionCallChain;
+    ConnectionEventCallbackChain_t connectionCallChain;
     CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> disconnectionCallChain;
 
 private:
