@@ -83,6 +83,8 @@ public:
      */
     ble_error_t read(uint16_t offset = 0) const;
 
+    ble_error_t read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const;
+
     /**
      * Perform a write without response procedure.
      *

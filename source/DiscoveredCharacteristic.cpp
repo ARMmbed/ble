@@ -31,6 +31,47 @@ DiscoveredCharacteristic::read(uint16_t offset) const
     return gattc->read(connHandle, valueHandle, offset);
 }
 
+
+struct OneShotReadCallback { 
+    static void launch(GattClient* client, const GattClient::ReadCallback_t& cb) { 
+        OneShotReadCallback* oneShot = new OneShotReadCallback(client, cb);
+        oneShot->attach();
+        // delete will be made when this callback is called
+    }
+
+private:
+    OneShotReadCallback(GattClient* client, const GattClient::ReadCallback_t& cb) : 
+        _client(client),
+        _callback(cb) { } 
+
+    void attach() { 
+        _client->onDataRead(makeFunctionPointer(this, &OneShotReadCallback::call));
+    }
+
+    void call(const GattReadCallbackParams* params) { 
+        _callback(params);
+        _client->onDataRead().detach(makeFunctionPointer(this, &OneShotReadCallback::call));
+        delete this;
+    }
+
+    GattClient* _client;
+    GattClient::ReadCallback_t _callback;
+};
+
+ble_error_t DiscoveredCharacteristic::read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const {
+    ble_error_t error = read(offset);
+    if(error) { 
+        return error;
+    }
+
+    OneShotReadCallback::launch(gattc, onRead);
+
+    return error;
+}
+
+
+
+
 ble_error_t
 DiscoveredCharacteristic::write(uint16_t length, const uint8_t *value) const
 {
