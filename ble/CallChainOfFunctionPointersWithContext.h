@@ -124,13 +124,12 @@ public:
                     previous->chainAsNext(current->getNext());
                 }
                 delete current;
-                return true;
+                return;
             }
 
             previous = current;
             current = current->getNext();
         }
-        return false;
     }
 
     /** Clear the call chain (remove all functions in the chain).
