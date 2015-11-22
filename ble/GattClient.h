@@ -23,18 +23,23 @@
 
 #include "GattCallbackParamTypes.h"
 
+#include "CallChainOfFunctionPointersWithContext.h"
+
 class GattClient {
 public:
-    typedef void (*ReadCallback_t)(const GattReadCallbackParams *params);
+    typedef FunctionPointerWithContext<const GattReadCallbackParams*> ReadCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const GattReadCallbackParams*> ReadCallbackChain_t;
 
     enum WriteOp_t {
         GATT_OP_WRITE_REQ = 0x01,  /**< Write request. */
         GATT_OP_WRITE_CMD = 0x02,  /**< Write command. */
     };
 
-    typedef void (*WriteCallback_t)(const GattWriteCallbackParams *params);
+    typedef FunctionPointerWithContext<const GattWriteCallbackParams*> WriteCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams*> WriteCallbackChain_t;
 
-    typedef void (*HVXCallback_t)(const GattHVXCallbackParams *params);
+    typedef FunctionPointerWithContext<const GattHVXCallbackParams*> HVXCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const GattHVXCallbackParams*> HVXCallbackChain_t;
 
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
@@ -244,7 +249,11 @@ public:
      * Set up a callback for read response events.
      */
     void onDataRead(ReadCallback_t callback) {
-        onDataReadCallback = callback;
+        onDataReadCallbackChain.add(callback);
+    }
+
+    ReadCallbackChain_t& onDataRead() {
+        return onDataReadCallbackChain;
     }
 
     /**
@@ -252,7 +261,11 @@ public:
      * @Note: Write commands (issued using writeWoResponse) don't generate a response.
      */
     void onDataWritten(WriteCallback_t callback) {
-        onDataWriteCallback = callback;
+        onDataWriteCallbackChain.add(callback);
+    }
+
+    WriteCallbackChain_t& onDataWritten() { 
+        return onDataWriteCallbackChain;
     }
 
     /**
@@ -281,7 +294,11 @@ public:
      * GATT server.
      */
     void onHVX(HVXCallback_t callback) {
-        onHVXCallback = callback;
+        onHVXCallbackChain.add(callback);
+    }
+
+    HVXCallbackChain_t& onHVX() { 
+        return onHVXCallbackChain;
     }
 
 protected:
@@ -292,27 +309,23 @@ protected:
     /* Entry points for the underlying stack to report events back to the user. */
 public:
     void processReadResponse(const GattReadCallbackParams *params) {
-        if (onDataReadCallback) {
-            onDataReadCallback(params);
-        }
+        onDataReadCallbackChain(params);
     }
 
     void processWriteResponse(const GattWriteCallbackParams *params) {
-        if (onDataWriteCallback) {
-            onDataWriteCallback(params);
-        }
+        onDataWriteCallbackChain(params);
     }
 
     void processHVXEvent(const GattHVXCallbackParams *params) {
-        if (onHVXCallback) {
-            onHVXCallback(params);
+        if (onHVXCallbackChain) {
+            onHVXCallbackChain(params);
         }
     }
 
 protected:
-    ReadCallback_t  onDataReadCallback;
-    WriteCallback_t onDataWriteCallback;
-    HVXCallback_t   onHVXCallback;
+    ReadCallbackChain_t  onDataReadCallbackChain;
+    WriteCallbackChain_t onDataWriteCallbackChain;
+    HVXCallbackChain_t   onHVXCallbackChain;
 
 private:
     /* Disallow copy and assignment. */
