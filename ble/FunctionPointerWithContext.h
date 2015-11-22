@@ -111,6 +111,19 @@ public:
         }
     }
 
+    typedef void (FunctionPointerWithContext::*bool_type)() const;
+
+    /** 
+     * implementation of safe bool operator
+     */
+    operator bool_type() const {
+        if(_function || _memberFunctionAndPointer._object) { 
+            return &FunctionPointerWithContext::trueValue;
+        }
+
+        return 0;
+    }
+
     /**
      * Set up an external FunctionPointer as a next in the chain of related
      * callbacks. Invoking call() on the head FunctionPointer will invoke all
@@ -155,6 +168,12 @@ private:
             self->_function(context);
         }
     }
+
+    /**
+     * @brief True value used in conversion to bool, this function is useless 
+     * beside this usage
+     */
+    void trueValue() const {}
 
     struct MemberFunctionAndPtr {
         /*
