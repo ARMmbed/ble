@@ -118,9 +118,15 @@ public:
 
         while (current) {
             if(*current == toDetach) { 
-                if(previous == NULL) { 
+                if(previous == NULL) {
+                    if(currentCalled == current) { 
+                        currentCalled = NULL;
+                    }
                     chainHead = current->getNext();
                 } else {
+                    if(currentCalled == current) { 
+                        currentCalled = previous;
+                    }
                     previous->chainAsNext(current->getNext());
                 }
                 delete current;
@@ -155,17 +161,23 @@ public:
      *        chained FunctionPointers.
      */
     void call(ContextType context) {
-        if (chainHead) {
-            chainHead->call(context);
-        }
+        ((const CallChainOfFunctionPointersWithContext*) this)->call(context);
     }
 
     /**
      * @brief same as above but const 
      */
     void call(ContextType context) const {
-        if (chainHead) {
-            chainHead->call(context);
+        currentCalled = chainHead;
+
+        while(currentCalled) { 
+            currentCalled->call(context);
+            // if this was the head and the call removed the head
+            if(currentCalled == NULL) { 
+                currentCalled = chainHead;
+            } else {
+                currentCalled = currentCalled->getNext();
+            }
         }
     }
 
@@ -197,6 +209,8 @@ private:
 
 private:
     pFunctionPointerWithContext_t chainHead;
+    mutable pFunctionPointerWithContext_t currentCalled;
+
 
     /* Disallow copy constructor and assignment operators. */
 private:

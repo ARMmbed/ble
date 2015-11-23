@@ -104,11 +104,6 @@ public:
     /** Same as above, workaround for mbed os FunctionPointer implementation. */
     void call(ContextType context) {
         _caller(this, context);
-
-        /* Propagate the call to next in the chain. */
-        if (_next) {
-            _next->call(context);
-        }
     }
 
     typedef void (FunctionPointerWithContext::*bool_type)() const;
