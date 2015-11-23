@@ -89,24 +89,6 @@ public:
     */
     /**********************************************************************/
     enum DataType_t {
-<<<<<<< HEAD
-        FLAGS                              = 0x01, /**< \ref *Flags. */
-        INCOMPLETE_LIST_16BIT_SERVICE_IDS  = 0x02, /**< Incomplete list of 16-bit service IDs. */
-        COMPLETE_LIST_16BIT_SERVICE_IDS    = 0x03, /**< Complete list of 16-bit service IDs. */
-        INCOMPLETE_LIST_32BIT_SERVICE_IDS  = 0x04, /**< Incomplete list of 32-bit service IDs (not relevant for Bluetooth 4.0). */
-        COMPLETE_LIST_32BIT_SERVICE_IDS    = 0x05, /**< Complete list of 32-bit service IDs (not relevant for Bluetooth 4.0). */
-        INCOMPLETE_LIST_128BIT_SERVICE_IDS = 0x06, /**< Incomplete list of 128-bit service IDs. */
-        COMPLETE_LIST_128BIT_SERVICE_IDS   = 0x07, /**< Complete list of 128-bit service IDs. */
-        SHORTENED_LOCAL_NAME               = 0x08, /**< Shortened local name. */
-        COMPLETE_LOCAL_NAME                = 0x09, /**< Complete local name. */
-        TX_POWER_LEVEL                     = 0x0A, /**< TX power level (in dBm). */
-        DEVICE_ID                          = 0x10, /**< Device ID. */
-        SLAVE_CONNECTION_INTERVAL_RANGE    = 0x12, /**< Slave connection interval range. */
-        SERVICE_DATA                       = 0x16, /**< Service data. */
-        APPEARANCE                         = 0x19, /**< \ref Appearance. */
-        ADVERTISING_INTERVAL               = 0x1A, /**< Advertising interval. */
-        MANUFACTURER_SPECIFIC_DATA         = 0xFF  /**< Manufacturer specific data. */
-=======
         FLAGS                              = 0x01, /**< \ref *Flags */
         INCOMPLETE_LIST_16BIT_SERVICE_IDS  = 0x02, /**< Incomplete list of 16-bit Service IDs */
         COMPLETE_LIST_16BIT_SERVICE_IDS    = 0x03, /**< Complete list of 16-bit Service IDs */
@@ -124,7 +106,6 @@ public:
         APPEARANCE                         = 0x19, /**< \ref Appearance */
         ADVERTISING_INTERVAL               = 0x1A, /**< Advertising Interval */
         MANUFACTURER_SPECIFIC_DATA         = 0xFF  /**< Manufacturer Specific Data */
->>>>>>> advertising
     };
     typedef enum DataType_t DataType; /* Deprecated type alias. This may be dropped in a future release. */
 
@@ -230,12 +211,6 @@ public:
      */
     ble_error_t addData(DataType advDataType, const uint8_t *payload, uint8_t len)
     {
-<<<<<<< HEAD
-        /* To Do: Check if an AD type already exists and if the existing */
-        /*       value is exclusive or not (flags and so on). */
-
-        /* Make sure we don't exceed the 31 byte payload limit. */
-=======
         ble_error_t result = BLE_ERROR_BUFFER_OVERFLOW;
 
         // find field
@@ -244,6 +219,7 @@ public:
         // Field type already exist, either add to field or replace
         if (field) {
             switch(advDataType) {
+                //  These fields will be overwritten with the new value
                 case FLAGS:
                 case SHORTENED_LOCAL_NAME:
                 case COMPLETE_LOCAL_NAME:
@@ -277,6 +253,7 @@ public:
 
                     break;
                 }
+                // These fields will have the new data appended if there is sufficient space
                 case INCOMPLETE_LIST_16BIT_SERVICE_IDS:
                 case COMPLETE_LIST_16BIT_SERVICE_IDS:
                 case INCOMPLETE_LIST_32BIT_SERVICE_IDS:
@@ -286,10 +263,12 @@ public:
                 case LIST_128BIT_SOLICITATION_IDS: {
                     // check if data fits
                     if ((_payloadLen + len) <= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
-                        // make room for new field
+                        // make room for new field by moving the remainder of the
+                        // advertisement payload "to the right" starting after the
+                        // TYPE field.
                         uint8_t* end = &_payload[_payloadLen];
 
-                        while (field < end) {
+                        while (&field[1] < end) {
                             end[len] = *end;
                             end--;
                         }
@@ -303,11 +282,15 @@ public:
                         field[0] += len;
                         _payloadLen += len;
 
+                        // re-insert TYPE field
+                        field[1] = advDataType;
+
                         result = BLE_ERROR_NONE;
                     }
 
                     break;
                 }
+                // Field exists but is not recognized. Abort operation.
                 default:
                     break;
             }
@@ -317,32 +300,6 @@ public:
         }
 
         return result;
-    }
-
-    /**
-     * Append advertising data based on the specified AD type (see DataType)
-     */
-    ble_error_t appendField(DataType advDataType, const uint8_t *payload, uint8_t len)
-    {
-        /* Make sure we don't exceed the 31 byte payload limit */
->>>>>>> advertising
-        if (_payloadLen + len + 2 > GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
-            return BLE_ERROR_BUFFER_OVERFLOW;
-        }
-
-        /* Field length. */
-        memset(&_payload[_payloadLen], len + 1, 1);
-        _payloadLen++;
-
-        /* Field ID. */
-        memset(&_payload[_payloadLen], (uint8_t)advDataType, 1);
-        _payloadLen++;
-
-        /* Payload. */
-        memcpy(&_payload[_payloadLen], payload, len);
-        _payloadLen += len;
-
-        return BLE_ERROR_NONE;
     }
 
     /**
@@ -459,7 +416,43 @@ public:
 
     /**
      * Search advertisement data for field.
-     * Returns pointer to field if found, NULL otherwise.
+     * Returns pointer to the first element in the field if found, NULL otherwise.
+     * Where the first element is the length of the field.
+     */
+    const uint8_t* findField(DataType_t type) const {
+        return findField(type);
+    }
+
+private:
+    /**
+     * Append advertising data based on the specified AD type (see DataType)
+     */
+    ble_error_t appendField(DataType advDataType, const uint8_t *payload, uint8_t len)
+    {
+        /* Make sure we don't exceed the 31 byte payload limit */
+        if (_payloadLen + len + 2 > GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
+            return BLE_ERROR_BUFFER_OVERFLOW;
+        }
+
+        /* Field length. */
+        memset(&_payload[_payloadLen], len + 1, 1);
+        _payloadLen++;
+
+        /* Field ID. */
+        memset(&_payload[_payloadLen], (uint8_t)advDataType, 1);
+        _payloadLen++;
+
+        /* Payload. */
+        memcpy(&_payload[_payloadLen], payload, len);
+        _payloadLen += len;
+
+        return BLE_ERROR_NONE;
+    }
+
+    /**
+     * Search advertisement data for field.
+     * Returns pointer to the first element in the field if found, NULL otherwise.
+     * Where the first element is the length of the field.
      */
     uint8_t* findField(DataType_t type) {
         // scan through advertisement data
@@ -478,7 +471,6 @@ public:
         return NULL;
     }
 
-private:
     uint8_t  _payload[GAP_ADVERTISING_DATA_MAX_PAYLOAD];
     uint8_t  _payloadLen;
     uint16_t _appearance;
