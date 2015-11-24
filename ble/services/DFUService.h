@@ -20,7 +20,9 @@
 #include "ble/BLE.h"
 #include "ble/UUID.h"
 
-extern "C" void bootloader_start(void);
+extern "C" {
+#include "dfu_app_handler.h"
+}
 
 extern const uint8_t  DFUServiceBaseUUID[];
 extern const uint16_t DFUServiceShortUUID;
@@ -101,7 +103,13 @@ public:
                 handoverCallback();
             }
 
-            bootloader_start();
+            // Call bootloader_start trough a event handler
+            // it is a work around for bootloader_start not being public in sdk 8.1
+            ble_dfu_t *p_dfu;
+            p_dfu-> conn_handle = params->connHandle;
+            ble_dfu_evt_t *p_evt;
+            p_evt->ble_dfu_evt_type = BLE_DFU_START;
+            dfu_app_on_dfu_evt(p_dfu, p_evt);
         }
     }
 
