@@ -13,7 +13,7 @@
     "url": "https://github.com/ARMmbed/ble.git",
     "type": "git"
   },
-  "homepage": "http://mbed.org/ble",
+  "homepage": "https://developer.mbed.org/teams/Bluetooth-Low-Energy/",
   "licenses": [
     {
       "url": "https://spdx.org/licenses/Apache-2.0",
