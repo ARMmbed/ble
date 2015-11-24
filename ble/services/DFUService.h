@@ -106,7 +106,7 @@ public:
             // Call bootloader_start implicitly trough a event handler call
             // it is a work around for bootloader_start not being public in sdk 8.1
             ble_dfu_t *p_dfu;
-            p_dfu-> conn_handle = params->connHandle;
+            p_dfu->conn_handle = params->connHandle;
             ble_dfu_evt_t *p_evt;
             p_evt->ble_dfu_evt_type = BLE_DFU_START;
             dfu_app_on_dfu_evt(p_dfu, p_evt);
