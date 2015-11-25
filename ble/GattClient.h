@@ -246,24 +246,40 @@ public:
     /* Event callback handlers. */
 public:
     /**
-     * Set up a callback for read response events.
+     * Set up a callback for read response events. 
+     * It is possible to remove registered callbacks using 
+     * onDataRead().detach(callbackToRemove)
      */
     void onDataRead(ReadCallback_t callback) {
         onDataReadCallbackChain.add(callback);
     }
 
+    /**
+     * @brief provide access to the callchain of read callbacks
+     * It is possible to register callbacks using onDataRead().add(callback);
+     * It is possible to unregister callbacks using onDataRead().detach(callback) 
+     * @return The read callbacks chain
+     */
     ReadCallbackChain_t& onDataRead() {
         return onDataReadCallbackChain;
     }
 
     /**
      * Set up a callback for write response events.
+     * It is possible to remove registered callbacks using 
+     * onDataWritten().detach(callbackToRemove).
      * @Note: Write commands (issued using writeWoResponse) don't generate a response.
      */
     void onDataWritten(WriteCallback_t callback) {
         onDataWriteCallbackChain.add(callback);
     }
 
+    /**
+     * @brief provide access to the callchain of data written callbacks
+     * It is possible to register callbacks using onDataWritten().add(callback);
+     * It is possible to unregister callbacks using onDataWritten().detach(callback) 
+     * @return The data written callbacks chain
+     */
     WriteCallbackChain_t& onDataWritten() { 
         return onDataWriteCallbackChain;
     }
@@ -292,11 +308,19 @@ public:
      * Set up a callback for when the GATT client receives an update event
      * corresponding to a change in the value of a characteristic on the remote
      * GATT server.
+     * It is possible to remove registered callbacks using onHVX().detach(callbackToRemove).
      */
     void onHVX(HVXCallback_t callback) {
         onHVXCallbackChain.add(callback);
     }
 
+
+    /**
+     * @brief provide access to the callchain of HVX callbacks
+     * It is possible to register callbacks using onHVX().add(callback);
+     * It is possible to unregister callbacks using onHVX().detach(callback) 
+     * @return The HVX callbacks chain
+     */
     HVXCallbackChain_t& onHVX() { 
         return onHVXCallbackChain;
     }

@@ -33,7 +33,7 @@ DiscoveredCharacteristic::read(uint16_t offset) const
 
 struct OneShotReadCallback { 
     static void launch(GattClient* client, Gap::Handle_t connHandle, 
-                       GattAttribute::Handle_t handle,const GattClient::ReadCallback_t& cb) { 
+                       GattAttribute::Handle_t handle, const GattClient::ReadCallback_t& cb) { 
         OneShotReadCallback* oneShot = new OneShotReadCallback(client, connHandle, handle, cb);
         oneShot->attach();
         // delete will be made when this callback is called
@@ -107,7 +107,7 @@ DiscoveredCharacteristic::writeWoResponse(uint16_t length, const uint8_t *value)
 
 struct OneShotWriteCallback { 
     static void launch(GattClient* client, Gap::Handle_t connHandle, 
-                       GattAttribute::Handle_t handle,const GattClient::WriteCallback_t& cb) { 
+                       GattAttribute::Handle_t handle, const GattClient::WriteCallback_t& cb) { 
         OneShotWriteCallback* oneShot = new OneShotWriteCallback(client, connHandle, handle, cb);
         oneShot->attach();
         // delete will be made when this callback is called

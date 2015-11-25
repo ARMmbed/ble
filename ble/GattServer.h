@@ -274,6 +274,8 @@ public:
      *
      * @Note: It is also possible to set up a callback into a member function of
      * some object.
+     * 
+     * @Note It is possible to unregister a callback using onDataWritten().detach(callback)
      */
     void onDataWritten(const DataWrittenCallback_t& callback) {dataWrittenCallChain.add(callback);}
     template <typename T>
@@ -281,6 +283,12 @@ public:
         dataWrittenCallChain.add(objPtr, memberPtr);
     }
 
+    /**
+     * @brief provide access to the callchain of data written event callbacks
+     * It is possible to register callbacks using onDataWritten().add(callback);
+     * It is possible to unregister callbacks using onDataWritten().detach(callback) 
+     * @return The data written event callbacks chain
+     */    
     DataWrittenCallbackChain_t& onDataWritten() {
         return dataWrittenCallChain;
     }
@@ -300,6 +308,8 @@ public:
      *
      * @Note: It is also possible to set up a callback into a member function of
      * some object.
+     *
+     * @Note It is possible to unregister a callback using onDataRead().detach(callback)
      *
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
      *         else BLE_ERROR_NONE.
@@ -322,6 +332,12 @@ public:
         return BLE_ERROR_NONE;
     }
 
+    /**
+     * @brief provide access to the callchain of data read event callbacks
+     * It is possible to register callbacks using onDataRead().add(callback);
+     * It is possible to unregister callbacks using onDataRead().detach(callback) 
+     * @return The data read event callbacks chain
+     */
     DataReadCallbackChain_t& onDataRead() {
         return dataReadCallChain;
     }

@@ -897,35 +897,56 @@ public:
     /**
      * Set up a callback for timeout events. Refer to TimeoutSource_t for
      * possible event types.
+     * @note It is possible to unregister callbacks using onTimeout().detach(callback)
      */
     void onTimeout(TimeoutEventCallback_t callback) {
         timeoutCallbackChain.add(callback);
     }
 
+    /**
+     * @brief provide access to the callchain of timeout event callbacks
+     * It is possible to register callbacks using onTimeout().add(callback);
+     * It is possible to unregister callbacks using onTimeout().detach(callback) 
+     * @return The timeout event callbacks chain
+     */
     TimeoutEventCallbackChain_t& onTimeout() {
         return timeoutCallbackChain;
     }
 
     /**
      * Append to a chain of callbacks to be invoked upon GAP connection.
+     * @note It is possible to unregister callbacks using onConnection().detach(callback)
      */
     void onConnection(ConnectionEventCallback_t callback) {connectionCallChain.add(callback);}
 
     template<typename T>
     void onConnection(T *tptr, void (T::*mptr)(const ConnectionCallbackParams_t*)) {connectionCallChain.add(tptr, mptr);}
 
+    /**
+     * @brief provide access to the callchain of connection event callbacks
+     * It is possible to register callbacks using onConnection().add(callback);
+     * It is possible to unregister callbacks using onConnection().detach(callback) 
+     * @return The connection event callbacks chain
+     */
     ConnectionEventCallbackChain_t& onconnection() { 
         return connectionCallChain;
     }
 
     /**
      * Append to a chain of callbacks to be invoked upon GAP disconnection.
+     * @note It is possible to unregister callbacks using onDisconnection().detach(callback)
      */
     void onDisconnection(DisconnectionEventCallback_t callback) {disconnectionCallChain.add(callback);}
 
     template<typename T>
     void onDisconnection(T *tptr, void (T::*mptr)(const DisconnectionCallbackParams_t*)) {disconnectionCallChain.add(tptr, mptr);}
 
+    /**
+     * @brief provide access to the callchain of disconnection event callbacks
+     * It is possible to register callbacks using onDisconnection().add(callback);
+     * It is possible to unregister callbacks using onDisconnection().detach(callback) 
+     * @return The disconnection event callbacks chain
+     */
     DisconnectionEventCallbackChain_t& onDisconnection() {
         return disconnectionCallChain;
     }
@@ -959,15 +980,10 @@ public:
      */
     void onRadioNotification(void (*callback)(bool param)) {
         radioNotificationCallback.attach(callback);
-        // why does it start radio notification ? It is not even indicated in the 
-        // doc that it start the listening process
-        initRadioNotification();
     }
     template <typename T>
     void onRadioNotification(T *tptr, void (T::*mptr)(bool)) {
         radioNotificationCallback.attach(tptr, mptr);
-        // why does it start radio notification ?
-        initRadioNotification();
     }
 
 protected:

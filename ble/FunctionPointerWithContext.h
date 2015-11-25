@@ -18,12 +18,13 @@
 #define MBED_FUNCTIONPOINTER_WITH_CONTEXT_H
 
 #include <string.h>
+#include "SafeBool.h"
 
 /** A class for storing and calling a pointer to a static or member void function
  *  that takes a context.
  */
 template <typename ContextType>
-class FunctionPointerWithContext {
+class FunctionPointerWithContext : public SafeBool<FunctionPointerWithContext<ContextType> > {
 public:
     typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
     typedef const FunctionPointerWithContext<ContextType> *cpFunctionPointerWithContext_t;
@@ -87,11 +88,6 @@ public:
      *  many FunctionPointers in a chain. */
     void call(ContextType context) const {
         _caller(this, context);
-
-        /* Propagate the call to next in the chain. */
-        if (_next) {
-            _next->call(context);
-        }
     }
 
     /**
@@ -103,7 +99,7 @@ public:
 
     /** Same as above, workaround for mbed os FunctionPointer implementation. */
     void call(ContextType context) {
-        _caller(this, context);
+        ((const FunctionPointerWithContext*)  this)->call(context);
     }
 
     typedef void (FunctionPointerWithContext::*bool_type)() const;
@@ -111,12 +107,8 @@ public:
     /** 
      * implementation of safe bool operator
      */
-    operator bool_type() const {
-        if(_function || _memberFunctionAndPointer._object) { 
-            return &FunctionPointerWithContext::trueValue;
-        }
-
-        return 0;
+    bool toBool() const {
+        return (_function || _memberFunctionAndPointer._object);
     }
 
     /**
@@ -163,12 +155,6 @@ private:
             self->_function(context);
         }
     }
-
-    /**
-     * @brief True value used in conversion to bool, this function is useless 
-     * beside this usage
-     */
-    void trueValue() const {}
 
     struct MemberFunctionAndPtr {
         /*
