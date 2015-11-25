@@ -2,7 +2,7 @@
 This is the Github repo for the `BLE_API` used by developer.mbed.org. Please see the [mbed BLE Homepage](https://developer.mbed.org/teams/Bluetooth-Low-Energy/) for all documentation, code examples and general help.
 
 # Supported Services
-Supported GATT services and constantly being added and can be found in the (ble/services/)[https://github.com/ARMmbed/ble/tree/master/ble/services] folder.
+Supported GATT services and constantly being added and can be found in the [ble/services/](https://github.com/ARMmbed/ble/tree/master/ble/services) folder.
 
 Currently supported services include:
 * Battery
