@@ -21,8 +21,8 @@
 
 /**
 * @class BatteryService
-* @brief BLE Battery Service. This service displays the battery level from 0%->100% represented as a 8bit number.<br>
-* Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml <br>
+* @brief BLE Battery Service. This service displays the battery level from 0% to 100%, represented as an 8bit number.
+* Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.battery_service.xml
 * Battery Level Char:  https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
 */
 class BatteryService {
@@ -45,11 +45,11 @@ public:
     }
 
     /**
-     * @brief Update the battery level with a new value. Valid values range from
-     * 0..100. Anything outside this range will be ignored.
+     * @brief Update the battery level with a new value. [Valid values lie between 0 and 100];
+     * anything outside this range will be ignored.
      *
      * @param newLevel
-     *              update to battery level.
+     *              Update to battery level.
      */
     void updateBatteryLevel(uint8_t newLevel) {
         batteryLevel = newLevel;
