@@ -22,9 +22,7 @@ extern "C" {
 #endif
 
 
-/** @defgroup BLE_UUID_VALUES assigned values for BLE UUIDs.
- * @{ */
-/* Generic UUIDs, applicable to all services. */
+/*! @brief Assigned values for BLE UUIDs. */
 enum {
     BLE_UUID_UNKNOWN                             = 0x0000, /**< Reserved UUID. */
     BLE_UUID_SERVICE_PRIMARY                     = 0x2800, /**< Primary Service. */
@@ -50,11 +48,10 @@ enum {
     BLE_UUID_GAP_CHARACTERISTIC_RECONN_ADDR      = 0x2A03, /**< Reconnection Address Characteristic. */
     BLE_UUID_GAP_CHARACTERISTIC_PPCP             = 0x2A04, /**< Peripheral Preferred Connection Parameters Characteristic. */
 };
-/** @} */
 
-/** @defgroup BLE_APPEARANCES Bluetooth appearance values.
+/*! Bluetooth appearance values.
  *  @note Retrieved from http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
- * @{ */
+ */
 enum {
     BLE_APPEARANCE_UNKNOWN                             =    0, /**< Unknown. */
     BLE_APPEARANCE_GENERIC_PHONE                       =   64, /**< Generic Phone. */
@@ -106,13 +103,9 @@ enum {
     BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_POD          = 5187, /**< Location Pod (Outdoor Sports Activity subtype). */
     BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_AND_NAV_POD  = 5188, /**< Location and Navigation Pod (Outdoor Sports Activity subtype). */
 };
-/** @} */
 
-/**************************************************************************/
-/*!
-    \brief  Error codes for the BLE API
-*/
-/**************************************************************************/
+
+/*! @brief Error codes for the BLE API. */
 enum ble_error_t {
     BLE_ERROR_NONE                      = 0, /**< No error. */
     BLE_ERROR_BUFFER_OVERFLOW           = 1, /**< The requested action would cause a buffer overflow and has been aborted. */
