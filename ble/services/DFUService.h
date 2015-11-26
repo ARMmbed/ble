@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#ifdef TARGET_NRF51822 /* DFU only supported on nrf51 platforms */
+
 #ifndef __BLE_DFU_SERVICE_H__
 #define __BLE_DFU_SERVICE_H__
 
@@ -141,3 +143,4 @@ protected:
 };
 
 #endif /* #ifndef __BLE_DFU_SERVICE_H__*/
+#endif /* #ifdef TARGET_NRF51822 */
