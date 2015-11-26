@@ -25,17 +25,17 @@ class SecurityManager {
 public:
     enum SecurityMode_t {
         SECURITY_MODE_NO_ACCESS,
-        SECURITY_MODE_ENCRYPTION_OPEN_LINK, /**< require no protection, open link. */
-        SECURITY_MODE_ENCRYPTION_NO_MITM,   /**< require encryption, but no MITM protection. */
-        SECURITY_MODE_ENCRYPTION_WITH_MITM, /**< require encryption and MITM protection. */
-        SECURITY_MODE_SIGNED_NO_MITM,       /**< require signing or encryption, but no MITM protection. */
-        SECURITY_MODE_SIGNED_WITH_MITM,     /**< require signing or encryption, and MITM protection. */
+        SECURITY_MODE_ENCRYPTION_OPEN_LINK, /**< Require no protection, open link. */
+        SECURITY_MODE_ENCRYPTION_NO_MITM,   /**< Require encryption, but no MITM protection. */
+        SECURITY_MODE_ENCRYPTION_WITH_MITM, /**< Require encryption and MITM protection. */
+        SECURITY_MODE_SIGNED_NO_MITM,       /**< Require signing or encryption, but no MITM protection. */
+        SECURITY_MODE_SIGNED_WITH_MITM,     /**< Require signing or encryption, and MITM protection. */
     };
 
     /**
-     * @brief Defines possible security status/states.
+     * @brief Defines possible security status or states.
      *
-     * @details Defines possible security status/states of a link when requested by getLinkSecurity().
+     * @details Defines possible security status or states of a link when requested by getLinkSecurity().
      */
     enum LinkSecurityStatus_t {
         NOT_ENCRYPTED,          /**< The link is not secured. */
@@ -44,11 +44,11 @@ public:
     };
 
     enum SecurityIOCapabilities_t {
-      IO_CAPS_DISPLAY_ONLY     = 0x00,   /**< Display Only. */
-      IO_CAPS_DISPLAY_YESNO    = 0x01,   /**< Display and Yes/No entry. */
-      IO_CAPS_KEYBOARD_ONLY    = 0x02,   /**< Keyboard Only. */
+      IO_CAPS_DISPLAY_ONLY     = 0x00,   /**< Display only. */
+      IO_CAPS_DISPLAY_YESNO    = 0x01,   /**< Display and yes/no entry. */
+      IO_CAPS_KEYBOARD_ONLY    = 0x02,   /**< Keyboard only. */
       IO_CAPS_NONE             = 0x03,   /**< No I/O capabilities. */
-      IO_CAPS_KEYBOARD_DISPLAY = 0x04,   /**< Keyboard and Display. */
+      IO_CAPS_KEYBOARD_DISPLAY = 0x04,   /**< Keyboard and display. */
     };
 
     enum SecurityCompletionStatus_t {
@@ -94,8 +94,8 @@ public:
      *
      * @param[in]  enableBonding Allow for bonding.
      * @param[in]  requireMITM   Require protection for man-in-the-middle attacks.
-     * @param[in]  iocaps        To specify IO capabilities of this peripheral,
-     *                           such as availability of a display or keyboard to
+     * @param[in]  iocaps        To specify the I/O capabilities of this peripheral,
+     *                           such as availability of a display or keyboard, to
      *                           support out-of-band exchanges of security data.
      * @param[in]  passkey       To specify a static passkey.
      *
@@ -105,29 +105,29 @@ public:
                              bool                     requireMITM   = true,
                              SecurityIOCapabilities_t iocaps        = IO_CAPS_NONE,
                              const Passkey_t          passkey       = NULL) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)enableBonding;
         (void)requireMITM;
         (void)iocaps;
         (void)passkey;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if security is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if security is supported. */
     }
 
     /**
      * Get the security status of a connection.
      *
      * @param[in]  connectionHandle   Handle to identify the connection.
-     * @param[out] securityStatusP    security status.
+     * @param[out] securityStatusP    Security status.
      *
-     * @return BLE_SUCCESS Or appropriate error code indicating reason for failure.
+     * @return BLE_SUCCESS or appropriate error code indicating the failure reason.
      */
     virtual ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, LinkSecurityStatus_t *securityStatusP) {
-        /* avoid compiler warnings about unused variables */
+        /* Avoid compiler warnings about unused variables. */
         (void)connectionHandle;
         (void)securityStatusP;
 
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if security is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if security is supported. */
     }
 
     /**
@@ -135,30 +135,30 @@ public:
      * the database within the security manager.
      *
      * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
-     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization and/or
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization or
      *                                    application registration.
      */
     virtual ble_error_t purgeAllBondingState(void) {
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if security is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if security is supported. */
     }
 
     /* Event callback handlers. */
 public:
     /**
-     * To indicate that security procedure for link has started.
+     * To indicate that a security procedure for the link has started.
      */
     virtual void onSecuritySetupInitiated(SecuritySetupInitiatedCallback_t callback) {securitySetupInitiatedCallback = callback;}
 
     /**
-     * To indicate that security procedure for link has completed.
+     * To indicate that the security procedure for the link has completed.
      */
     virtual void onSecuritySetupCompleted(SecuritySetupCompletedCallback_t callback) {securitySetupCompletedCallback = callback;}
 
     /**
-     * To indicate that link with the peer is secured. For bonded devices,
-     * subsequent re-connections with bonded peer will result only in this callback
-     * when the link is secured and setup procedures will not occur unless the
-     * bonding information is either lost or deleted on either or both sides.
+     * To indicate that the link with the peer is secured. For bonded devices,
+     * subsequent reconnections with a bonded peer will result only in this callback
+     * when the link is secured; setup procedures will not occur (unless the
+     * bonding information is either lost or deleted on either or both sides).
      */
     virtual void onLinkSecured(LinkSecuredCallback_t callback) {linkSecuredCallback = callback;}
 

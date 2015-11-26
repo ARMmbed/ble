@@ -29,7 +29,7 @@
 class DiscoveredCharacteristic {
 public:
     struct Properties_t {
-        uint8_t _broadcast       :1; /**< Broadcasting of the value permitted. */
+        uint8_t _broadcast       :1; /**< Broadcasting the value permitted. */
         uint8_t _read            :1; /**< Reading the value permitted. */
         uint8_t _writeWoResp     :1; /**< Writing the value with Write Command permitted. */
         uint8_t _write           :1; /**< Writing the value with Write Request permitted. */
@@ -47,8 +47,8 @@ public:
         bool authSignedWrite(void) const {return _authSignedWrite;}
 
     private:
-        operator uint8_t()  const; /* disallow implicit conversion into an integer */
-        operator unsigned() const; /* disallow implicit conversion into an integer */
+        operator uint8_t()  const; /* Disallow implicit conversion into an integer. */
+        operator unsigned() const; /* Disallow implicit conversion into an integer. */
     };
 
     /**
@@ -72,16 +72,18 @@ public:
 
     /**
      * Initiate (or continue) a read for the value attribute, optionally at a
-     * given offset. If the Characteristic or Descriptor to be read is longer
+     * given offset. If the characteristic or descriptor to be read is longer
      * than ATT_MTU - 1, this function must be called multiple times with
      * appropriate offset to read the complete value.
      *
-     * @return BLE_ERROR_NONE if a read has been initiated, else
+     * @return BLE_ERROR_NONE if a read has been initiated, or
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
-     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_STACK_BUSY if some client procedure is already in progress, or
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t read(uint16_t offset = 0) const;
+
+    ble_error_t read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const;
 
     /**
      * Perform a write without response procedure.
@@ -97,9 +99,9 @@ public:
      *         writeWoResponse operations; the user may want to use the onDataSent()
      *         callback for flow-control.
      *
-     * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
+     * @retval BLE_ERROR_NONE Successfully started the Write procedure, or
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
-     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_STACK_BUSY if some client procedure is already in progress, or
      *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
@@ -110,7 +112,7 @@ public:
      *
      * @param  callback
      * @param  matchingUUID
-     *           filter for descriptors. Defaults to wildcard which will discover all descriptors.
+     *           Filter for descriptors. Defaults to wildcard which will discover all descriptors.
      *
      * @return  BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
      */
@@ -127,13 +129,18 @@ public:
      * @note   It is important to note that a write will generate
      *         an onDataWritten() callback when the peer acknowledges the request.
      *
-     * @retval BLE_ERROR_NONE Successfully started the Write procedure, else
+     * @retval BLE_ERROR_NONE Successfully started the Write procedure, or
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
-     *         BLE_STACK_BUSY if some client procedure already in progress, or
+     *         BLE_STACK_BUSY if some client procedure is already in progress, or
      *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t write(uint16_t length, const uint8_t *value) const;
+
+    /** 
+     * Same as above but register the callback wich will be called once the data has been written
+     */
+    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onRead) const;
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);

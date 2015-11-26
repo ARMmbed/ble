@@ -27,16 +27,16 @@ public:
 public:
     /**
      *  @brief  Creates a new GattAttribute using the specified
-     *          UUID, value length, and inital value
+     *          UUID, value length, and inital value.
      *
      *  @param[in]  uuid
-     *              The UUID to use for this attribute
+     *              The UUID to use for this attribute.
      *  @param[in]  valuePtr
      *              The memory holding the initial value.
      *  @param[in]  initialLen
-     *              The min length in bytes of this attribute's value
+     *              The min length in bytes of this attribute's value.
      *  @param[in]  maxLen
-     *              The max length in bytes of this attribute's value
+     *              The max length in bytes of this attribute's value.
      *
      *  @section EXAMPLE
      *
@@ -49,7 +49,7 @@ public:
      */
     GattAttribute(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0) :
         _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _len(initialLen), _handle() {
-        /* empty */
+        /* Empty */
     }
 
 public:
@@ -63,15 +63,15 @@ public:
     uint8_t    *getValuePtr(void)            {return _valuePtr;  }
 
 private:
-    UUID      _uuid;        /* Characteristic UUID */
+    UUID      _uuid;        /* Characteristic UUID. */
     uint8_t  *_valuePtr;
-    uint16_t  _initialLen;  /* Initial length of the value */
-    uint16_t  _lenMax;      /* Maximum length of the value */
-    uint16_t  _len;         /* Current length of the value */
+    uint16_t  _initialLen;  /* Initial length of the value. */
+    uint16_t  _lenMax;      /* Maximum length of the value. */
+    uint16_t  _len;         /* Current length of the value. */
     Handle_t  _handle;
 
 private:
-    /* disallow copy and assignment */
+    /* Disallow copy and assignment. */
     GattAttribute(const GattAttribute &);
     GattAttribute& operator=(const GattAttribute &);
 };

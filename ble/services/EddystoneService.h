@@ -17,6 +17,8 @@
 #ifndef SERVICES_EDDYSTONEBEACON_H_
 #define SERVICES_EDDYSTONEBEACON_H_
 
+#warning ble/services/EddystoneService.h is deprecated. Please use the example in 'github.com/ARMmbed/ble-examples/tree/master/BLE_EddystoneService'.
+
 #include "ble/BLE.h"
 #include "mbed.h"
 #include "CircularBuffer.h"
