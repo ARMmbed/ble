@@ -38,7 +38,7 @@ public:
      * framework. The application can safely make a persistent shallow-copy of
      * this object to work with the service beyond the callback.
      */
-    typedef void (*ServiceCallback_t)(const DiscoveredService *);
+    typedef FunctionPointerWithContext<const DiscoveredService *> ServiceCallback_t;
 
     /**
      * Callback type for when a matching characteristic is found during service-
@@ -48,12 +48,12 @@ public:
      * framework. The application can safely make a persistent shallow-copy of
      * this object to work with the characteristic beyond the callback.
      */
-    typedef void (*CharacteristicCallback_t)(const DiscoveredCharacteristic *);
+    typedef FunctionPointerWithContext<const DiscoveredCharacteristic *> CharacteristicCallback_t;
 
     /**
      * Callback type for when serviceDiscovery terminates.
      */
-    typedef void (*TerminationCallback_t)(Gap::Handle_t connectionHandle);
+    typedef FunctionPointerWithContext<Gap::Handle_t> TerminationCallback_t;
 
 public:
     /**

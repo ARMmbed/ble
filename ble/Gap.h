@@ -140,10 +140,15 @@ public:
         return (durationInMillis * 1000) / UNIT_1_25_MS;
     }
 
+    typedef FunctionPointerWithContext<TimeoutSource_t> TimeoutEventCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<TimeoutSource_t> TimeoutEventCallbackChain_t;
 
-    typedef void (*TimeoutEventCallback_t)(TimeoutSource_t source);
-    typedef void (*ConnectionEventCallback_t)(const ConnectionCallbackParams_t *params);
-    typedef void (*DisconnectionEventCallback_t)(const DisconnectionCallbackParams_t *params);
+    typedef FunctionPointerWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallbackChain_t;
+
+    typedef FunctionPointerWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallbackChain_t;    
+
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
     /*
@@ -892,11 +897,25 @@ public:
     /**
      * Set up a callback for timeout events. Refer to TimeoutSource_t for
      * possible event types.
+     * @note It is possible to unregister callbacks using onTimeout().detach(callback)
      */
-    void onTimeout(TimeoutEventCallback_t callback) {timeoutCallback = callback;}
+    void onTimeout(TimeoutEventCallback_t callback) {
+        timeoutCallbackChain.add(callback);
+    }
+
+    /**
+     * @brief provide access to the callchain of timeout event callbacks
+     * It is possible to register callbacks using onTimeout().add(callback);
+     * It is possible to unregister callbacks using onTimeout().detach(callback) 
+     * @return The timeout event callbacks chain
+     */
+    TimeoutEventCallbackChain_t& onTimeout() {
+        return timeoutCallbackChain;
+    }
 
     /**
      * Append to a chain of callbacks to be invoked upon GAP connection.
+     * @note It is possible to unregister callbacks using onConnection().detach(callback)
      */
     void onConnection(ConnectionEventCallback_t callback) {connectionCallChain.add(callback);}
 
@@ -904,12 +923,33 @@ public:
     void onConnection(T *tptr, void (T::*mptr)(const ConnectionCallbackParams_t*)) {connectionCallChain.add(tptr, mptr);}
 
     /**
+     * @brief provide access to the callchain of connection event callbacks
+     * It is possible to register callbacks using onConnection().add(callback);
+     * It is possible to unregister callbacks using onConnection().detach(callback) 
+     * @return The connection event callbacks chain
+     */
+    ConnectionEventCallbackChain_t& onconnection() { 
+        return connectionCallChain;
+    }
+
+    /**
      * Append to a chain of callbacks to be invoked upon GAP disconnection.
+     * @note It is possible to unregister callbacks using onDisconnection().detach(callback)
      */
     void onDisconnection(DisconnectionEventCallback_t callback) {disconnectionCallChain.add(callback);}
 
     template<typename T>
     void onDisconnection(T *tptr, void (T::*mptr)(const DisconnectionCallbackParams_t*)) {disconnectionCallChain.add(tptr, mptr);}
+
+    /**
+     * @brief provide access to the callchain of disconnection event callbacks
+     * It is possible to register callbacks using onDisconnection().add(callback);
+     * It is possible to unregister callbacks using onDisconnection().detach(callback) 
+     * @return The disconnection event callbacks chain
+     */
+    DisconnectionEventCallbackChain_t& onDisconnection() {
+        return disconnectionCallChain;
+    }
 
     /**
      * Set the application callback for radio-notification events.
@@ -940,12 +980,10 @@ public:
      */
     void onRadioNotification(void (*callback)(bool param)) {
         radioNotificationCallback.attach(callback);
-        initRadioNotification();
     }
     template <typename T>
     void onRadioNotification(T *tptr, void (T::*mptr)(bool)) {
         radioNotificationCallback.attach(tptr, mptr);
-        initRadioNotification();
     }
 
 protected:
@@ -956,7 +994,7 @@ protected:
         _scanResponse(),
         state(),
         scanningActive(false),
-        timeoutCallback(NULL),
+        timeoutCallbackChain(),
         radioNotificationCallback(),
         onAdvertisementReport(),
         connectionCallChain(),
@@ -1002,8 +1040,8 @@ public:
     }
 
     void processTimeoutEvent(TimeoutSource_t source) {
-        if (timeoutCallback) {
-            timeoutCallback(source);
+        if (timeoutCallbackChain) {
+            timeoutCallbackChain(source);
         }
     }
 
@@ -1017,11 +1055,11 @@ protected:
     bool                             scanningActive;
 
 protected:
-    TimeoutEventCallback_t           timeoutCallback;
-    RadioNotificationEventCallback_t radioNotificationCallback;
-    AdvertisementReportCallback_t    onAdvertisementReport;
-    CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t*>    connectionCallChain;
-    CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> disconnectionCallChain;
+    TimeoutEventCallbackChain_t       timeoutCallbackChain;
+    RadioNotificationEventCallback_t  radioNotificationCallback;
+    AdvertisementReportCallback_t     onAdvertisementReport;
+    ConnectionEventCallbackChain_t    connectionCallChain;
+    DisconnectionEventCallbackChain_t disconnectionCallChain;
 
 private:
     /* Disallow copy and assignment. */

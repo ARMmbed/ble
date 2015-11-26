@@ -18,6 +18,7 @@
 
 #include <string.h>
 #include "FunctionPointerWithContext.h"
+#include "SafeBool.h"
 
 
 /** Group one or more functions in an instance of a CallChainOfFunctionPointersWithContext, then call them in
@@ -56,7 +57,7 @@
  */
 
 template <typename ContextType>
-class CallChainOfFunctionPointersWithContext {
+class CallChainOfFunctionPointersWithContext : public SafeBool<CallChainOfFunctionPointersWithContext<ContextType> > {
 public:
     typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
 
@@ -97,6 +98,49 @@ public:
         return common_add(new FunctionPointerWithContext<ContextType>(tptr, mptr));
     }
 
+    /** Add a function at the front of the chain.
+     *
+     *  @param func The FunctionPointerWithContext to add.
+     */
+    pFunctionPointerWithContext_t add(const FunctionPointerWithContext<ContextType>& func) {
+        return common_add(new FunctionPointerWithContext<ContextType>(func));
+    }
+
+    /** 
+     * Detach a function pointer from a callchain
+     * 
+     * @oaram toDetach FunctionPointerWithContext to detach from this callchain
+     * 
+     * @return true if a function pointer has been detached and false otherwise
+     */ 
+    bool detach(const FunctionPointerWithContext<ContextType>& toDetach) { 
+        pFunctionPointerWithContext_t current = chainHead;
+        pFunctionPointerWithContext_t previous = NULL;
+
+        while (current) {
+            if(*current == toDetach) { 
+                if(previous == NULL) {
+                    if(currentCalled == current) { 
+                        currentCalled = NULL;
+                    }
+                    chainHead = current->getNext();
+                } else {
+                    if(currentCalled == current) { 
+                        currentCalled = previous;
+                    }
+                    previous->chainAsNext(current->getNext());
+                }
+                delete current;
+                return true;
+            }
+
+            previous = current;
+            current = current->getNext();
+        }
+
+        return false;
+    }
+
     /** Clear the call chain (remove all functions in the chain).
      */
     void clear(void) {
@@ -115,14 +159,54 @@ public:
     }
 
     /** Call all the functions in the chain in sequence
-     * @Note: The stack frames of all the callbacks within the chained
-     *        FunctionPointers will stack up. Hopefully there won't be too many
-     *        chained FunctionPointers.
      */
     void call(ContextType context) {
-        if (chainHead) {
-            chainHead->call(context);
+        ((const CallChainOfFunctionPointersWithContext*) this)->call(context);
+    }
+
+    /**
+     * @brief same as above but const 
+     */
+    void call(ContextType context) const {
+        currentCalled = chainHead;
+
+        while(currentCalled) { 
+            currentCalled->call(context);
+            // if this was the head and the call removed the head
+            if(currentCalled == NULL) { 
+                currentCalled = chainHead;
+            } else {
+                currentCalled = currentCalled->getNext();
+            }
         }
+    }
+
+    /**
+     * @brief same as above but with function call operator
+     * \code
+     * 
+     * void first(bool);
+     * void second(bool);
+     * 
+     * CallChainOfFunctionPointerWithContext<bool> foo;
+     * 
+     * foo.attach(first);
+     * foo.attach(second);
+     * 
+     * // call the callchain like a function
+     * foo(true);
+     * 
+     * \endcode
+     */
+    void operator()(ContextType context) const {
+        call(context);
+    }
+
+    /**
+     * @brief bool conversion operation
+     */
+    bool toBool() const {
+        return chainHead != NULL;
     }
 
 private:
@@ -139,6 +223,11 @@ private:
 
 private:
     pFunctionPointerWithContext_t chainHead;
+    // iterator during a function call, this has to be mutable because the call function is const.
+    // Note: mutable is the correct behaviour here, the iterator never leak outside the object.
+    // So the object can still be seen as logically const even if it change its internal state
+    mutable pFunctionPointerWithContext_t currentCalled;
+
 
     /* Disallow copy constructor and assignment operators. */
 private:
