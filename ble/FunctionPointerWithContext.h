@@ -18,12 +18,13 @@
 #define MBED_FUNCTIONPOINTER_WITH_CONTEXT_H
 
 #include <string.h>
+#include "SafeBool.h"
 
 /** A class for storing and calling a pointer to a static or member void function
  *  that takes a context.
  */
 template <typename ContextType>
-class FunctionPointerWithContext {
+class FunctionPointerWithContext : public SafeBool<FunctionPointerWithContext<ContextType> > {
 public:
     typedef FunctionPointerWithContext<ContextType> *pFunctionPointerWithContext_t;
     typedef const FunctionPointerWithContext<ContextType> *cpFunctionPointerWithContext_t;
@@ -87,21 +88,27 @@ public:
      *  many FunctionPointers in a chain. */
     void call(ContextType context) const {
         _caller(this, context);
+    }
 
-        /* Propagate the call to next in the chain. */
-        if (_next) {
-            _next->call(context);
-        }
+    /**
+     * @brief Same as above
+     */
+    void operator()(ContextType context) const {
+        call(context);
     }
 
     /** Same as above, workaround for mbed os FunctionPointer implementation. */
     void call(ContextType context) {
-        _caller(this, context);
+        ((const FunctionPointerWithContext*)  this)->call(context);
+    }
 
-        /* Propagate the call to next in the chain. */
-        if (_next) {
-            _next->call(context);
-        }
+    typedef void (FunctionPointerWithContext::*bool_type)() const;
+
+    /** 
+     * implementation of safe bool operator
+     */
+    bool toBool() const {
+        return (_function || _memberFunctionAndPointer._object);
     }
 
     /**

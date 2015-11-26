@@ -81,6 +81,8 @@ public:
      */
     ble_error_t read(uint16_t offset = 0) const;
 
+    ble_error_t read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const;
+
     /**
      * Perform a write without response procedure.
      *
@@ -132,6 +134,11 @@ public:
      *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t write(uint16_t length, const uint8_t *value) const;
+
+    /** 
+     * Same as above but register the callback wich will be called once the data has been written
+     */
+    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onRead) const;
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
         uuid.setupLong(longUUID);

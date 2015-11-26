@@ -26,9 +26,18 @@
 
 class GattServer {
 public:
+
     /* Event callback handlers. */
-    typedef void (*EventCallback_t)(GattAttribute::Handle_t attributeHandle);
-    typedef void (*ServerEventCallback_t)(void);                    /**< Independent of any particular attribute. */
+    typedef FunctionPointerWithContext<unsigned> DataSentCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<unsigned> DataSentCallbackChain_t;
+
+    typedef FunctionPointerWithContext<const GattWriteCallbackParams*> DataWrittenCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams*> DataWrittenCallbackChain_t;    
+
+    typedef FunctionPointerWithContext<const GattReadCallbackParams*> DataReadCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *> DataReadCallbackChain_t;
+
+    typedef FunctionPointerWithContext<GattAttribute::Handle_t> EventCallback_t;
 
 protected:
     GattServer() :
@@ -238,10 +247,17 @@ public:
      * @Note: It is also possible to set up a callback into a member function of
      * some object.
      */
-    void onDataSent(void (*callback)(unsigned count)) {dataSentCallChain.add(callback);}
+    void onDataSent(const DataSentCallback_t& callback) {dataSentCallChain.add(callback);}
     template <typename T>
     void onDataSent(T *objPtr, void (T::*memberPtr)(unsigned count)) {
         dataSentCallChain.add(objPtr, memberPtr);
+    }
+
+    /**
+     * @brief get the callback chain called when the event DATA_EVENT is triggered. 
+     */
+    DataSentCallbackChain_t& onDataSent() { 
+        return dataSentCallChain;
     }
 
     /**
@@ -258,11 +274,23 @@ public:
      *
      * @Note: It is also possible to set up a callback into a member function of
      * some object.
+     * 
+     * @Note It is possible to unregister a callback using onDataWritten().detach(callback)
      */
-    void onDataWritten(void (*callback)(const GattWriteCallbackParams *eventDataP)) {dataWrittenCallChain.add(callback);}
+    void onDataWritten(const DataWrittenCallback_t& callback) {dataWrittenCallChain.add(callback);}
     template <typename T>
     void onDataWritten(T *objPtr, void (T::*memberPtr)(const GattWriteCallbackParams *context)) {
         dataWrittenCallChain.add(objPtr, memberPtr);
+    }
+
+    /**
+     * @brief provide access to the callchain of data written event callbacks
+     * It is possible to register callbacks using onDataWritten().add(callback);
+     * It is possible to unregister callbacks using onDataWritten().detach(callback) 
+     * @return The data written event callbacks chain
+     */    
+    DataWrittenCallbackChain_t& onDataWritten() {
+        return dataWrittenCallChain;
     }
 
     /**
@@ -281,10 +309,12 @@ public:
      * @Note: It is also possible to set up a callback into a member function of
      * some object.
      *
+     * @Note It is possible to unregister a callback using onDataRead().detach(callback)
+     *
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
      *         else BLE_ERROR_NONE.
      */
-    ble_error_t onDataRead(void (*callback)(const GattReadCallbackParams *eventDataP)) {
+    ble_error_t onDataRead(const DataReadCallback_t& callback) {
         if (!isOnDataReadAvailable()) {
             return BLE_ERROR_NOT_IMPLEMENTED;
         }
@@ -300,6 +330,16 @@ public:
 
         dataReadCallChain.add(objPtr, memberPtr);
         return BLE_ERROR_NONE;
+    }
+
+    /**
+     * @brief provide access to the callchain of data read event callbacks
+     * It is possible to register callbacks using onDataRead().add(callback);
+     * It is possible to unregister callbacks using onDataRead().detach(callback) 
+     * @return The data read event callbacks chain
+     */
+    DataReadCallbackChain_t& onDataRead() {
+        return dataReadCallChain;
     }
 
     /**
@@ -323,15 +363,11 @@ public:
     /* Entry points for the underlying stack to report events back to the user. */
 protected:
     void handleDataWrittenEvent(const GattWriteCallbackParams *params) {
-        if (dataWrittenCallChain.hasCallbacksAttached()) {
-            dataWrittenCallChain.call(params);
-        }
+        dataWrittenCallChain.call(params);
     }
 
     void handleDataReadEvent(const GattReadCallbackParams *params) {
-        if (dataReadCallChain.hasCallbacksAttached()) {
-            dataReadCallChain.call(params);
-        }
+        dataReadCallChain.call(params);
     }
 
     void handleEvent(GattServerEvents::gattEvent_e type, GattAttribute::Handle_t attributeHandle) {
@@ -357,9 +393,7 @@ protected:
     }
 
     void handleDataSentEvent(unsigned count) {
-        if (dataSentCallChain.hasCallbacksAttached()) {
-            dataSentCallChain.call(count);
-        }
+        dataSentCallChain.call(count);
     }
 
 protected:
@@ -367,12 +401,12 @@ protected:
     uint8_t characteristicCount;
 
 private:
-    CallChainOfFunctionPointersWithContext<unsigned>                        dataSentCallChain;
-    CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams *> dataWrittenCallChain;
-    CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *>  dataReadCallChain;
-    EventCallback_t                                                         updatesEnabledCallback;
-    EventCallback_t                                                         updatesDisabledCallback;
-    EventCallback_t                                                         confirmationReceivedCallback;
+    DataSentCallbackChain_t    dataSentCallChain;
+    DataWrittenCallbackChain_t dataWrittenCallChain;
+    DataReadCallbackChain_t    dataReadCallChain;
+    EventCallback_t            updatesEnabledCallback;
+    EventCallback_t            updatesDisabledCallback;
+    EventCallback_t            confirmationReceivedCallback;
 
 private:
     /* Disallow copy and assignment. */
