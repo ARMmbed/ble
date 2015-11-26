@@ -19,6 +19,8 @@
 #ifndef __BLE_DFU_SERVICE_H__
 #define __BLE_DFU_SERVICE_H__
 
+#ifdef TARGET_NRF51822 /* DFU only supported on nrf51 platforms */
+
 #include "ble/BLE.h"
 #include "ble/UUID.h"
 
@@ -142,5 +144,6 @@ protected:
     static ResetPrepare_t handoverCallback;  /**< application specific handover callback. */
 };
 
+#endif /* #ifdef TARGET_NRF51822 */
 #endif /* #ifndef __BLE_DFU_SERVICE_H__*/
 #endif /* #ifdef TARGET_NRF51822 */
