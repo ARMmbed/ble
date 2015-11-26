@@ -16,7 +16,7 @@ examples, please refer to [code under mbed.org](https://developer.mbed.org/teams
 
 ## Supported Services
 
-Currently supported  services include:
+Currently supported reference services include:
 
 * [Battery](@ref BatteryService)
 * [Device Firmware Update (DFU)](@ref DFUService)
@@ -26,3 +26,6 @@ Currently supported  services include:
 * [UART](@ref UARTService)
 * [UriBeacon](@ref URIBeaconConfigService)
 * [iBeacon](@ref iBeacon)
+
+The [documentation](https://docs.mbed.com/docs/ble-intros/en/latest/AdvSamples/Overview/)
+contains an overview on how to create new, application-specific services.
