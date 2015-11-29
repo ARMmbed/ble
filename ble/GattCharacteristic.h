@@ -307,8 +307,8 @@ public:
      *              The memory holding the initial value. The value is copied
      *              into the stack when the enclosing service is added, and
      *              is thereafter maintained internally by the stack.
-     *  @param[in]  initialLen
-     *              The min length in bytes of this characteristic's value.
+     *  @param[in]  len
+     *              The length in bytes of this characteristic's value.
      *  @param[in]  maxLen
      *              The max length in bytes of this characteristic's value.
      *  @param[in]  props
@@ -321,19 +321,19 @@ public:
      *  @param[in]  numDescriptors
      *              The number of descriptors in the previous array.
      *
-     * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
+     * @NOTE: If valuePtr == NULL, length == 0, and properties == READ
      *        for the value attribute of a characteristic, then that particular
      *        characteristic may be considered optional and dropped while
      *        instantiating the service with the underlying BLE stack.
      */
     GattCharacteristic(const UUID    &uuid,
                        uint8_t       *valuePtr       = NULL,
-                       uint16_t       initialLen     = 0,
+                       uint16_t       len            = 0,
                        uint16_t       maxLen         = 0,
                        uint8_t        props          = BLE_GATT_CHAR_PROPERTIES_NONE,
                        GattAttribute *descriptors[]  = NULL,
                        unsigned       numDescriptors = 0) :
-        _valueAttribute(uuid, valuePtr, initialLen, maxLen),
+        _valueAttribute(uuid, valuePtr, len, maxLen),
         _properties(props),
         _requiredSecurity(SecurityManager::SECURITY_MODE_ENCRYPTION_OPEN_LINK),
         _descriptors(descriptors),
