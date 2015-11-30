@@ -311,6 +311,8 @@ public:
      *              The length in bytes of this characteristic's value.
      *  @param[in]  maxLen
      *              The max length in bytes of this characteristic's value.
+     *  @param[in]  hasVariableLen
+     *              Whether the attribute's value length changes overtime.
      *  @param[in]  props
      *              The 8-bit field containing the characteristic's properties.
      *  @param[in]  descriptors
@@ -332,8 +334,9 @@ public:
                        uint16_t       maxLen         = 0,
                        uint8_t        props          = BLE_GATT_CHAR_PROPERTIES_NONE,
                        GattAttribute *descriptors[]  = NULL,
-                       unsigned       numDescriptors = 0) :
-        _valueAttribute(uuid, valuePtr, len, maxLen),
+                       unsigned       numDescriptors = 0,
+                       bool           hasVariableLen = true) :
+        _valueAttribute(uuid, valuePtr, len, maxLen, hasVariableLen),
         _properties(props),
         _requiredSecurity(SecurityManager::SECURITY_MODE_ENCRYPTION_OPEN_LINK),
         _descriptors(descriptors),
