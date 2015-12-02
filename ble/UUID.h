@@ -22,6 +22,18 @@
 
 #include "blecommon.h"
 
+static uint16_t char2int(char c) {
+    if ((c >= '0') && (c <= '9')) {
+        return c - '0';
+    } else if ((c >= 'a') && (c <= 'f')) {
+        return c - 'a' + 10;
+    } else if ((c >= 'A') && (c <= 'F')) {
+        return c - 'A' + 10;
+    } else {
+        return 0;
+    }
+}
+
 class UUID {
 public:
     enum UUID_Type_t {
@@ -35,6 +47,49 @@ public:
     typedef uint8_t       LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
 
 public:
+
+    /**
+     * Creates a new 128-bit UUID.
+     *
+     * @note   The UUID is a unique 128-bit (16 byte) ID used to identify
+     *         different service or characteristics on the BLE device.
+     *
+     * @param  stringUUID
+     *          The 128-bit (16-byte) UUID as a human readable const-string.
+     *          Format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+     *          Upper and lower case supported. Hyphens are optional, but only
+     *          upto four of them. The UUID is stored internally as a 16 byte
+     *          array, LSB (little endian), which is opposite from the string.
+     */
+    UUID(const char* stringUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
+        bool nibble = false;
+        uint8_t byte = 0;
+        size_t baseIndex = 0;
+
+        // Iterate through string, abort if NULL is encountered prematurely.
+        // Ignore upto four hyphens. Reverse endian when storing internally.
+        for (size_t index = 0; (index < 36) && (baseIndex < LENGTH_OF_LONG_UUID); index++) {
+            if (stringUUID[index] == '\0') {
+                // error abort
+                break;
+            } else if (stringUUID[index] == '-') {
+                // ignore hyphen
+                continue;
+            } else if (nibble) {
+                // got second nibble
+                byte |= char2int(stringUUID[index]);
+                nibble = false;
+
+                // reverse endian
+                baseUUID[LENGTH_OF_LONG_UUID - 1 - baseIndex++] = byte;
+            } else {
+                // got first nibble
+                byte = char2int(stringUUID[index]) << 4;
+                nibble = true;
+            }
+        }
+    }
+
     /**
      * Creates a new 128-bit UUID.
      *
@@ -42,7 +97,7 @@ public:
      *         different service or characteristics on the BLE device.
      *
      * @param longUUID
-     *          The 128-bit (16-byte) UUID value, MSB first (big-endian).
+     *          The 128-bit (16-byte) UUID value, LSB first (little-endian).
      */
     UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
         setupLong(longUUID);
@@ -94,7 +149,7 @@ public:
     void setupLong(const LongUUIDBytes_t longUUID) {
         type      = UUID_TYPE_LONG;
         memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
-        shortUUID = (uint16_t)((longUUID[2] << 8) | (longUUID[3]));
+        shortUUID = (uint16_t)((longUUID[13] << 8) | (longUUID[12]));
     }
 
 public:

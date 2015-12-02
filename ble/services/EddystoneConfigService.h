@@ -23,9 +23,9 @@
 #include "ble/BLE.h"
 #include "ble/services/EddystoneService.h"
 
-#define UUID_URI_BEACON(FIRST, SECOND) {                         \
-        0xee, 0x0c, FIRST, SECOND, 0x87, 0x86, 0x40, 0xba,       \
-        0xab, 0x96, 0x99, 0xb9, 0x1a, 0xc9, 0x81, 0xd8,          \
+#define UUID_URI_BEACON(FIRST, SECOND) {                        \
+        0xd8, 0x81, 0xc9, 0x1a,   0xb9,  0x99, 0x96, 0xab,      \
+        0xba, 0x40, 0x86, 0x87, SECOND, FIRST, 0x0c, 0xee       \
 }
 
 static const uint8_t UUID_URI_BEACON_SERVICE[]    = UUID_URI_BEACON(0x20, 0x80);
@@ -271,12 +271,7 @@ public:
 
         ble.accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
 
-        // UUID is in a different order in the ADV frame (!)
-        uint8_t reversedServiceUUID[sizeof(UUID_URI_BEACON_SERVICE)];
-        for (unsigned int i = 0; i < sizeof(UUID_URI_BEACON_SERVICE); i++) {
-            reversedServiceUUID[i] = UUID_URI_BEACON_SERVICE[sizeof(UUID_URI_BEACON_SERVICE) - i - 1];
-        }
-        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, reversedServiceUUID, sizeof(reversedServiceUUID));
+        ble.accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, UUID_URI_BEACON_SERVICE, sizeof(UUID_URI_BEACON_SERVICE));
         ble.accumulateAdvertisingPayload(GapAdvertisingData::GENERIC_TAG);
         ble.accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, reinterpret_cast<const uint8_t *>(&DEVICE_NAME), sizeof(DEVICE_NAME));
         ble.accumulateScanResponse(
