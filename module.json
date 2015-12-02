@@ -26,7 +26,7 @@
       "x-nucleo-idb0xa1": "ARMmbed/ble-x-nucleo-idb0xa1"
     },
     "nrf51822": {
-      "ble-nrf51822": "^2.1.1"
+      "ble-nrf51822": "^2.1.2"
     },
     "cordio": {
       "ble-wicentric": "~0.0.4"
