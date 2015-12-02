@@ -469,7 +469,7 @@ public:
                                   GattAttribute *descriptors[]        = NULL,
                                   unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T),
-                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
@@ -483,7 +483,7 @@ public:
                                    GattAttribute *descriptors[]        = NULL,
                                    unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T),
-                           BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
@@ -497,7 +497,7 @@ public:
                                    GattAttribute *descriptors[]        = NULL,
                                    unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T),
-                           BLE_GATT_CHAR_PROPERTIES_READ | BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_READ | BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
@@ -511,7 +511,7 @@ public:
                                                       GattAttribute *descriptors[]        = NULL,
                                                       unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
@@ -525,7 +525,7 @@ public:
                                                      GattAttribute *descriptors[]        = NULL,
                                                      unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
@@ -539,7 +539,7 @@ public:
                                                       GattAttribute *descriptors[]        = NULL,
                                                       unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           BLE_GATT_CHAR_PROPERTIES_READ | BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_READ | BLE_GATT_CHAR_PROPERTIES_WRITE | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
