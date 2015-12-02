@@ -147,7 +147,7 @@ public:
     typedef CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallbackChain_t;
 
     typedef FunctionPointerWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallback_t;
-    typedef CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallbackChain_t;    
+    typedef CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallbackChain_t;
 
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
@@ -906,7 +906,7 @@ public:
     /**
      * @brief provide access to the callchain of timeout event callbacks
      * It is possible to register callbacks using onTimeout().add(callback);
-     * It is possible to unregister callbacks using onTimeout().detach(callback) 
+     * It is possible to unregister callbacks using onTimeout().detach(callback)
      * @return The timeout event callbacks chain
      */
     TimeoutEventCallbackChain_t& onTimeout() {
@@ -925,10 +925,10 @@ public:
     /**
      * @brief provide access to the callchain of connection event callbacks
      * It is possible to register callbacks using onConnection().add(callback);
-     * It is possible to unregister callbacks using onConnection().detach(callback) 
+     * It is possible to unregister callbacks using onConnection().detach(callback)
      * @return The connection event callbacks chain
      */
-    ConnectionEventCallbackChain_t& onconnection() { 
+    ConnectionEventCallbackChain_t& onConnection() {
         return connectionCallChain;
     }
 
@@ -944,7 +944,7 @@ public:
     /**
      * @brief provide access to the callchain of disconnection event callbacks
      * It is possible to register callbacks using onDisconnection().add(callback);
-     * It is possible to unregister callbacks using onDisconnection().detach(callback) 
+     * It is possible to unregister callbacks using onDisconnection().detach(callback)
      * @return The disconnection event callbacks chain
      */
     DisconnectionEventCallbackChain_t& onDisconnection() {
