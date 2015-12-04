@@ -183,14 +183,16 @@ public:
     }
 
     /**
-     * @return Minimum Advertising interval in milliseconds.
+     * @return Minimum Advertising interval in milliseconds for connectable
+     *      undirected and connectable directed event types.
      */
     virtual uint16_t getMinAdvertisingInterval(void) const {
         return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
-     * @return Minimum Advertising interval in milliseconds for non-connectible mode.
+     * @return Minimum Advertising interval in milliseconds for scannable
+     *      undirected and non-connectable undirected event types.
      */
     virtual uint16_t getMinNonConnectableAdvertisingInterval(void) const {
         return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
