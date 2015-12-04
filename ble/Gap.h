@@ -466,11 +466,6 @@ public:
      * peripheral faster, at the expense of more power being used by the radio
      * due to the higher data transmit rate.
      *
-     * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from Gap directly. A former call to
-     * ble.setAdvertisingInterval(...) should now be achieved using
-     * ble.gap().setAdvertisingInterval(...).
-     *
      * @Note: [WARNING] This API previously used 0.625ms as the unit for its
      * 'interval' argument. That required an explicit conversion from
      * milliseconds using Gap::MSEC_TO_GAP_DURATION_UNITS(). This conversion is
