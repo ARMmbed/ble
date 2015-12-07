@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <algorithm>
 
 #include "blecommon.h"
 
@@ -177,11 +178,9 @@ public:
         type      = UUID_TYPE_LONG;
         if (order == UUID::MSB) {
             // Switch endian. Input is big-endian, internal representation is little endian.
-            for (size_t index = 0; index < LENGTH_OF_LONG_UUID; index++) {
-                baseUUID[LENGTH_OF_LONG_UUID - 1 - index] = longUUID[index];
-            }
+            std::reverse_copy(longUUID, longUUID + LENGTH_OF_LONG_UUID, baseUUID);
         } else {
-            memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
+            std::copy(longUUID, longUUID + LENGTH_OF_LONG_UUID, baseUUID);
         }
         shortUUID = (uint16_t)((baseUUID[13] << 8) | (baseUUID[12]));
     }
