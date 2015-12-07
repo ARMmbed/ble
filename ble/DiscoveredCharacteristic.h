@@ -142,7 +142,7 @@ public:
      */
     ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onRead) const;
 
-    void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::BitOrder_t order = UUID::MSB) {
+    void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::ByteOrder_t order = UUID::MSB) {
         uuid.setupLong(longUUID, order);
     }
 

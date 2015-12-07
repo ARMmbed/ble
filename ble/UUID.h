@@ -46,10 +46,13 @@ public:
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID.
     };
 
+    /**
+     * An enumeration to specify byte ordering of the long version of the UUID.
+     */
     typedef enum {
-        MSB,
-        LSB
-    } BitOrder_t;
+        MSB, /*!< Most-significant byte first (at the smallest address) */
+        LSB  /*!< least-significant byte first (at the smallest address) */
+    } ByteOrder_t;
 
     typedef uint16_t      ShortUUIDBytes_t;
 
@@ -123,7 +126,7 @@ public:
      * @param order
      *          The bit order of the UUID, MSB by default.
      */
-    UUID(const LongUUIDBytes_t longUUID, BitOrder_t order = UUID::MSB) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
+    UUID(const LongUUIDBytes_t longUUID, ByteOrder_t order = UUID::MSB) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
         setupLong(longUUID, order);
     }
 
@@ -170,7 +173,7 @@ public:
     /**
      * Fill in a 128-bit UUID; this is useful when the UUID isn't known at the time of the object construction.
      */
-    void setupLong(const LongUUIDBytes_t longUUID, BitOrder_t order = UUID::MSB) {
+    void setupLong(const LongUUIDBytes_t longUUID, ByteOrder_t order = UUID::MSB) {
         type      = UUID_TYPE_LONG;
         if (order == UUID::MSB) {
             // Switch endian. Input is big-endian, internal representation is little endian.

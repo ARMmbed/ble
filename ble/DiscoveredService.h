@@ -36,7 +36,7 @@ public:
          endHandle   = endHandleIn;
      }
 
-    void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::BitOrder_t order = UUID::MSB) {
+    void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::ByteOrder_t order = UUID::MSB) {
          uuid.setupLong(longUUID, order);
     }
 
