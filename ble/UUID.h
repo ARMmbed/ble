@@ -22,6 +22,11 @@
 
 #include "blecommon.h"
 
+/**
+ * A trivial converter for single hexadecimal character to unsigned-int.
+ * @param  c hexadecimal character.
+ * @return   the corresponding value as unsigned int.
+ */
 static uint8_t char2int(char c) {
     if ((c >= '0') && (c <= '9')) {
         return c - '0';
