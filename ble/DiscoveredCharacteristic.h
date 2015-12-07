@@ -137,13 +137,13 @@ public:
      */
     ble_error_t write(uint16_t length, const uint8_t *value) const;
 
-    /** 
+    /**
      * Same as above but register the callback wich will be called once the data has been written
      */
     ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onRead) const;
 
-    void setupLongUUID(UUID::LongUUIDBytes_t longUUID) {
-        uuid.setupLong(longUUID);
+    void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::BitOrder_t order = UUID::MSB) {
+        uuid.setupLong(longUUID, order);
     }
 
 public:

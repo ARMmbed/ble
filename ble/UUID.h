@@ -22,7 +22,7 @@
 
 #include "blecommon.h"
 
-static uint16_t char2int(char c) {
+static uint8_t char2int(char c) {
     if ((c >= '0') && (c <= '9')) {
         return c - '0';
     } else if ((c >= 'a') && (c <= 'f')) {
@@ -41,10 +41,17 @@ public:
         UUID_TYPE_LONG  = 1     // Full 128-bit UUID.
     };
 
+    typedef enum {
+        MSB,
+        LSB
+    } BitOrder_t;
+
     typedef uint16_t      ShortUUIDBytes_t;
 
     static const unsigned LENGTH_OF_LONG_UUID = 16;
     typedef uint8_t       LongUUIDBytes_t[LENGTH_OF_LONG_UUID];
+
+    static const unsigned MAX_UUID_STRING_LENGTH = LENGTH_OF_LONG_UUID * 2 + 4;
 
 public:
 
@@ -65,10 +72,11 @@ public:
         bool nibble = false;
         uint8_t byte = 0;
         size_t baseIndex = 0;
+        uint8_t tempUUID[LENGTH_OF_LONG_UUID];
 
         // Iterate through string, abort if NULL is encountered prematurely.
-        // Ignore upto four hyphens. Reverse endian when storing internally.
-        for (size_t index = 0; (index < 36) && (baseIndex < LENGTH_OF_LONG_UUID); index++) {
+        // Ignore upto four hyphens.
+        for (size_t index = 0; (index < MAX_UUID_STRING_LENGTH) && (baseIndex < LENGTH_OF_LONG_UUID); index++) {
             if (stringUUID[index] == '\0') {
                 // error abort
                 break;
@@ -80,13 +88,22 @@ public:
                 byte |= char2int(stringUUID[index]);
                 nibble = false;
 
-                // reverse endian
-                baseUUID[LENGTH_OF_LONG_UUID - 1 - baseIndex++] = byte;
+                // store copy
+                tempUUID[baseIndex++] = byte;
             } else {
                 // got first nibble
                 byte = char2int(stringUUID[index]) << 4;
                 nibble = true;
             }
+        }
+
+        // populate internal variables if string was successfully parsed
+        if (baseIndex == LENGTH_OF_LONG_UUID) {
+            setupLong(tempUUID, UUID::MSB);
+        } else {
+            const uint8_t sig[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
+                                    0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB };
+            setupLong(sig, UUID::MSB);
         }
     }
 
@@ -97,10 +114,12 @@ public:
      *         different service or characteristics on the BLE device.
      *
      * @param longUUID
-     *          The 128-bit (16-byte) UUID value, LSB first (little-endian).
+     *          The 128-bit (16-byte) UUID value.
+     * @param order
+     *          The bit order of the UUID, MSB by default.
      */
-    UUID(const LongUUIDBytes_t longUUID) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
-        setupLong(longUUID);
+    UUID(const LongUUIDBytes_t longUUID, BitOrder_t order = UUID::MSB) : type(UUID_TYPE_LONG), baseUUID(), shortUUID(0) {
+        setupLong(longUUID, order);
     }
 
     /**
@@ -146,10 +165,17 @@ public:
     /**
      * Fill in a 128-bit UUID; this is useful when the UUID isn't known at the time of the object construction.
      */
-    void setupLong(const LongUUIDBytes_t longUUID) {
+    void setupLong(const LongUUIDBytes_t longUUID, BitOrder_t order = UUID::MSB) {
         type      = UUID_TYPE_LONG;
-        memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
-        shortUUID = (uint16_t)((longUUID[13] << 8) | (longUUID[12]));
+        if (order == UUID::MSB) {
+            // Switch endian. Input is big-endian, internal representation is little endian.
+            for (size_t index = 0; index < LENGTH_OF_LONG_UUID; index++) {
+                baseUUID[LENGTH_OF_LONG_UUID - 1 - index] = longUUID[index];
+            }
+        } else {
+            memcpy(baseUUID, longUUID, LENGTH_OF_LONG_UUID);
+        }
+        shortUUID = (uint16_t)((baseUUID[13] << 8) | (baseUUID[12]));
     }
 
 public:
@@ -187,12 +213,8 @@ public:
 
 private:
     UUID_Type_t      type;      // UUID_TYPE_SHORT or UUID_TYPE_LONG
-    LongUUIDBytes_t  baseUUID;  /* The base of the long UUID (if
-                            * used). Note: bytes 12 and 13 (counting from LSB)
-                            * are zeroed out to allow comparison with other long
-                            * UUIDs, which differ only in the 16-bit relative
-                            * part.*/
-    ShortUUIDBytes_t shortUUID; // 16 bit UUID (byte 2-3 using with base).
+    LongUUIDBytes_t  baseUUID;  // The long UUID
+    ShortUUIDBytes_t shortUUID; // 16 bit UUID
 };
 
 #endif // ifndef __UUID_H__
