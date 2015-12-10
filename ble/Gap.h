@@ -183,14 +183,16 @@ public:
     }
 
     /**
-     * @return Minimum Advertising interval in milliseconds.
+     * @return Minimum Advertising interval in milliseconds for connectable
+     *      undirected and connectable directed event types.
      */
     virtual uint16_t getMinAdvertisingInterval(void) const {
         return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
-     * @return Minimum Advertising interval in milliseconds for non-connectible mode.
+     * @return Minimum Advertising interval in milliseconds for scannable
+     *      undirected and non-connectable undirected event types.
      */
     virtual uint16_t getMinNonConnectableAdvertisingInterval(void) const {
         return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
@@ -463,11 +465,6 @@ public:
      * @note: Decreasing this value will allow central devices to detect a
      * peripheral faster, at the expense of more power being used by the radio
      * due to the higher data transmit rate.
-     *
-     * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from Gap directly. A former call to
-     * ble.setAdvertisingInterval(...) should now be achieved using
-     * ble.gap().setAdvertisingInterval(...).
      *
      * @Note: [WARNING] This API previously used 0.625ms as the unit for its
      * 'interval' argument. That required an explicit conversion from
