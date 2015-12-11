@@ -232,6 +232,53 @@ protected:
     }
 
 protected:
+    /**
+     * Clear all SecurityManager state of the associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to clean up its
+     * state and not the data held in SecurityManager members. This shall be
+     * achieved by a call to SecurityManager::cleanup() from the sub-class'
+     * cleanup() implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    virtual ble_error_t cleanup(void) {
+        securitySetupInitiatedCallback = NULL;
+        securitySetupCompletedCallback = NULL;
+        linkSecuredCallback = NULL;
+        securityContextStoredCallback = NULL;
+        passkeyDisplayCallback = NULL;
+
+        return BLE_ERROR_NONE;
+    }
+
+public:
+    /**
+     * Clear all SecurityManager state of the object pointed to by
+     * securityManagerInstance.
+     *
+     * This function is meant to be called by the overridden BLE::shutdown()
+     * in the platform-specific sub-class.
+     *
+     * @return BLE_ERROR_NONE on success.
+     *
+     * @note: If securityManagerInstance is NULL then it is assumed that Gap has
+     * not been instantiated and a call to SecurityManager::shutdown() will
+     * succeed.
+     */
+    static ble_error_t shutdown(void) {
+        if (securityManagerInstance) {
+            return securityManagerInstance->cleanup();
+        }
+        return BLE_ERROR_NONE;
+    }
+
+protected:
+    static SecurityManager *securityManagerInstance;    /**< Pointer to the SecurityManager object instance.
+                                                         *   If NULL, then SecurityManager has not been initialized. */
+
+protected:
     SecuritySetupInitiatedCallback_t securitySetupInitiatedCallback;
     SecuritySetupCompletedCallback_t securitySetupCompletedCallback;
     LinkSecuredCallback_t            linkSecuredCallback;

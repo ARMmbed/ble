@@ -984,6 +984,54 @@ public:
     }
 
 protected:
+    /**
+     * Clear all Gap state of the associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to clean up its
+     * state and not the data held in Gap members. This shall be achieved by a
+     * call to Gap::cleanup() from the sub-class' cleanup() implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     *
+     * @note: Currently a call to cleanup() does not reset the advertising and
+     * scan parameters to default values.
+     */
+    virtual ble_error_t cleanup(void) {
+        /* Clear Gap state */
+        state.advertising = 0;
+        state.connected = 0;
+
+        /* Clear scanning state */
+        scanningActive = false;
+
+        /* Clear advertising and scanning data */
+        _advPayload.clear();
+        _scanResponse.clear();
+
+        return BLE_ERROR_NONE;
+    }
+
+public:
+    /**
+     * Clear all Gap state of the object pointed to by gapInstance.
+     *
+     * This function is meant to be called by the overridden BLE::shutdown()
+     * in the platform-specific sub-class.
+     *
+     * @return BLE_ERROR_NONE on success.
+     *
+     * @note: If gapInstance is NULL then it is assumed that Gap has not been
+     * instantiated and a call to Gap::shutdown() will succeed.
+     */
+    static ble_error_t shutdown(void) {
+        if (gapInstance) {
+            return gapInstance->cleanup();
+        }
+        return BLE_ERROR_NONE;
+    }
+
+protected:
     Gap() :
         _advParams(),
         _advPayload(),
@@ -1050,6 +1098,10 @@ protected:
 
     GapState_t                       state;
     bool                             scanningActive;
+
+protected:
+    static Gap *gapInstance;    /**< Pointer to the Gap object instance.
+                                 *   If NULL, then Gap has not been initialized. */
 
 protected:
     TimeoutEventCallbackChain_t       timeoutCallbackChain;
