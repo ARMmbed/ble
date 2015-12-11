@@ -120,7 +120,7 @@ public:
      * @param[in]  connectionHandle   Handle to identify the connection.
      * @param[out] securityStatusP    Security status.
      *
-     * @return BLE_SUCCESS or appropriate error code indicating the failure reason.
+     * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
      */
     virtual ble_error_t getLinkSecurity(Gap::Handle_t connectionHandle, LinkSecurityStatus_t *securityStatusP) {
         /* Avoid compiler warnings about unused variables. */
@@ -128,6 +128,23 @@ public:
         (void)securityStatusP;
 
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if security is supported. */
+    }
+
+    /**
+     * Set the security mode on a connection. Useful for elevating the security mode
+     * once certain conditions are met, e.g., a particular service is found.
+     *
+     * @param[in]  connectionHandle   Handle to identify the connection.
+     * @param[in]  securityMode       Requested security mode.
+     *
+     * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
+     */
+    virtual ble_error_t setLinkSecurity(Gap::Handle_t connectionHandle, SecurityMode_t securityMode) {
+        /* Avoid compiler warnings about unused variables. */
+        (void)connectionHandle;
+        (void)securityMode;
+
+        return BLE_ERROR_NOT_IMPLEMENTED;
     }
 
     /**
