@@ -24,7 +24,6 @@
 #include "CharacteristicDescriptorDiscovery.h"
 #include "ble/DiscoveredCharacteristicDescriptor.h"
 
-
 /**
  * Structure for holding information about the service and the characteristics
  * found during the discovery process.
@@ -36,7 +35,7 @@ public:
         uint8_t _read            :1; /**< Reading the value permitted. */
         uint8_t _writeWoResp     :1; /**< Writing the value with Write Command permitted. */
         uint8_t _write           :1; /**< Writing the value with Write Request permitted. */
-        uint8_t _notify          :1; /**< Notications of the value permitted. */
+        uint8_t _notify          :1; /**< Notifications of the value permitted. */
         uint8_t _indicate        :1; /**< Indications of the value permitted. */
         uint8_t _authSignedWrite :1; /**< Writing the value with Signed Write Command permitted. */
 
@@ -49,7 +48,15 @@ public:
         bool indicate(void)        const {return _indicate;       }
         bool authSignedWrite(void) const {return _authSignedWrite;}
 
-        friend bool operator==(Properties_t rhs, Properties_t lhs) {
+        /**
+         * @brief "Equal to" operator for DiscoveredCharacteristic::Properties_t
+         *
+         * @param lhs The left hand side of the equality expression
+         * @param rhs The right hand side of the equality expression
+         *
+         * @return true if operands are equals, false otherwise.
+         */
+        friend bool operator==(Properties_t lhs, Properties_t rhs) {
             return rhs._broadcast == lhs._broadcast &&
                    rhs._read == lhs._read &&
                    rhs._writeWoResp == lhs._writeWoResp &&
@@ -59,7 +66,15 @@ public:
                    rhs._authSignedWrite == lhs._authSignedWrite;
         }
 
-        friend bool operator!=(Properties_t rhs, Properties_t lhs) { 
+        /**
+         * @brief "Not equal to" operator for DiscoveredCharacteristic::Properties_t
+         *
+         * @param lhs The right hand side of the expression
+         * @param rhs The left hand side of the expression
+         *
+         * @return true if operands are not equals, false otherwise.
+         */
+        friend bool operator!=(Properties_t lhs, Properties_t rhs) {
             return !(rhs == lhs);
         }
 
@@ -108,12 +123,12 @@ public:
     /**
      * Initiate a GATT Characteristic Descriptor Discovery procedure for descriptors within this characteristic.
      *
-     * @param onCharacteristicDiscovered This callback will be called every time a descriptor is discovered
+     * @param onDescriptorDiscovered This callback will be called every time a descriptor is discovered
      * @param onTermination This callback will be called when the discovery process is over.
      *
-     * @return  BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
+     * @return BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
      */
-    ble_error_t discoverDescriptors(const CharacteristicDescriptorDiscovery::DiscoveryCallback_t& onCharacteristicDiscovered, 
+    ble_error_t discoverDescriptors(const CharacteristicDescriptorDiscovery::DiscoveryCallback_t& onDescriptorDiscovered,
                                     const CharacteristicDescriptorDiscovery::TerminationCallback_t& onTermination) const;
 
     /**
@@ -145,54 +160,122 @@ public:
     }
 
 public:
+    /**
+     * @brief Get the UUID of the discovered characteristic
+     * @return the UUID of this characteristic
+     */
     const UUID& getUUID(void) const {
         return uuid;
     }
 
+    /**
+     * @brief Get the properties of this characteristic
+     * @return the set of properties of this characteristic
+     */
     const Properties_t& getProperties(void) const {
         return props;
     }
 
+    /**
+     * @brief Get the declaration handle of this characteristic.
+     * @detail The declaration handle is the first handle of a characteristic
+     * definition. The value accessible at this handle contains the following
+     * informations:
+     *    - The characteristics properties (see Properties_t). This value can
+     *      be accessed by using DiscoveredCharacteristic::getProperties .
+     *    - The characteristic value attribute handle. This field can be accessed
+     *      by using DiscoveredCharacteristic::getValueHandle .
+     *    - The characteristic UUID, this value can be accessed by using the
+     *      function DiscoveredCharacteristic::getUUID .
+     * @return the declaration handle of this characteristic.
+     */
     GattAttribute::Handle_t getDeclHandle(void) const {
         return declHandle;
     }
 
+    /**
+     * @brief Return the handle used to access the value of this characteristic.
+     * @details This handle is the one provided in the characteristic declaration
+     * value. Usually, it is equal to <declaration handle> + 1. But it is not always
+     * the case. Anyway, users are allowed to use <declaration handle> + 1 to access
+     * the value of a characteristic.
+     * @return The handle to access the value of this characteristic.
+     */
     GattAttribute::Handle_t getValueHandle(void) const {
         return valueHandle;
     }
 
+    /**
+     * @brief Return the last handle of the characteristic definition.
+     * @details A Characteristic definition can contain a lot of handles:
+     *     - one for the declaration (see DiscoveredCharacteristic::getDeclHandle)
+     *     - one for the value (see DiscoveredCharacteristic::getValueHandle)
+     *     - zero of more for the characteristic descriptors.
+     * This handle is the last handle of the characteristic definition.
+     * @return The last handle of this characteristic definition.
+     */
     GattAttribute::Handle_t getLastHandle(void) const {
         return lastHandle;
     }
 
-    void setLastHandle(GattAttribute::Handle_t last) { 
+    void setLastHandle(GattAttribute::Handle_t last) {
         lastHandle = last;
     }
 
-    GattClient* getGattClient() { 
+    /**
+     * @brief Return the GattClient which can operate on this characteristic.
+     * @return The GattClient which can operate on this characteristic.
+     */
+    GattClient* getGattClient() {
         return gattc;
     }
 
-    const GattClient* getGattClient() const { 
+    /**
+     * @brief Return the GattClient which can operate on this characteristic.
+     * @return The GattClient which can operate on this characteristic.
+     */
+    const GattClient* getGattClient() const {
         return gattc;
     }
 
+    /**
+     * @brief Return the connection handle to the GattServer which contain
+     * this characteristic.
+     * @return the connection handle to the GattServer which contain
+     * this characteristic.
+     */
     Gap::Handle_t getConnectionHandle() const {
         return connHandle;
     }
 
-    friend bool operator==(const DiscoveredCharacteristic& rhs, const DiscoveredCharacteristic& lhs) {
-        return rhs.gattc == lhs.gattc && 
-               rhs.uuid == lhs.uuid &&
-               rhs.props == lhs.props &&
-               rhs.declHandle == lhs.declHandle &&
-               rhs.valueHandle == lhs.valueHandle &&
-               rhs.lastHandle == lhs.lastHandle &&
-               rhs.connHandle == lhs.connHandle;
+    /**
+     * @brief "Equal to" operator for DiscoveredCharacteristic
+     *
+     * @param lhs The left hand side of the equality expression
+     * @param rhs The right hand side of the equality expression
+     *
+     * @return true if operands are equals, false otherwise.
+     */
+    friend bool operator==(const DiscoveredCharacteristic& lhs, const DiscoveredCharacteristic& rhs) {
+        return lhs.gattc == rhs.gattc &&
+               lhs.uuid == rhs.uuid &&
+               lhs.props == rhs.props &&
+               lhs.declHandle == rhs.declHandle &&
+               lhs.valueHandle == rhs.valueHandle &&
+               lhs.lastHandle == rhs.lastHandle &&
+               lhs.connHandle == rhs.connHandle;
     }
 
-    friend bool operator !=(const DiscoveredCharacteristic& rhs, const DiscoveredCharacteristic& lhs) {
-        return !(rhs == lhs);
+    /**
+     * @brief "Not equal to" operator for DiscoveredCharacteristic
+     *
+     * @param lhs The right hand side of the expression
+     * @param rhs The left hand side of the expression
+     *
+     * @return true if operands are not equals, false otherwise.
+     */
+    friend bool operator !=(const DiscoveredCharacteristic& lhs, const DiscoveredCharacteristic& rhs) {
+        return !(lhs == rhs);
     }
 
 public:
