@@ -325,43 +325,23 @@ public:
         return onHVXCallbackChain;
     }
 
-protected:
+public:
     /**
      * Clear all GattClient state of the associated object.
      *
      * This function is meant to be overridden in the platform-specific
-     * sub-class. Nevertheless, the sub-class is only expected to clean up its
+     * sub-class. Nevertheless, the sub-class is only expected to reset its
      * state and not the data held in GattClient members. This shall be achieved
-     * by a call to GattClient::cleanup() from the sub-class' cleanup()
+     * by a call to GattClient::reset() from the sub-class' reset()
      * implementation.
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t cleanup(void) {
+    virtual ble_error_t reset(void) {
         onDataReadCallbackChain.clear();
         onDataWriteCallbackChain.clear();
         onHVXCallbackChain.clear();
 
-        return BLE_ERROR_NONE;
-    }
-
-public:
-    /**
-     * Clear all GattClient state of the object pointed to by
-     * gattClientInstance.
-     *
-     * This function is meant to be called by the overridden BLE::shutdown()
-     * in the platform-specific sub-class.
-     *
-     * @return BLE_ERROR_NONE on success.
-     *
-     * @note: If gattClientInstance is NULL then it is assumed that Gap has not
-     * been instantiated and a call to GattClient::shutdown() will succeed.
-     */
-    static ble_error_t shutdown(void) {
-        if (gattClientInstance) {
-            return gattClientInstance->cleanup();
-        }
         return BLE_ERROR_NONE;
     }
 
@@ -390,10 +370,6 @@ protected:
     ReadCallbackChain_t  onDataReadCallbackChain;
     WriteCallbackChain_t onDataWriteCallbackChain;
     HVXCallbackChain_t   onHVXCallbackChain;
-
-protected:
-    static GattClient *gattClientInstance;      /**< Pointer to the GattClient object instance.
-                                                 *   If NULL, then GattClient has not been initialized. */
 
 private:
     /* Disallow copy and assignment. */
