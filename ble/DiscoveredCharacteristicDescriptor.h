@@ -25,22 +25,22 @@
 
 
 /**
- * 
+ *
  */
 class DiscoveredCharacteristicDescriptor {
 
 public:
     DiscoveredCharacteristicDescriptor(
-        GattClient* client, Gap::Handle_t connectionHandle,  GattAttribute::Handle_t gattHandle, const UUID& uuid) : 
+        GattClient* client, Gap::Handle_t connectionHandle,  GattAttribute::Handle_t gattHandle, const UUID& uuid) :
         _client(client), _connectionHandle(connectionHandle), _uuid(uuid), _gattHandle(gattHandle) {
 
     }
 
-    GattClient* client() { 
+    GattClient* client() {
         return _client;
     }
 
-    const GattClient* client() const { 
+    const GattClient* client() const {
         return _client;
     }
 
