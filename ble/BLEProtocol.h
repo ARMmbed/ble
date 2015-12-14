@@ -21,9 +21,9 @@
 #include <stdint.h>
 
 /**
- * A common container for types and constants used everywhere in BLE API.
+ * A common namespace for types and constants used everywhere in BLE API.
  */
-struct BLEProtocol {
+namespace BLEProtocol {
     /**< Address-type for Protocol addresses. */
     struct AddressType { /* Adding a struct to encapsulate the contained enumeration
                             * prevents polluting the BLEProtocol namespace with the
