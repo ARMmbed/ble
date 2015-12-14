@@ -30,8 +30,8 @@
  *
  * @detail Provide detailed informations about a discovered characteristic descriptor
  * like:
- *     - Its UUID (see getUUID).
- *     - Its handle (see getAttributeHandle)
+ *     - Its UUID (see #getUUID).
+ *     - Its handle (see #getAttributeHandle)
  * Basic read (see GattClient::read) and write (see GattClient::write) procedure from
  * GattClient can be used access the value of the descriptor.
  *
