@@ -217,8 +217,8 @@ public:
      * Initiate a GATT Client write procedure.
      *
      * @param[in] cmd
-     *              Command can be either a write-request (which generates a 
-     *              matching response from the peripheral), or a write-command 
+     *              Command can be either a write-request (which generates a
+     *              matching response from the peripheral), or a write-command
      *              (which doesn't require the connected peer to respond).
      * @param[in] connHandle
      *              Connection handle.
@@ -247,8 +247,8 @@ public:
     /* Event callback handlers. */
 public:
     /**
-     * Set up a callback for read response events. 
-     * It is possible to remove registered callbacks using 
+     * Set up a callback for read response events.
+     * It is possible to remove registered callbacks using
      * onDataRead().detach(callbackToRemove)
      */
     void onDataRead(ReadCallback_t callback) {
@@ -258,7 +258,7 @@ public:
     /**
      * @brief provide access to the callchain of read callbacks
      * It is possible to register callbacks using onDataRead().add(callback);
-     * It is possible to unregister callbacks using onDataRead().detach(callback) 
+     * It is possible to unregister callbacks using onDataRead().detach(callback)
      * @return The read callbacks chain
      */
     ReadCallbackChain_t& onDataRead() {
@@ -267,7 +267,7 @@ public:
 
     /**
      * Set up a callback for write response events.
-     * It is possible to remove registered callbacks using 
+     * It is possible to remove registered callbacks using
      * onDataWritten().detach(callbackToRemove).
      * @Note: Write commands (issued using writeWoResponse) don't generate a response.
      */
@@ -278,10 +278,10 @@ public:
     /**
      * @brief provide access to the callchain of data written callbacks
      * It is possible to register callbacks using onDataWritten().add(callback);
-     * It is possible to unregister callbacks using onDataWritten().detach(callback) 
+     * It is possible to unregister callbacks using onDataWritten().detach(callback)
      * @return The data written callbacks chain
      */
-    WriteCallbackChain_t& onDataWritten() { 
+    WriteCallbackChain_t& onDataWritten() {
         return onDataWriteCallbackChain;
     }
 
@@ -307,21 +307,20 @@ public:
 
     /**
      * @brief launch discovery of descriptors for a given characteristic
-     * @details This function will discover all descriptors available for a 
-     * specific characteristic. 
-     * 
-     * @param characteristic The characteristic targeted by this discovery
-     * @param callback This is the application callback for each descriptors 
-     * found. 
-     * @note service discovery may still be active when the callback is issued; 
-     * calling asynchronous BLE-stack APIs from within this application callback 
-     * might cause the stack to abort the discovery. If this becomes an issue, 
-     * it may be better to make local copy of the DiscoveredCharacteristicDescriptor 
-     * and wait for characteristic descriptor discovery to terminate before 
-     * operating on the descriptor.
-     * 
-     * @return 
-     *   BLE_ERROR_NONE if characteristic descriptor discovery is launched 
+     * @details This function will discover all descriptors available for a
+     * specific characteristic.
+     *
+     * @param characteristic[in] The characteristic targeted by this discovery
+     * procedure
+     * @param discoveryCallback[in] User function called each time a descriptor
+     * is found during the procedure.
+     * @param terminationCallback[in] User provided function which will be called
+     * once the discovery procedure is terminating. This will get called when all
+     * the descriptors have been discovered or if an error occur during the discovery
+     * procedure.
+     *
+     * @return
+     *   BLE_ERROR_NONE if characteristic descriptor discovery is launched
      *   successfully; else an appropriate error.
      */
     virtual ble_error_t discoverCharacteristicDescriptors(
@@ -331,21 +330,28 @@ public:
         (void) characteristic;
         (void) discoveryCallback;
         (void) terminationCallback;
-        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+        /* Requesting action from porter(s): override this API if this capability is supported. */
+        return BLE_ERROR_NOT_IMPLEMENTED;
     }
 
     /**
-     * Is characteristic descriptor discovery currently active?
+     * @brief Indicate if the discovery of characteristic descriptors is active for a given characteristic
+     * or not.
+     * @param characteristic[in] The characteristic concerned by the descriptors discovery.
+     * @return true if a descriptors discovery is active for the characteristic in input; otherwise false.
      */
-    virtual bool isCharacteristicDescriptorsDiscoveryActive(const DiscoveredCharacteristic& characteristic) const 
+    virtual bool isCharacteristicDescriptorsDiscoveryActive(const DiscoveredCharacteristic& characteristic) const
      {
         (void) characteristic;
         return false; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
-     * Terminate an ongoing characteristic descriptor discovery. This should result 
-     * in an invocation of the TerminationCallback if characteristic descriptor discovery is active.
+     * @brief Terminate an ongoing characteristic descriptor discovery.
+     * @detail This should result in an invocation of the TerminationCallback if
+     * the characteristic descriptor discovery is active.
+     * @param characteristic[in] The characteristic on which the running descriptors
+     * discovery should be stopped.
      */
     virtual void terminateCharacteristicDescriptorsDiscovery(const DiscoveredCharacteristic& characteristic) {
         /* Requesting action from porter(s): override this API if this capability is supported. */
@@ -366,10 +372,10 @@ public:
     /**
      * @brief provide access to the callchain of HVX callbacks
      * It is possible to register callbacks using onHVX().add(callback);
-     * It is possible to unregister callbacks using onHVX().detach(callback) 
+     * It is possible to unregister callbacks using onHVX().detach(callback)
      * @return The HVX callbacks chain
      */
-    HVXCallbackChain_t& onHVX() { 
+    HVXCallbackChain_t& onHVX() {
         return onHVXCallbackChain;
     }
 
