@@ -246,10 +246,6 @@ public:
         return lastHandle;
     }
 
-    void setLastHandle(GattAttribute::Handle_t last) {
-        lastHandle = last;
-    }
-
     /**
      * @brief Return the GattClient which can operate on this characteristic.
      * @return The GattClient which can operate on this characteristic.
