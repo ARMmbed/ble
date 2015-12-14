@@ -23,7 +23,6 @@
 #include "GattClient.h"
 #include "CharacteristicDescriptorDiscovery.h"
 
-
 /**
  *
  */
@@ -36,23 +35,23 @@ public:
 
     }
 
-    GattClient* client() {
+    GattClient* getGattClient() {
         return _client;
     }
 
-    const GattClient* client() const {
+    const GattClient* getGattClient() const {
         return _client;
     }
 
-    Gap::Handle_t connectionHandle() const {
+    Gap::Handle_t getConnectionHandle() const {
         return _connectionHandle;
     }
 
-    const UUID& uuid(void) const {
+    const UUID& getUUID(void) const {
         return _uuid;
     }
 
-    GattAttribute::Handle_t gattHandle() const {
+    GattAttribute::Handle_t getAttributeHandle() const {
         return _gattHandle;
     }
 
