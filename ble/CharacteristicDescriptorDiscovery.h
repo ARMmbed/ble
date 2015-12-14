@@ -19,37 +19,79 @@
 
 #include "FunctionPointerWithContext.h"
 
-class DiscoveredCharacteristic;
-class DiscoveredCharacteristicDescriptor;
+class DiscoveredCharacteristic;                         // forward declaration
+class DiscoveredCharacteristicDescriptor;               // forward declaration
 
+/**
+ * @brief Contain all definitions of callbacks and callbacks parameters types
+ * related to characteristic descriptor discovery.
+ *
+ * @details This class act like a namespace for characteristic descriptor discovery
+ * types. It act like ServiceDiscovery by providing callbacks and callbacks
+ * parameters types related to the characteristic descriptor discovery process but
+ * contrary to ServiceDiscovery class, it does not force the porter to use a
+ * specific interface for the characteristic descriptor discovery process.
+ */
 class CharacteristicDescriptorDiscovery {
 public:
-    /*
-     * Exposed application callback types.
+    /**
+     * @brief Parameter type of CharacteristicDescriptorDiscovery::DiscoveryCallback_t.
+     * @detail Every time a characteristic descriptor has been discovered, the callback
+     * registered for the discovery operation through GattClient::discoverCharacteristicDescriptors
+     * or DiscoveredCharacteristic::discoverDescriptors will be called with this parameter.
+     *
      */
     struct DiscoveryCallbackParams_t {
+        /**
+         * The characteristic owning the DiscoveredCharacteristicDescriptor
+         */
         const DiscoveredCharacteristic& characteristic;
+
+        /**
+         * The characteristic descriptor discovered
+         */
         const DiscoveredCharacteristicDescriptor& descriptor;
     };
 
-    struct TerminationCallbackParams_t { 
+    /**
+     * @brief Parameter type of CharacteristicDescriptorDiscovery::TerminationCallback_t.
+     * @details Once a characteristic descriptor discovery process terminate, the termination
+     * callback registered for the discovery operation through
+     * GattClient::discoverCharacteristicDescriptors or DiscoveredCharacteristic::discoverDescriptors
+     * will be called with this parameter.
+     */
+    struct TerminationCallbackParams_t {
+        /**
+         * The characteristic for which the descriptors has been discovered
+         */
         const DiscoveredCharacteristic& characteristic;
+
+        /**
+         * status of the discovery operation
+         */
         ble_error_t status;
     };
 
     /**
-     * Callback type for when a matching characteristic descriptor is found during 
-     * characteristic descriptor discovery. The receiving function is passed in a 
-     * pointer to a DiscoveryCallbackParams_t object which will remain 
-     * valid for the lifetime of the callback. Memory for this object is owned by 
-     * the BLE_API eventing framework. The application can safely make a persistent 
-     * shallow-copy of this object in order to work with the service beyond the 
+     * @brief Callback type for when a matching characteristic descriptor is found during
+     * characteristic descriptor discovery.
+     *
+     * @param param A pointer to a DiscoveryCallbackParams_t object which will remain
+     * valid for the lifetime of the callback. Memory for this object is owned by
+     * the BLE_API eventing framework. The application can safely make a persistent
+     * shallow-copy of this object in order to work with the service beyond the
      * callback.
      */
     typedef FunctionPointerWithContext<const DiscoveryCallbackParams_t*> DiscoveryCallback_t;
 
     /**
-     * Callback type for when characteristic descriptor discovery terminates.
+     * @brief Callback type for when characteristic descriptor discovery terminates.
+     *
+     * @param param A pointer to a TerminationCallbackParams_t object which will remain
+     * valid for the lifetime of the callback. Memory for this object is owned by
+     * the BLE_API eventing framework. The application can safely make a persistent
+     * shallow-copy of this object in order to work with the service beyond the
+     * callback.
      */
     typedef FunctionPointerWithContext<const TerminationCallbackParams_t*> TerminationCallback_t;
 };
