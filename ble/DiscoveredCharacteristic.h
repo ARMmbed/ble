@@ -29,13 +29,13 @@
  * discovery procedure (see GattClient::launchServiceDiscovery ).
  *
  * @detail Provide detailed informations about a discovered characteristic like:
- *     - Its UUID (see getUUID).
+ *     - Its UUID (see #getUUID).
  *     - The most important handles of the characteristic definition
- *       (see getDeclHandle, getValueHandle, getLastHandle )
- *     - Its properties (see getProperties).
+ *       (see #getDeclHandle, #getValueHandle, #getLastHandle )
+ *     - Its properties (see #getProperties).
  * This class also provide functions to operate on the characteristic:
- *     - Read the characteristic value (see read)
- *     - Writing a characteristic value (see write or writeWoResponse)
+ *     - Read the characteristic value (see #read)
+ *     - Writing a characteristic value (see #write or #writeWoResponse)
  *     - Discover descriptors inside the characteristic definition. These descriptors
  *       extends the characteristic. More information about descriptor usage is
  *       available in DiscoveredCharacteristicDescriptor class.
@@ -63,19 +63,19 @@ public:
         /**
          * @brief "Equal to" operator for DiscoveredCharacteristic::Properties_t
          *
-         * @param lhs The left hand side of the equality expression
-         * @param rhs The right hand side of the equality expression
+         * @param lhs[in] The left hand side of the equality expression
+         * @param rhs[in] The right hand side of the equality expression
          *
          * @return true if operands are equals, false otherwise.
          */
         friend bool operator==(Properties_t lhs, Properties_t rhs) {
-            return rhs._broadcast == lhs._broadcast &&
-                   rhs._read == lhs._read &&
-                   rhs._writeWoResp == lhs._writeWoResp &&
-                   rhs._write == lhs._write &&
-                   rhs._notify == lhs._notify &&
-                   rhs._indicate == lhs._indicate &&
-                   rhs._authSignedWrite == lhs._authSignedWrite;
+            return lhs._broadcast == rhs._broadcast &&
+                   lhs._read == rhs._read &&
+                   lhs._writeWoResp == rhs._writeWoResp &&
+                   lhs._write == rhs._write &&
+                   lhs._notify == rhs._notify &&
+                   lhs._indicate == rhs._indicate &&
+                   lhs._authSignedWrite == rhs._authSignedWrite;
         }
 
         /**
@@ -87,7 +87,7 @@ public:
          * @return true if operands are not equals, false otherwise.
          */
         friend bool operator!=(Properties_t lhs, Properties_t rhs) {
-            return !(rhs == lhs);
+            return !(lhs == rhs);
         }
 
     private:
@@ -101,6 +101,9 @@ public:
      * than ATT_MTU - 1, this function must be called multiple times with
      * appropriate offset to read the complete value.
      *
+     * @param offset[in] The position - in the characteristic value bytes stream - where
+     * the read operation begin.
+     *
      * @return BLE_ERROR_NONE if a read has been initiated, or
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
      *         BLE_STACK_BUSY if some client procedure is already in progress, or
@@ -108,14 +111,22 @@ public:
      */
     ble_error_t read(uint16_t offset = 0) const;
 
+    /**
+     * @brief Same as #read(uint16_t) const but allow the user to register a callback
+     * which will be fired once the read is done.
+     *
+     * @param offset[in] The position - in the characteristic value bytes stream - where
+     * the read operation begin.
+     * @param onRead[in] Continuation of the read operation
+     */
     ble_error_t read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const;
 
     /**
      * Perform a write without response procedure.
      *
-     * @param  length
+     * @param[in]  length
      *           The amount of data being written.
-     * @param  value
+     * @param[in]  value
      *           The bytes being written.
      *
      * @note   It is important to note that a write without response will generate
@@ -135,8 +146,8 @@ public:
     /**
      * Initiate a GATT Characteristic Descriptor Discovery procedure for descriptors within this characteristic.
      *
-     * @param onDescriptorDiscovered This callback will be called every time a descriptor is discovered
-     * @param onTermination This callback will be called when the discovery process is over.
+     * @param[in] onDescriptorDiscovered This callback will be called every time a descriptor is discovered
+     * @param[in] onTermination This callback will be called when the discovery process is over.
      *
      * @return BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
      */
@@ -146,9 +157,9 @@ public:
     /**
      * Perform a write procedure.
      *
-     * @param  length
+     * @param[in]  length
      *           The amount of data being written.
-     * @param  value
+     * @param[in]  value
      *           The bytes being written.
      *
      * @note   It is important to note that a write will generate
@@ -163,9 +174,14 @@ public:
     ble_error_t write(uint16_t length, const uint8_t *value) const;
 
     /**
-     * Same as above but register the callback wich will be called once the data has been written
+     * Same as #write(uint16_t, const uint8_t *) const but register a callback
+     * which will be called once the data has been written.
+     *
+     * @param[in] length The amount of bytes to write.
+     * @param[in] value The bytes to write.
+     * @param[in] onRead Continuation callback for the write operation
      */
-    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onRead) const;
+    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onWrite) const;
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::ByteOrder_t order = UUID::MSB) {
         uuid.setupLong(longUUID, order);
@@ -194,11 +210,11 @@ public:
      * definition. The value accessible at this handle contains the following
      * informations:
      *    - The characteristics properties (see Properties_t). This value can
-     *      be accessed by using DiscoveredCharacteristic::getProperties .
+     *      be accessed by using #getProperties .
      *    - The characteristic value attribute handle. This field can be accessed
-     *      by using DiscoveredCharacteristic::getValueHandle .
+     *      by using #getValueHandle .
      *    - The characteristic UUID, this value can be accessed by using the
-     *      function DiscoveredCharacteristic::getUUID .
+     *      function #getUUID .
      * @return the declaration handle of this characteristic.
      */
     GattAttribute::Handle_t getDeclHandle(void) const {
@@ -208,8 +224,8 @@ public:
     /**
      * @brief Return the handle used to access the value of this characteristic.
      * @details This handle is the one provided in the characteristic declaration
-     * value. Usually, it is equal to <declaration handle> + 1. But it is not always
-     * the case. Anyway, users are allowed to use <declaration handle> + 1 to access
+     * value. Usually, it is equal to #getDeclHandle() + 1. But it is not always
+     * the case. Anyway, users are allowed to use #getDeclHandle() + 1 to access
      * the value of a characteristic.
      * @return The handle to access the value of this characteristic.
      */
@@ -220,8 +236,8 @@ public:
     /**
      * @brief Return the last handle of the characteristic definition.
      * @details A Characteristic definition can contain a lot of handles:
-     *     - one for the declaration (see DiscoveredCharacteristic::getDeclHandle)
-     *     - one for the value (see DiscoveredCharacteristic::getValueHandle)
+     *     - one for the declaration (see #getDeclHandle)
+     *     - one for the value (see #getValueHandle)
      *     - zero of more for the characteristic descriptors.
      * This handle is the last handle of the characteristic definition.
      * @return The last handle of this characteristic definition.
@@ -263,8 +279,8 @@ public:
     /**
      * @brief "Equal to" operator for DiscoveredCharacteristic
      *
-     * @param lhs The left hand side of the equality expression
-     * @param rhs The right hand side of the equality expression
+     * @param lhs[in] The left hand side of the equality expression
+     * @param rhs[in] The right hand side of the equality expression
      *
      * @return true if operands are equals, false otherwise.
      */
@@ -281,8 +297,8 @@ public:
     /**
      * @brief "Not equal to" operator for DiscoveredCharacteristic
      *
-     * @param lhs The right hand side of the expression
-     * @param rhs The left hand side of the expression
+     * @param lhs[in] The right hand side of the expression
+     * @param rhs[in] The left hand side of the expression
      *
      * @return true if operands are not equals, false otherwise.
      */
