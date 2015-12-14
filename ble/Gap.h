@@ -147,7 +147,7 @@ public:
     typedef CallChainOfFunctionPointersWithContext<const ConnectionCallbackParams_t *> ConnectionEventCallbackChain_t;
 
     typedef FunctionPointerWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallback_t;
-    typedef CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallbackChain_t;    
+    typedef CallChainOfFunctionPointersWithContext<const DisconnectionCallbackParams_t*> DisconnectionEventCallbackChain_t;
 
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
@@ -183,14 +183,16 @@ public:
     }
 
     /**
-     * @return Minimum Advertising interval in milliseconds.
+     * @return Minimum Advertising interval in milliseconds for connectable
+     *      undirected and connectable directed event types.
      */
     virtual uint16_t getMinAdvertisingInterval(void) const {
         return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
 
     /**
-     * @return Minimum Advertising interval in milliseconds for non-connectible mode.
+     * @return Minimum Advertising interval in milliseconds for scannable
+     *      undirected and non-connectable undirected event types.
      */
     virtual uint16_t getMinNonConnectableAdvertisingInterval(void) const {
         return 0; /* Requesting action from porter(s): override this API if this capability is supported. */
@@ -463,11 +465,6 @@ public:
      * @note: Decreasing this value will allow central devices to detect a
      * peripheral faster, at the expense of more power being used by the radio
      * due to the higher data transmit rate.
-     *
-     * @note: This API is now *deprecated* and will be dropped in the future.
-     * You should use the parallel API from Gap directly. A former call to
-     * ble.setAdvertisingInterval(...) should now be achieved using
-     * ble.gap().setAdvertisingInterval(...).
      *
      * @Note: [WARNING] This API previously used 0.625ms as the unit for its
      * 'interval' argument. That required an explicit conversion from
@@ -906,7 +903,7 @@ public:
     /**
      * @brief provide access to the callchain of timeout event callbacks
      * It is possible to register callbacks using onTimeout().add(callback);
-     * It is possible to unregister callbacks using onTimeout().detach(callback) 
+     * It is possible to unregister callbacks using onTimeout().detach(callback)
      * @return The timeout event callbacks chain
      */
     TimeoutEventCallbackChain_t& onTimeout() {
@@ -925,10 +922,10 @@ public:
     /**
      * @brief provide access to the callchain of connection event callbacks
      * It is possible to register callbacks using onConnection().add(callback);
-     * It is possible to unregister callbacks using onConnection().detach(callback) 
+     * It is possible to unregister callbacks using onConnection().detach(callback)
      * @return The connection event callbacks chain
      */
-    ConnectionEventCallbackChain_t& onconnection() { 
+    ConnectionEventCallbackChain_t& onConnection() {
         return connectionCallChain;
     }
 
@@ -944,7 +941,7 @@ public:
     /**
      * @brief provide access to the callchain of disconnection event callbacks
      * It is possible to register callbacks using onDisconnection().add(callback);
-     * It is possible to unregister callbacks using onDisconnection().detach(callback) 
+     * It is possible to unregister callbacks using onDisconnection().detach(callback)
      * @return The disconnection event callbacks chain
      */
     DisconnectionEventCallbackChain_t& onDisconnection() {

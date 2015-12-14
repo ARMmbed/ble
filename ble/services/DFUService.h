@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
+#ifdef TARGET_NRF51822 /* DFU only supported on nrf51 platforms */
+
 #ifndef __BLE_DFU_SERVICE_H__
 #define __BLE_DFU_SERVICE_H__
 
 #include "ble/BLE.h"
 #include "ble/UUID.h"
 
-extern "C" void bootloader_start(void);
+extern "C" {
+#include "dfu_app_handler.h"
+}
 
 extern const uint8_t  DFUServiceBaseUUID[];
 extern const uint16_t DFUServiceShortUUID;
@@ -101,7 +105,15 @@ public:
                 handoverCallback();
             }
 
-            bootloader_start();
+            // Call bootloader_start implicitly trough a event handler call
+            // it is a work around for bootloader_start not being public in sdk 8.1
+            ble_dfu_t p_dfu;
+            ble_dfu_evt_t p_evt;
+
+            p_dfu.conn_handle = params->connHandle;
+            p_evt.ble_dfu_evt_type = BLE_DFU_START;
+
+            dfu_app_on_dfu_evt(&p_dfu, &p_evt);
         }
     }
 
@@ -131,3 +143,4 @@ protected:
 };
 
 #endif /* #ifndef __BLE_DFU_SERVICE_H__*/
+#endif /* #ifdef TARGET_NRF51822 */

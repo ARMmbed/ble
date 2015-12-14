@@ -21,9 +21,9 @@
 
 /**
 * @class LinkLossService
-* @brief This service defines behavior when a link is lost between two devices. <br>
-* Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.link_loss.xml <br>
-* Alertness Level Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.alert_level.xml <br>
+* @brief This service defines behavior when a link is lost between two devices.
+* Service:  https://developer.bluetooth.org/gatt/services/Pages/ServiceViewer.aspx?u=org.bluetooth.service.link_loss.xml
+* Alertness Level Char: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.alert_level.xml
 */
 class LinkLossService {
 public:
@@ -67,7 +67,7 @@ public:
     }
 
     /**
-     * Update Alertness Level.
+     * Update alertness level.
      */
     void setAlertLevel(AlertLevel_t newLevel) {
         alertLevel = newLevel;
@@ -75,7 +75,7 @@ public:
 
 protected:
     /**
-     * This callback allows receiving updates to the AlertLevel Characteristic.
+     * This callback allows receiving updates to the AlertLevel characteristic.
      *
      * @param[in] params
      *     Information about the characterisitc being updated.
