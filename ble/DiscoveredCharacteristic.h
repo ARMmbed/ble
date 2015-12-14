@@ -25,8 +25,20 @@
 #include "ble/DiscoveredCharacteristicDescriptor.h"
 
 /**
- * Structure for holding information about the service and the characteristics
- * found during the discovery process.
+ * @brief Representation of a characteristic discovered during a GattClient
+ * discovery procedure (see GattClient::launchServiceDiscovery ).
+ *
+ * @detail Provide detailed informations about a discovered characteristic like:
+ *     - Its UUID (see getUUID).
+ *     - The most important handles of the characteristic definition
+ *       (see getDeclHandle, getValueHandle, getLastHandle )
+ *     - Its properties (see getProperties).
+ * This class also provide functions to operate on the characteristic:
+ *     - Read the characteristic value (see read)
+ *     - Writing a characteristic value (see write or writeWoResponse)
+ *     - Discover descriptors inside the characteristic definition. These descriptors
+ *       extends the characteristic. More information about descriptor usage is
+ *       available in DiscoveredCharacteristicDescriptor class.
  */
 class DiscoveredCharacteristic {
 public:
