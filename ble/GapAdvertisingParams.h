@@ -45,6 +45,9 @@ public:
     typedef enum AdvertisingType_t AdvertisingType; /* Deprecated type alias. */
 
 public:
+    /**
+     * Constructor for GapAdvertisingParams.
+     */
     GapAdvertisingParams(AdvertisingType_t               advType   = ADV_CONNECTABLE_UNDIRECTED,
                          uint16_t                        interval  = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
                          uint16_t                        timeout   = 0,
