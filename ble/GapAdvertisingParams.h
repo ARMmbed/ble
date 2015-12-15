@@ -17,6 +17,8 @@
 #ifndef __GAP_ADVERTISING_PARAMS_H__
 #define __GAP_ADVERTISING_PARAMS_H__
 
+#include "BLEProtocol.h"
+
 /**
  *  This class provides a wrapper for the core advertising parameters,
  *  including the advertising type (Connectable Undirected,
@@ -43,9 +45,13 @@ public:
     typedef enum AdvertisingType_t AdvertisingType; /* Deprecated type alias. */
 
 public:
-    GapAdvertisingParams(AdvertisingType_t advType  = ADV_CONNECTABLE_UNDIRECTED,
-                         uint16_t          interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
-                         uint16_t          timeout  = 0) : _advType(advType), _interval(interval), _timeout(timeout) {
+    GapAdvertisingParams(AdvertisingType_t               advType   = ADV_CONNECTABLE_UNDIRECTED,
+                         uint16_t                        interval  = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
+                         uint16_t                        timeout   = 0,
+                         const BLEProtocol::Whitelist_t *whiteList = NULL) : _advType(advType),
+                                                                             _interval(interval),
+                                                                             _timeout(timeout),
+                                                                             _whiteList(whiteList) {
         /* Interval checks. */
         if (_advType == ADV_CONNECTABLE_DIRECTED) {
             /* Interval must be 0 in directed connectable mode. */
@@ -107,14 +113,21 @@ public:
         return _timeout;
     }
 
-    void setAdvertisingType(AdvertisingType_t newAdvType) {_advType = newAdvType;  }
-    void setInterval(uint16_t newInterval)                {_interval = MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newInterval);}
-    void setTimeout(uint16_t newTimeout)                  {_timeout = newTimeout;  }
+    void setAdvertisingType(AdvertisingType_t newAdvType)        {_advType   = newAdvType;  }
+    void setInterval(uint16_t newInterval)                       {_interval  = MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newInterval);}
+    void setTimeout(uint16_t newTimeout)                         {_timeout   = newTimeout;  }
+
+    /**
+     * Set the whiteList to be used for advertising. See \ref BLEProtocol::Whitelist_t
+     * @param [in] whiteList
+     */
+    void setWhiteList(const BLEProtocol::Whitelist_t *whiteList) {_whiteList = whiteList;   }
 
 private:
-    AdvertisingType_t _advType;
-    uint16_t          _interval; /* In ADV duration units (i.e. 0.625ms). */
-    uint16_t          _timeout;  /* In seconds. */
+    AdvertisingType_t               _advType;
+    uint16_t                        _interval;  /* In ADV duration units (i.e. 0.625ms). */
+    uint16_t                        _timeout;   /* In seconds. */
+    const BLEProtocol::Whitelist_t *_whiteList; /**< white list associated with advertisements. \ref BLEProtocol::Whitelist_t */
 };
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__
