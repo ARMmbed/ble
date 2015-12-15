@@ -25,15 +25,21 @@
  * A common namespace for types and constants used everywhere in BLE API.
  */
 namespace BLEProtocol {
-    /**< Address-type for Protocol addresses. */
-    struct AddressType { /* Adding a struct to encapsulate the contained enumeration
-                          * prevents polluting the BLEProtocol namespace with the
-                          * enumerated values. It also allows type-aliases for the
-                          * enumeration while retaining the enumerated values. i.e.
-                          *
-                          * doing:
-                          *       typedef AddressType_t AliasedType_t;
-                          * would allow the use of AliasedType_t::PUBLIC in code. */
+    /**<
+     * A simple container for the enumeration of address-types for Protocol addresses.
+     *
+     * Adding a struct to encapsulate the contained enumeration prevents
+     * polluting the BLEProtocol namespace with the enumerated values. It also
+     * allows type-aliases for the enumeration while retaining the enumerated
+     * values. i.e.
+     *
+     * doing:
+     *       typedef AddressType AliasedType;
+     *
+     * would allow the use of AliasedType::PUBLIC in code.
+     */
+    struct AddressType {
+        /**< Address-types for Protocol addresses. */
         enum Type {
             PUBLIC = 0,
             RANDOM_STATIC,
