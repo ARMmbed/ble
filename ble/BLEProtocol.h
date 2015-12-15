@@ -47,7 +47,7 @@ namespace BLEProtocol {
             RANDOM_PRIVATE_NON_RESOLVABLE
         };
     };
-    typedef AddressType::Type AddressType_t; /**< Alias for AddressType::Type */
+    typedef AddressType::Type AddressType_t;   /**< Alias for AddressType::Type */
 
     static const size_t ADDR_LEN = 6;         /**< Length (in octets) of the BLE MAC address. */
     typedef uint8_t AddressBytes_t[ADDR_LEN]; /**< 48-bit address bytes, in LSB format. */
@@ -65,7 +65,7 @@ namespace BLEProtocol {
     };
 
     static const size_t SECURITY_KEY_LEN = 16; /**@brief GAP Security Key Length. */
-    typedef uint8_t Irk_t[SECURITY_KEY_LEN]; /**@brief Identity Resolving Key. */
+    typedef uint8_t Irk_t[SECURITY_KEY_LEN];   /**@brief Identity Resolving Key. */
 
     /**
      * Whitelisting is an important feature available in BLE. White-lists allow hosts to filter devices
@@ -81,7 +81,7 @@ namespace BLEProtocol {
      * received from devices whose Bluetooth Address is not present in the white list will simply be dropped.
      */
     struct Whitelist_t {
-        AddressBytes_t *addrs[];   /**< Pointer to an array of device address pointers, pointing to addresses to be used in whitelist.
+        AddressBytes_t *addrs[];  /**< Pointer to an array of device address pointers, pointing to addresses to be used in whitelist.
                                        NULL if none are given. */
         uint8_t        addrCount; /**< Count of device addresses in the array `addrs`.
                                        @note there will be some upper limit to this count imposed by the underlying BLE stack. */
