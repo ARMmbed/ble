@@ -17,6 +17,7 @@
 #ifndef __GAP_H__
 #define __GAP_H__
 
+#include "ble/BLEProtocol.h"
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
 #include "GapScanningParams.h"
@@ -30,19 +31,28 @@ class GapScanningParams;
 class GapAdvertisingData;
 
 class Gap {
+    /*
+     * DEPRECATION ALERT: all of the APIs in this `public` block are deprecated.
+     * They have been relocated to the class BLEProtocol.
+     */
 public:
-    enum AddressType_t {
-        ADDR_TYPE_PUBLIC = 0,
-        ADDR_TYPE_RANDOM_STATIC,
-        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
-        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
-    };
-    typedef enum AddressType_t addr_type_t; /* @Note: Deprecated. Use AddressType_t instead. */
+    /**
+     * Address-type for BLEProtocol addresses.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     */
+    typedef BLEProtocol::AddressType_t AddressType_t;
 
-    static const unsigned ADDR_LEN = 6;
-    typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
-    typedef Address_t address_t;         /* @Note: Deprecated. Use Address_t instead. */
+    /**
+     * Address-type for BLEProtocol addresses.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     */
+    typedef BLEProtocol::AddressType_t addr_type_t;
 
+    static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
+    typedef BLEProtocol::Address_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+    typedef BLEProtocol::Address_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+
+public:
     enum TimeoutSource_t {
         TIMEOUT_SRC_ADVERTISING      = 0x00, /**< Advertising timeout. */
         TIMEOUT_SRC_SECURITY_REQUEST = 0x01, /**< Security request timeout. */
@@ -87,31 +97,31 @@ public:
     };
 
     struct AdvertisementCallbackParams_t {
-        Address_t            peerAddr;
-        int8_t               rssi;
-        bool                 isScanResponse;
-        GapAdvertisingParams::AdvertisingType_t type;
-        uint8_t              advertisingDataLen;
-        const uint8_t       *advertisingData;
+        BLEProtocol::Address_t                   peerAddr;
+        int8_t                                   rssi;
+        bool                                     isScanResponse;
+        GapAdvertisingParams::AdvertisingType_t  type;
+        uint8_t                                  advertisingDataLen;
+        const uint8_t                           *advertisingData;
     };
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
     struct ConnectionCallbackParams_t {
-        Handle_t      handle;
-        Role_t        role;
-        AddressType_t peerAddrType;
-        Address_t     peerAddr;
-        AddressType_t ownAddrType;
-        Address_t     ownAddr;
-        const ConnectionParams_t *connectionParams;
+        Handle_t                    handle;
+        Role_t                      role;
+        BLEProtocol::AddressType_t  peerAddrType;
+        BLEProtocol::Address_t      peerAddr;
+        BLEProtocol::AddressType_t  ownAddrType;
+        BLEProtocol::Address_t      ownAddr;
+        const ConnectionParams_t   *connectionParams;
 
-        ConnectionCallbackParams_t(Handle_t       handleIn,
-                                   Role_t         roleIn,
-                                   AddressType_t  peerAddrTypeIn,
-                                   const uint8_t *peerAddrIn,
-                                   AddressType_t  ownAddrTypeIn,
-                                   const uint8_t *ownAddrIn,
-                                   const ConnectionParams_t *connectionParamsIn) :
+        ConnectionCallbackParams_t(Handle_t                    handleIn,
+                                   Role_t                      roleIn,
+                                   BLEProtocol::AddressType_t  peerAddrTypeIn,
+                                   const uint8_t              *peerAddrIn,
+                                   BLEProtocol::AddressType_t  ownAddrTypeIn,
+                                   const uint8_t              *ownAddrIn,
+                                   const ConnectionParams_t   *connectionParamsIn) :
             handle(handleIn),
             role(roleIn),
             peerAddrType(peerAddrTypeIn),
@@ -157,11 +167,11 @@ public:
 public:
     /**
      * Set the BTLE MAC address and type. Please note that the address format is
-     * least significant byte first (LSB). Please refer to Address_t.
+     * least significant byte first (LSB). Please refer to BLEProtocol::Address_t.
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t setAddress(AddressType_t type, const Address_t address) {
+    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::Address_t address) {
         /* avoid compiler warnings about unused variables */
         (void)type;
         (void)address;
@@ -174,7 +184,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) {
+    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::Address_t address) {
         /* Avoid compiler warnings about unused variables. */
         (void)typeP;
         (void)address;
@@ -233,10 +243,10 @@ public:
      *     successfully. The connectionCallChain (if set) will be invoked upon
      *     a connection event.
      */
-    virtual ble_error_t connect(const Address_t           peerAddr,
-                                Gap::AddressType_t        peerAddrType,
-                                const ConnectionParams_t *connectionParams,
-                                const GapScanningParams  *scanParams) {
+    virtual ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
+                                BLEProtocol::AddressType_t    peerAddrType,
+                                const ConnectionParams_t     *connectionParams,
+                                const GapScanningParams      *scanParams) {
         /* Avoid compiler warnings about unused variables. */
         (void)peerAddr;
         (void)peerAddrType;
@@ -1002,13 +1012,13 @@ protected:
 
     /* Entry points for the underlying stack to report events back to the user. */
 public:
-    void processConnectionEvent(Handle_t                  handle,
-                                Role_t                    role,
-                                AddressType_t             peerAddrType,
-                                const Address_t           peerAddr,
-                                AddressType_t             ownAddrType,
-                                const Address_t           ownAddr,
-                                const ConnectionParams_t *connectionParams) {
+    void processConnectionEvent(Handle_t                      handle,
+                                Role_t                        role,
+                                BLEProtocol::AddressType_t    peerAddrType,
+                                const BLEProtocol::Address_t  peerAddr,
+                                BLEProtocol::AddressType_t    ownAddrType,
+                                const BLEProtocol::Address_t  ownAddr,
+                                const ConnectionParams_t     *connectionParams) {
         state.connected = 1;
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
         connectionCallChain.call(&callbackParams);
@@ -1020,12 +1030,12 @@ public:
         disconnectionCallChain.call(&callbackParams);
     }
 
-    void processAdvertisementReport(const Address_t    peerAddr,
-                                    int8_t             rssi,
-                                    bool               isScanResponse,
+    void processAdvertisementReport(const BLEProtocol::Address_t             peerAddr,
+                                    int8_t                                   rssi,
+                                    bool                                     isScanResponse,
                                     GapAdvertisingParams::AdvertisingType_t  type,
-                                    uint8_t            advertisingDataLen,
-                                    const uint8_t     *advertisingData) {
+                                    uint8_t                                  advertisingDataLen,
+                                    const uint8_t                           *advertisingData) {
         AdvertisementCallbackParams_t params;
         memcpy(params.peerAddr, peerAddr, ADDR_LEN);
         params.rssi               = rssi;
