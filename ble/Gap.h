@@ -38,15 +38,15 @@ class Gap {
 public:
     /**
      * Address-type for BLEProtocol addresses.
-     * @note: deprecated. Use BLEProtocol::AddressType::Type instead.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
      */
-    typedef BLEProtocol::AddressType::Type AddressType_t;
+    typedef BLEProtocol::AddressType_t AddressType_t;
 
     /**
      * Address-type for BLEProtocol addresses.
-     * @note: deprecated. Use BLEProtocol::AddressType::Type instead.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
      */
-    typedef BLEProtocol::AddressType::Type addr_type_t;
+    typedef BLEProtocol::AddressType_t addr_type_t;
 
     static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
     typedef BLEProtocol::Address_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
@@ -107,21 +107,21 @@ public:
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
     struct ConnectionCallbackParams_t {
-        Handle_t                        handle;
-        Role_t                          role;
-        BLEProtocol::AddressType::Type  peerAddrType;
-        Address_t                       peerAddr;
-        BLEProtocol::AddressType::Type  ownAddrType;
-        Address_t                       ownAddr;
-        const ConnectionParams_t       *connectionParams;
+        Handle_t                    handle;
+        Role_t                      role;
+        BLEProtocol::AddressType_t  peerAddrType;
+        Address_t                   peerAddr;
+        BLEProtocol::AddressType_t  ownAddrType;
+        Address_t                   ownAddr;
+        const ConnectionParams_t   *connectionParams;
 
-        ConnectionCallbackParams_t(Handle_t                        handleIn,
-                                   Role_t                          roleIn,
-                                   BLEProtocol::AddressType::Type  peerAddrTypeIn,
-                                   const uint8_t                  *peerAddrIn,
-                                   BLEProtocol::AddressType::Type  ownAddrTypeIn,
-                                   const uint8_t                  *ownAddrIn,
-                                   const ConnectionParams_t       *connectionParamsIn) :
+        ConnectionCallbackParams_t(Handle_t                    handleIn,
+                                   Role_t                      roleIn,
+                                   BLEProtocol::AddressType_t  peerAddrTypeIn,
+                                   const uint8_t              *peerAddrIn,
+                                   BLEProtocol::AddressType_t  ownAddrTypeIn,
+                                   const uint8_t              *ownAddrIn,
+                                   const ConnectionParams_t   *connectionParamsIn) :
             handle(handleIn),
             role(roleIn),
             peerAddrType(peerAddrTypeIn),
@@ -171,7 +171,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t setAddress(BLEProtocol::AddressType::Type type, const Address_t address) {
+    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const Address_t address) {
         /* avoid compiler warnings about unused variables */
         (void)type;
         (void)address;
@@ -184,7 +184,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t getAddress(BLEProtocol::AddressType::Type *typeP, Address_t address) {
+    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, Address_t address) {
         /* Avoid compiler warnings about unused variables. */
         (void)typeP;
         (void)address;
@@ -243,10 +243,10 @@ public:
      *     successfully. The connectionCallChain (if set) will be invoked upon
      *     a connection event.
      */
-    virtual ble_error_t connect(const Address_t                 peerAddr,
-                                BLEProtocol::AddressType::Type  peerAddrType,
-                                const ConnectionParams_t       *connectionParams,
-                                const GapScanningParams        *scanParams) {
+    virtual ble_error_t connect(const Address_t             peerAddr,
+                                BLEProtocol::AddressType_t  peerAddrType,
+                                const ConnectionParams_t   *connectionParams,
+                                const GapScanningParams    *scanParams) {
         /* Avoid compiler warnings about unused variables. */
         (void)peerAddr;
         (void)peerAddrType;
@@ -1012,13 +1012,13 @@ protected:
 
     /* Entry points for the underlying stack to report events back to the user. */
 public:
-    void processConnectionEvent(Handle_t                        handle,
-                                Role_t                          role,
-                                BLEProtocol::AddressType::Type  peerAddrType,
-                                const Address_t                 peerAddr,
-                                BLEProtocol::AddressType::Type  ownAddrType,
-                                const Address_t                 ownAddr,
-                                const ConnectionParams_t       *connectionParams) {
+    void processConnectionEvent(Handle_t                    handle,
+                                Role_t                      role,
+                                BLEProtocol::AddressType_t  peerAddrType,
+                                const Address_t             peerAddr,
+                                BLEProtocol::AddressType_t  ownAddrType,
+                                const Address_t             ownAddr,
+                                const ConnectionParams_t   *connectionParams) {
         state.connected = 1;
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
         connectionCallChain.call(&callbackParams);

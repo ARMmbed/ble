@@ -239,7 +239,7 @@ public:
      * ble.setAddress(...) should be replaced with
      * ble.gap().setAddress(...).
      */
-    ble_error_t setAddress(BLEProtocol::AddressType::Type type, const Gap::Address_t address) {
+    ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::Address_t address) {
         return gap().setAddress(type, address);
     }
 
@@ -252,7 +252,7 @@ public:
      * ble.getAddress(...) should be replaced with
      * ble.gap().getAddress(...).
      */
-    ble_error_t getAddress(BLEProtocol::AddressType::Type *typeP, Gap::Address_t address) {
+    ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::Address_t address) {
         return gap().getAddress(typeP, address);
     }
 
@@ -752,8 +752,8 @@ public:
      * ble.connect(...) should be replaced with
      * ble.gap().connect(...).
      */
-    ble_error_t connect(const Gap::Address_t           peerAddr,
-                        BLEProtocol::AddressType::Type peerAddrType = BLEProtocol::AddressType::RANDOM_STATIC,
+    ble_error_t connect(const BLEProtocol::Address_t   peerAddr,
+                        BLEProtocol::AddressType_t     peerAddrType = BLEProtocol::AddressType::RANDOM_STATIC,
                         const Gap::ConnectionParams_t *connectionParams = NULL,
                         const GapScanningParams       *scanParams = NULL) {
         return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);

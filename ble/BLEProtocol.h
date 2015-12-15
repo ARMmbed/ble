@@ -26,14 +26,13 @@
 namespace BLEProtocol {
     /**< Address-type for Protocol addresses. */
     struct AddressType { /* Adding a struct to encapsulate the contained enumeration
-                            * prevents polluting the BLEProtocol namespace with the
-                            * enumerated values. It also allows type-aliases for the
-                            * enumeration while retaining the enumerated values. i.e.
-                            *
-                            * doing:
-                            *       typedef AddressType_t AliasedType_t;
-                            * would allow the use of AliasedType_t::PUBLIC in code.
-                            */
+                          * prevents polluting the BLEProtocol namespace with the
+                          * enumerated values. It also allows type-aliases for the
+                          * enumeration while retaining the enumerated values. i.e.
+                          *
+                          * doing:
+                          *       typedef AddressType_t AliasedType_t;
+                          * would allow the use of AliasedType_t::PUBLIC in code. */
         enum Type {
             PUBLIC = 0,
             RANDOM_STATIC,
@@ -41,9 +40,10 @@ namespace BLEProtocol {
             RANDOM_PRIVATE_NON_RESOLVABLE
         };
     };
+    typedef AddressType::Type AddressType_t; /**< Alias for AddressType::Type */
 
-    static const size_t ADDR_LEN = 6;    /**< Length (in octets) of the BLE MAC address. */
-    typedef uint8_t Address_t[ADDR_LEN]; /**< 48-bit address, in LSB format. */
+    static const size_t ADDR_LEN = 6;        /**< Length (in octets) of the BLE MAC address. */
+    typedef uint8_t Address_t[ADDR_LEN];     /**< 48-bit address, in LSB format. */
 };
 
 #endif /* __BLE_PROTOCOL_H__ */
