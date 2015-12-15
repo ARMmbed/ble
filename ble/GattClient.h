@@ -340,7 +340,7 @@ public:
      * @param characteristic[in] The characteristic concerned by the descriptors discovery.
      * @return true if a descriptors discovery is active for the characteristic in input; otherwise false.
      */
-    virtual bool isCharacteristicDescriptorsDiscoveryActive(const DiscoveredCharacteristic& characteristic) const
+    virtual bool isCharacteristicDescriptorDiscoveryActive(const DiscoveredCharacteristic& characteristic) const
      {
         (void) characteristic;
         return false; /* Requesting action from porter(s): override this API if this capability is supported. */
@@ -353,7 +353,7 @@ public:
      * @param characteristic[in] The characteristic on which the running descriptors
      * discovery should be stopped.
      */
-    virtual void terminateCharacteristicDescriptorsDiscovery(const DiscoveredCharacteristic& characteristic) {
+    virtual void terminateCharacteristicDescriptorDiscovery(const DiscoveredCharacteristic& characteristic) {
         /* Requesting action from porter(s): override this API if this capability is supported. */
         (void) characteristic;
     }
