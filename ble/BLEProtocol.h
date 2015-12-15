@@ -57,6 +57,33 @@ namespace BLEProtocol {
             std::copy(addressIn, addressIn + ADDR_LEN, address);
         }
     };
+
+    static const size_t SECURITY_KEY_LEN = 16; /**@brief GAP Security Key Length. */
+    typedef uint8_t Irk_t[SECURITY_KEY_LEN]; /**@brief Identity Resolving Key. */
+
+    /**
+     * Whitelisting is an important feature available in BLE. White-lists allow hosts to filter devices
+     * when advertising, scanning, and establishing connections on both sides. White lists are
+     * simply arrays of Bluetooth device addresses that are populated by the host and stored
+     * and used in the controller.
+     *
+     * A device scanning or initiating a connection can use a white list to limit the number of
+     * devices that will be detected or with which it can connect, and the advertising device
+     * can use a white list to specify which peers it will accept an incoming connection from.
+     *
+     * Any advertising packets (in the case of a scanner) or connection request packets (in the case of an advertiser)
+     * received from devices whose Bluetooth Address is not present in the white list will simply be dropped.
+     */
+    struct Whitelist_t {
+        AddressBytes_t *addrs[];   /**< Pointer to an array of device address pointers, pointing to addresses to be used in whitelist.
+                                       NULL if none are given. */
+        uint8_t        addrCount; /**< Count of device addresses in the array `addrs`.
+                                       @note there will be some upper limit to this count imposed by the underlying BLE stack. */
+        Irk_t         *irks;      /**< Pointer to an array of Identity Resolving Key (IRK) pointers, each pointing
+                                       to an IRK in the whitelist. NULL if none are given. */
+        uint8_t        irkCount;  /**< Count of IRKs in array.
+                                       @note there will be some upper limit to this count imposed by the underlying BLE stack. */
+    };
 };
 
 #endif /* __BLE_PROTOCOL_H__ */
