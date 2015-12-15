@@ -26,7 +26,7 @@
       "x-nucleo-idb0xa1": "^2.0.0"
     },
     "nrf51822": {
-      "ble-nrf51822": "^2.1.3"
+      "ble-nrf51822": "^2.2.6"
     },
     "cordio": {
       "ble-wicentric": "~0.0.4"
