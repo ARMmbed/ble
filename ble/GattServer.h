@@ -26,13 +26,12 @@
 
 class GattServer {
 public:
-
     /* Event callback handlers. */
     typedef FunctionPointerWithContext<unsigned> DataSentCallback_t;
     typedef CallChainOfFunctionPointersWithContext<unsigned> DataSentCallbackChain_t;
 
     typedef FunctionPointerWithContext<const GattWriteCallbackParams*> DataWrittenCallback_t;
-    typedef CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams*> DataWrittenCallbackChain_t;    
+    typedef CallChainOfFunctionPointersWithContext<const GattWriteCallbackParams*> DataWrittenCallbackChain_t;
 
     typedef FunctionPointerWithContext<const GattReadCallbackParams*> DataReadCallback_t;
     typedef CallChainOfFunctionPointersWithContext<const GattReadCallbackParams *> DataReadCallbackChain_t;
@@ -254,9 +253,9 @@ public:
     }
 
     /**
-     * @brief get the callback chain called when the event DATA_EVENT is triggered. 
+     * @brief get the callback chain called when the event DATA_EVENT is triggered.
      */
-    DataSentCallbackChain_t& onDataSent() { 
+    DataSentCallbackChain_t& onDataSent() {
         return dataSentCallChain;
     }
 
@@ -274,7 +273,7 @@ public:
      *
      * @Note: It is also possible to set up a callback into a member function of
      * some object.
-     * 
+     *
      * @Note It is possible to unregister a callback using onDataWritten().detach(callback)
      */
     void onDataWritten(const DataWrittenCallback_t& callback) {dataWrittenCallChain.add(callback);}
@@ -286,9 +285,9 @@ public:
     /**
      * @brief provide access to the callchain of data written event callbacks
      * It is possible to register callbacks using onDataWritten().add(callback);
-     * It is possible to unregister callbacks using onDataWritten().detach(callback) 
+     * It is possible to unregister callbacks using onDataWritten().detach(callback)
      * @return The data written event callbacks chain
-     */    
+     */
     DataWrittenCallbackChain_t& onDataWritten() {
         return dataWrittenCallChain;
     }
@@ -335,7 +334,7 @@ public:
     /**
      * @brief provide access to the callchain of data read event callbacks
      * It is possible to register callbacks using onDataRead().add(callback);
-     * It is possible to unregister callbacks using onDataRead().detach(callback) 
+     * It is possible to unregister callbacks using onDataRead().detach(callback)
      * @return The data read event callbacks chain
      */
     DataReadCallbackChain_t& onDataRead() {
@@ -409,14 +408,14 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t reset(void) {
-        serviceCount = 0;
+        serviceCount        = 0;
         characteristicCount = 0;
 
         dataSentCallChain.clear();
         dataWrittenCallChain.clear();
         dataReadCallChain.clear();
-        updatesEnabledCallback = NULL;
-        updatesDisabledCallback = NULL;
+        updatesEnabledCallback       = NULL;
+        updatesDisabledCallback      = NULL;
         confirmationReceivedCallback = NULL;
 
         return BLE_ERROR_NONE;

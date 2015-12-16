@@ -144,11 +144,11 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t reset(void) {
-        connHandle = 0;
-        matchingServiceUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN);
-        serviceCallback = NULL;
+        connHandle                 = 0;
+        matchingServiceUUID        = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN);
+        serviceCallback            = NULL;
         matchingCharacteristicUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN);
-        characteristicCallback = NULL;
+        characteristicCallback     = NULL;
 
         return BLE_ERROR_NONE;
     }

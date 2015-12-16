@@ -246,9 +246,9 @@ public:
     virtual ble_error_t reset(void) {
         securitySetupInitiatedCallback = NULL;
         securitySetupCompletedCallback = NULL;
-        linkSecuredCallback = NULL;
-        securityContextStoredCallback = NULL;
-        passkeyDisplayCallback = NULL;
+        linkSecuredCallback            = NULL;
+        securityContextStoredCallback  = NULL;
+        passkeyDisplayCallback         = NULL;
 
         return BLE_ERROR_NONE;
     }

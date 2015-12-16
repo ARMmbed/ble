@@ -1010,7 +1010,7 @@ public:
     virtual ble_error_t reset(void) {
         /* Clear Gap state */
         state.advertising = 0;
-        state.connected = 0;
+        state.connected   = 0;
 
         /* Clear scanning state */
         scanningActive = false;
@@ -1024,7 +1024,7 @@ public:
         connectionCallChain.clear();
         disconnectionCallChain.clear();
         radioNotificationCallback = NULL;
-        onAdvertisementReport = NULL;
+        onAdvertisementReport     = NULL;
 
         return BLE_ERROR_NONE;
     }
