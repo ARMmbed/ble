@@ -993,6 +993,42 @@ public:
         radioNotificationCallback.attach(tptr, mptr);
     }
 
+public:
+    /**
+     * Clear all Gap state of the associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to reset its
+     * state and not the data held in Gap members. This shall be achieved by a
+     * call to Gap::reset() from the sub-class' reset() implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     *
+     * @note: Currently a call to reset() does not reset the advertising and
+     * scan parameters to default values.
+     */
+    virtual ble_error_t reset(void) {
+        /* Clear Gap state */
+        state.advertising = 0;
+        state.connected = 0;
+
+        /* Clear scanning state */
+        scanningActive = false;
+
+        /* Clear advertising and scanning data */
+        _advPayload.clear();
+        _scanResponse.clear();
+
+        /* Clear callbacks */
+        timeoutCallbackChain.clear();
+        connectionCallChain.clear();
+        disconnectionCallChain.clear();
+        radioNotificationCallback = NULL;
+        onAdvertisementReport = NULL;
+
+        return BLE_ERROR_NONE;
+    }
+
 protected:
     Gap() :
         _advParams(),

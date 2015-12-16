@@ -396,6 +396,32 @@ protected:
         dataSentCallChain.call(count);
     }
 
+public:
+    /**
+     * Clear all GattServer state of the associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to reset its
+     * state and not the data held in GattServer members. This shall be achieved
+     * by a call to GattServer::reset() from the sub-class' reset()
+     * implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    virtual ble_error_t reset(void) {
+        serviceCount = 0;
+        characteristicCount = 0;
+
+        dataSentCallChain.clear();
+        dataWrittenCallChain.clear();
+        dataReadCallChain.clear();
+        updatesEnabledCallback = NULL;
+        updatesDisabledCallback = NULL;
+        confirmationReceivedCallback = NULL;
+
+        return BLE_ERROR_NONE;
+    }
+
 protected:
     uint8_t serviceCount;
     uint8_t characteristicCount;

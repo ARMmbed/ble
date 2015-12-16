@@ -231,6 +231,28 @@ protected:
         /* empty */
     }
 
+public:
+    /**
+     * Clear all SecurityManager state of the associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to reset its
+     * state and not the data held in SecurityManager members. This shall be
+     * achieved by a call to SecurityManager::reset() from the sub-class'
+     * reset() implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    virtual ble_error_t reset(void) {
+        securitySetupInitiatedCallback = NULL;
+        securitySetupCompletedCallback = NULL;
+        linkSecuredCallback = NULL;
+        securityContextStoredCallback = NULL;
+        passkeyDisplayCallback = NULL;
+
+        return BLE_ERROR_NONE;
+    }
+
 protected:
     SecuritySetupInitiatedCallback_t securitySetupInitiatedCallback;
     SecuritySetupCompletedCallback_t securitySetupCompletedCallback;

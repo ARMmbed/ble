@@ -325,6 +325,26 @@ public:
         return onHVXCallbackChain;
     }
 
+public:
+    /**
+     * Clear all GattClient state of the associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to reset its
+     * state and not the data held in GattClient members. This shall be achieved
+     * by a call to GattClient::reset() from the sub-class' reset()
+     * implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     */
+    virtual ble_error_t reset(void) {
+        onDataReadCallbackChain.clear();
+        onDataWriteCallbackChain.clear();
+        onHVXCallbackChain.clear();
+
+        return BLE_ERROR_NONE;
+    }
+
 protected:
     GattClient() {
         /* Empty */
