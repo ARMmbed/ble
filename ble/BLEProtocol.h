@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <algorithm>
 
 /**
  * A common namespace for types and constants used everywhere in BLE API.
@@ -44,6 +45,18 @@ namespace BLEProtocol {
 
     static const size_t ADDR_LEN = 6;         /**< Length (in octets) of the BLE MAC address. */
     typedef uint8_t AddressBytes_t[ADDR_LEN]; /**< 48-bit address bytes, in LSB format. */
+
+    /**
+     * BLE address. It contains an address-type (@ref AddressType_t) and bytes (@ref AddressBytes_t).
+     */
+    struct Address_t {
+        AddressType_t  type;
+        AddressBytes_t address;
+
+        Address_t(AddressType_t typeIn, const AddressBytes_t addressIn) : type(typeIn) {
+            std::copy(addressIn, addressIn + ADDR_LEN, address);
+        }
+    };
 };
 
 #endif /* __BLE_PROTOCOL_H__ */
