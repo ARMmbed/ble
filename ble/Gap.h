@@ -39,15 +39,23 @@ public:
     /**
      * Address-type for BLEProtocol addresses.
      *
-     * @note: deprecated. Use BLEProtocol::AddressType_t instead. This declaration will soon be changed to:
-     *     typedef BLEProtocol::AddressType_t AddressType_t;
-     * It has been left in this current state to transparenly support existing applications which may have used Gap::ADDR_TYPE_*.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
      */
-    enum AddressType_t {
-        ADDR_TYPE_PUBLIC = BLEProtocol::AddressType::PUBLIC,
-        ADDR_TYPE_RANDOM_STATIC,
-        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
-        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
+    typedef BLEProtocol::AddressType_t AddressType_t;
+
+    /**
+     * Address-type for BLEProtocol addresses.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     *
+     * DEPRECATION ALERT: The following constants have been left in their
+     * deprecated state to transparenly support existing applications which may
+     * have used Gap::ADDR_TYPE_*.
+     */
+    enum {
+        ADDR_TYPE_PUBLIC                        = BLEProtocol::AddressType::PUBLIC,
+        ADDR_TYPE_RANDOM_STATIC                 = BLEProtocol::AddressType::RANDOM_STATIC,
+        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE     = BLEProtocol::AddressType::RANDOM_PRIVATE_RESOLVABLE,
+        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE = BLEProtocol::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE
     };
 
     /**
