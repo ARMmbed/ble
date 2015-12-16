@@ -116,6 +116,16 @@ public:
         return _timeout;
     }
 
+    /**
+     * Accessor for whiteList.
+     *
+     * Typically used from the adaptation layer of the BLE port to pass
+     * parameters into the underlying stack.
+     */
+    const BLEProtocol::Whitelist_t *getWhiteList(void) const {
+        return _whiteList;
+    }
+
     void setAdvertisingType(AdvertisingType_t newAdvType)        {_advType   = newAdvType;  }
     void setInterval(uint16_t newInterval)                       {_interval  = MSEC_TO_ADVERTISEMENT_DURATION_UNITS(newInterval);}
     void setTimeout(uint16_t newTimeout)                         {_timeout   = newTimeout;  }
