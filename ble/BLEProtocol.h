@@ -86,16 +86,18 @@ namespace BLEProtocol {
      * packets (in the case of an advertiser) received from devices whose
      * Bluetooth Address is not present in the white list will simply be
      * dropped.
+     *
+     * @note A whitelist has a fixed size.
      */
     struct Whitelist_t {
         AddressBytes_t *addrs[];  /**< Pointer to an array of device address pointers, pointing to addresses to be used in whitelist.
                                        NULL if none are given. */
         uint8_t        addrCount; /**< Count of device addresses in the array `addrs`.
-                                       @note there will be some upper limit to this count imposed by the underlying BLE stack. */
+                                       @note There will be some upper limit to this size imposed by the underlying BLE stack. */
         Irk_t         *irks;      /**< Pointer to an array of Identity Resolving Key (IRK) pointers, each pointing
                                        to an IRK in the whitelist. NULL if none are given. */
         uint8_t        irkCount;  /**< Count of IRKs in array.
-                                       @note there will be some upper limit to this count imposed by the underlying BLE stack. */
+                                       @note There will be some upper limit to this size imposed by the underlying BLE stack. */
     };
 };
 
