@@ -447,6 +447,7 @@ public:
     virtual ble_error_t reset(void) {
         /* Notify that the instance is about to shutdown */
         shutdownCallChain.call(this);
+        shutdownCallChain.clear();
 
         serviceCount = 0;
         characteristicCount = 0;
