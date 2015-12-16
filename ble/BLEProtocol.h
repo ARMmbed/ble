@@ -42,8 +42,8 @@ namespace BLEProtocol {
     };
     typedef AddressType::Type AddressType_t; /**< Alias for AddressType::Type */
 
-    static const size_t ADDR_LEN = 6;        /**< Length (in octets) of the BLE MAC address. */
-    typedef uint8_t Address_t[ADDR_LEN];     /**< 48-bit address, in LSB format. */
+    static const size_t ADDR_LEN = 6;         /**< Length (in octets) of the BLE MAC address. */
+    typedef uint8_t AddressBytes_t[ADDR_LEN]; /**< 48-bit address bytes, in LSB format. */
 };
 
 #endif /* __BLE_PROTOCOL_H__ */
