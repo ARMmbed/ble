@@ -1,6 +1,6 @@
 {
   "name": "ble",
-  "version": "2.1.15",
+  "version": "2.1.16",
   "description": "The BLE module offers a high level abstraction for using Bluetooth Low Energy on multiple platforms.",
   "keywords": [
     "Bluetooth",
@@ -26,7 +26,7 @@
       "x-nucleo-idb0xa1": "^2.0.0"
     },
     "nrf51822": {
-      "ble-nrf51822": "^2.2.6"
+      "ble-nrf51822": "^2.2.8"
     },
     "cordio": {
       "ble-wicentric": "~0.0.4"
