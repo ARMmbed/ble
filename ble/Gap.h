@@ -46,6 +46,12 @@ public:
     /**
      * Address-type for BLEProtocol addresses.
      * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     */
+    typedef BLEProtocol::AddressType_t addr_type_t;
+
+    /**
+     * Address-type for BLEProtocol addresses.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
      *
      * DEPRECATION ALERT: The following constants have been left in their
      * deprecated state to transparenly support existing applications which may
@@ -57,12 +63,6 @@ public:
         ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE     = BLEProtocol::AddressType::RANDOM_PRIVATE_RESOLVABLE,
         ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE = BLEProtocol::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE
     };
-
-    /**
-     * Address-type for BLEProtocol addresses.
-     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
-     */
-    typedef BLEProtocol::AddressType_t addr_type_t;
 
     static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
     typedef BLEProtocol::Address_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
