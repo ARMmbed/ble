@@ -87,7 +87,15 @@ namespace BLEProtocol {
      * Bluetooth Address is not present in the white list will simply be
      * dropped.
      *
-     * @note A whitelist has a fixed size.
+     * @note A whitelist has a fixed size. There will be some upper limit
+     *     imposed by the underlying BLE stack.
+     *
+     * @note It is not possible to change the contents of the whitelist while it
+     *     is being used. For example, if the device is advertising and using
+     *     the whitelist to filter the devices to and from which it will respond
+     *     to scan requests or connection requests, the whitelist cannot be
+     *     changed until advertising is disabled. The whitelist can then be
+     *     changed and advertising re-enabled.
      */
     struct Whitelist_t {
         AddressBytes_t *addrs[];  /**< Pointer to an array of device address pointers, pointing to addresses to be used in whitelist.

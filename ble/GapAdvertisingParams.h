@@ -131,8 +131,25 @@ public:
     void setTimeout(uint16_t newTimeout)                         {_timeout   = newTimeout;  }
 
     /**
-     * Set the whiteList to be used for advertising. See \ref BLEProtocol::Whitelist_t
-     * @param [in] whiteList
+     * Set the whiteList to be used for advertising. See @ref
+     * BLEProtocol::Whitelist_t. When used for a Peripheral, both scan-requests
+     * and connection-requests are filtered by the white-list.
+     *
+     * @param [in] whiteList The white-list to be used for connections and scan-
+     *                 requests. If passed in as NULL, the existing whitelist
+     *                 (if any) remains in effect.
+     *
+     * @note The contents of the structure holding the white-list should remain
+     *     valid at least until advertising is started (in the case of the
+     *     Peripheral) or a connection-request is issued (in the case of the
+     *     Central).
+     *
+     * @note It is not possible to change the contents of the whitelist while it
+     *     is being used. For example, if the device is advertising and using
+     *     the whitelist to filter the devices to and from which it will respond
+     *     to scan requests or connection requests, the whitelist cannot be
+     *     changed until advertising is disabled. The whitelist can then be
+     *     changed and advertising re-enabled.
      */
     void setWhiteList(const BLEProtocol::Whitelist_t *whiteList) {_whiteList = whiteList;   }
 
