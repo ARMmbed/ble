@@ -68,17 +68,24 @@ namespace BLEProtocol {
     typedef uint8_t Irk_t[SECURITY_KEY_LEN];   /**@brief Identity Resolving Key. */
 
     /**
-     * Whitelisting is an important feature available in BLE. White-lists allow hosts to filter devices
-     * when advertising, scanning, and establishing connections on both sides. White lists are
-     * simply arrays of Bluetooth device addresses that are populated by the host and stored
-     * and used in the controller.
+     * Whitelisting is an important feature available in BLE. White-lists allow
+     * hosts to filter devices when advertising, scanning, and establishing
+     * connections on both sides. White lists are simply arrays of Bluetooth
+     * device addresses that are populated by the host (i.e. the processor where
+     * the application is running) and stored and used in the controller (i.e.
+     * Bluetooth controller).
      *
-     * A device scanning or initiating a connection can use a white list to limit the number of
-     * devices that will be detected or with which it can connect, and the advertising device
-     * can use a white list to specify which peers it will accept an incoming connection from.
+     * A device scanning or initiating a connection can use a white list to
+     * limit the number of devices that will be detected or with which it can
+     * connect, and the advertising device can use a white list to specify which
+     * peers it will accept an incoming connection from. This is especially
+     * useful when searching for a few known devices in a fog of advertising
+     * packets in busy locations.
      *
-     * Any advertising packets (in the case of a scanner) or connection request packets (in the case of an advertiser)
-     * received from devices whose Bluetooth Address is not present in the white list will simply be dropped.
+     * Any advertising packets (in the case of a scanner) or connection request
+     * packets (in the case of an advertiser) received from devices whose
+     * Bluetooth Address is not present in the white list will simply be
+     * dropped.
      */
     struct Whitelist_t {
         AddressBytes_t *addrs[];  /**< Pointer to an array of device address pointers, pointing to addresses to be used in whitelist.
