@@ -41,6 +41,9 @@ public:
     typedef FunctionPointerWithContext<const GattHVXCallbackParams*> HVXCallback_t;
     typedef CallChainOfFunctionPointersWithContext<const GattHVXCallbackParams*> HVXCallbackChain_t;
 
+    typedef FunctionPointerWithContext<const GattClient *> GattClientShutdownCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const GattClient *> GattClientShutdownCallbackChain_t;
+
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
      */
@@ -314,6 +317,37 @@ public:
         onHVXCallbackChain.add(callback);
     }
 
+    /**
+     * Setup a callback to be invoked to notify the user application that the
+     * GattClient instance is about to shutdown (possibly as a result of a call
+     * to BLE::shutdown()).
+     *
+     * @Note: It is possible to chain together multiple onShutdown callbacks
+     * (potentially from different modules of an application) to be notified
+     * before the GattClient is shutdown.
+     *
+     * @Note: It is also possible to set up a callback into a member function of
+     * some object.
+     *
+     * @Note It is possible to unregister a callback using onShutdown().detach(callback)
+     */
+    void onShutdown(const GattClientShutdownCallback_t& callback) {
+        shutdownCallChain.add(callback);
+    }
+    template <typename T>
+    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+        shutdownCallChain.add(objPtr, memberPtr);
+    }
+
+    /**
+     * @brief provide access to the callchain of shutdown event callbacks
+     * It is possible to register callbacks using onShutdown().add(callback);
+     * It is possible to unregister callbacks using onShutdown().detach(callback)
+     * @return The shutdown event callbacks chain
+     */
+    GattClientShutdownCallbackChain_t& onShutdown() {
+        return shutdownCallChain;
+    }
 
     /**
      * @brief provide access to the callchain of HVX callbacks
@@ -327,7 +361,9 @@ public:
 
 public:
     /**
-     * Clear all GattClient state of the associated object.
+     * Notify all registered onShutdown callbacks that the GattClient is
+     * about to be shutdown and clear all GattClient state of the
+     * associated object.
      *
      * This function is meant to be overridden in the platform-specific
      * sub-class. Nevertheless, the sub-class is only expected to reset its
@@ -338,6 +374,10 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t reset(void) {
+        /* Notify that the instance is about to shutdown */
+        shutdownCallChain.call(this);
+        shutdownCallChain.clear();
+
         onDataReadCallbackChain.clear();
         onDataWriteCallbackChain.clear();
         onHVXCallbackChain.clear();
@@ -367,9 +407,10 @@ public:
     }
 
 protected:
-    ReadCallbackChain_t  onDataReadCallbackChain;
-    WriteCallbackChain_t onDataWriteCallbackChain;
-    HVXCallbackChain_t   onHVXCallbackChain;
+    ReadCallbackChain_t               onDataReadCallbackChain;
+    WriteCallbackChain_t              onDataWriteCallbackChain;
+    HVXCallbackChain_t                onHVXCallbackChain;
+    GattClientShutdownCallbackChain_t shutdownCallChain;
 
 private:
     /* Disallow copy and assignment. */

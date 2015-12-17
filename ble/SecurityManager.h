@@ -20,6 +20,7 @@
 #include <stdint.h>
 
 #include "Gap.h"
+#include "CallChainOfFunctionPointersWithContext.h"
 
 class SecurityManager {
 public:
@@ -81,6 +82,9 @@ public:
     typedef void (*SecuritySetupCompletedCallback_t)(Gap::Handle_t, SecurityCompletionStatus_t status);
     typedef void (*LinkSecuredCallback_t)(Gap::Handle_t handle, SecurityMode_t securityMode);
     typedef void (*PasskeyDisplayCallback_t)(Gap::Handle_t handle, const Passkey_t passkey);
+
+    typedef FunctionPointerWithContext<const SecurityManager *> SecurityManagerShutdownCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const SecurityManager *> SecurityManagerShutdownCallbackChain_t;
 
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
@@ -162,6 +166,38 @@ public:
     /* Event callback handlers. */
 public:
     /**
+     * Setup a callback to be invoked to notify the user application that the
+     * SecurityManager instance is about to shutdown (possibly as a result of a call
+     * to BLE::shutdown()).
+     *
+     * @Note: It is possible to chain together multiple onShutdown callbacks
+     * (potentially from different modules of an application) to be notified
+     * before the SecurityManager is shutdown.
+     *
+     * @Note: It is also possible to set up a callback into a member function of
+     * some object.
+     *
+     * @Note It is possible to unregister a callback using onShutdown().detach(callback)
+     */
+    void onShutdown(const SecurityManagerShutdownCallback_t& callback) {
+        shutdownCallChain.add(callback);
+    }
+    template <typename T>
+    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+        shutdownCallChain.add(objPtr, memberPtr);
+    }
+
+    /**
+     * @brief provide access to the callchain of shutdown event callbacks
+     * It is possible to register callbacks using onShutdown().add(callback);
+     * It is possible to unregister callbacks using onShutdown().detach(callback)
+     * @return The shutdown event callbacks chain
+     */
+    SecurityManagerShutdownCallbackChain_t& onShutdown() {
+        return shutdownCallChain;
+    }
+
+    /**
      * To indicate that a security procedure for the link has started.
      */
     virtual void onSecuritySetupInitiated(SecuritySetupInitiatedCallback_t callback) {securitySetupInitiatedCallback = callback;}
@@ -233,7 +269,9 @@ protected:
 
 public:
     /**
-     * Clear all SecurityManager state of the associated object.
+     * Notify all registered onShutdown callbacks that the SecurityManager is
+     * about to be shutdown and clear all SecurityManager state of the
+     * associated object.
      *
      * This function is meant to be overridden in the platform-specific
      * sub-class. Nevertheless, the sub-class is only expected to reset its
@@ -244,6 +282,10 @@ public:
      * @return BLE_ERROR_NONE on success.
      */
     virtual ble_error_t reset(void) {
+        /* Notify that the instance is about to shutdown */
+        shutdownCallChain.call(this);
+        shutdownCallChain.clear();
+
         securitySetupInitiatedCallback = NULL;
         securitySetupCompletedCallback = NULL;
         linkSecuredCallback            = NULL;
@@ -259,6 +301,9 @@ protected:
     LinkSecuredCallback_t            linkSecuredCallback;
     HandleSpecificEvent_t            securityContextStoredCallback;
     PasskeyDisplayCallback_t         passkeyDisplayCallback;
+
+private:
+    SecurityManagerShutdownCallbackChain_t shutdownCallChain;
 };
 
 #endif /*__SECURITY_MANAGER_H__*/

@@ -177,6 +177,9 @@ public:
 
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
+    typedef FunctionPointerWithContext<const Gap *> GapShutdownCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const Gap *> GapShutdownCallbackChain_t;
+
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
      */
@@ -1009,9 +1012,43 @@ public:
         radioNotificationCallback.attach(tptr, mptr);
     }
 
+    /**
+     * Setup a callback to be invoked to notify the user application that the
+     * Gap instance is about to shutdown (possibly as a result of a call
+     * to BLE::shutdown()).
+     *
+     * @Note: It is possible to chain together multiple onShutdown callbacks
+     * (potentially from different modules of an application) to be notified
+     * before the Gap instance is shutdown.
+     *
+     * @Note: It is also possible to set up a callback into a member function of
+     * some object.
+     *
+     * @Note It is possible to unregister a callback using onShutdown().detach(callback)
+     */
+    void onShutdown(const GapShutdownCallback_t& callback) {
+        shutdownCallChain.add(callback);
+    }
+    template <typename T>
+    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+        shutdownCallChain.add(objPtr, memberPtr);
+    }
+
+    /**
+     * @brief provide access to the callchain of shutdown event callbacks
+     * It is possible to register callbacks using onShutdown().add(callback);
+     * It is possible to unregister callbacks using onShutdown().detach(callback)
+     * @return The shutdown event callbacks chain
+     */
+    GapShutdownCallbackChain_t& onShutdown() {
+        return shutdownCallChain;
+    }
+
 public:
     /**
-     * Clear all Gap state of the associated object.
+     * Notify all registered onShutdown callbacks that the Gap instance is
+     * about to be shutdown and clear all Gap state of the
+     * associated object.
      *
      * This function is meant to be overridden in the platform-specific
      * sub-class. Nevertheless, the sub-class is only expected to reset its
@@ -1024,6 +1061,10 @@ public:
      * scan parameters to default values.
      */
     virtual ble_error_t reset(void) {
+        /* Notify that the instance is about to shutdown */
+        shutdownCallChain.call(this);
+        shutdownCallChain.clear();
+
         /* Clear Gap state */
         state.advertising = 0;
         state.connected   = 0;
@@ -1119,6 +1160,9 @@ protected:
     AdvertisementReportCallback_t     onAdvertisementReport;
     ConnectionEventCallbackChain_t    connectionCallChain;
     DisconnectionEventCallbackChain_t disconnectionCallChain;
+
+private:
+    GapShutdownCallbackChain_t shutdownCallChain;
 
 private:
     /* Disallow copy and assignment. */
