@@ -134,6 +134,66 @@ public:
 
     /**
      * Appearance-type for BLEProtocol addresses.
+     * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
+     *
+     * DEPRECATION ALERT: The following constants have been left in their
+     * deprecated state to transparenly support existing applications which may
+     * have used GapAdvertisingData::*.
+     */
+    enum {
+        UNKNOWN                                        = BLEProtocol::AppearanceType::UNKNOWN,                                         /**< Unknown or unspecified appearance type. */
+        GENERIC_PHONE                                  = BLEProtocol::AppearanceType::GENERIC_PHONE,                                   /**< Generic Phone. */
+        GENERIC_COMPUTER                               = BLEProtocol::AppearanceType::GENERIC_COMPUTER,                                /**< Generic Computer. */
+        GENERIC_WATCH                                  = BLEProtocol::AppearanceType::GENERIC_WATCH,                                   /**< Generic Watch. */
+        WATCH_SPORTS_WATCH                             = BLEProtocol::AppearanceType::WATCH_SPORTS_WATCH,                              /**< Sports Watch. */
+        GENERIC_CLOCK                                  = BLEProtocol::AppearanceType::GENERIC_CLOCK,                                   /**< Generic Clock. */
+        GENERIC_DISPLAY                                = BLEProtocol::AppearanceType::GENERIC_DISPLAY,                                 /**< Generic Display. */
+        GENERIC_REMOTE_CONTROL                         = BLEProtocol::AppearanceType::GENERIC_REMOTE_CONTROL,                          /**< Generic Remote Control. */
+        GENERIC_EYE_GLASSES                            = BLEProtocol::AppearanceType::GENERIC_EYE_GLASSES,                             /**< Generic Eye Glasses. */
+        GENERIC_TAG                                    = BLEProtocol::AppearanceType::GENERIC_TAG,                                     /**< Generic Tag. */
+        GENERIC_KEYRING                                = BLEProtocol::AppearanceType::GENERIC_KEYRING,                                 /**< Generic Keyring. */
+        GENERIC_MEDIA_PLAYER                           = BLEProtocol::AppearanceType::GENERIC_MEDIA_PLAYER,                            /**< Generic Media Player. */
+        GENERIC_BARCODE_SCANNER                        = BLEProtocol::AppearanceType::GENERIC_BARCODE_SCANNER,                         /**< Generic Barcode Scanner. */
+        GENERIC_THERMOMETER                            = BLEProtocol::AppearanceType::GENERIC_THERMOMETER,                             /**< Generic Thermometer. */
+        THERMOMETER_EAR                                = BLEProtocol::AppearanceType::THERMOMETER_EAR,                                 /**< Ear Thermometer. */
+        GENERIC_HEART_RATE_SENSOR                      = BLEProtocol::AppearanceType::GENERIC_HEART_RATE_SENSOR,                       /**< Generic Heart Rate Sensor. */
+        HEART_RATE_SENSOR_HEART_RATE_BELT              = BLEProtocol::AppearanceType::HEART_RATE_SENSOR_HEART_RATE_BELT,               /**< Belt Heart Rate Sensor. */
+        GENERIC_BLOOD_PRESSURE                         = BLEProtocol::AppearanceType::GENERIC_BLOOD_PRESSURE,                          /**< Generic Blood Pressure. */
+        BLOOD_PRESSURE_ARM                             = BLEProtocol::AppearanceType::BLOOD_PRESSURE_ARM,                              /**< Arm Blood Pressure. */
+        BLOOD_PRESSURE_WRIST                           = BLEProtocol::AppearanceType::BLOOD_PRESSURE_WRIST,                            /**< Wrist Blood Pressure. */
+        HUMAN_INTERFACE_DEVICE_HID                     = BLEProtocol::AppearanceType::HUMAN_INTERFACE_DEVICE_HID,                      /**< Human Interface Device (HID). */
+        KEYBOARD                                       = BLEProtocol::AppearanceType::KEYBOARD,                                        /**< Keyboard. */
+        MOUSE                                          = BLEProtocol::AppearanceType::MOUSE,                                           /**< Mouse. */
+        JOYSTICK                                       = BLEProtocol::AppearanceType::JOYSTICK,                                        /**< Joystick. */
+        GAMEPAD                                        = BLEProtocol::AppearanceType::GAMEPAD,                                         /**< Gamepad. */
+        DIGITIZER_TABLET                               = BLEProtocol::AppearanceType::DIGITIZER_TABLET,                                /**< Digitizer Tablet. */
+        CARD_READER                                    = BLEProtocol::AppearanceType::CARD_READER,                                     /**< Card Reader. */
+        DIGITAL_PEN                                    = BLEProtocol::AppearanceType::DIGITAL_PEN,                                     /**< Digital Pen. */
+        BARCODE_SCANNER                                = BLEProtocol::AppearanceType::BARCODE_SCANNER,                                 /**< Barcode Scanner. */
+        GENERIC_GLUCOSE_METER                          = BLEProtocol::AppearanceType::GENERIC_GLUCOSE_METER,                           /**< Generic Glucose Meter. */
+        GENERIC_RUNNING_WALKING_SENSOR                 = BLEProtocol::AppearanceType::GENERIC_RUNNING_WALKING_SENSOR,                  /**< Generic Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_IN_SHOE                 = BLEProtocol::AppearanceType::RUNNING_WALKING_SENSOR_IN_SHOE,                  /**< In Shoe Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_ON_SHOE                 = BLEProtocol::AppearanceType::RUNNING_WALKING_SENSOR_ON_SHOE,                  /**< On Shoe Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_ON_HIP                  = BLEProtocol::AppearanceType::RUNNING_WALKING_SENSOR_ON_HIP,                   /**< On Hip Running/Walking Sensor. */
+        GENERIC_CYCLING                                = BLEProtocol::AppearanceType::GENERIC_CYCLING,                                 /**< Generic Cycling. */
+        CYCLING_CYCLING_COMPUTER                       = BLEProtocol::AppearanceType::CYCLING_CYCLING_COMPUTER,                        /**< Cycling Computer. */
+        CYCLING_SPEED_SENSOR                           = BLEProtocol::AppearanceType::CYCLING_SPEED_SENSOR,                            /**< Cycling Speed Sensor. */
+        CYCLING_CADENCE_SENSOR                         = BLEProtocol::AppearanceType::CYCLING_CADENCE_SENSOR,                          /**< Cycling Cadence Sensor. */
+        CYCLING_POWER_SENSOR                           = BLEProtocol::AppearanceType::CYCLING_POWER_SENSOR,                            /**< Cycling Power Sensor. */
+        CYCLING_SPEED_AND_CADENCE_SENSOR               = BLEProtocol::AppearanceType::CYCLING_SPEED_AND_CADENCE_SENSOR,                /**< Cycling Speed and Cadence Sensor. */
+        PULSE_OXIMETER_GENERIC                         = BLEProtocol::AppearanceType::PULSE_OXIMETER_GENERIC,                          /**< Generic Pulse Oximeter. */
+        PULSE_OXIMETER_FINGERTIP                       = BLEProtocol::AppearanceType::PULSE_OXIMETER_FINGERTIP,                        /**< Fingertip Pulse Oximeter. */
+        PULSE_OXIMETER_WRIST_WORN                      = BLEProtocol::AppearanceType::PULSE_OXIMETER_WRIST_WORN,                       /**< Wrist Worn Pulse Oximeter. */
+        GENERIC_WEIGHT_SCALE                           = BLEProtocol::AppearanceType::GENERIC_WEIGHT_SCALE,                            /**< Generic Weight Scale */
+        OUTDOOR_GENERIC                                = BLEProtocol::AppearanceType::OUTDOOR_GENERIC,                                 /**< Generic Outdoor. */
+        OUTDOOR_LOCATION_DISPLAY_DEVICE                = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_DISPLAY_DEVICE,                 /**< Outdoor Location Display Device. */
+        OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE,  /**< Outdoor Location and Navigation Display Device. */
+        OUTDOOR_LOCATION_POD                           = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_POD,                            /**< Outdoor Location Pod. */
+        OUTDOOR_LOCATION_AND_NAVIGATION_POD            = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_AND_NAVIGATION_POD              /**< Outdoor Location and Navigation Pod. */
+    };
+
+    /**
+     * Appearance-type for BLEProtocol addresses.
      *
      * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
      */
