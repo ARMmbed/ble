@@ -20,7 +20,7 @@
 #warning ble/services/EddystoneService.h is deprecated. Please use the example in 'github.com/ARMmbed/ble-examples/tree/master/BLE_EddystoneService'.
 
 #include "ble/BLE.h"
-#include "mbed.h"
+#include "mbed-drivers/mbed.h"
 #include "CircularBuffer.h"
 static const uint8_t BEACON_EDDYSTONE[] = {0xAA, 0xFE};
 
