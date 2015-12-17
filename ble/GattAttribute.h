@@ -27,16 +27,18 @@ public:
 public:
     /**
      *  @brief  Creates a new GattAttribute using the specified
-     *          UUID, value length, and inital value
+     *          UUID, value length, and inital value.
      *
      *  @param[in]  uuid
-     *              The UUID to use for this attribute
+     *              The UUID to use for this attribute.
      *  @param[in]  valuePtr
      *              The memory holding the initial value.
-     *  @param[in]  initialLen
-     *              The min length in bytes of this attribute's value
+     *  @param[in]  len
+     *              The length in bytes of this attribute's value.
      *  @param[in]  maxLen
-     *              The max length in bytes of this attribute's value
+     *              The max length in bytes of this attribute's value.
+     *  @param[in]  hasVariableLen
+     *              Whether the attribute's value length changes overtime.
      *
      *  @section EXAMPLE
      *
@@ -47,31 +49,31 @@ public:
      *
      *  @endcode
      */
-    GattAttribute(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t initialLen = 0, uint16_t maxLen = 0) :
-        _uuid(uuid), _valuePtr(valuePtr), _initialLen(initialLen), _lenMax(maxLen), _len(initialLen), _handle() {
-        /* empty */
+    GattAttribute(const UUID &uuid, uint8_t *valuePtr = NULL, uint16_t len = 0, uint16_t maxLen = 0, bool hasVariableLen = true) :
+        _uuid(uuid), _valuePtr(valuePtr), _lenMax(maxLen), _len(len), _hasVariableLen(hasVariableLen), _handle() {
+        /* Empty */
     }
 
 public:
-    Handle_t    getHandle(void)        const {return _handle;    }
-    const UUID &getUUID(void)          const {return _uuid;      }
-    uint16_t    getLength(void)        const {return _len;       }
-    uint16_t    getInitialLength(void) const {return _initialLen;}
-    uint16_t    getMaxLength(void)     const {return _lenMax;    }
-    uint16_t   *getLengthPtr(void)           {return &_len;      }
-    void        setHandle(Handle_t id)       {_handle = id;      }
-    uint8_t    *getValuePtr(void)            {return _valuePtr;  }
+    Handle_t    getHandle(void)         const {return _handle;        }
+    const UUID &getUUID(void)           const {return _uuid;          }
+    uint16_t    getLength(void)         const {return _len;           }
+    uint16_t    getMaxLength(void)      const {return _lenMax;        }
+    uint16_t   *getLengthPtr(void)            {return &_len;          }
+    void        setHandle(Handle_t id)        {_handle = id;          }
+    uint8_t    *getValuePtr(void)             {return _valuePtr;      }
+    bool        hasVariableLength(void) const {return _hasVariableLen;}
 
 private:
-    UUID      _uuid;        /* Characteristic UUID */
+    UUID      _uuid;           /* Characteristic UUID. */
     uint8_t  *_valuePtr;
-    uint16_t  _initialLen;  /* Initial length of the value */
-    uint16_t  _lenMax;      /* Maximum length of the value */
-    uint16_t  _len;         /* Current length of the value */
+    uint16_t  _lenMax;         /* Maximum length of the value. */
+    uint16_t  _len;            /* Current length of the value. */
+    bool      _hasVariableLen;
     Handle_t  _handle;
 
 private:
-    /* disallow copy and assignment */
+    /* Disallow copy and assignment. */
     GattAttribute(const GattAttribute &);
     GattAttribute& operator=(const GattAttribute &);
 };

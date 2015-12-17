@@ -109,24 +109,24 @@ public:
     */
     /**************************************************************************/
     enum {
-        BLE_GATT_UNIT_NONE                                                   = 0x2700,      /**< No specified unit type */
-        BLE_GATT_UNIT_LENGTH_METRE                                           = 0x2701,      /**< Length, Metre */
-        BLE_GATT_UNIT_MASS_KILOGRAM                                          = 0x2702,      /**< Mass, Kilogram */
-        BLE_GATT_UNIT_TIME_SECOND                                            = 0x2703,      /**< Time, Second */
-        BLE_GATT_UNIT_ELECTRIC_CURRENT_AMPERE                                = 0x2704,      /**< Electric Current, Ampere */
-        BLE_GATT_UNIT_THERMODYNAMIC_TEMPERATURE_KELVIN                       = 0x2705,      /**< Thermodynamic Temperature, Kelvin */
-        BLE_GATT_UNIT_AMOUNT_OF_SUBSTANCE_MOLE                               = 0x2706,      /**< Amount of Substance, Mole */
-        BLE_GATT_UNIT_LUMINOUS_INTENSITY_CANDELA                             = 0x2707,      /**< Luminous Intensity, Candela */
-        BLE_GATT_UNIT_AREA_SQUARE_METRES                                     = 0x2710,      /**< Area, Square Metres */
-        BLE_GATT_UNIT_VOLUME_CUBIC_METRES                                    = 0x2711,      /**< Volume, Cubic Metres*/
-        BLE_GATT_UNIT_VELOCITY_METRES_PER_SECOND                             = 0x2712,      /**< Velocity, Metres per Second*/
-        BLE_GATT_UNIT_ACCELERATION_METRES_PER_SECOND_SQUARED                 = 0x2713,      /**< Acceleration, Metres per Second Squared */
-        BLE_GATT_UNIT_WAVENUMBER_RECIPROCAL_METRE                            = 0x2714,      /**< Wave Number Reciprocal, Metre */
-        BLE_GATT_UNIT_DENSITY_KILOGRAM_PER_CUBIC_METRE                       = 0x2715,      /**< Density, Kilogram per Cubic Metre */
+        BLE_GATT_UNIT_NONE                                                   = 0x2700,      /**< No specified unit type. */
+        BLE_GATT_UNIT_LENGTH_METRE                                           = 0x2701,      /**< Length, metre. */
+        BLE_GATT_UNIT_MASS_KILOGRAM                                          = 0x2702,      /**< Mass, kilogram. */
+        BLE_GATT_UNIT_TIME_SECOND                                            = 0x2703,      /**< Time, second. */
+        BLE_GATT_UNIT_ELECTRIC_CURRENT_AMPERE                                = 0x2704,      /**< Electric current, ampere. */
+        BLE_GATT_UNIT_THERMODYNAMIC_TEMPERATURE_KELVIN                       = 0x2705,      /**< Thermodynamic temperature, kelvin. */
+        BLE_GATT_UNIT_AMOUNT_OF_SUBSTANCE_MOLE                               = 0x2706,      /**< Amount of substance, mole. */
+        BLE_GATT_UNIT_LUMINOUS_INTENSITY_CANDELA                             = 0x2707,      /**< Luminous intensity, candela. */
+        BLE_GATT_UNIT_AREA_SQUARE_METRES                                     = 0x2710,      /**< Area, square metres. */
+        BLE_GATT_UNIT_VOLUME_CUBIC_METRES                                    = 0x2711,      /**< Volume, cubic metres. */
+        BLE_GATT_UNIT_VELOCITY_METRES_PER_SECOND                             = 0x2712,      /**< Velocity, metres per second. */
+        BLE_GATT_UNIT_ACCELERATION_METRES_PER_SECOND_SQUARED                 = 0x2713,      /**< Acceleration, metres per second squared. */
+        BLE_GATT_UNIT_WAVENUMBER_RECIPROCAL_METRE                            = 0x2714,      /**< Wave number reciprocal, metre. */
+        BLE_GATT_UNIT_DENSITY_KILOGRAM_PER_CUBIC_METRE                       = 0x2715,      /**< Density, kilogram per cubic metre. */
         BLE_GATT_UNIT_SURFACE_DENSITY_KILOGRAM_PER_SQUARE_METRE              = 0x2716,      /**<  */
         BLE_GATT_UNIT_SPECIFIC_VOLUME_CUBIC_METRE_PER_KILOGRAM               = 0x2717,      /**<  */
         BLE_GATT_UNIT_CURRENT_DENSITY_AMPERE_PER_SQUARE_METRE                = 0x2718,      /**<  */
-        BLE_GATT_UNIT_MAGNETIC_FIELD_STRENGTH_AMPERE_PER_METRE               = 0x2719,      /**< Magnetic Field Strength, Ampere per Metre */
+        BLE_GATT_UNIT_MAGNETIC_FIELD_STRENGTH_AMPERE_PER_METRE               = 0x2719,      /**< Magnetic field strength, ampere per metre. */
         BLE_GATT_UNIT_AMOUNT_CONCENTRATION_MOLE_PER_CUBIC_METRE              = 0x271A,      /**<  */
         BLE_GATT_UNIT_MASS_CONCENTRATION_KILOGRAM_PER_CUBIC_METRE            = 0x271B,      /**<  */
         BLE_GATT_UNIT_LUMINANCE_CANDELA_PER_SQUARE_METRE                     = 0x271C,      /**<  */
@@ -134,13 +134,13 @@ public:
         BLE_GATT_UNIT_RELATIVE_PERMEABILITY                                  = 0x271E,      /**<  */
         BLE_GATT_UNIT_PLANE_ANGLE_RADIAN                                     = 0x2720,      /**<  */
         BLE_GATT_UNIT_SOLID_ANGLE_STERADIAN                                  = 0x2721,      /**<  */
-        BLE_GATT_UNIT_FREQUENCY_HERTZ                                        = 0x2722,      /**< Frequency, Hertz */
-        BLE_GATT_UNIT_FORCE_NEWTON                                           = 0x2723,      /**< Force, Newton */
-        BLE_GATT_UNIT_PRESSURE_PASCAL                                        = 0x2724,      /**< Pressure, Pascal */
-        BLE_GATT_UNIT_ENERGY_JOULE                                           = 0x2725,      /**< Energy, Joule */
-        BLE_GATT_UNIT_POWER_WATT                                             = 0x2726,      /**< Power, Watt */
-        BLE_GATT_UNIT_ELECTRIC_CHARGE_COULOMB                                = 0x2727,      /**< Electrical Charge, Coulomb */
-        BLE_GATT_UNIT_ELECTRIC_POTENTIAL_DIFFERENCE_VOLT                     = 0x2728,      /**< Electrical Potential Difference, Voltage */
+        BLE_GATT_UNIT_FREQUENCY_HERTZ                                        = 0x2722,      /**< Frequency, hertz. */
+        BLE_GATT_UNIT_FORCE_NEWTON                                           = 0x2723,      /**< Force, newton. */
+        BLE_GATT_UNIT_PRESSURE_PASCAL                                        = 0x2724,      /**< Pressure, pascal. */
+        BLE_GATT_UNIT_ENERGY_JOULE                                           = 0x2725,      /**< Energy, joule. */
+        BLE_GATT_UNIT_POWER_WATT                                             = 0x2726,      /**< Power, watt. */
+        BLE_GATT_UNIT_ELECTRIC_CHARGE_COULOMB                                = 0x2727,      /**< Electrical charge, coulomb. */
+        BLE_GATT_UNIT_ELECTRIC_POTENTIAL_DIFFERENCE_VOLT                     = 0x2728,      /**< Electrical potential difference, voltage. */
         BLE_GATT_UNIT_CAPACITANCE_FARAD                                      = 0x2729,      /**<  */
         BLE_GATT_UNIT_ELECTRIC_RESISTANCE_OHM                                = 0x272A,      /**<  */
         BLE_GATT_UNIT_ELECTRIC_CONDUCTANCE_SIEMENS                           = 0x272B,      /**<  */
@@ -178,58 +178,58 @@ public:
         BLE_GATT_UNIT_RADIANT_INTENSITY_WATT_PER_STERADIAN                   = 0x2755,      /**<  */
         BLE_GATT_UNIT_RADIANCE_WATT_PER_SQUARE_METRE_STERADIAN               = 0x2756,      /**<  */
         BLE_GATT_UNIT_CATALYTIC_ACTIVITY_CONCENTRATION_KATAL_PER_CUBIC_METRE = 0x2757,      /**<  */
-        BLE_GATT_UNIT_TIME_MINUTE                                            = 0x2760,      /**< Time, Minute */
-        BLE_GATT_UNIT_TIME_HOUR                                              = 0x2761,      /**< Time, Hour */
-        BLE_GATT_UNIT_TIME_DAY                                               = 0x2762,      /**< Time, Day */
+        BLE_GATT_UNIT_TIME_MINUTE                                            = 0x2760,      /**< Time, minute. */
+        BLE_GATT_UNIT_TIME_HOUR                                              = 0x2761,      /**< Time, hour. */
+        BLE_GATT_UNIT_TIME_DAY                                               = 0x2762,      /**< Time, day. */
         BLE_GATT_UNIT_PLANE_ANGLE_DEGREE                                     = 0x2763,      /**<  */
         BLE_GATT_UNIT_PLANE_ANGLE_MINUTE                                     = 0x2764,      /**<  */
         BLE_GATT_UNIT_PLANE_ANGLE_SECOND                                     = 0x2765,      /**<  */
         BLE_GATT_UNIT_AREA_HECTARE                                           = 0x2766,      /**<  */
         BLE_GATT_UNIT_VOLUME_LITRE                                           = 0x2767,      /**<  */
         BLE_GATT_UNIT_MASS_TONNE                                             = 0x2768,      /**<  */
-        BLE_GATT_UNIT_PRESSURE_BAR                                           = 0x2780,      /**< Pressure, Bar */
-        BLE_GATT_UNIT_PRESSURE_MILLIMETRE_OF_MERCURY                         = 0x2781,      /**< Pressure, Millimetre of Mercury */
+        BLE_GATT_UNIT_PRESSURE_BAR                                           = 0x2780,      /**< Pressure, bar. */
+        BLE_GATT_UNIT_PRESSURE_MILLIMETRE_OF_MERCURY                         = 0x2781,      /**< Pressure, millimetre of mercury. */
         BLE_GATT_UNIT_LENGTH_ANGSTROM                                        = 0x2782,      /**<  */
         BLE_GATT_UNIT_LENGTH_NAUTICAL_MILE                                   = 0x2783,      /**<  */
         BLE_GATT_UNIT_AREA_BARN                                              = 0x2784,      /**<  */
         BLE_GATT_UNIT_VELOCITY_KNOT                                          = 0x2785,      /**<  */
         BLE_GATT_UNIT_LOGARITHMIC_RADIO_QUANTITY_NEPER                       = 0x2786,      /**<  */
         BLE_GATT_UNIT_LOGARITHMIC_RADIO_QUANTITY_BEL                         = 0x2787,      /**<  */
-        BLE_GATT_UNIT_LENGTH_YARD                                            = 0x27A0,      /**< Length, Yard */
-        BLE_GATT_UNIT_LENGTH_PARSEC                                          = 0x27A1,      /**< Length, Parsec */
-        BLE_GATT_UNIT_LENGTH_INCH                                            = 0x27A2,      /**< Length, Inch */
-        BLE_GATT_UNIT_LENGTH_FOOT                                            = 0x27A3,      /**< Length, Foot */
-        BLE_GATT_UNIT_LENGTH_MILE                                            = 0x27A4,      /**< Length, Mile */
+        BLE_GATT_UNIT_LENGTH_YARD                                            = 0x27A0,      /**< Length, yard. */
+        BLE_GATT_UNIT_LENGTH_PARSEC                                          = 0x27A1,      /**< Length, parsec. */
+        BLE_GATT_UNIT_LENGTH_INCH                                            = 0x27A2,      /**< Length, inch. */
+        BLE_GATT_UNIT_LENGTH_FOOT                                            = 0x27A3,      /**< Length, foot. */
+        BLE_GATT_UNIT_LENGTH_MILE                                            = 0x27A4,      /**< Length, mile. */
         BLE_GATT_UNIT_PRESSURE_POUND_FORCE_PER_SQUARE_INCH                   = 0x27A5,      /**<  */
-        BLE_GATT_UNIT_VELOCITY_KILOMETRE_PER_HOUR                            = 0x27A6,      /**< Velocity, Kilometre per Hour */
-        BLE_GATT_UNIT_VELOCITY_MILE_PER_HOUR                                 = 0x27A7,      /**< Velocity, Mile per Hour */
-        BLE_GATT_UNIT_ANGULAR_VELOCITY_REVOLUTION_PER_MINUTE                 = 0x27A8,      /**< Angular Velocity, Revolution per Minute */
-        BLE_GATT_UNIT_ENERGY_GRAM_CALORIE                                    = 0x27A9,      /**< Energy, Gram Calorie */
-        BLE_GATT_UNIT_ENERGY_KILOGRAM_CALORIE                                = 0x27AA,      /**< Energy, Kilogram Calorie */
-        BLE_GATT_UNIT_ENERGY_KILOWATT_HOUR                                   = 0x27AB,      /**< Energy, Killowatt Hour */
+        BLE_GATT_UNIT_VELOCITY_KILOMETRE_PER_HOUR                            = 0x27A6,      /**< Velocity, kilometre per hour. */
+        BLE_GATT_UNIT_VELOCITY_MILE_PER_HOUR                                 = 0x27A7,      /**< Velocity, mile per hour. */
+        BLE_GATT_UNIT_ANGULAR_VELOCITY_REVOLUTION_PER_MINUTE                 = 0x27A8,      /**< Angular Velocity, revolution per minute. */
+        BLE_GATT_UNIT_ENERGY_GRAM_CALORIE                                    = 0x27A9,      /**< Energy, gram calorie. */
+        BLE_GATT_UNIT_ENERGY_KILOGRAM_CALORIE                                = 0x27AA,      /**< Energy, kilogram calorie. */
+        BLE_GATT_UNIT_ENERGY_KILOWATT_HOUR                                   = 0x27AB,      /**< Energy, killowatt hour. */
         BLE_GATT_UNIT_THERMODYNAMIC_TEMPERATURE_DEGREE_FAHRENHEIT            = 0x27AC,      /**<  */
-        BLE_GATT_UNIT_PERCENTAGE                                             = 0x27AD,      /**< Percentage */
+        BLE_GATT_UNIT_PERCENTAGE                                             = 0x27AD,      /**< Percentage. */
         BLE_GATT_UNIT_PER_MILLE                                              = 0x27AE,      /**<  */
         BLE_GATT_UNIT_PERIOD_BEATS_PER_MINUTE                                = 0x27AF,      /**<  */
         BLE_GATT_UNIT_ELECTRIC_CHARGE_AMPERE_HOURS                           = 0x27B0,      /**<  */
         BLE_GATT_UNIT_MASS_DENSITY_MILLIGRAM_PER_DECILITRE                   = 0x27B1,      /**<  */
         BLE_GATT_UNIT_MASS_DENSITY_MILLIMOLE_PER_LITRE                       = 0x27B2,      /**<  */
-        BLE_GATT_UNIT_TIME_YEAR                                              = 0x27B3,      /**< Time, Year */
-        BLE_GATT_UNIT_TIME_MONTH                                             = 0x27B4,      /**< Time, Month */
+        BLE_GATT_UNIT_TIME_YEAR                                              = 0x27B3,      /**< Time, year. */
+        BLE_GATT_UNIT_TIME_MONTH                                             = 0x27B4,      /**< Time, month. */
         BLE_GATT_UNIT_CONCENTRATION_COUNT_PER_CUBIC_METRE                    = 0x27B5,      /**<  */
         BLE_GATT_UNIT_IRRADIANCE_WATT_PER_SQUARE_METRE                       = 0x27B6       /**<  */
     };
 
     /**************************************************************************/
     /*!
-        \brief  Standard GATT number types
+        \brief  Standard GATT number types.
 
         \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.2
         \note   See http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
     */
     /**************************************************************************/
     enum {
-        BLE_GATT_FORMAT_RFU     = 0x00, /**< Reserved For Future Use. */
+        BLE_GATT_FORMAT_RFU     = 0x00, /**< Reserved for future use. */
         BLE_GATT_FORMAT_BOOLEAN = 0x01, /**< Boolean. */
         BLE_GATT_FORMAT_2BIT    = 0x02, /**< Unsigned 2-bit integer. */
         BLE_GATT_FORMAT_NIBBLE  = 0x03, /**< Unsigned 4-bit integer. */
@@ -261,7 +261,7 @@ public:
 
     /**************************************************************************/
     /*!
-        \brief  Standard GATT characteristic properties
+        \brief  Standard GATT characteristic properties.
 
         \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.1.1
                 and Section 3.3.3.1 for Extended Properties
@@ -269,14 +269,14 @@ public:
     /**************************************************************************/
     enum Properties_t {
         BLE_GATT_CHAR_PROPERTIES_NONE                        = 0x00,
-        BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01, /**< Permits broadcasts of the Characteristic Value using Server Characteristic Configuration Descriptor. */
-        BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02, /**< Permits reads of the Characteristic Value. */
-        BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04, /**< Permits writes of the Characteristic Value without response. */
-        BLE_GATT_CHAR_PROPERTIES_WRITE                       = 0x08, /**< Permits writes of the Characteristic Value with response. */
-        BLE_GATT_CHAR_PROPERTIES_NOTIFY                      = 0x10, /**< Permits notifications of a Characteristic Value without acknowledgment. */
-        BLE_GATT_CHAR_PROPERTIES_INDICATE                    = 0x20, /**< Permits indications of a Characteristic Value with acknowledgment. */
-        BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES = 0x40, /**< Permits signed writes to the Characteristic Value. */
-        BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES         = 0x80  /**< Additional characteristic properties are defined in the Characteristic Extended Properties Descriptor */
+        BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01, /**< Permits broadcasts of the characteristic value using the Server Characteristic Configuration descriptor. */
+        BLE_GATT_CHAR_PROPERTIES_READ                        = 0x02, /**< Permits reads of the characteristic value. */
+        BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE      = 0x04, /**< Permits writes of the characteristic value without response. */
+        BLE_GATT_CHAR_PROPERTIES_WRITE                       = 0x08, /**< Permits writes of the characteristic value with response. */
+        BLE_GATT_CHAR_PROPERTIES_NOTIFY                      = 0x10, /**< Permits notifications of a characteristic value without acknowledgment. */
+        BLE_GATT_CHAR_PROPERTIES_INDICATE                    = 0x20, /**< Permits indications of a characteristic value with acknowledgment. */
+        BLE_GATT_CHAR_PROPERTIES_AUTHENTICATED_SIGNED_WRITES = 0x40, /**< Permits signed writes to the characteristic value. */
+        BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES         = 0x80  /**< Additional characteristic properties are defined in the Characteristic Extended Properties descriptor */
     };
 
     /**************************************************************************/
@@ -288,31 +288,33 @@ public:
     */
     /**************************************************************************/
     struct PresentationFormat_t {
-        uint8_t  gatt_format;    /**< Format of the value, see @ref ble_gatt_format_t. */
-        int8_t   exponent;       /**< Exponent for integer data types. Ex. if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
-        uint16_t gatt_unit;      /**< UUID from Bluetooth Assigned Numbers, see @ref ble_gatt_unit_t. */
-        uint8_t  gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1',  see @ref BLE_GATT_CPF_NAMESPACES. */
-        uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0', see @ref BLE_GATT_CPF_NAMESPACES. */
+        uint8_t  gatt_format;    /**< Format of the value; see @ref ble_gatt_format_t. */
+        int8_t   exponent;       /**< Exponent for integer data types. Example: if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
+        uint16_t gatt_unit;      /**< UUID from Bluetooth Assigned Numbers; see @ref ble_gatt_unit_t. */
+        uint8_t  gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1'; see @ref BLE_GATT_CPF_NAMESPACES. */
+        uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0'; see @ref BLE_GATT_CPF_NAMESPACES. */
     };
 
     /**
      *  @brief  Creates a new GattCharacteristic using the specified 16-bit
-     *          UUID, value length, and properties
+     *          UUID, value length, and properties.
      *
-     *  @note   The UUID value must be unique in the service and is normally >1
+     *  @note   The UUID value must be unique in the service and is normally >1.
      *
      *  @param[in]  uuid
-     *              The UUID to use for this characteristic
+     *              The UUID to use for this characteristic.
      *  @param[in]  valuePtr
      *              The memory holding the initial value. The value is copied
-     *              into the stack when the enclosing service is added; and
-     *              thereafter maintained internally by the stack.
-     *  @param[in]  initialLen
-     *              The min length in bytes of this characteristic's value
+     *              into the stack when the enclosing service is added, and
+     *              is thereafter maintained internally by the stack.
+     *  @param[in]  len
+     *              The length in bytes of this characteristic's value.
      *  @param[in]  maxLen
-     *              The max length in bytes of this characteristic's value
+     *              The max length in bytes of this characteristic's value.
+     *  @param[in]  hasVariableLen
+     *              Whether the attribute's value length changes over time.
      *  @param[in]  props
-     *              The 8-bit bit field containing the characteristic's properties
+     *              The 8-bit field containing the characteristic's properties.
      *  @param[in]  descriptors
      *              A pointer to an array of descriptors to be included within
      *              this characteristic. The memory for the descriptor array is
@@ -321,19 +323,20 @@ public:
      *  @param[in]  numDescriptors
      *              The number of descriptors in the previous array.
      *
-     * @NOTE: If valuePtr == NULL, initialLength == 0, and properties == READ
+     * @NOTE: If valuePtr == NULL, length == 0, and properties == READ
      *        for the value attribute of a characteristic, then that particular
      *        characteristic may be considered optional and dropped while
      *        instantiating the service with the underlying BLE stack.
      */
     GattCharacteristic(const UUID    &uuid,
                        uint8_t       *valuePtr       = NULL,
-                       uint16_t       initialLen     = 0,
+                       uint16_t       len            = 0,
                        uint16_t       maxLen         = 0,
                        uint8_t        props          = BLE_GATT_CHAR_PROPERTIES_NONE,
                        GattAttribute *descriptors[]  = NULL,
-                       unsigned       numDescriptors = 0) :
-        _valueAttribute(uuid, valuePtr, initialLen, maxLen),
+                       unsigned       numDescriptors = 0,
+                       bool           hasVariableLen = true) :
+        _valueAttribute(uuid, valuePtr, len, maxLen, hasVariableLen),
         _properties(props),
         _requiredSecurity(SecurityManager::SECURITY_MODE_ENCRYPTION_OPEN_LINK),
         _descriptors(descriptors),
@@ -347,9 +350,9 @@ public:
 
 public:
     /**
-     * Setup the minimum security (mode and level) requirements for access to the characteristic's value attribute.
+     * Set up the minimum security (mode and level) requirements for access to the characteristic's value attribute.
      *
-     * @param securityMode Can be one of encryption or signing, with or without protection for MITM (man in the middle attacks).
+     * @param securityMode Can be one of encryption or signing, with or without protection for man in the middle attacks (MITM).
      */
     void requireSecurity(SecurityManager::SecurityMode_t securityMode) {
         _requiredSecurity = securityMode;
@@ -381,7 +384,7 @@ public:
     /**
      * Helper function meant to be called from the guts of the BLE stack to
      * determine the authorization reply for a write request.
-     * @param  params to capture the context of the write-auth request; and also contains an out-parameter for reply.
+     * @param  params To capture the context of the write-auth request. Also contains an out-parameter for reply.
      * @return        true if the write is authorized to proceed.
      */
     GattAuthCallbackReply_t authorizeWrite(GattWriteAuthCallbackParams *params) {
@@ -389,7 +392,7 @@ public:
             return AUTH_CALLBACK_REPLY_SUCCESS;
         }
 
-        params->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS; /* initialized to no-error by default */
+        params->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS; /* Initialized to no-error by default. */
         writeAuthorizationCallback.call(params);
         return params->authorizationReply;
     }
@@ -397,10 +400,10 @@ public:
     /**
      * Helper function meant to be called from the guts of the BLE stack to
      * determine the authorization reply for a read request.
-     * @param  params to capture the context of the read-auth request.
+     * @param  params To capture the context of the read-auth request.
      *
-     * @NOTE:  To authorize/deny the read the params->authorizationReply field
-     *         should be set to true/false.
+     * @NOTE:  To authorize or deny the read the params->authorizationReply field
+     *         should be set to true (authorize) or false (deny).
      *
      *         If the read is approved and params->data is unchanged (NULL),
      *         the current characteristic value will be used.
@@ -415,7 +418,7 @@ public:
             return AUTH_CALLBACK_REPLY_SUCCESS;
         }
 
-        params->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS; /* initialized to no-error by default */
+        params->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS; /* Initialized to no-error by default. */
         readAuthorizationCallback.call(params);
         return params->authorizationReply;
     }
@@ -452,7 +455,7 @@ private:
     FunctionPointerWithContext<GattWriteAuthCallbackParams *> writeAuthorizationCallback;
 
 private:
-    /* disallow copy and assignment */
+    /* Disallow copy and assignment. */
     GattCharacteristic(const GattCharacteristic &);
     GattCharacteristic& operator=(const GattCharacteristic &);
 };
@@ -466,7 +469,7 @@ public:
                                   GattAttribute *descriptors[]        = NULL,
                                   unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T), sizeof(T),
-                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };
@@ -522,7 +525,7 @@ public:
                                                      GattAttribute *descriptors[]        = NULL,
                                                      unsigned       numDescriptors       = 0) :
         GattCharacteristic(uuid, reinterpret_cast<uint8_t *>(valuePtr), sizeof(T) * NUM_ELEMENTS, sizeof(T) * NUM_ELEMENTS,
-                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors) {
+                           BLE_GATT_CHAR_PROPERTIES_READ | additionalProperties, descriptors, numDescriptors, false) {
         /* empty */
     }
 };

@@ -47,16 +47,16 @@ public:
 public:
     /**
      *  @brief  Creates a new GattService using the specified 16-bit
-     *          UUID, value length, and properties
+     *          UUID, value length, and properties.
      *
-     *  @note   The UUID value must be unique and is normally >1
+     *  @note   The UUID value must be unique and is normally >1.
      *
      *  @param[in]  uuid
-     *              The UUID to use for this service
+     *              The UUID to use for this service.
      *  @param[in]  characteristics
-     *              A pointer to an array of characteristics to be included within this service
+     *              A pointer to an array of characteristics to be included within this service.
      *  @param[in]  numCharacteristics
-     *              The number of characteristics
+     *              The number of characteristics.
      */
     GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics) :
         _primaryServiceID(uuid), _characteristicCount(numCharacteristics), _characteristics(characteristics), _handle(0) {

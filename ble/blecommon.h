@@ -22,9 +22,7 @@ extern "C" {
 #endif
 
 
-/** @defgroup BLE_UUID_VALUES Assigned Values for BLE UUIDs
- * @{ */
-/* Generic UUIDs, applicable to all services */
+/*! @brief Assigned values for BLE UUIDs. */
 enum {
     BLE_UUID_UNKNOWN                             = 0x0000, /**< Reserved UUID. */
     BLE_UUID_SERVICE_PRIMARY                     = 0x2800, /**< Primary Service. */
@@ -50,11 +48,10 @@ enum {
     BLE_UUID_GAP_CHARACTERISTIC_RECONN_ADDR      = 0x2A03, /**< Reconnection Address Characteristic. */
     BLE_UUID_GAP_CHARACTERISTIC_PPCP             = 0x2A04, /**< Peripheral Preferred Connection Parameters Characteristic. */
 };
-/** @} */
 
-/** @defgroup BLE_APPEARANCES Bluetooth Appearance values
+/*! Bluetooth appearance values.
  *  @note Retrieved from http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
- * @{ */
+ */
 enum {
     BLE_APPEARANCE_UNKNOWN                             =    0, /**< Unknown. */
     BLE_APPEARANCE_GENERIC_PHONE                       =   64, /**< Generic Phone. */
@@ -71,20 +68,20 @@ enum {
     BLE_APPEARANCE_GENERIC_BARCODE_SCANNER             =  704, /**< Generic Barcode Scanner. */
     BLE_APPEARANCE_GENERIC_THERMOMETER                 =  768, /**< Generic Thermometer. */
     BLE_APPEARANCE_THERMOMETER_EAR                     =  769, /**< Thermometer: Ear. */
-    BLE_APPEARANCE_GENERIC_HEART_RATE_SENSOR           =  832, /**< Generic Heart rate Sensor. */
+    BLE_APPEARANCE_GENERIC_HEART_RATE_SENSOR           =  832, /**< Generic Heart Rate Sensor. */
     BLE_APPEARANCE_HEART_RATE_SENSOR_HEART_RATE_BELT   =  833, /**< Heart Rate Sensor: Heart Rate Belt. */
     BLE_APPEARANCE_GENERIC_BLOOD_PRESSURE              =  896, /**< Generic Blood Pressure. */
     BLE_APPEARANCE_BLOOD_PRESSURE_ARM                  =  897, /**< Blood Pressure: Arm. */
     BLE_APPEARANCE_BLOOD_PRESSURE_WRIST                =  898, /**< Blood Pressure: Wrist. */
     BLE_APPEARANCE_GENERIC_HID                         =  960, /**< Human Interface Device (HID). */
-    BLE_APPEARANCE_HID_KEYBOARD                        =  961, /**< Keyboard (HID Subtype). */
-    BLE_APPEARANCE_HID_MOUSE                           =  962, /**< Mouse (HID Subtype). */
-    BLE_APPEARANCE_HID_JOYSTICK                        =  963, /**< Joystiq (HID Subtype). */
-    BLE_APPEARANCE_HID_GAMEPAD                         =  964, /**< Gamepad (HID Subtype). */
-    BLE_APPEARANCE_HID_DIGITIZERSUBTYPE                =  965, /**< Digitizer Tablet (HID Subtype). */
-    BLE_APPEARANCE_HID_CARD_READER                     =  966, /**< Card Reader (HID Subtype). */
-    BLE_APPEARANCE_HID_DIGITAL_PEN                     =  967, /**< Digital Pen (HID Subtype). */
-    BLE_APPEARANCE_HID_BARCODE                         =  968, /**< Barcode Scanner (HID Subtype). */
+    BLE_APPEARANCE_HID_KEYBOARD                        =  961, /**< Keyboard (HID subtype). */
+    BLE_APPEARANCE_HID_MOUSE                           =  962, /**< Mouse (HID subtype). */
+    BLE_APPEARANCE_HID_JOYSTICK                        =  963, /**< Joystick (HID subtype). */
+    BLE_APPEARANCE_HID_GAMEPAD                         =  964, /**< Gamepad (HID subtype). */
+    BLE_APPEARANCE_HID_DIGITIZERSUBTYPE                =  965, /**< Digitizer Tablet (HID subtype). */
+    BLE_APPEARANCE_HID_CARD_READER                     =  966, /**< Card Reader (HID subtype). */
+    BLE_APPEARANCE_HID_DIGITAL_PEN                     =  967, /**< Digital Pen (HID subtype). */
+    BLE_APPEARANCE_HID_BARCODE                         =  968, /**< Barcode Scanner (HID subtype). */
     BLE_APPEARANCE_GENERIC_GLUCOSE_METER               = 1024, /**< Generic Glucose Meter. */
     BLE_APPEARANCE_GENERIC_RUNNING_WALKING_SENSOR      = 1088, /**< Generic Running Walking Sensor. */
     BLE_APPEARANCE_RUNNING_WALKING_SENSOR_IN_SHOE      = 1089, /**< Running Walking Sensor: In-Shoe. */
@@ -98,7 +95,7 @@ enum {
     BLE_APPEARANCE_CYCLING_SPEED_CADENCE_SENSOR        = 1157, /**< Cycling: Speed and Cadence Sensor. */
     BLE_APPEARANCE_GENERIC_PULSE_OXIMETER              = 3136, /**< Generic Pulse Oximeter. */
     BLE_APPEARANCE_PULSE_OXIMETER_FINGERTIP            = 3137, /**< Fingertip (Pulse Oximeter subtype). */
-    BLE_APPEARANCE_PULSE_OXIMETER_WRIST_WORN           = 3138, /**< Wrist Worn(Pulse Oximeter subtype). */
+    BLE_APPEARANCE_PULSE_OXIMETER_WRIST_WORN           = 3138, /**< Wrist Worn (Pulse Oximeter subtype). */
     BLE_APPEARANCE_GENERIC_WEIGHT_SCALE                = 3200, /**< Generic Weight Scale. */
     BLE_APPEARANCE_GENERIC_OUTDOOR_SPORTS_ACT          = 5184, /**< Generic Outdoor Sports Activity. */
     BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_DISP         = 5185, /**< Location Display Device (Outdoor Sports Activity subtype). */
@@ -106,22 +103,18 @@ enum {
     BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_POD          = 5187, /**< Location Pod (Outdoor Sports Activity subtype). */
     BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_AND_NAV_POD  = 5188, /**< Location and Navigation Pod (Outdoor Sports Activity subtype). */
 };
-/** @} */
 
-/**************************************************************************/
-/*!
-    \brief  Error codes for the BLE API
-*/
-/**************************************************************************/
+
+/*! @brief Error codes for the BLE API. */
 enum ble_error_t {
-    BLE_ERROR_NONE                      = 0, /**< No error */
-    BLE_ERROR_BUFFER_OVERFLOW           = 1, /**< The requested action would cause a buffer overflow and has been aborted */
-    BLE_ERROR_NOT_IMPLEMENTED           = 2, /**< Requested a feature that isn't yet implement or isn't supported by the target HW */
-    BLE_ERROR_PARAM_OUT_OF_RANGE        = 3, /**< One of the supplied parameters is outside the valid range */
-    BLE_ERROR_INVALID_PARAM             = 4, /**< One of the supplied parameters is invalid */
-    BLE_STACK_BUSY                      = 5, /**< The stack is busy */
+    BLE_ERROR_NONE                      = 0, /**< No error. */
+    BLE_ERROR_BUFFER_OVERFLOW           = 1, /**< The requested action would cause a buffer overflow and has been aborted. */
+    BLE_ERROR_NOT_IMPLEMENTED           = 2, /**< Requested a feature that isn't yet implemented or isn't supported by the target HW. */
+    BLE_ERROR_PARAM_OUT_OF_RANGE        = 3, /**< One of the supplied parameters is outside the valid range. */
+    BLE_ERROR_INVALID_PARAM             = 4, /**< One of the supplied parameters is invalid. */
+    BLE_STACK_BUSY                      = 5, /**< The stack is busy. */
     BLE_ERROR_INVALID_STATE             = 6, /**< Invalid state. */
-    BLE_ERROR_NO_MEM                    = 7, /**< Out of Memory */
+    BLE_ERROR_NO_MEM                    = 7, /**< Out of memory */
     BLE_ERROR_OPERATION_NOT_PERMITTED   = 8,
     BLE_ERROR_INITIALIZATION_INCOMPLETE = 9,
     BLE_ERROR_ALREADY_INITIALIZED       = 10,

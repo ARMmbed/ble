@@ -20,7 +20,7 @@
 /**
  *  This class provides a wrapper for the core advertising parameters,
  *  including the advertising type (Connectable Undirected,
- *  Non Connectable Undirected, etc.), as well as the advertising and
+ *  Non Connectable Undirected and so on), as well as the advertising and
  *  timeout intervals.
  */
 class GapAdvertisingParams {
@@ -32,7 +32,7 @@ public:
 
     /*!
      * Encapsulates the peripheral advertising modes, which determine how
-     * the device appears to other central devices in hearing range
+     * the device appears to other central devices in hearing range.
      */
     enum AdvertisingType_t {
         ADV_CONNECTABLE_UNDIRECTED,     /**< Vol 3, Part C, Section 9.3.4 and Vol 6, Part B, Section 2.3.1.1 */
@@ -40,18 +40,18 @@ public:
         ADV_SCANNABLE_UNDIRECTED,       /**< Include support for Scan Response payloads, see Vol 6, Part B, Section 2.3.1.4 */
         ADV_NON_CONNECTABLE_UNDIRECTED  /**< Vol 3, Part C, Section 9.3.2 and Vol 6, Part B, Section 2.3.1.3 */
     };
-    typedef enum AdvertisingType_t AdvertisingType; /* deprecated type alias. */
+    typedef enum AdvertisingType_t AdvertisingType; /* Deprecated type alias. */
 
 public:
     GapAdvertisingParams(AdvertisingType_t advType  = ADV_CONNECTABLE_UNDIRECTED,
                          uint16_t          interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
                          uint16_t          timeout  = 0) : _advType(advType), _interval(interval), _timeout(timeout) {
-        /* Interval checks */
+        /* Interval checks. */
         if (_advType == ADV_CONNECTABLE_DIRECTED) {
-            /* Interval must be 0 in directed connectable mode */
+            /* Interval must be 0 in directed connectable mode. */
             _interval = 0;
         } else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED) {
-            /* Min interval is slightly larger than in other modes */
+            /* Min interval is slightly larger than in other modes. */
             if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON) {
                 _interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON;
             }
@@ -59,7 +59,7 @@ public:
                 _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
             }
         } else {
-            /* Stay within interval limits */
+            /* Stay within interval limits. */
             if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN) {
                 _interval = GAP_ADV_PARAMS_INTERVAL_MIN;
             }
@@ -68,9 +68,9 @@ public:
             }
         }
 
-        /* Timeout checks */
+        /* Timeout checks. */
         if (timeout) {
-            /* Stay within timeout limits */
+            /* Stay within timeout limits. */
             if (_timeout > GAP_ADV_PARAMS_TIMEOUT_MAX) {
                 _timeout = GAP_ADV_PARAMS_TIMEOUT_MAX;
             }
@@ -90,14 +90,14 @@ public:
     }
 
     /**
-     * @return the advertisement interval (in milliseconds)
+     * @return the advertisement interval (in milliseconds).
      */
     uint16_t getInterval(void) const {
         return ADVERTISEMENT_DURATION_UNITS_TO_MS(_interval);
     }
 
     /**
-     * @return the advertisement interval in units advertisement duration units--i.e. 0.625ms units.
+     * @return the advertisement interval in advertisement duration units (0.625ms units).
      */
     uint16_t getIntervalInADVUnits(void) const {
         return _interval;
@@ -113,8 +113,8 @@ public:
 
 private:
     AdvertisingType_t _advType;
-    uint16_t          _interval; /* in ADV duration units (i.e. 0.625ms) */
-    uint16_t          _timeout;  /* in seconds */
+    uint16_t          _interval; /* In ADV duration units (i.e. 0.625ms). */
+    uint16_t          _timeout;  /* In seconds. */
 };
 
 #endif // ifndef __GAP_ADVERTISING_PARAMS_H__
