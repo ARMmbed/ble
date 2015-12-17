@@ -104,7 +104,7 @@ namespace BLEProtocol {
             OUTDOOR_LOCATION_AND_NAVIGATION_POD            = 5188   /**< Outdoor Location and Navigation Pod. */
         };
     };
-    typedef AppearanceType::Type AppearanceType_t; /**< Alias for AppearanceType::Type */
+    typedef AppearanceType::Type AppearanceType_t; /**< Alias for @ref AppearanceType::Type */
 };
 
 #endif /* __BLE_PROTOCOL_H__ */

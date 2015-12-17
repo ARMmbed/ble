@@ -135,14 +135,14 @@ public:
     /**
      * Appearance-type for BLEProtocol addresses.
      *
-     * @note: deprecated. Use BLEProtocol::AppearanceType_t instead.
+     * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
      */
     typedef BLEProtocol::AppearanceType_t Appearance_t;
 
     /**
      * Appearance-type for BLEProtocol addresses.
      *
-     * @note: deprecated. Use BLEProtocol::AppearanceType_t instead.
+     * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
      */
     typedef BLEProtocol::AppearanceType_t Appearance;
 
