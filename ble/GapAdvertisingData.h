@@ -21,6 +21,7 @@
 #include <string.h>
 
 #include "blecommon.h"
+#include "BLEProtocol.h"
 
 #define GAP_ADVERTISING_DATA_MAX_PAYLOAD        (31)
 
@@ -131,71 +132,81 @@ public:
     };
     typedef enum Flags_t Flags; /* Deprecated type alias. This may be dropped in a future release. */
 
-    /**********************************************************************/
-    /*!
-        \brief
-        A list of values for the APPEARANCE AD Type, which describes the
-        physical shape or appearance of the device.
-
-        \par Source
-        \li \c Bluetooth Core Specification Supplement, Part A, Section 1.12
-        \li \c Bluetooth Core Specification 4.0 (Vol. 3), Part C, Section 12.2
-        \li \c https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
-    */
-    /**********************************************************************/
-    enum Appearance_t {
-        UNKNOWN                                        = 0,     /**< Unknown or unspecified appearance type. */
-        GENERIC_PHONE                                  = 64,    /**< Generic Phone. */
-        GENERIC_COMPUTER                               = 128,   /**< Generic Computer. */
-        GENERIC_WATCH                                  = 192,   /**< Generic Watch. */
-        WATCH_SPORTS_WATCH                             = 193,   /**< Sports Watch. */
-        GENERIC_CLOCK                                  = 256,   /**< Generic Clock. */
-        GENERIC_DISPLAY                                = 320,   /**< Generic Display. */
-        GENERIC_REMOTE_CONTROL                         = 384,   /**< Generic Remote Control. */
-        GENERIC_EYE_GLASSES                            = 448,   /**< Generic Eye Glasses. */
-        GENERIC_TAG                                    = 512,   /**< Generic Tag. */
-        GENERIC_KEYRING                                = 576,   /**< Generic Keyring. */
-        GENERIC_MEDIA_PLAYER                           = 640,   /**< Generic Media Player. */
-        GENERIC_BARCODE_SCANNER                        = 704,   /**< Generic Barcode Scanner. */
-        GENERIC_THERMOMETER                            = 768,   /**< Generic Thermometer. */
-        THERMOMETER_EAR                                = 769,   /**< Ear Thermometer. */
-        GENERIC_HEART_RATE_SENSOR                      = 832,   /**< Generic Heart Rate Sensor. */
-        HEART_RATE_SENSOR_HEART_RATE_BELT              = 833,   /**< Belt Heart Rate Sensor. */
-        GENERIC_BLOOD_PRESSURE                         = 896,   /**< Generic Blood Pressure. */
-        BLOOD_PRESSURE_ARM                             = 897,   /**< Arm Blood Pressure. */
-        BLOOD_PRESSURE_WRIST                           = 898,   /**< Wrist Blood Pressure. */
-        HUMAN_INTERFACE_DEVICE_HID                     = 960,   /**< Human Interface Device (HID). */
-        KEYBOARD                                       = 961,   /**< Keyboard. */
-        MOUSE                                          = 962,   /**< Mouse. */
-        JOYSTICK                                       = 963,   /**< Joystick. */
-        GAMEPAD                                        = 964,   /**< Gamepad. */
-        DIGITIZER_TABLET                               = 965,   /**< Digitizer Tablet. */
-        CARD_READER                                    = 966,   /**< Card Reader. */
-        DIGITAL_PEN                                    = 967,   /**< Digital Pen. */
-        BARCODE_SCANNER                                = 968,   /**< Barcode Scanner. */
-        GENERIC_GLUCOSE_METER                          = 1024,  /**< Generic Glucose Meter. */
-        GENERIC_RUNNING_WALKING_SENSOR                 = 1088,  /**< Generic Running/Walking Sensor. */
-        RUNNING_WALKING_SENSOR_IN_SHOE                 = 1089,  /**< In Shoe Running/Walking Sensor. */
-        RUNNING_WALKING_SENSOR_ON_SHOE                 = 1090,  /**< On Shoe Running/Walking Sensor. */
-        RUNNING_WALKING_SENSOR_ON_HIP                  = 1091,  /**< On Hip Running/Walking Sensor. */
-        GENERIC_CYCLING                                = 1152,  /**< Generic Cycling. */
-        CYCLING_CYCLING_COMPUTER                       = 1153,  /**< Cycling Computer. */
-        CYCLING_SPEED_SENSOR                           = 1154,  /**< Cycling Speed Sensor. */
-        CYCLING_CADENCE_SENSOR                         = 1155,  /**< Cycling Cadence Sensor. */
-        CYCLING_POWER_SENSOR                           = 1156,  /**< Cycling Power Sensor. */
-        CYCLING_SPEED_AND_CADENCE_SENSOR               = 1157,  /**< Cycling Speed and Cadence Sensor. */
-        PULSE_OXIMETER_GENERIC                         = 3136,  /**< Generic Pulse Oximeter. */
-        PULSE_OXIMETER_FINGERTIP                       = 3137,  /**< Fingertip Pulse Oximeter. */
-        PULSE_OXIMETER_WRIST_WORN                      = 3138,  /**< Wrist Worn Pulse Oximeter. */
-        OUTDOOR_GENERIC                                = 5184,  /**< Generic Outdoor. */
-        OUTDOOR_LOCATION_DISPLAY_DEVICE                = 5185,  /**< Outdoor Location Display Device. */
-        OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE = 5186,  /**< Outdoor Location and Navigation Display Device. */
-        OUTDOOR_LOCATION_POD                           = 5187,  /**< Outdoor Location Pod. */
-        OUTDOOR_LOCATION_AND_NAVIGATION_POD            = 5188   /**< Outdoor Location and Navigation Pod. */
+    /**
+     * Appearance-type for BLEProtocol addresses.
+     * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
+     *
+     * DEPRECATION ALERT: The following constants have been left in their
+     * deprecated state to transparenly support existing applications which may
+     * have used GapAdvertisingData::*.
+     */
+    enum {
+        UNKNOWN                                        = BLEProtocol::AppearanceType::UNKNOWN,                                         /**< Unknown or unspecified appearance type. */
+        GENERIC_PHONE                                  = BLEProtocol::AppearanceType::GENERIC_PHONE,                                   /**< Generic Phone. */
+        GENERIC_COMPUTER                               = BLEProtocol::AppearanceType::GENERIC_COMPUTER,                                /**< Generic Computer. */
+        GENERIC_WATCH                                  = BLEProtocol::AppearanceType::GENERIC_WATCH,                                   /**< Generic Watch. */
+        WATCH_SPORTS_WATCH                             = BLEProtocol::AppearanceType::WATCH_SPORTS_WATCH,                              /**< Sports Watch. */
+        GENERIC_CLOCK                                  = BLEProtocol::AppearanceType::GENERIC_CLOCK,                                   /**< Generic Clock. */
+        GENERIC_DISPLAY                                = BLEProtocol::AppearanceType::GENERIC_DISPLAY,                                 /**< Generic Display. */
+        GENERIC_REMOTE_CONTROL                         = BLEProtocol::AppearanceType::GENERIC_REMOTE_CONTROL,                          /**< Generic Remote Control. */
+        GENERIC_EYE_GLASSES                            = BLEProtocol::AppearanceType::GENERIC_EYE_GLASSES,                             /**< Generic Eye Glasses. */
+        GENERIC_TAG                                    = BLEProtocol::AppearanceType::GENERIC_TAG,                                     /**< Generic Tag. */
+        GENERIC_KEYRING                                = BLEProtocol::AppearanceType::GENERIC_KEYRING,                                 /**< Generic Keyring. */
+        GENERIC_MEDIA_PLAYER                           = BLEProtocol::AppearanceType::GENERIC_MEDIA_PLAYER,                            /**< Generic Media Player. */
+        GENERIC_BARCODE_SCANNER                        = BLEProtocol::AppearanceType::GENERIC_BARCODE_SCANNER,                         /**< Generic Barcode Scanner. */
+        GENERIC_THERMOMETER                            = BLEProtocol::AppearanceType::GENERIC_THERMOMETER,                             /**< Generic Thermometer. */
+        THERMOMETER_EAR                                = BLEProtocol::AppearanceType::THERMOMETER_EAR,                                 /**< Ear Thermometer. */
+        GENERIC_HEART_RATE_SENSOR                      = BLEProtocol::AppearanceType::GENERIC_HEART_RATE_SENSOR,                       /**< Generic Heart Rate Sensor. */
+        HEART_RATE_SENSOR_HEART_RATE_BELT              = BLEProtocol::AppearanceType::HEART_RATE_SENSOR_HEART_RATE_BELT,               /**< Belt Heart Rate Sensor. */
+        GENERIC_BLOOD_PRESSURE                         = BLEProtocol::AppearanceType::GENERIC_BLOOD_PRESSURE,                          /**< Generic Blood Pressure. */
+        BLOOD_PRESSURE_ARM                             = BLEProtocol::AppearanceType::BLOOD_PRESSURE_ARM,                              /**< Arm Blood Pressure. */
+        BLOOD_PRESSURE_WRIST                           = BLEProtocol::AppearanceType::BLOOD_PRESSURE_WRIST,                            /**< Wrist Blood Pressure. */
+        HUMAN_INTERFACE_DEVICE_HID                     = BLEProtocol::AppearanceType::HUMAN_INTERFACE_DEVICE_HID,                      /**< Human Interface Device (HID). */
+        KEYBOARD                                       = BLEProtocol::AppearanceType::KEYBOARD,                                        /**< Keyboard. */
+        MOUSE                                          = BLEProtocol::AppearanceType::MOUSE,                                           /**< Mouse. */
+        JOYSTICK                                       = BLEProtocol::AppearanceType::JOYSTICK,                                        /**< Joystick. */
+        GAMEPAD                                        = BLEProtocol::AppearanceType::GAMEPAD,                                         /**< Gamepad. */
+        DIGITIZER_TABLET                               = BLEProtocol::AppearanceType::DIGITIZER_TABLET,                                /**< Digitizer Tablet. */
+        CARD_READER                                    = BLEProtocol::AppearanceType::CARD_READER,                                     /**< Card Reader. */
+        DIGITAL_PEN                                    = BLEProtocol::AppearanceType::DIGITAL_PEN,                                     /**< Digital Pen. */
+        BARCODE_SCANNER                                = BLEProtocol::AppearanceType::BARCODE_SCANNER,                                 /**< Barcode Scanner. */
+        GENERIC_GLUCOSE_METER                          = BLEProtocol::AppearanceType::GENERIC_GLUCOSE_METER,                           /**< Generic Glucose Meter. */
+        GENERIC_RUNNING_WALKING_SENSOR                 = BLEProtocol::AppearanceType::GENERIC_RUNNING_WALKING_SENSOR,                  /**< Generic Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_IN_SHOE                 = BLEProtocol::AppearanceType::RUNNING_WALKING_SENSOR_IN_SHOE,                  /**< In Shoe Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_ON_SHOE                 = BLEProtocol::AppearanceType::RUNNING_WALKING_SENSOR_ON_SHOE,                  /**< On Shoe Running/Walking Sensor. */
+        RUNNING_WALKING_SENSOR_ON_HIP                  = BLEProtocol::AppearanceType::RUNNING_WALKING_SENSOR_ON_HIP,                   /**< On Hip Running/Walking Sensor. */
+        GENERIC_CYCLING                                = BLEProtocol::AppearanceType::GENERIC_CYCLING,                                 /**< Generic Cycling. */
+        CYCLING_CYCLING_COMPUTER                       = BLEProtocol::AppearanceType::CYCLING_CYCLING_COMPUTER,                        /**< Cycling Computer. */
+        CYCLING_SPEED_SENSOR                           = BLEProtocol::AppearanceType::CYCLING_SPEED_SENSOR,                            /**< Cycling Speed Sensor. */
+        CYCLING_CADENCE_SENSOR                         = BLEProtocol::AppearanceType::CYCLING_CADENCE_SENSOR,                          /**< Cycling Cadence Sensor. */
+        CYCLING_POWER_SENSOR                           = BLEProtocol::AppearanceType::CYCLING_POWER_SENSOR,                            /**< Cycling Power Sensor. */
+        CYCLING_SPEED_AND_CADENCE_SENSOR               = BLEProtocol::AppearanceType::CYCLING_SPEED_AND_CADENCE_SENSOR,                /**< Cycling Speed and Cadence Sensor. */
+        PULSE_OXIMETER_GENERIC                         = BLEProtocol::AppearanceType::PULSE_OXIMETER_GENERIC,                          /**< Generic Pulse Oximeter. */
+        PULSE_OXIMETER_FINGERTIP                       = BLEProtocol::AppearanceType::PULSE_OXIMETER_FINGERTIP,                        /**< Fingertip Pulse Oximeter. */
+        PULSE_OXIMETER_WRIST_WORN                      = BLEProtocol::AppearanceType::PULSE_OXIMETER_WRIST_WORN,                       /**< Wrist Worn Pulse Oximeter. */
+        GENERIC_WEIGHT_SCALE                           = BLEProtocol::AppearanceType::GENERIC_WEIGHT_SCALE,                            /**< Generic Weight Scale */
+        OUTDOOR_GENERIC                                = BLEProtocol::AppearanceType::OUTDOOR_GENERIC,                                 /**< Generic Outdoor. */
+        OUTDOOR_LOCATION_DISPLAY_DEVICE                = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_DISPLAY_DEVICE,                 /**< Outdoor Location Display Device. */
+        OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE,  /**< Outdoor Location and Navigation Display Device. */
+        OUTDOOR_LOCATION_POD                           = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_POD,                            /**< Outdoor Location Pod. */
+        OUTDOOR_LOCATION_AND_NAVIGATION_POD            = BLEProtocol::AppearanceType::OUTDOOR_LOCATION_AND_NAVIGATION_POD              /**< Outdoor Location and Navigation Pod. */
     };
-    typedef enum Appearance_t Appearance; /* Deprecated type alias. This may be dropped in a future release. */
 
-    GapAdvertisingData(void) : _payload(), _payloadLen(0), _appearance(GENERIC_TAG) {
+    /**
+     * Appearance-type for BLEProtocol addresses.
+     *
+     * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
+     */
+    typedef BLEProtocol::AppearanceType_t Appearance_t;
+
+    /**
+     * Appearance-type for BLEProtocol addresses.
+     *
+     * @note: deprecated. Use @ref BLEProtocol::AppearanceType_t instead.
+     */
+    typedef BLEProtocol::AppearanceType_t Appearance;
+
+    GapAdvertisingData(void) : _payload(), _payloadLen(0), _appearance(BLEProtocol::AppearanceType::GENERIC_TAG) {
         /* empty */
     }
 
@@ -355,7 +366,7 @@ public:
      * @return BLE_ERROR_BUFFER_OVERFLOW if the specified data would cause the
      * advertising buffer to overflow, else BLE_ERROR_NONE.
      */
-    ble_error_t addAppearance(Appearance appearance = GENERIC_TAG) {
+    ble_error_t addAppearance(BLEProtocol::AppearanceType_t appearance = BLEProtocol::AppearanceType::GENERIC_TAG) {
         _appearance = appearance;
         return addData(GapAdvertisingData::APPEARANCE, (uint8_t *)&appearance, 2);
     }

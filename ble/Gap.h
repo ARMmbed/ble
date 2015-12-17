@@ -408,7 +408,7 @@ public:
      * @param[in] appearance
      *              The new value for the device-appearance.
      */
-    virtual ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) {
+    virtual ble_error_t setAppearance(BLEProtocol::AppearanceType_t appearance) {
         /* Avoid compiler warnings about unused variables. */
         (void)appearance;
 
@@ -420,7 +420,7 @@ public:
      * @param[out] appearance
      *               The new value for the device-appearance.
      */
-    virtual ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) {
+    virtual ble_error_t getAppearance(BLEProtocol::AppearanceType_t *appearanceP) {
         /* Avoid compiler warnings about unused variables. */
         (void)appearanceP;
 
@@ -566,7 +566,7 @@ public:
      * @param  app
      *         The appearance of the peripheral.
      */
-    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
+    ble_error_t accumulateAdvertisingPayload(BLEProtocol::AppearanceType_t app) {
         setAppearance(app);
 
         ble_error_t rc;

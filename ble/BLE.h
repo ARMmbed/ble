@@ -410,7 +410,7 @@ public:
      * ble.accumulateAdvertisingPayload(appearance) should be replaced with
      * ble.gap().accumulateAdvertisingPayload(appearance).
      */
-    ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
+    ble_error_t accumulateAdvertisingPayload(BLEProtocol::AppearanceType_t app) {
         return gap().accumulateAdvertisingPayload(app);
     }
 
@@ -915,7 +915,7 @@ public:
      * ble.setAppearance() should be replaced with
      * ble.gap().setAppearance().
      */
-    ble_error_t setAppearance(GapAdvertisingData::Appearance appearance) {
+    ble_error_t setAppearance(BLEProtocol::AppearanceType_t appearance) {
         return gap().setAppearance(appearance);
     }
 
@@ -929,7 +929,7 @@ public:
      * ble.getAppearance() should be replaced with
      * ble.gap().getAppearance().
      */
-    ble_error_t getAppearance(GapAdvertisingData::Appearance *appearanceP) {
+    ble_error_t getAppearance(BLEProtocol::AppearanceType_t *appearanceP) {
         return gap().getAppearance(appearanceP);
     }
 
