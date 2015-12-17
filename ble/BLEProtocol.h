@@ -97,6 +97,7 @@ namespace BLEProtocol {
             PULSE_OXIMETER_GENERIC                         = 3136,  /**< Generic Pulse Oximeter. */
             PULSE_OXIMETER_FINGERTIP                       = 3137,  /**< Fingertip Pulse Oximeter. */
             PULSE_OXIMETER_WRIST_WORN                      = 3138,  /**< Wrist Worn Pulse Oximeter. */
+            GENERIC_WEIGHT_SCALE                           = 3200,  /**< Generic Weight Scale */
             OUTDOOR_GENERIC                                = 5184,  /**< Generic Outdoor. */
             OUTDOOR_LOCATION_DISPLAY_DEVICE                = 5185,  /**< Outdoor Location Display Device. */
             OUTDOOR_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE = 5186,  /**< Outdoor Location and Navigation Display Device. */
