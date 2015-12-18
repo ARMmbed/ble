@@ -96,6 +96,20 @@ namespace BLEProtocol {
      *     to scan requests or connection requests, the whitelist cannot be
      *     changed until advertising is disabled. The whitelist can then be
      *     changed and advertising re-enabled.
+     *
+     * Here's how you might use a whitelist at a peripheral to populate a STATIC address:
+     *
+     *     const BLEProtocol::AddressBytes_t addrBytes = {0xc9, 0xd0, 0x04, 0x6c, 0xe5, 0x73}; // PLEASE REPALCE THIS
+     *     const BLEProtocol::Address_t peerAddr(BLEProtocol::AddressType::RANDOM_STATIC, addrBytes);
+     *     const BLEProtocol::Address_t *table[] = {&peerAddr};
+     *
+     *     BLEProtocol::Whitelist_t whitelist;
+     *     whitelist.addrs     = table;
+     *     whitelist.addrCount = sizeof(table) / sizeof(const BLEProtocol::Address_t *);
+     *     whitelist.irks      = NULL;
+     *     whitelist.irkCount  = 0;
+     *
+     *     ble.gap().getAdvertisingParams().setWhitelist(&whitelist);
      */
     struct Whitelist_t {
         const Address_t **addrs;     /**< Pointer to an array of device address pointers, pointing to addresses to be
