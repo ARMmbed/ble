@@ -59,7 +59,7 @@ namespace BLEProtocol {
         AddressType_t  type;    /**< @ref AddressType_t */
         AddressBytes_t address; /**< @ref AddressBytes_t */
 
-        Address_t(AddressType_t typeIn, const AddressBytes_t addressIn) : type(typeIn) {
+        Address_t(AddressType_t typeIn, const AddressBytes_t& addressIn) : type(typeIn) {
             std::copy(addressIn, addressIn + ADDR_LEN, address);
         }
     };
@@ -99,7 +99,7 @@ namespace BLEProtocol {
      *
      * Here's how you might use a whitelist at a peripheral to populate a STATIC address:
      *
-     *     const BLEProtocol::AddressBytes_t addrBytes = {0xc9, 0xd0, 0x04, 0x6c, 0xe5, 0x73}; // PLEASE REPALCE THIS
+     *     const BLEProtocol::AddressBytes_t addrBytes = {0xc9, 0xd0, 0x04, 0x6c, 0xe5, 0x73}; // PLEASE REPLACE THIS
      *     const BLEProtocol::Address_t peerAddr(BLEProtocol::AddressType::RANDOM_STATIC, addrBytes);
      *     const BLEProtocol::Address_t *table[] = {&peerAddr};
      *
