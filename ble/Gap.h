@@ -51,7 +51,7 @@ public:
 
     /**
      * Address-type for BLEProtocol addresses.
-     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     * @note: deprecated. Use @ref BLEProtocol::AddressType_t instead.
      *
      * DEPRECATION ALERT: The following constants have been left in their
      * deprecated state to transparenly support existing applications which may
