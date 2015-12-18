@@ -150,6 +150,8 @@ public:
      *     to scan requests or connection requests, the whitelist cannot be
      *     changed until advertising is disabled. The whitelist can then be
      *     changed and advertising re-enabled.
+     *
+     * @note this API is experimental.
      */
     void setWhitelist(const BLEProtocol::Whitelist_t *whiteList) {_whiteList = whiteList;   }
 

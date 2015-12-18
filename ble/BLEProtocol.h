@@ -110,6 +110,8 @@ namespace BLEProtocol {
      *     whitelist.irkCount  = 0;
      *
      *     ble.gap().getAdvertisingParams().setWhitelist(&whitelist);
+     *
+     * @note support for whitelisting is still experimental.
      */
     struct Whitelist_t {
         const Address_t **addrs;     /**< Pointer to an array of device address pointers, pointing to addresses to be
