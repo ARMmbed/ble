@@ -151,7 +151,7 @@ public:
      *     changed until advertising is disabled. The whitelist can then be
      *     changed and advertising re-enabled.
      */
-    void setWhiteList(const BLEProtocol::Whitelist_t *whiteList) {_whiteList = whiteList;   }
+    void setWhitelist(const BLEProtocol::Whitelist_t *whiteList) {_whiteList = whiteList;   }
 
 private:
     AdvertisingType_t               _advType;
