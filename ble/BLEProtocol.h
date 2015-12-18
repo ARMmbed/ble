@@ -98,14 +98,14 @@ namespace BLEProtocol {
      *     changed and advertising re-enabled.
      */
     struct Whitelist_t {
-        Address_t *addrs[];   /**< Pointer to an array of device address pointers, pointing to addresses to be
-                                   used in whitelist. NULL if none are given. */
-        uint8_t    addrCount; /**< Count of device addresses in the array `addrs`.
-                                   @note There will be some upper limit to this size imposed by the underlying BLE stack. */
-        Irk_t     *irks;      /**< Pointer to an array of Identity Resolving Key (IRK) pointers, each pointing
-                                   to an IRK in the whitelist. NULL if none are given. */
-        uint8_t    irkCount;  /**< Count of IRKs in array.
-                                   @note There will be some upper limit to this size imposed by the underlying BLE stack. */
+        const Address_t **addrs;     /**< Pointer to an array of device address pointers, pointing to addresses to be
+                                          used in whitelist. NULL if none are given. */
+        uint8_t           addrCount; /**< Count of device addresses in the array `addrs`.
+                                          @note There will be some upper limit to this size imposed by the underlying BLE stack. */
+        const Irk_t     **irks;      /**< Pointer to an array of Identity Resolving Key (IRK) pointers, each pointing
+                                          to an IRK in the whitelist. NULL if none are given. */
+        uint8_t           irkCount;  /**< Count of IRKs in array.
+                                          @note There will be some upper limit to this size imposed by the underlying BLE stack. */
     };
 };
 
