@@ -227,7 +227,7 @@ public:
 
         if (field) {
             // Field type already exist, either add to field or replace
-            return updateFieldPayload(advDataType, payload, len, field);
+            return updateField(advDataType, payload, len, field);
         } else {
             // field doesn't exists, insert new
             return appendField(advDataType, payload, len);
@@ -254,7 +254,7 @@ public:
 
         if (field) {
             // Field type already exist, either add to field or replace
-            return updateFieldPayload(advDataType, payload, len, field);
+            return updateField(advDataType, payload, len, field);
         } else {
             // field doesn't exists, return an error
             return BLE_ERROR_UNSPECIFIED;
@@ -394,7 +394,7 @@ private:
      * the existing data in the field with the supplied data.
      * Returns BLE_ERROR_NONE on success.
      */
-    ble_error_t updateFieldPayload(DataType_t advDataType, const uint8_t *payload, uint8_t len, uint8_t* field)
+    ble_error_t updateField(DataType_t advDataType, const uint8_t *payload, uint8_t len, uint8_t* field)
     {
         ble_error_t result = BLE_ERROR_BUFFER_OVERFLOW;
 
