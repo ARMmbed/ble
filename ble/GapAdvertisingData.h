@@ -246,6 +246,13 @@ public:
      *         BLE_ERROR_BUFFER_OVERFLOW if the new value causes the
      *         advertising buffer to overflow. BLE_ERROR_NONE is returned
      *         on success.
+     *
+     * @note When the specified AD type is INCOMPLETE_LIST_16BIT_SERVICE_IDS,
+     *       COMPLETE_LIST_16BIT_SERVICE_IDS, INCOMPLETE_LIST_32BIT_SERVICE_IDS,
+     *       COMPLETE_LIST_32BIT_SERVICE_IDS, INCOMPLETE_LIST_128BIT_SERVICE_IDS,
+     *       COMPLETE_LIST_128BIT_SERVICE_IDS or LIST_128BIT_SOLICITATION_IDS the
+     *       supplied value is appended to the values previously added to the
+     *       payload.
      */
     ble_error_t updateData(DataType_t advDataType, const uint8_t *payload, uint8_t len)
     {
