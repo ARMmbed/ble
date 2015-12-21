@@ -57,7 +57,7 @@ public:
      * deprecated state to transparenly support existing applications which may
      * have used Gap::ADDR_TYPE_*.
      */
-    enum {
+    enum AddressTypeOverload_t {
         ADDR_TYPE_PUBLIC                        = BLEProtocol::AddressType::PUBLIC,
         ADDR_TYPE_RANDOM_STATIC                 = BLEProtocol::AddressType::RANDOM_STATIC,
         ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE     = BLEProtocol::AddressType::RANDOM_PRIVATE_RESOLVABLE,
@@ -273,6 +273,22 @@ public:
         (void)scanParams;
 
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
+    }
+
+    /**
+     * Create a connection (GAP Link Establishment).
+     *
+     * @note: deprecated. This funtion overloads Gap::connect(const BLEProtocol::Address_t  peerAddr,
+                                                              BLEProtocol::AddressType_t    peerAddrType,
+                                                              const ConnectionParams_t     *connectionParams,
+                                                              const GapScanningParams      *scanParams)
+     *      to maintain backward compatibility for change from Gap::AddressType_t to BLEProtocol::AddressType_t
+     */
+    ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
+                        AddressTypeOverload_t         peerAddrType,
+                        const ConnectionParams_t     *connectionParams,
+                        const GapScanningParams      *scanParams) {
+        return connect(peerAddr, (BLEProtocol::AddressType_t) peerAddrType, connectionParams, scanParams);
     }
 
     /**
