@@ -253,7 +253,7 @@ public:
         uint8_t* field = findField(advDataType);
 
         if (field) {
-            // Field type already exist, either add to field or replace
+            // Field type already exist, replace field contents
             return updateField(advDataType, payload, len, field);
         } else {
             // field doesn't exists, return an error
