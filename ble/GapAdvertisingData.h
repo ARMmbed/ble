@@ -227,7 +227,7 @@ public:
 
         if (field) {
             // Field type already exist, either add to field or replace
-            return updateField(advDataType, payload, len, field);
+            return addField(advDataType, payload, len, field);
         } else {
             // field doesn't exists, insert new
             return appendField(advDataType, payload, len);
@@ -246,13 +246,6 @@ public:
      *         BLE_ERROR_BUFFER_OVERFLOW if the new value causes the
      *         advertising buffer to overflow. BLE_ERROR_NONE is returned
      *         on success.
-     *
-     * @note When the specified AD type is INCOMPLETE_LIST_16BIT_SERVICE_IDS,
-     *       COMPLETE_LIST_16BIT_SERVICE_IDS, INCOMPLETE_LIST_32BIT_SERVICE_IDS,
-     *       COMPLETE_LIST_32BIT_SERVICE_IDS, INCOMPLETE_LIST_128BIT_SERVICE_IDS,
-     *       COMPLETE_LIST_128BIT_SERVICE_IDS or LIST_128BIT_SOLICITATION_IDS the
-     *       supplied value is appended to the values previously added to the
-     *       payload.
      */
     ble_error_t updateData(DataType_t advDataType, const uint8_t *payload, uint8_t len)
     {
@@ -399,9 +392,17 @@ private:
     /**
      * Given the a pointer to a field in the advertising payload it replaces
      * the existing data in the field with the supplied data.
+     *
+     * When the specified AD type is INCOMPLETE_LIST_16BIT_SERVICE_IDS,
+     * COMPLETE_LIST_16BIT_SERVICE_IDS, INCOMPLETE_LIST_32BIT_SERVICE_IDS,
+     * COMPLETE_LIST_32BIT_SERVICE_IDS, INCOMPLETE_LIST_128BIT_SERVICE_IDS,
+     * COMPLETE_LIST_128BIT_SERVICE_IDS or LIST_128BIT_SOLICITATION_IDS the
+     * supplied value is appended to the values previously added to the
+     * payload.
+     *
      * Returns BLE_ERROR_NONE on success.
      */
-    ble_error_t updateField(DataType_t advDataType, const uint8_t *payload, uint8_t len, uint8_t* field)
+    ble_error_t addField(DataType_t advDataType, const uint8_t *payload, uint8_t len, uint8_t* field)
     {
         ble_error_t result = BLE_ERROR_BUFFER_OVERFLOW;
 
@@ -442,33 +443,47 @@ private:
             }
             //  These fields will be overwritten with the new value
             default: {
-                // current field length, with the type subtracted
-                uint8_t dataLength = field[0] - 1;
-
-                // new data has same length, do in-order replacement
-                if (len == dataLength) {
-                    for (uint8_t idx = 0; idx < dataLength; idx++) {
-                        field[2 + idx] = payload[idx];
-                    }
-                } else {
-                    // check if data fits
-                    if ((_payloadLen - dataLength + len) <= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
-
-                        // remove old field
-                        while ((field + dataLength + 2) < &_payload[_payloadLen]) {
-                            *field = field[dataLength + 2];
-                            field++;
-                        }
-
-                        // reduce length
-                        _payloadLen -= dataLength + 2;
-
-                        // add new field
-                        result = appendField(advDataType, payload, len);
-                    }
-                }
+                result = updateField(advDataType, payload, len, field);
 
                 break;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Given the a pointer to a field in the advertising payload it replaces
+     * the existing data in the field with the supplied data.
+     * Returns BLE_ERROR_NONE on success.
+     */
+    ble_error_t updateField(DataType_t advDataType, const uint8_t *payload, uint8_t len, uint8_t* field)
+    {
+        ble_error_t result = BLE_ERROR_BUFFER_OVERFLOW;
+        uint8_t dataLength = field[0] - 1;
+
+        // new data has same length, do in-order replacement
+        if (len == dataLength) {
+            for (uint8_t idx = 0; idx < dataLength; idx++) {
+                field[2 + idx] = payload[idx];
+            }
+
+            result = BLE_ERROR_NONE;
+        } else {
+            // check if data fits
+            if ((_payloadLen - dataLength + len) <= GAP_ADVERTISING_DATA_MAX_PAYLOAD) {
+
+                // remove old field
+                while ((field + dataLength + 2) < &_payload[_payloadLen]) {
+                    *field = field[dataLength + 2];
+                    field++;
+                }
+
+                // reduce length
+                _payloadLen -= dataLength + 2;
+
+                // add new field
+                result = appendField(advDataType, payload, len);
             }
         }
 
