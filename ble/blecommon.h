@@ -63,6 +63,7 @@ enum ble_error_t {
     BLE_ERROR_INITIALIZATION_INCOMPLETE = 9,
     BLE_ERROR_ALREADY_INITIALIZED       = 10,
     BLE_ERROR_UNSPECIFIED               = 11, /**< Unknown error. */
+    BLE_ERROR_INTERNAL_STACK_FAILURE    = 12, /**< The platform-specific stack failed */
 };
 
 /** @brief Default MTU size. */
