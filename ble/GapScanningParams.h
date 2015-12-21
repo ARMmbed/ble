@@ -90,7 +90,7 @@ private:
     uint16_t                        _window;         /**< Scan window in units of 625us (between 2.5ms and 10.24s). */
     uint16_t                        _timeout;        /**< Scan timeout between 0x0001 and 0xFFFF in seconds; 0x0000 disables timeout. */
     bool                            _activeScanning; /**< Obtain the peer device's advertising data and (if possible) scanResponse. */
-    const BLEProtocol::Whitelist_t *_whiteList;      /**< white list associated with advertisements. \ref BLEProtocol::Whitelist_t */
+    const BLEProtocol::Whitelist_t *_whiteList;      /**< white list associated with scanning. \ref BLEProtocol::Whitelist_t */
 
 private:
     /* Disallow copy constructor. */
