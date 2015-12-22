@@ -24,6 +24,7 @@
 #include "GapEvents.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 #include "FunctionPointerWithContext.h"
+#include "deprecate.h"
 
 /* Forward declarations for classes that will only be used for pointers or references in the following. */
 class GapAdvertisingParams;
@@ -51,13 +52,13 @@ public:
 
     /**
      * Address-type for BLEProtocol addresses.
-     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     * \deprecated: Use BLEProtocol::AddressType_t instead.
      *
      * DEPRECATION ALERT: The following constants have been left in their
      * deprecated state to transparenly support existing applications which may
      * have used Gap::ADDR_TYPE_*.
      */
-    enum AddressTypeOverload_t {
+    enum DeprecatedAddressType_t {
         ADDR_TYPE_PUBLIC                        = BLEProtocol::AddressType::PUBLIC,
         ADDR_TYPE_RANDOM_STATIC                 = BLEProtocol::AddressType::RANDOM_STATIC,
         ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE     = BLEProtocol::AddressType::RANDOM_PRIVATE_RESOLVABLE,
@@ -285,9 +286,10 @@ public:
      *      to maintain backward compatibility for change from Gap::AddressType_t to BLEProtocol::AddressType_t
      */
     ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
-                        AddressTypeOverload_t         peerAddrType,
+                        DeprecatedAddressType_t       peerAddrType,
                         const ConnectionParams_t     *connectionParams,
-                        const GapScanningParams      *scanParams) {
+                        const GapScanningParams      *scanParams)
+    __deprecated_message("Gap::DeprecatedAddressType_t is deprecated, use BLEProtocol::AddressType_t instead") {
         return connect(peerAddr, (BLEProtocol::AddressType_t) peerAddrType, connectionParams, scanParams);
     }
 
