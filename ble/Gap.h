@@ -17,6 +17,7 @@
 #ifndef __GAP_H__
 #define __GAP_H__
 
+#include "ble/BLEProtocol.h"
 #include "GapAdvertisingData.h"
 #include "GapAdvertisingParams.h"
 #include "GapScanningParams.h"
@@ -30,19 +31,44 @@ class GapScanningParams;
 class GapAdvertisingData;
 
 class Gap {
+    /*
+     * DEPRECATION ALERT: all of the APIs in this `public` block are deprecated.
+     * They have been relocated to the class BLEProtocol.
+     */
 public:
-    enum AddressType_t {
-        ADDR_TYPE_PUBLIC = 0,
-        ADDR_TYPE_RANDOM_STATIC,
-        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE,
-        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE
+    /**
+     * Address-type for BLEProtocol addresses.
+     *
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     */
+    typedef BLEProtocol::AddressType_t AddressType_t;
+
+    /**
+     * Address-type for BLEProtocol addresses.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     */
+    typedef BLEProtocol::AddressType_t addr_type_t;
+
+    /**
+     * Address-type for BLEProtocol addresses.
+     * @note: deprecated. Use BLEProtocol::AddressType_t instead.
+     *
+     * DEPRECATION ALERT: The following constants have been left in their
+     * deprecated state to transparenly support existing applications which may
+     * have used Gap::ADDR_TYPE_*.
+     */
+    enum {
+        ADDR_TYPE_PUBLIC                        = BLEProtocol::AddressType::PUBLIC,
+        ADDR_TYPE_RANDOM_STATIC                 = BLEProtocol::AddressType::RANDOM_STATIC,
+        ADDR_TYPE_RANDOM_PRIVATE_RESOLVABLE     = BLEProtocol::AddressType::RANDOM_PRIVATE_RESOLVABLE,
+        ADDR_TYPE_RANDOM_PRIVATE_NON_RESOLVABLE = BLEProtocol::AddressType::RANDOM_PRIVATE_NON_RESOLVABLE
     };
-    typedef enum AddressType_t addr_type_t; /* @Note: Deprecated. Use AddressType_t instead. */
 
-    static const unsigned ADDR_LEN = 6;
-    typedef uint8_t Address_t[ADDR_LEN]; /* 48-bit address, LSB format. */
-    typedef Address_t address_t;         /* @Note: Deprecated. Use Address_t instead. */
+    static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
+    typedef BLEProtocol::Address_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+    typedef BLEProtocol::Address_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
 
+public:
     enum TimeoutSource_t {
         TIMEOUT_SRC_ADVERTISING      = 0x00, /**< Advertising timeout. */
         TIMEOUT_SRC_SECURITY_REQUEST = 0x01, /**< Security request timeout. */
@@ -87,31 +113,31 @@ public:
     };
 
     struct AdvertisementCallbackParams_t {
-        Address_t            peerAddr;
-        int8_t               rssi;
-        bool                 isScanResponse;
-        GapAdvertisingParams::AdvertisingType_t type;
-        uint8_t              advertisingDataLen;
-        const uint8_t       *advertisingData;
+        BLEProtocol::Address_t                   peerAddr;
+        int8_t                                   rssi;
+        bool                                     isScanResponse;
+        GapAdvertisingParams::AdvertisingType_t  type;
+        uint8_t                                  advertisingDataLen;
+        const uint8_t                           *advertisingData;
     };
     typedef FunctionPointerWithContext<const AdvertisementCallbackParams_t *> AdvertisementReportCallback_t;
 
     struct ConnectionCallbackParams_t {
-        Handle_t      handle;
-        Role_t        role;
-        AddressType_t peerAddrType;
-        Address_t     peerAddr;
-        AddressType_t ownAddrType;
-        Address_t     ownAddr;
-        const ConnectionParams_t *connectionParams;
+        Handle_t                    handle;
+        Role_t                      role;
+        BLEProtocol::AddressType_t  peerAddrType;
+        BLEProtocol::Address_t      peerAddr;
+        BLEProtocol::AddressType_t  ownAddrType;
+        BLEProtocol::Address_t      ownAddr;
+        const ConnectionParams_t   *connectionParams;
 
-        ConnectionCallbackParams_t(Handle_t       handleIn,
-                                   Role_t         roleIn,
-                                   AddressType_t  peerAddrTypeIn,
-                                   const uint8_t *peerAddrIn,
-                                   AddressType_t  ownAddrTypeIn,
-                                   const uint8_t *ownAddrIn,
-                                   const ConnectionParams_t *connectionParamsIn) :
+        ConnectionCallbackParams_t(Handle_t                    handleIn,
+                                   Role_t                      roleIn,
+                                   BLEProtocol::AddressType_t  peerAddrTypeIn,
+                                   const uint8_t              *peerAddrIn,
+                                   BLEProtocol::AddressType_t  ownAddrTypeIn,
+                                   const uint8_t              *ownAddrIn,
+                                   const ConnectionParams_t   *connectionParamsIn) :
             handle(handleIn),
             role(roleIn),
             peerAddrType(peerAddrTypeIn),
@@ -151,17 +177,20 @@ public:
 
     typedef FunctionPointerWithContext<bool> RadioNotificationEventCallback_t;
 
+    typedef FunctionPointerWithContext<const Gap *> GapShutdownCallback_t;
+    typedef CallChainOfFunctionPointersWithContext<const Gap *> GapShutdownCallbackChain_t;
+
     /*
      * The following functions are meant to be overridden in the platform-specific sub-class.
      */
 public:
     /**
      * Set the BTLE MAC address and type. Please note that the address format is
-     * least significant byte first (LSB). Please refer to Address_t.
+     * least significant byte first (LSB). Please refer to BLEProtocol::Address_t.
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t setAddress(AddressType_t type, const Address_t address) {
+    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::Address_t address) {
         /* avoid compiler warnings about unused variables */
         (void)type;
         (void)address;
@@ -174,7 +203,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t getAddress(AddressType_t *typeP, Address_t address) {
+    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::Address_t address) {
         /* Avoid compiler warnings about unused variables. */
         (void)typeP;
         (void)address;
@@ -233,10 +262,10 @@ public:
      *     successfully. The connectionCallChain (if set) will be invoked upon
      *     a connection event.
      */
-    virtual ble_error_t connect(const Address_t           peerAddr,
-                                Gap::AddressType_t        peerAddrType,
-                                const ConnectionParams_t *connectionParams,
-                                const GapScanningParams  *scanParams) {
+    virtual ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
+                                BLEProtocol::AddressType_t    peerAddrType,
+                                const ConnectionParams_t     *connectionParams,
+                                const GapScanningParams      *scanParams) {
         /* Avoid compiler warnings about unused variables. */
         (void)peerAddr;
         (void)peerAddrType;
@@ -575,6 +604,16 @@ public:
      * @param  type The type describing the variable length data.
      * @param  data Data bytes.
      * @param  len  Length of data.
+     *
+     * @return BLE_ERROR_NONE if the advertisement payload was updated based on
+     *         matching AD type; otherwise, an appropriate error.
+     *
+     * @note When the specified AD type is INCOMPLETE_LIST_16BIT_SERVICE_IDS,
+     *       COMPLETE_LIST_16BIT_SERVICE_IDS, INCOMPLETE_LIST_32BIT_SERVICE_IDS,
+     *       COMPLETE_LIST_32BIT_SERVICE_IDS, INCOMPLETE_LIST_128BIT_SERVICE_IDS,
+     *       COMPLETE_LIST_128BIT_SERVICE_IDS or LIST_128BIT_SOLICITATION_IDS the
+     *       supplied value is appended to the values previously added to the
+     *       payload.
      */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
         if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
@@ -591,8 +630,7 @@ public:
 
     /**
      * Update a particular ADV field in the advertising payload (based on
-     * matching type and length). Note: the length of the new data must be the
-     * same as the old one.
+     * matching type).
      *
      * @param[in] type  The ADV type field describing the variable length data.
      * @param[in] data  Data bytes.
@@ -601,7 +639,7 @@ public:
      * @note: If advertisements are enabled, then the update will take effect immediately.
      *
      * @return BLE_ERROR_NONE if the advertisement payload was updated based on
-     *         a <type, len> match; otherwise, an appropriate error.
+     *         matching AD type; otherwise, an appropriate error.
      */
     ble_error_t updateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
         if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
@@ -983,6 +1021,80 @@ public:
         radioNotificationCallback.attach(tptr, mptr);
     }
 
+    /**
+     * Setup a callback to be invoked to notify the user application that the
+     * Gap instance is about to shutdown (possibly as a result of a call
+     * to BLE::shutdown()).
+     *
+     * @Note: It is possible to chain together multiple onShutdown callbacks
+     * (potentially from different modules of an application) to be notified
+     * before the Gap instance is shutdown.
+     *
+     * @Note: It is also possible to set up a callback into a member function of
+     * some object.
+     *
+     * @Note It is possible to unregister a callback using onShutdown().detach(callback)
+     */
+    void onShutdown(const GapShutdownCallback_t& callback) {
+        shutdownCallChain.add(callback);
+    }
+    template <typename T>
+    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+        shutdownCallChain.add(objPtr, memberPtr);
+    }
+
+    /**
+     * @brief provide access to the callchain of shutdown event callbacks
+     * It is possible to register callbacks using onShutdown().add(callback);
+     * It is possible to unregister callbacks using onShutdown().detach(callback)
+     * @return The shutdown event callbacks chain
+     */
+    GapShutdownCallbackChain_t& onShutdown() {
+        return shutdownCallChain;
+    }
+
+public:
+    /**
+     * Notify all registered onShutdown callbacks that the Gap instance is
+     * about to be shutdown and clear all Gap state of the
+     * associated object.
+     *
+     * This function is meant to be overridden in the platform-specific
+     * sub-class. Nevertheless, the sub-class is only expected to reset its
+     * state and not the data held in Gap members. This shall be achieved by a
+     * call to Gap::reset() from the sub-class' reset() implementation.
+     *
+     * @return BLE_ERROR_NONE on success.
+     *
+     * @note: Currently a call to reset() does not reset the advertising and
+     * scan parameters to default values.
+     */
+    virtual ble_error_t reset(void) {
+        /* Notify that the instance is about to shutdown */
+        shutdownCallChain.call(this);
+        shutdownCallChain.clear();
+
+        /* Clear Gap state */
+        state.advertising = 0;
+        state.connected   = 0;
+
+        /* Clear scanning state */
+        scanningActive = false;
+
+        /* Clear advertising and scanning data */
+        _advPayload.clear();
+        _scanResponse.clear();
+
+        /* Clear callbacks */
+        timeoutCallbackChain.clear();
+        connectionCallChain.clear();
+        disconnectionCallChain.clear();
+        radioNotificationCallback = NULL;
+        onAdvertisementReport     = NULL;
+
+        return BLE_ERROR_NONE;
+    }
+
 protected:
     Gap() :
         _advParams(),
@@ -1002,13 +1114,13 @@ protected:
 
     /* Entry points for the underlying stack to report events back to the user. */
 public:
-    void processConnectionEvent(Handle_t                  handle,
-                                Role_t                    role,
-                                AddressType_t             peerAddrType,
-                                const Address_t           peerAddr,
-                                AddressType_t             ownAddrType,
-                                const Address_t           ownAddr,
-                                const ConnectionParams_t *connectionParams) {
+    void processConnectionEvent(Handle_t                      handle,
+                                Role_t                        role,
+                                BLEProtocol::AddressType_t    peerAddrType,
+                                const BLEProtocol::Address_t  peerAddr,
+                                BLEProtocol::AddressType_t    ownAddrType,
+                                const BLEProtocol::Address_t  ownAddr,
+                                const ConnectionParams_t     *connectionParams) {
         state.connected = 1;
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
         connectionCallChain.call(&callbackParams);
@@ -1020,12 +1132,12 @@ public:
         disconnectionCallChain.call(&callbackParams);
     }
 
-    void processAdvertisementReport(const Address_t    peerAddr,
-                                    int8_t             rssi,
-                                    bool               isScanResponse,
+    void processAdvertisementReport(const BLEProtocol::Address_t             peerAddr,
+                                    int8_t                                   rssi,
+                                    bool                                     isScanResponse,
                                     GapAdvertisingParams::AdvertisingType_t  type,
-                                    uint8_t            advertisingDataLen,
-                                    const uint8_t     *advertisingData) {
+                                    uint8_t                                  advertisingDataLen,
+                                    const uint8_t                           *advertisingData) {
         AdvertisementCallbackParams_t params;
         memcpy(params.peerAddr, peerAddr, ADDR_LEN);
         params.rssi               = rssi;
@@ -1057,6 +1169,9 @@ protected:
     AdvertisementReportCallback_t     onAdvertisementReport;
     ConnectionEventCallbackChain_t    connectionCallChain;
     DisconnectionEventCallbackChain_t disconnectionCallChain;
+
+private:
+    GapShutdownCallbackChain_t shutdownCallChain;
 
 private:
     /* Disallow copy and assignment. */
