@@ -36,7 +36,7 @@
     },
     "mbed-os": {
       "mbed-drivers": "*",
-      "compilerpolyfill": "^1.2.1"
+      "compiler-polyfill": "^1.2.1"
     }
   }
 }

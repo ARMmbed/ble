@@ -20,7 +20,7 @@
 #ifdef YOTTA_CFG_MBED_OS
 	#include "compiler-polyfill/attributes.h"
 #else
-	#define __deprecated_message
+	#define __deprecated_message(msg)
 #endif
 
 #endif

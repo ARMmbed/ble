@@ -279,10 +279,10 @@ public:
     /**
      * Create a connection (GAP Link Establishment).
      *
-     * @note: deprecated. This funtion overloads Gap::connect(const BLEProtocol::Address_t  peerAddr,
-                                                              BLEProtocol::AddressType_t    peerAddrType,
-                                                              const ConnectionParams_t     *connectionParams,
-                                                              const GapScanningParams      *scanParams)
+     * \deprecated: This funtion overloads Gap::connect(const BLEProtocol::Address_t  peerAddr,
+                                                        BLEProtocol::AddressType_t    peerAddrType,
+                                                        const ConnectionParams_t     *connectionParams,
+                                                        const GapScanningParams      *scanParams)
      *      to maintain backward compatibility for change from Gap::AddressType_t to BLEProtocol::AddressType_t
      */
     ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
