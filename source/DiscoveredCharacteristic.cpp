@@ -151,12 +151,17 @@ ble_error_t DiscoveredCharacteristic::write(uint16_t length, const uint8_t *valu
     return error;
 }
 
-ble_error_t
-DiscoveredCharacteristic::discoverDescriptors(DescriptorCallback_t callback, const UUID &matchingUUID) const
-{
-    /* Avoid compiler warnings */
-    (void) callback;
-    (void) matchingUUID;
+ble_error_t DiscoveredCharacteristic::discoverDescriptors(
+    const CharacteristicDescriptorDiscovery::DiscoveryCallback_t& onCharacteristicDiscovered, 
+    const CharacteristicDescriptorDiscovery::TerminationCallback_t& onTermination) const {
 
-    return BLE_ERROR_NOT_IMPLEMENTED; /* TODO: this needs to be filled in. */
+    if(!gattc) {
+        return BLE_ERROR_INVALID_STATE;
+    }
+
+    ble_error_t err = gattc->discoverCharacteristicDescriptors(
+        *this, onCharacteristicDiscovered, onTermination
+    );
+
+    return err;
 }
