@@ -35,7 +35,8 @@
       "mbed-classic": "~0.0.1"
     },
     "mbed-os": {
-      "mbed-drivers": "*"
+      "mbed-drivers": "*",
+      "compiler-polyfill": "^1.2.1"
     }
   }
 }
