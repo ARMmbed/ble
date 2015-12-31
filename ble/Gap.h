@@ -115,7 +115,7 @@ public:
     };
 
     struct AdvertisementCallbackParams_t {
-        BLEProtocol::AddressBytes_t                   peerAddr;
+        BLEProtocol::AddressBytes_t              peerAddr;
         int8_t                                   rssi;
         bool                                     isScanResponse;
         GapAdvertisingParams::AdvertisingType_t  type;
@@ -265,9 +265,9 @@ public:
      *     a connection event.
      */
     virtual ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
-                                BLEProtocol::AddressType_t    peerAddrType,
-                                const ConnectionParams_t     *connectionParams,
-                                const GapScanningParams      *scanParams) {
+                                BLEProtocol::AddressType_t         peerAddrType,
+                                const ConnectionParams_t          *connectionParams,
+                                const GapScanningParams           *scanParams) {
         /* Avoid compiler warnings about unused variables. */
         (void)peerAddr;
         (void)peerAddrType;
@@ -286,10 +286,10 @@ public:
                                                         const GapScanningParams      *scanParams)
      *      to maintain backward compatibility for change from Gap::AddressType_t to BLEProtocol::AddressType_t
      */
-    ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
-                        DeprecatedAddressType_t       peerAddrType,
-                        const ConnectionParams_t     *connectionParams,
-                        const GapScanningParams      *scanParams)
+    ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
+                        DeprecatedAddressType_t            peerAddrType,
+                        const ConnectionParams_t          *connectionParams,
+                        const GapScanningParams           *scanParams)
     __deprecated_message("Gap::DeprecatedAddressType_t is deprecated, use BLEProtocol::AddressType_t instead") {
         return connect(peerAddr, (BLEProtocol::AddressType_t) peerAddrType, connectionParams, scanParams);
     }
