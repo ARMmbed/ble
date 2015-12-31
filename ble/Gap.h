@@ -24,6 +24,7 @@
 #include "GapEvents.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 #include "FunctionPointerWithContext.h"
+#include <set>
 
 /* Forward declarations for classes that will only be used for pointers or references in the following. */
 class GapAdvertisingParams;
@@ -65,8 +66,8 @@ public:
     };
 
     static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
-    typedef BLEProtocol::Address_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
-    typedef BLEProtocol::Address_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+    typedef BLEProtocol::AddressBytes_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+    typedef BLEProtocol::AddressBytes_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
 
 public:
     enum TimeoutSource_t {
@@ -113,7 +114,7 @@ public:
     };
 
     struct AdvertisementCallbackParams_t {
-        BLEProtocol::Address_t                   peerAddr;
+        BLEProtocol::AddressBytes_t                   peerAddr;
         int8_t                                   rssi;
         bool                                     isScanResponse;
         GapAdvertisingParams::AdvertisingType_t  type;
@@ -126,9 +127,9 @@ public:
         Handle_t                    handle;
         Role_t                      role;
         BLEProtocol::AddressType_t  peerAddrType;
-        BLEProtocol::Address_t      peerAddr;
+        BLEProtocol::AddressBytes_t      peerAddr;
         BLEProtocol::AddressType_t  ownAddrType;
-        BLEProtocol::Address_t      ownAddr;
+        BLEProtocol::AddressBytes_t      ownAddr;
         const ConnectionParams_t   *connectionParams;
 
         ConnectionCallbackParams_t(Handle_t                    handleIn,
@@ -190,7 +191,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::Address_t address) {
+    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::AddressBytes_t address) {
         /* avoid compiler warnings about unused variables */
         (void)type;
         (void)address;
@@ -203,7 +204,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::Address_t address) {
+    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::AddressBytes_t address) {
         /* Avoid compiler warnings about unused variables. */
         (void)typeP;
         (void)address;
@@ -262,7 +263,7 @@ public:
      *     successfully. The connectionCallChain (if set) will be invoked upon
      *     a connection event.
      */
-    virtual ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
+    virtual ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
                                 BLEProtocol::AddressType_t    peerAddrType,
                                 const ConnectionParams_t     *connectionParams,
                                 const GapScanningParams      *scanParams) {
@@ -1117,9 +1118,9 @@ public:
     void processConnectionEvent(Handle_t                      handle,
                                 Role_t                        role,
                                 BLEProtocol::AddressType_t    peerAddrType,
-                                const BLEProtocol::Address_t  peerAddr,
+                                const BLEProtocol::AddressBytes_t  peerAddr,
                                 BLEProtocol::AddressType_t    ownAddrType,
-                                const BLEProtocol::Address_t  ownAddr,
+                                const BLEProtocol::AddressBytes_t  ownAddr,
                                 const ConnectionParams_t     *connectionParams) {
         state.connected = 1;
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
@@ -1132,7 +1133,7 @@ public:
         disconnectionCallChain.call(&callbackParams);
     }
 
-    void processAdvertisementReport(const BLEProtocol::Address_t             peerAddr,
+    void processAdvertisementReport(const BLEProtocol::AddressBytes_t             peerAddr,
                                     int8_t                                   rssi,
                                     bool                                     isScanResponse,
                                     GapAdvertisingParams::AdvertisingType_t  type,
@@ -1153,6 +1154,76 @@ public:
             timeoutCallbackChain(source);
         }
     }
+
+///////////////////////////////////////////////////
+public:
+    enum AdvertisingPolicyMode_t {
+        ADV_POLICY_IGNORE_WHITELIST = 0,
+        ADV_POLICY_FILTER_SCAN_REQS = 1,
+        ADV_POLICY_FILTER_CONN_REQS = 2,
+        ADV_POLICY_FILTER_ALL_REQS  = 3,
+    };
+
+    enum ScanningPolicyMode_t {
+        SCAN_POLICY_IGNORE_WHITELIST = 0,
+        SCAN_POLICY_FILTER_ALL_ADV   = 1,
+    };
+
+    enum InitiatorPolicyMode_t {
+        INIT_POLICY_IGNORE_WHITELIST = 0,
+        INIT_POLICY_FILTER_ALL_ADV   = 1,
+    };
+
+    // Things to be implemented by the porter
+    virtual int8_t getMaxWhitelistSize(void) const
+    {
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    virtual ble_error_t getWhitelist(std::set<BLEProtocol::Address_t> &whitelist) const
+    {
+        (void) whitelist;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    virtual ble_error_t setWhitelist(std::set<BLEProtocol::Address_t> whitelist)
+    {
+        (void) whitelist;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    // Accessors
+    virtual void setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
+    {
+        (void) mode;
+    }
+
+    virtual void setScanningPolicyMode(ScanningPolicyMode_t mode)
+    {
+        (void) mode;
+    }
+
+    virtual void setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
+    {
+        (void) mode;
+    }
+
+    virtual AdvertisingPolicyMode_t getAdvertisingPolicyMode(void) const
+    {
+        return ADV_POLICY_IGNORE_WHITELIST;
+    }
+
+    virtual ScanningPolicyMode_t getScanningPolicyMode(void) const
+    {
+        return SCAN_POLICY_IGNORE_WHITELIST;
+    }
+
+    virtual InitiatorPolicyMode_t getInitiatorPolicyMode(void) const
+    {
+        return INIT_POLICY_IGNORE_WHITELIST;
+    }
+
+///////////////////////////////////////////////////
 
 protected:
     GapAdvertisingParams             _advParams;
