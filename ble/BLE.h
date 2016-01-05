@@ -752,10 +752,10 @@ public:
      * ble.connect(...) should be replaced with
      * ble.gap().connect(...).
      */
-    ble_error_t connect(const BLEProtocol::AddressBytes_t   peerAddr,
-                        BLEProtocol::AddressType_t     peerAddrType = BLEProtocol::AddressType::RANDOM_STATIC,
-                        const Gap::ConnectionParams_t *connectionParams = NULL,
-                        const GapScanningParams       *scanParams = NULL) {
+    ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
+                        BLEProtocol::AddressType_t         peerAddrType = BLEProtocol::AddressType::RANDOM_STATIC,
+                        const Gap::ConnectionParams_t     *connectionParams = NULL,
+                        const GapScanningParams           *scanParams = NULL) {
         return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
     }
 

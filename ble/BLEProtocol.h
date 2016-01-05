@@ -26,15 +26,19 @@
  * A common namespace for types and constants used everywhere in BLE API.
  */
 namespace BLEProtocol {
-    /**< Address-type for Protocol addresses. */
-    struct AddressType { /* Adding a struct to encapsulate the contained enumeration
-                          * prevents polluting the BLEProtocol namespace with the
-                          * enumerated values. It also allows type-aliases for the
-                          * enumeration while retaining the enumerated values. i.e.
-                          *
-                          * doing:
-                          *       typedef AddressType_t AliasedType_t;
-                          * would allow the use of AliasedType_t::PUBLIC in code. */
+    /**<
+     * A simple container for the enumeration of address-types for Protocol addresses.
+     *
+     * Adding a struct to encapsulate the contained enumeration prevents
+     * polluting the BLEProtocol namespace with the enumerated values. It also
+     * allows type-aliases for the enumeration while retaining the enumerated
+     * values. i.e. doing:
+     *       typedef AddressType AliasedType;
+     *
+     * would allow the use of AliasedType::PUBLIC in code.
+     */
+    struct AddressType {
+        /**< Address-types for Protocol addresses. */
         enum Type {
             PUBLIC = 0,
             RANDOM_STATIC,
@@ -42,10 +46,10 @@ namespace BLEProtocol {
             RANDOM_PRIVATE_NON_RESOLVABLE
         };
     };
-    typedef AddressType::Type AddressType_t; /**< Alias for AddressType::Type */
+    typedef AddressType::Type AddressType_t;  /**< Alias for AddressType::Type */
 
-    static const size_t ADDR_LEN = 6;        /**< Length (in octets) of the BLE MAC address. */
-    typedef uint8_t AddressBytes_t[ADDR_LEN];     /**< 48-bit address, in LSB format. */
+    static const size_t ADDR_LEN = 6;         /**< Length (in octets) of the BLE MAC address. */
+    typedef uint8_t AddressBytes_t[ADDR_LEN]; /**< 48-bit address, in LSB format. */
 
     /**
      * BLE address. It contains an address-type (@ref AddressType_t) and bytes (@ref AddressBytes_t).
@@ -58,16 +62,7 @@ namespace BLEProtocol {
             std::copy(addressIn, addressIn + ADDR_LEN, address);
         }
 
-        Address_t(void) : type(AddressType::PUBLIC), address() {
-        }
-
-        bool operator<(const Address_t &rhs) const {
-            if (type < rhs.type) {
-                return true;
-            } else if (type > rhs.type) {
-                return false;
-            }
-            return (memcmp(address, rhs.address, sizeof(AddressBytes_t)) < 0) ? true : false;
+        Address_t() : type(), address() {
         }
     };
 };

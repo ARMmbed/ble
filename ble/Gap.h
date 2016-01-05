@@ -66,8 +66,8 @@ public:
     };
 
     static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
-    typedef BLEProtocol::AddressBytes_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
-    typedef BLEProtocol::AddressBytes_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+    typedef BLEProtocol::AddressBytes_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::AddressBytes_t instead. */
+    typedef BLEProtocol::AddressBytes_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::AddressBytes_t instead. */
 
 public:
     enum TimeoutSource_t {
@@ -141,9 +141,9 @@ public:
     typedef uint16_t Handle_t; /* Type for connection handle. */
 
     typedef struct {
-        uint16_t minConnectionInterval;      /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
-        uint16_t maxConnectionInterval;      /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
-        uint16_t slaveLatency;               /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t minConnectionInterval;        /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t maxConnectionInterval;        /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t slaveLatency;                 /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
@@ -166,9 +166,9 @@ public:
         Handle_t                    handle;
         Role_t                      role;
         BLEProtocol::AddressType_t  peerAddrType;
-        BLEProtocol::AddressBytes_t      peerAddr;
+        BLEProtocol::AddressBytes_t peerAddr;
         BLEProtocol::AddressType_t  ownAddrType;
-        BLEProtocol::AddressBytes_t      ownAddr;
+        BLEProtocol::AddressBytes_t ownAddr;
         const ConnectionParams_t   *connectionParams;
 
         ConnectionCallbackParams_t(Handle_t                    handleIn,
@@ -226,7 +226,7 @@ public:
 public:
     /**
      * Set the BTLE MAC address and type. Please note that the address format is
-     * least significant byte first (LSB). Please refer to BLEProtocol::Address_t.
+     * least significant byte first (LSB). Please refer to BLEProtocol::AddressBytes_t.
      *
      * @return BLE_ERROR_NONE on success.
      */
@@ -1291,13 +1291,13 @@ protected:
 
     /* Entry points for the underlying stack to report events back to the user. */
 public:
-    void processConnectionEvent(Handle_t                      handle,
-                                Role_t                        role,
-                                BLEProtocol::AddressType_t    peerAddrType,
+    void processConnectionEvent(Handle_t                           handle,
+                                Role_t                             role,
+                                BLEProtocol::AddressType_t         peerAddrType,
                                 const BLEProtocol::AddressBytes_t  peerAddr,
-                                BLEProtocol::AddressType_t    ownAddrType,
+                                BLEProtocol::AddressType_t         ownAddrType,
                                 const BLEProtocol::AddressBytes_t  ownAddr,
-                                const ConnectionParams_t     *connectionParams) {
+                                const ConnectionParams_t          *connectionParams) {
         state.connected = 1;
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
         connectionCallChain.call(&callbackParams);
@@ -1309,7 +1309,7 @@ public:
         disconnectionCallChain.call(&callbackParams);
     }
 
-    void processAdvertisementReport(const BLEProtocol::AddressBytes_t             peerAddr,
+    void processAdvertisementReport(const BLEProtocol::AddressBytes_t        peerAddr,
                                     int8_t                                   rssi,
                                     bool                                     isScanResponse,
                                     GapAdvertisingParams::AdvertisingType_t  type,
