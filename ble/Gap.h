@@ -24,7 +24,6 @@
 #include "GapEvents.h"
 #include "CallChainOfFunctionPointersWithContext.h"
 #include "FunctionPointerWithContext.h"
-#include <set>
 #include "deprecate.h"
 
 /* Forward declarations for classes that will only be used for pointers or references in the following. */
@@ -93,6 +92,45 @@ public:
         LOCAL_HOST_TERMINATED_CONNECTION            = 0x16,
         CONN_INTERVAL_UNACCEPTABLE                  = 0x3B,
     };
+
+    /**
+     * Enumeration for whitelist advertising policy filter modes. The possible
+     * filter modes were obtained from the Bluetooth Core Specification
+     * 4.2 (Vol. 6), Part B, Section 4.3.2.
+     */
+    enum AdvertisingPolicyMode_t {
+        ADV_POLICY_IGNORE_WHITELIST = 0,
+        ADV_POLICY_FILTER_SCAN_REQS = 1,
+        ADV_POLICY_FILTER_CONN_REQS = 2,
+        ADV_POLICY_FILTER_ALL_REQS  = 3,
+    };
+
+    /**
+     * Enumeration for whitelist scanning policy filter modes. The possible
+     * filter modes were obtained from the Bluetooth Core Specification
+     * 4.2 (Vol. 6), Part B, Section 4.3.3.
+     */
+    enum ScanningPolicyMode_t {
+        SCAN_POLICY_IGNORE_WHITELIST = 0,
+        SCAN_POLICY_FILTER_ALL_ADV   = 1,
+    };
+
+    /**
+     * Enumeration for the whitelist initiator policy fiter modes. The possible
+     * filter modes were obtained from the Bluetooth Core Specification
+     * 4.2 (vol. 6), Part B, Section 4.4.4.
+     */
+    enum InitiatorPolicyMode_t {
+        INIT_POLICY_IGNORE_WHITELIST = 0,
+        INIT_POLICY_FILTER_ALL_ADV   = 1,
+    };
+
+    /* Representation of a Bluetooth Low Enery Whitelist containing addresses. */
+    struct Whitelist_t {
+        BLEProtocol::Address_t *addresses;
+        uint8_t                 size;
+    };
+
 
     /* Describes the current state of the device (more than one bit can be set). */
     struct GapState_t {
@@ -472,6 +510,126 @@ public:
 
         *countP = 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
+
+    /**
+     * @return Maximum size of the whitelist.
+     */
+    virtual uint8_t getMaxWhitelistSize(void) const
+    {
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Get the internal whitelist to be used by the Link Layer when scanning,
+     * advertising or initiating a connection depending on the filter policies.
+     *
+     * @param[in/out]   whitelist
+     *                  (on input) whitelist.size contains the maximum number
+     *                  of addresses to be returned.
+     *                  (on output) The populated whitelist with copies of the
+     *                  addresses in the implementation's whitelist.
+     *
+     * @return BLE_ERROR_NONE if the implementation's whitelist was successfully
+     *         copied into the supplied reference.
+     */
+    virtual ble_error_t getWhitelist(Whitelist_t &whitelist) const
+    {
+        (void) whitelist;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Set the internal whitelist to be used by the Link Layer when scanning,
+     * advertising or initiating a connection depending on the filter policies.
+     *
+     * @param[out]    whitelist
+     *                  A reference to a whitelist containing the addresses to
+     *                  be added to the internal whitelist.
+     *
+     * @return BLE_ERROR_NONE if the implementation's whitelist was successfully
+     *         populated with the addresses in the given whitelist.
+     *
+     * @note The whitelist must not contain addresses of type @ref
+     *       BLEProtocol::AddressType_t::RANDOM_PRIVATE_NON_RESOLVABLE, this
+     *       this will result in a @ref BLE_ERROR_INVALID_PARAM since the
+     *       remote peer might change its private address at any time and it
+     *       is not possible to resolve it.
+     * @note If the input whitelist is larger than @ref getMaxWhitelistSize()
+     *       the @ref BLE_ERROR_PARAM_OUT_OF_RANGE is returned.
+     */
+    virtual ble_error_t setWhitelist(Whitelist_t &whitelist)
+    {
+        (void) whitelist;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Set the advertising policy filter mode to be used in the next call
+     * to startAdvertising().
+     *
+     * @param[in] mode
+     *              The new advertising policy filter mode.
+     */
+    virtual void setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
+    {
+        (void) mode;
+    }
+
+    /**
+     * Set the scan policy filter mode to be used in the next call
+     * to startScan().
+     *
+     * @param[in] mode
+     *              The new scan policy filter mode.
+     */
+    virtual void setScanningPolicyMode(ScanningPolicyMode_t mode)
+    {
+        (void) mode;
+    }
+
+    /**
+     * Set the initiator policy filter mode to be used.
+     *
+     * @param[in] mode
+     *              The new initiator policy filter mode.
+     */
+    virtual void setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
+    {
+        (void) mode;
+    }
+
+    /**
+     * Get the advertising policy filter mode that will be used in the next
+     * call to startAdvertising().
+     *
+     * @return The set advertising policy filter mode.
+     */
+    virtual AdvertisingPolicyMode_t getAdvertisingPolicyMode(void) const
+    {
+        return ADV_POLICY_IGNORE_WHITELIST;
+    }
+
+    /**
+     * Get the scan policy filter mode that will be used in the next
+     * call to startScan().
+     *
+     * @return The set scan policy filter mode.
+     */
+    virtual ScanningPolicyMode_t getScanningPolicyMode(void) const
+    {
+        return SCAN_POLICY_IGNORE_WHITELIST;
+    }
+
+    /**
+     * Get the initiator policy filter mode that will be used.
+     *
+     * @return The set scan policy filter mode.
+     */
+    virtual InitiatorPolicyMode_t getInitiatorPolicyMode(void) const
+    {
+        return INIT_POLICY_IGNORE_WHITELIST;
+    }
+
 
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
@@ -1172,76 +1330,6 @@ public:
             timeoutCallbackChain(source);
         }
     }
-
-///////////////////////////////////////////////////
-public:
-    enum AdvertisingPolicyMode_t {
-        ADV_POLICY_IGNORE_WHITELIST = 0,
-        ADV_POLICY_FILTER_SCAN_REQS = 1,
-        ADV_POLICY_FILTER_CONN_REQS = 2,
-        ADV_POLICY_FILTER_ALL_REQS  = 3,
-    };
-
-    enum ScanningPolicyMode_t {
-        SCAN_POLICY_IGNORE_WHITELIST = 0,
-        SCAN_POLICY_FILTER_ALL_ADV   = 1,
-    };
-
-    enum InitiatorPolicyMode_t {
-        INIT_POLICY_IGNORE_WHITELIST = 0,
-        INIT_POLICY_FILTER_ALL_ADV   = 1,
-    };
-
-    // Things to be implemented by the porter
-    virtual int8_t getMaxWhitelistSize(void) const
-    {
-        return BLE_ERROR_NOT_IMPLEMENTED;
-    }
-
-    virtual ble_error_t getWhitelist(std::set<BLEProtocol::Address_t> &whitelist) const
-    {
-        (void) whitelist;
-        return BLE_ERROR_NOT_IMPLEMENTED;
-    }
-
-    virtual ble_error_t setWhitelist(std::set<BLEProtocol::Address_t> whitelist)
-    {
-        (void) whitelist;
-        return BLE_ERROR_NOT_IMPLEMENTED;
-    }
-
-    // Accessors
-    virtual void setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
-    {
-        (void) mode;
-    }
-
-    virtual void setScanningPolicyMode(ScanningPolicyMode_t mode)
-    {
-        (void) mode;
-    }
-
-    virtual void setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
-    {
-        (void) mode;
-    }
-
-    virtual AdvertisingPolicyMode_t getAdvertisingPolicyMode(void) const
-    {
-        return ADV_POLICY_IGNORE_WHITELIST;
-    }
-
-    virtual ScanningPolicyMode_t getScanningPolicyMode(void) const
-    {
-        return SCAN_POLICY_IGNORE_WHITELIST;
-    }
-
-    virtual InitiatorPolicyMode_t getInitiatorPolicyMode(void) const
-    {
-        return INIT_POLICY_IGNORE_WHITELIST;
-    }
-
-///////////////////////////////////////////////////
 
 protected:
     GapAdvertisingParams             _advParams;
