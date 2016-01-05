@@ -20,7 +20,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <algorithm>
-#include <string.h>
 
 /**
  * A common namespace for types and constants used everywhere in BLE API.
