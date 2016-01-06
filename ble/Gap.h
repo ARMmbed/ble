@@ -516,7 +516,7 @@ public:
      */
     virtual uint8_t getMaxWhitelistSize(void) const
     {
-        return BLE_ERROR_NOT_IMPLEMENTED;
+        return 0;
     }
 
     /**
@@ -542,7 +542,7 @@ public:
      * Set the internal whitelist to be used by the Link Layer when scanning,
      * advertising or initiating a connection depending on the filter policies.
      *
-     * @param[out]    whitelist
+     * @param[in]     whitelist
      *                  A reference to a whitelist containing the addresses to
      *                  be added to the internal whitelist.
      *
@@ -557,7 +557,7 @@ public:
      * @note If the input whitelist is larger than @ref getMaxWhitelistSize()
      *       the @ref BLE_ERROR_PARAM_OUT_OF_RANGE is returned.
      */
-    virtual ble_error_t setWhitelist(Whitelist_t &whitelist)
+    virtual ble_error_t setWhitelist(const Whitelist_t &whitelist)
     {
         (void) whitelist;
         return BLE_ERROR_NOT_IMPLEMENTED;
