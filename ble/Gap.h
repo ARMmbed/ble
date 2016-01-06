@@ -97,6 +97,8 @@ public:
      * Enumeration for whitelist advertising policy filter modes. The possible
      * filter modes were obtained from the Bluetooth Core Specification
      * 4.2 (Vol. 6), Part B, Section 4.3.2.
+     *
+     * @experimental
      */
     enum AdvertisingPolicyMode_t {
         ADV_POLICY_IGNORE_WHITELIST = 0,
@@ -109,6 +111,8 @@ public:
      * Enumeration for whitelist scanning policy filter modes. The possible
      * filter modes were obtained from the Bluetooth Core Specification
      * 4.2 (Vol. 6), Part B, Section 4.3.3.
+     *
+     * @experimental
      */
     enum ScanningPolicyMode_t {
         SCAN_POLICY_IGNORE_WHITELIST = 0,
@@ -119,13 +123,19 @@ public:
      * Enumeration for the whitelist initiator policy fiter modes. The possible
      * filter modes were obtained from the Bluetooth Core Specification
      * 4.2 (vol. 6), Part B, Section 4.4.4.
+     *
+     * @experimental
      */
     enum InitiatorPolicyMode_t {
         INIT_POLICY_IGNORE_WHITELIST = 0,
         INIT_POLICY_FILTER_ALL_ADV   = 1,
     };
 
-    /* Representation of a Bluetooth Low Enery Whitelist containing addresses. */
+    /**
+     * Representation of a Bluetooth Low Enery Whitelist containing addresses.
+     *
+     * @experimental
+     */
     struct Whitelist_t {
         BLEProtocol::Address_t *addresses;
         uint8_t                 size;
@@ -514,6 +524,8 @@ public:
 
     /**
      * @return Maximum size of the whitelist.
+     *
+     * @experimental
      */
     virtual uint8_t getMaxWhitelistSize(void) const
     {
@@ -532,6 +544,8 @@ public:
      *
      * @return BLE_ERROR_NONE if the implementation's whitelist was successfully
      *         copied into the supplied reference.
+     *
+     * @experimental
      */
     virtual ble_error_t getWhitelist(Whitelist_t &whitelist) const
     {
@@ -557,6 +571,8 @@ public:
      *       is not possible to resolve it.
      * @note If the input whitelist is larger than @ref getMaxWhitelistSize()
      *       the @ref BLE_ERROR_PARAM_OUT_OF_RANGE is returned.
+     *
+     * @experimental
      */
     virtual ble_error_t setWhitelist(const Whitelist_t &whitelist)
     {
@@ -570,6 +586,8 @@ public:
      *
      * @param[in] mode
      *              The new advertising policy filter mode.
+     *
+     * @experimental
      */
     virtual void setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
     {
@@ -582,6 +600,8 @@ public:
      *
      * @param[in] mode
      *              The new scan policy filter mode.
+     *
+     * @experimental
      */
     virtual void setScanningPolicyMode(ScanningPolicyMode_t mode)
     {
@@ -593,6 +613,8 @@ public:
      *
      * @param[in] mode
      *              The new initiator policy filter mode.
+     *
+     * @experimental
      */
     virtual void setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
     {
@@ -604,6 +626,8 @@ public:
      * call to startAdvertising().
      *
      * @return The set advertising policy filter mode.
+     *
+     * @experimental
      */
     virtual AdvertisingPolicyMode_t getAdvertisingPolicyMode(void) const
     {
@@ -615,6 +639,8 @@ public:
      * call to startScan().
      *
      * @return The set scan policy filter mode.
+     *
+     * @experimental
      */
     virtual ScanningPolicyMode_t getScanningPolicyMode(void) const
     {
@@ -625,6 +651,8 @@ public:
      * Get the initiator policy filter mode that will be used.
      *
      * @return The set scan policy filter mode.
+     *
+     * @experimental
      */
     virtual InitiatorPolicyMode_t getInitiatorPolicyMode(void) const
     {
