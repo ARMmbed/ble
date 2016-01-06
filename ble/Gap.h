@@ -129,6 +129,7 @@ public:
     struct Whitelist_t {
         BLEProtocol::Address_t *addresses;
         uint8_t                 size;
+        uint8_t                 capacity;
     };
 
 
@@ -524,7 +525,7 @@ public:
      * advertising or initiating a connection depending on the filter policies.
      *
      * @param[in/out]   whitelist
-     *                  (on input) whitelist.size contains the maximum number
+     *                  (on input) whitelist.capacity contains the maximum number
      *                  of addresses to be returned.
      *                  (on output) The populated whitelist with copies of the
      *                  addresses in the implementation's whitelist.
