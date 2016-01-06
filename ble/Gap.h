@@ -66,8 +66,8 @@ public:
     };
 
     static const unsigned ADDR_LEN = BLEProtocol::ADDR_LEN; /**< Length (in octets) of the BLE MAC address. */
-    typedef BLEProtocol::Address_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
-    typedef BLEProtocol::Address_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::Address_t instead. */
+    typedef BLEProtocol::AddressBytes_t Address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::AddressBytes_t instead. */
+    typedef BLEProtocol::AddressBytes_t address_t; /**< 48-bit address, LSB format. @Note: Deprecated. Use BLEProtocol::AddressBytes_t instead. */
 
 public:
     enum TimeoutSource_t {
@@ -93,6 +93,56 @@ public:
         CONN_INTERVAL_UNACCEPTABLE                  = 0x3B,
     };
 
+    /**
+     * Enumeration for whitelist advertising policy filter modes. The possible
+     * filter modes were obtained from the Bluetooth Core Specification
+     * 4.2 (Vol. 6), Part B, Section 4.3.2.
+     *
+     * @experimental
+     */
+    enum AdvertisingPolicyMode_t {
+        ADV_POLICY_IGNORE_WHITELIST = 0,
+        ADV_POLICY_FILTER_SCAN_REQS = 1,
+        ADV_POLICY_FILTER_CONN_REQS = 2,
+        ADV_POLICY_FILTER_ALL_REQS  = 3,
+    };
+
+    /**
+     * Enumeration for whitelist scanning policy filter modes. The possible
+     * filter modes were obtained from the Bluetooth Core Specification
+     * 4.2 (Vol. 6), Part B, Section 4.3.3.
+     *
+     * @experimental
+     */
+    enum ScanningPolicyMode_t {
+        SCAN_POLICY_IGNORE_WHITELIST = 0,
+        SCAN_POLICY_FILTER_ALL_ADV   = 1,
+    };
+
+    /**
+     * Enumeration for the whitelist initiator policy fiter modes. The possible
+     * filter modes were obtained from the Bluetooth Core Specification
+     * 4.2 (vol. 6), Part B, Section 4.4.4.
+     *
+     * @experimental
+     */
+    enum InitiatorPolicyMode_t {
+        INIT_POLICY_IGNORE_WHITELIST = 0,
+        INIT_POLICY_FILTER_ALL_ADV   = 1,
+    };
+
+    /**
+     * Representation of a Bluetooth Low Enery Whitelist containing addresses.
+     *
+     * @experimental
+     */
+    struct Whitelist_t {
+        BLEProtocol::Address_t *addresses;
+        uint8_t                 size;
+        uint8_t                 capacity;
+    };
+
+
     /* Describes the current state of the device (more than one bit can be set). */
     struct GapState_t {
         unsigned advertising : 1; /**< Peripheral is currently advertising. */
@@ -102,9 +152,9 @@ public:
     typedef uint16_t Handle_t; /* Type for connection handle. */
 
     typedef struct {
-        uint16_t minConnectionInterval;      /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
-        uint16_t maxConnectionInterval;      /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
-        uint16_t slaveLatency;               /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t minConnectionInterval;        /**< Minimum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t maxConnectionInterval;        /**< Maximum Connection Interval in 1.25 ms units, see @ref BLE_GAP_CP_LIMITS.*/
+        uint16_t slaveLatency;                 /**< Slave Latency in number of connection events, see @ref BLE_GAP_CP_LIMITS.*/
         uint16_t connectionSupervisionTimeout; /**< Connection Supervision Timeout in 10 ms units, see @ref BLE_GAP_CP_LIMITS.*/
     } ConnectionParams_t;
 
@@ -114,7 +164,7 @@ public:
     };
 
     struct AdvertisementCallbackParams_t {
-        BLEProtocol::Address_t                   peerAddr;
+        BLEProtocol::AddressBytes_t              peerAddr;
         int8_t                                   rssi;
         bool                                     isScanResponse;
         GapAdvertisingParams::AdvertisingType_t  type;
@@ -127,9 +177,9 @@ public:
         Handle_t                    handle;
         Role_t                      role;
         BLEProtocol::AddressType_t  peerAddrType;
-        BLEProtocol::Address_t      peerAddr;
+        BLEProtocol::AddressBytes_t peerAddr;
         BLEProtocol::AddressType_t  ownAddrType;
-        BLEProtocol::Address_t      ownAddr;
+        BLEProtocol::AddressBytes_t ownAddr;
         const ConnectionParams_t   *connectionParams;
 
         ConnectionCallbackParams_t(Handle_t                    handleIn,
@@ -187,11 +237,11 @@ public:
 public:
     /**
      * Set the BTLE MAC address and type. Please note that the address format is
-     * least significant byte first (LSB). Please refer to BLEProtocol::Address_t.
+     * least significant byte first (LSB). Please refer to BLEProtocol::AddressBytes_t.
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::Address_t address) {
+    virtual ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::AddressBytes_t address) {
         /* avoid compiler warnings about unused variables */
         (void)type;
         (void)address;
@@ -204,7 +254,7 @@ public:
      *
      * @return BLE_ERROR_NONE on success.
      */
-    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::Address_t address) {
+    virtual ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::AddressBytes_t address) {
         /* Avoid compiler warnings about unused variables. */
         (void)typeP;
         (void)address;
@@ -263,10 +313,10 @@ public:
      *     successfully. The connectionCallChain (if set) will be invoked upon
      *     a connection event.
      */
-    virtual ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
-                                BLEProtocol::AddressType_t    peerAddrType,
-                                const ConnectionParams_t     *connectionParams,
-                                const GapScanningParams      *scanParams) {
+    virtual ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
+                                BLEProtocol::AddressType_t         peerAddrType,
+                                const ConnectionParams_t          *connectionParams,
+                                const GapScanningParams           *scanParams) {
         /* Avoid compiler warnings about unused variables. */
         (void)peerAddr;
         (void)peerAddrType;
@@ -285,10 +335,10 @@ public:
                                                         const GapScanningParams      *scanParams)
      *      to maintain backward compatibility for change from Gap::AddressType_t to BLEProtocol::AddressType_t
      */
-    ble_error_t connect(const BLEProtocol::Address_t  peerAddr,
-                        DeprecatedAddressType_t       peerAddrType,
-                        const ConnectionParams_t     *connectionParams,
-                        const GapScanningParams      *scanParams)
+    ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
+                        DeprecatedAddressType_t            peerAddrType,
+                        const ConnectionParams_t          *connectionParams,
+                        const GapScanningParams           *scanParams)
     __deprecated_message("Gap::DeprecatedAddressType_t is deprecated, use BLEProtocol::AddressType_t instead") {
         return connect(peerAddr, (BLEProtocol::AddressType_t) peerAddrType, connectionParams, scanParams);
     }
@@ -471,6 +521,156 @@ public:
 
         *countP = 0; /* Requesting action from porter(s): override this API if this capability is supported. */
     }
+
+    /**
+     * @return Maximum size of the whitelist.
+     *
+     * @experimental
+     */
+    virtual uint8_t getMaxWhitelistSize(void) const
+    {
+        return 0;
+    }
+
+    /**
+     * Get the internal whitelist to be used by the Link Layer when scanning,
+     * advertising or initiating a connection depending on the filter policies.
+     *
+     * @param[in/out]   whitelist
+     *                  (on input) whitelist.capacity contains the maximum number
+     *                  of addresses to be returned.
+     *                  (on output) The populated whitelist with copies of the
+     *                  addresses in the implementation's whitelist.
+     *
+     * @return BLE_ERROR_NONE if the implementation's whitelist was successfully
+     *         copied into the supplied reference.
+     *
+     * @experimental
+     */
+    virtual ble_error_t getWhitelist(Whitelist_t &whitelist) const
+    {
+        (void) whitelist;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Set the internal whitelist to be used by the Link Layer when scanning,
+     * advertising or initiating a connection depending on the filter policies.
+     *
+     * @param[in]     whitelist
+     *                  A reference to a whitelist containing the addresses to
+     *                  be added to the internal whitelist.
+     *
+     * @return BLE_ERROR_NONE if the implementation's whitelist was successfully
+     *         populated with the addresses in the given whitelist.
+     *
+     * @note The whitelist must not contain addresses of type @ref
+     *       BLEProtocol::AddressType_t::RANDOM_PRIVATE_NON_RESOLVABLE, this
+     *       this will result in a @ref BLE_ERROR_INVALID_PARAM since the
+     *       remote peer might change its private address at any time and it
+     *       is not possible to resolve it.
+     * @note If the input whitelist is larger than @ref getMaxWhitelistSize()
+     *       the @ref BLE_ERROR_PARAM_OUT_OF_RANGE is returned.
+     *
+     * @experimental
+     */
+    virtual ble_error_t setWhitelist(const Whitelist_t &whitelist)
+    {
+        (void) whitelist;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Set the advertising policy filter mode to be used in the next call
+     * to startAdvertising().
+     *
+     * @param[in] mode
+     *              The new advertising policy filter mode.
+     *
+     * @return BLE_ERROR_NONE if the specified policy filter mode was set
+     *         successfully.
+     *
+     * @experimental
+     */
+    virtual ble_error_t setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
+    {
+        (void) mode;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Set the scan policy filter mode to be used in the next call
+     * to startScan().
+     *
+     * @param[in] mode
+     *              The new scan policy filter mode.
+     *
+     * @return BLE_ERROR_NONE if the specified policy filter mode was set
+     *         successfully.
+     *
+     * @experimental
+     */
+    virtual ble_error_t setScanningPolicyMode(ScanningPolicyMode_t mode)
+    {
+        (void) mode;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Set the initiator policy filter mode to be used.
+     *
+     * @param[in] mode
+     *              The new initiator policy filter mode.
+     *
+     * @return BLE_ERROR_NONE if the specified policy filter mode was set
+     *         successfully.
+     *
+     * @experimental
+     */
+    virtual ble_error_t setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
+    {
+        (void) mode;
+        return BLE_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Get the advertising policy filter mode that will be used in the next
+     * call to startAdvertising().
+     *
+     * @return The set advertising policy filter mode.
+     *
+     * @experimental
+     */
+    virtual AdvertisingPolicyMode_t getAdvertisingPolicyMode(void) const
+    {
+        return ADV_POLICY_IGNORE_WHITELIST;
+    }
+
+    /**
+     * Get the scan policy filter mode that will be used in the next
+     * call to startScan().
+     *
+     * @return The set scan policy filter mode.
+     *
+     * @experimental
+     */
+    virtual ScanningPolicyMode_t getScanningPolicyMode(void) const
+    {
+        return SCAN_POLICY_IGNORE_WHITELIST;
+    }
+
+    /**
+     * Get the initiator policy filter mode that will be used.
+     *
+     * @return The set scan policy filter mode.
+     *
+     * @experimental
+     */
+    virtual InitiatorPolicyMode_t getInitiatorPolicyMode(void) const
+    {
+        return INIT_POLICY_IGNORE_WHITELIST;
+    }
+
 
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
@@ -1132,13 +1332,13 @@ protected:
 
     /* Entry points for the underlying stack to report events back to the user. */
 public:
-    void processConnectionEvent(Handle_t                      handle,
-                                Role_t                        role,
-                                BLEProtocol::AddressType_t    peerAddrType,
-                                const BLEProtocol::Address_t  peerAddr,
-                                BLEProtocol::AddressType_t    ownAddrType,
-                                const BLEProtocol::Address_t  ownAddr,
-                                const ConnectionParams_t     *connectionParams) {
+    void processConnectionEvent(Handle_t                           handle,
+                                Role_t                             role,
+                                BLEProtocol::AddressType_t         peerAddrType,
+                                const BLEProtocol::AddressBytes_t  peerAddr,
+                                BLEProtocol::AddressType_t         ownAddrType,
+                                const BLEProtocol::AddressBytes_t  ownAddr,
+                                const ConnectionParams_t          *connectionParams) {
         state.connected = 1;
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
         connectionCallChain.call(&callbackParams);
@@ -1150,7 +1350,7 @@ public:
         disconnectionCallChain.call(&callbackParams);
     }
 
-    void processAdvertisementReport(const BLEProtocol::Address_t             peerAddr,
+    void processAdvertisementReport(const BLEProtocol::AddressBytes_t        peerAddr,
                                     int8_t                                   rssi,
                                     bool                                     isScanResponse,
                                     GapAdvertisingParams::AdvertisingType_t  type,
