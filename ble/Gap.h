@@ -587,11 +587,15 @@ public:
      * @param[in] mode
      *              The new advertising policy filter mode.
      *
+     * @return BLE_ERROR_NONE if the specified policy filter mode was set
+     *         successfully.
+     *
      * @experimental
      */
-    virtual void setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
+    virtual ble_error_t setAdvertisingPolicyMode(AdvertisingPolicyMode_t mode)
     {
         (void) mode;
+        return BLE_ERROR_NOT_IMPLEMENTED;
     }
 
     /**
@@ -601,11 +605,15 @@ public:
      * @param[in] mode
      *              The new scan policy filter mode.
      *
+     * @return BLE_ERROR_NONE if the specified policy filter mode was set
+     *         successfully.
+     *
      * @experimental
      */
-    virtual void setScanningPolicyMode(ScanningPolicyMode_t mode)
+    virtual ble_error_t setScanningPolicyMode(ScanningPolicyMode_t mode)
     {
         (void) mode;
+        return BLE_ERROR_NOT_IMPLEMENTED;
     }
 
     /**
@@ -614,11 +622,15 @@ public:
      * @param[in] mode
      *              The new initiator policy filter mode.
      *
+     * @return BLE_ERROR_NONE if the specified policy filter mode was set
+     *         successfully.
+     *
      * @experimental
      */
-    virtual void setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
+    virtual ble_error_t setInitiatorPolicyMode(InitiatorPolicyMode_t mode)
     {
         (void) mode;
+        return BLE_ERROR_NOT_IMPLEMENTED;
     }
 
     /**
