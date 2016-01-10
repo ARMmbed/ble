@@ -131,7 +131,6 @@ bool BLE::hasInitialized(void) const
 
 ble_error_t BLE::shutdown(void)
 {
-    clearAdvertisingPayload();
     if (!transport) {
         error("bad handle to underlying transport");
     }

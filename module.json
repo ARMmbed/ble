@@ -1,6 +1,6 @@
 {
   "name": "ble",
-  "version": "2.1.11",
+  "version": "2.4.0",
   "description": "The BLE module offers a high level abstraction for using Bluetooth Low Energy on multiple platforms.",
   "keywords": [
     "Bluetooth",
@@ -23,10 +23,10 @@
   "dependencies": {},
   "targetDependencies": {
     "st-ble-shield": {
-      "x-nucleo-idb0xa1": "ARMmbed/ble-x-nucleo-idb0xa1"
+      "x-nucleo-idb0xa1": "^2.0.0"
     },
     "nrf51822": {
-      "ble-nrf51822": "^2.1.3"
+      "ble-nrf51822": "^2.2.8"
     },
     "cordio": {
       "ble-wicentric": "~0.0.4"
@@ -35,7 +35,8 @@
       "mbed-classic": "~0.0.1"
     },
     "mbed-os": {
-      "mbed-drivers": "*"
+      "mbed-drivers": "*",
+      "compiler-polyfill": "^1.2.1"
     }
   }
 }

@@ -196,7 +196,7 @@ public:
      * directly, as it returns references to singletons.
      *
      * @param[in] id
-     *              Instance-ID. This should be less than NUM_INSTANCES 
+     *              Instance-ID. This should be less than NUM_INSTANCES
      *              for the returned BLE singleton to be useful.
      *
      * @return a reference to a single object.
@@ -239,7 +239,7 @@ public:
      * ble.setAddress(...) should be replaced with
      * ble.gap().setAddress(...).
      */
-    ble_error_t setAddress(Gap::AddressType_t type, const Gap::Address_t address) {
+    ble_error_t setAddress(BLEProtocol::AddressType_t type, const BLEProtocol::AddressBytes_t address) {
         return gap().setAddress(type, address);
     }
 
@@ -252,7 +252,7 @@ public:
      * ble.getAddress(...) should be replaced with
      * ble.gap().getAddress(...).
      */
-    ble_error_t getAddress(Gap::AddressType_t *typeP, Gap::Address_t address) {
+    ble_error_t getAddress(BLEProtocol::AddressType_t *typeP, BLEProtocol::AddressBytes_t address) {
         return gap().getAddress(typeP, address);
     }
 
@@ -752,10 +752,10 @@ public:
      * ble.connect(...) should be replaced with
      * ble.gap().connect(...).
      */
-    ble_error_t connect(const Gap::Address_t           peerAddr,
-                        Gap::AddressType_t             peerAddrType = Gap::ADDR_TYPE_RANDOM_STATIC,
-                        const Gap::ConnectionParams_t *connectionParams = NULL,
-                        const GapScanningParams       *scanParams = NULL) {
+    ble_error_t connect(const BLEProtocol::AddressBytes_t  peerAddr,
+                        BLEProtocol::AddressType_t         peerAddrType = BLEProtocol::AddressType::RANDOM_STATIC,
+                        const Gap::ConnectionParams_t     *connectionParams = NULL,
+                        const GapScanningParams           *scanParams = NULL) {
         return gap().connect(peerAddr, peerAddrType, connectionParams, scanParams);
     }
 
@@ -773,7 +773,7 @@ public:
     }
 
     /**
-     * This call initiates the disconnection procedure, and its completion 
+     * This call initiates the disconnection procedure, and its completion
      * is communicated to the application with an invocation of the
      * onDisconnection callback.
      *
@@ -1407,7 +1407,7 @@ public:
     /**
      * Set up a callback for when the passkey needs to be displayed on a
      * peripheral with DISPLAY capability. This happens when security is
-     * configured to prevent Man-In-The-Middle attacks, and the peers need to exchange 
+     * configured to prevent Man-In-The-Middle attacks, and the peers need to exchange
      * a passkey (or PIN) to authenticate the connection
      * attempt.
      *

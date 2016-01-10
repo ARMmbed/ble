@@ -21,10 +21,24 @@
 #include "Gap.h"
 #include "GattAttribute.h"
 #include "GattClient.h"
+#include "CharacteristicDescriptorDiscovery.h"
+#include "ble/DiscoveredCharacteristicDescriptor.h"
 
 /**
- * Structure for holding information about the service and the characteristics
- * found during the discovery process.
+ * @brief Representation of a characteristic discovered during a GattClient
+ * discovery procedure (see GattClient::launchServiceDiscovery ).
+ *
+ * @detail Provide detailed informations about a discovered characteristic like:
+ *     - Its UUID (see #getUUID).
+ *     - The most important handles of the characteristic definition
+ *       (see #getDeclHandle, #getValueHandle, #getLastHandle )
+ *     - Its properties (see #getProperties).
+ * This class also provide functions to operate on the characteristic:
+ *     - Read the characteristic value (see #read)
+ *     - Writing a characteristic value (see #write or #writeWoResponse)
+ *     - Discover descriptors inside the characteristic definition. These descriptors
+ *       extends the characteristic. More information about descriptor usage is
+ *       available in DiscoveredCharacteristicDescriptor class.
  */
 class DiscoveredCharacteristic {
 public:
@@ -33,7 +47,7 @@ public:
         uint8_t _read            :1; /**< Reading the value permitted. */
         uint8_t _writeWoResp     :1; /**< Writing the value with Write Command permitted. */
         uint8_t _write           :1; /**< Writing the value with Write Request permitted. */
-        uint8_t _notify          :1; /**< Notications of the value permitted. */
+        uint8_t _notify          :1; /**< Notifications of the value permitted. */
         uint8_t _indicate        :1; /**< Indications of the value permitted. */
         uint8_t _authSignedWrite :1; /**< Writing the value with Signed Write Command permitted. */
 
@@ -46,35 +60,49 @@ public:
         bool indicate(void)        const {return _indicate;       }
         bool authSignedWrite(void) const {return _authSignedWrite;}
 
+        /**
+         * @brief "Equal to" operator for DiscoveredCharacteristic::Properties_t
+         *
+         * @param lhs[in] The left hand side of the equality expression
+         * @param rhs[in] The right hand side of the equality expression
+         *
+         * @return true if operands are equals, false otherwise.
+         */
+        friend bool operator==(Properties_t lhs, Properties_t rhs) {
+            return lhs._broadcast == rhs._broadcast &&
+                   lhs._read == rhs._read &&
+                   lhs._writeWoResp == rhs._writeWoResp &&
+                   lhs._write == rhs._write &&
+                   lhs._notify == rhs._notify &&
+                   lhs._indicate == rhs._indicate &&
+                   lhs._authSignedWrite == rhs._authSignedWrite;
+        }
+
+        /**
+         * @brief "Not equal to" operator for DiscoveredCharacteristic::Properties_t
+         *
+         * @param lhs The right hand side of the expression
+         * @param rhs The left hand side of the expression
+         *
+         * @return true if operands are not equals, false otherwise.
+         */
+        friend bool operator!=(Properties_t lhs, Properties_t rhs) {
+            return !(lhs == rhs);
+        }
+
     private:
         operator uint8_t()  const; /* Disallow implicit conversion into an integer. */
         operator unsigned() const; /* Disallow implicit conversion into an integer. */
     };
 
     /**
-     * Structure for holding information about the service and the characteristics
-     * found during the discovery process.
-     */
-    struct DiscoveredDescriptor {
-        GattAttribute::Handle_t handle; /**< Descriptor Handle. */
-        UUID                    uuid;   /**< Descriptor UUID. */
-    };
-
-    /**
-     * Callback type for when a characteristic descriptor is found during descriptor-
-     * discovery. The receiving function is passed in a pointer to a
-     * DiscoveredDescriptor object which will remain valid for the lifetime
-     * of the callback. Memory for this object is owned by the BLE_API eventing
-     * framework. The application can safely make a persistent shallow-copy of
-     * this object in order to work with the characteristic beyond the callback.
-     */
-    typedef void (*DescriptorCallback_t)(const DiscoveredDescriptor *);
-
-    /**
      * Initiate (or continue) a read for the value attribute, optionally at a
      * given offset. If the characteristic or descriptor to be read is longer
      * than ATT_MTU - 1, this function must be called multiple times with
      * appropriate offset to read the complete value.
+     *
+     * @param offset[in] The position - in the characteristic value bytes stream - where
+     * the read operation begin.
      *
      * @return BLE_ERROR_NONE if a read has been initiated, or
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
@@ -83,14 +111,22 @@ public:
      */
     ble_error_t read(uint16_t offset = 0) const;
 
+    /**
+     * @brief Same as #read(uint16_t) const but allow the user to register a callback
+     * which will be fired once the read is done.
+     *
+     * @param offset[in] The position - in the characteristic value bytes stream - where
+     * the read operation begin.
+     * @param onRead[in] Continuation of the read operation
+     */
     ble_error_t read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const;
 
     /**
      * Perform a write without response procedure.
      *
-     * @param  length
+     * @param[in]  length
      *           The amount of data being written.
-     * @param  value
+     * @param[in]  value
      *           The bytes being written.
      *
      * @note   It is important to note that a write without response will generate
@@ -110,20 +146,20 @@ public:
     /**
      * Initiate a GATT Characteristic Descriptor Discovery procedure for descriptors within this characteristic.
      *
-     * @param  callback
-     * @param  matchingUUID
-     *           Filter for descriptors. Defaults to wildcard which will discover all descriptors.
+     * @param[in] onDescriptorDiscovered This callback will be called every time a descriptor is discovered
+     * @param[in] onTermination This callback will be called when the discovery process is over.
      *
-     * @return  BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
+     * @return BLE_ERROR_NONE if descriptor discovery is launched successfully; else an appropriate error.
      */
-    ble_error_t discoverDescriptors(DescriptorCallback_t callback, const UUID &matchingUUID = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) const;
+    ble_error_t discoverDescriptors(const CharacteristicDescriptorDiscovery::DiscoveryCallback_t& onDescriptorDiscovered,
+                                    const CharacteristicDescriptorDiscovery::TerminationCallback_t& onTermination) const;
 
     /**
      * Perform a write procedure.
      *
-     * @param  length
+     * @param[in]  length
      *           The amount of data being written.
-     * @param  value
+     * @param[in]  value
      *           The bytes being written.
      *
      * @note   It is important to note that a write will generate
@@ -138,28 +174,132 @@ public:
     ble_error_t write(uint16_t length, const uint8_t *value) const;
 
     /**
-     * Same as above but register the callback wich will be called once the data has been written
+     * Same as #write(uint16_t, const uint8_t *) const but register a callback
+     * which will be called once the data has been written.
+     *
+     * @param[in] length The amount of bytes to write.
+     * @param[in] value The bytes to write.
+     * @param[in] onRead Continuation callback for the write operation
      */
-    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onRead) const;
+    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onWrite) const;
 
     void setupLongUUID(UUID::LongUUIDBytes_t longUUID, UUID::ByteOrder_t order = UUID::MSB) {
         uuid.setupLong(longUUID, order);
     }
 
 public:
+    /**
+     * @brief Get the UUID of the discovered characteristic
+     * @return the UUID of this characteristic
+     */
     const UUID& getUUID(void) const {
         return uuid;
     }
 
+    /**
+     * @brief Get the properties of this characteristic
+     * @return the set of properties of this characteristic
+     */
     const Properties_t& getProperties(void) const {
         return props;
     }
 
-    const GattAttribute::Handle_t& getDeclHandle(void) const {
+    /**
+     * @brief Get the declaration handle of this characteristic.
+     * @detail The declaration handle is the first handle of a characteristic
+     * definition. The value accessible at this handle contains the following
+     * informations:
+     *    - The characteristics properties (see Properties_t). This value can
+     *      be accessed by using #getProperties .
+     *    - The characteristic value attribute handle. This field can be accessed
+     *      by using #getValueHandle .
+     *    - The characteristic UUID, this value can be accessed by using the
+     *      function #getUUID .
+     * @return the declaration handle of this characteristic.
+     */
+    GattAttribute::Handle_t getDeclHandle(void) const {
         return declHandle;
     }
-    const GattAttribute::Handle_t& getValueHandle(void) const {
+
+    /**
+     * @brief Return the handle used to access the value of this characteristic.
+     * @details This handle is the one provided in the characteristic declaration
+     * value. Usually, it is equal to #getDeclHandle() + 1. But it is not always
+     * the case. Anyway, users are allowed to use #getDeclHandle() + 1 to access
+     * the value of a characteristic.
+     * @return The handle to access the value of this characteristic.
+     */
+    GattAttribute::Handle_t getValueHandle(void) const {
         return valueHandle;
+    }
+
+    /**
+     * @brief Return the last handle of the characteristic definition.
+     * @details A Characteristic definition can contain a lot of handles:
+     *     - one for the declaration (see #getDeclHandle)
+     *     - one for the value (see #getValueHandle)
+     *     - zero of more for the characteristic descriptors.
+     * This handle is the last handle of the characteristic definition.
+     * @return The last handle of this characteristic definition.
+     */
+    GattAttribute::Handle_t getLastHandle(void) const {
+        return lastHandle;
+    }
+
+    /**
+     * @brief Return the GattClient which can operate on this characteristic.
+     * @return The GattClient which can operate on this characteristic.
+     */
+    GattClient* getGattClient() {
+        return gattc;
+    }
+
+    /**
+     * @brief Return the GattClient which can operate on this characteristic.
+     * @return The GattClient which can operate on this characteristic.
+     */
+    const GattClient* getGattClient() const {
+        return gattc;
+    }
+
+    /**
+     * @brief Return the connection handle to the GattServer which contain
+     * this characteristic.
+     * @return the connection handle to the GattServer which contain
+     * this characteristic.
+     */
+    Gap::Handle_t getConnectionHandle() const {
+        return connHandle;
+    }
+
+    /**
+     * @brief "Equal to" operator for DiscoveredCharacteristic
+     *
+     * @param lhs[in] The left hand side of the equality expression
+     * @param rhs[in] The right hand side of the equality expression
+     *
+     * @return true if operands are equals, false otherwise.
+     */
+    friend bool operator==(const DiscoveredCharacteristic& lhs, const DiscoveredCharacteristic& rhs) {
+        return lhs.gattc == rhs.gattc &&
+               lhs.uuid == rhs.uuid &&
+               lhs.props == rhs.props &&
+               lhs.declHandle == rhs.declHandle &&
+               lhs.valueHandle == rhs.valueHandle &&
+               lhs.lastHandle == rhs.lastHandle &&
+               lhs.connHandle == rhs.connHandle;
+    }
+
+    /**
+     * @brief "Not equal to" operator for DiscoveredCharacteristic
+     *
+     * @param lhs[in] The right hand side of the expression
+     * @param rhs[in] The left hand side of the expression
+     *
+     * @return true if operands are not equals, false otherwise.
+     */
+    friend bool operator !=(const DiscoveredCharacteristic& lhs, const DiscoveredCharacteristic& rhs) {
+        return !(lhs == rhs);
     }
 
 public:
@@ -167,7 +307,9 @@ public:
                                  uuid(UUID::ShortUUIDBytes_t(0)),
                                  props(),
                                  declHandle(GattAttribute::INVALID_HANDLE),
-                                 valueHandle(GattAttribute::INVALID_HANDLE) {
+                                 valueHandle(GattAttribute::INVALID_HANDLE),
+                                 lastHandle(GattAttribute::INVALID_HANDLE),
+                                 connHandle() {
         /* empty */
     }
 
@@ -179,6 +321,7 @@ protected:
     Properties_t             props;
     GattAttribute::Handle_t  declHandle;
     GattAttribute::Handle_t  valueHandle;
+    GattAttribute::Handle_t  lastHandle;
 
     Gap::Handle_t            connHandle;
 };

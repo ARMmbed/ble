@@ -49,62 +49,6 @@ enum {
     BLE_UUID_GAP_CHARACTERISTIC_PPCP             = 0x2A04, /**< Peripheral Preferred Connection Parameters Characteristic. */
 };
 
-/*! Bluetooth appearance values.
- *  @note Retrieved from http://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
- */
-enum {
-    BLE_APPEARANCE_UNKNOWN                             =    0, /**< Unknown. */
-    BLE_APPEARANCE_GENERIC_PHONE                       =   64, /**< Generic Phone. */
-    BLE_APPEARANCE_GENERIC_COMPUTER                    =  128, /**< Generic Computer. */
-    BLE_APPEARANCE_GENERIC_WATCH                       =  192, /**< Generic Watch. */
-    BLE_APPEARANCE_WATCH_SPORTS_WATCH                  =  193, /**< Watch: Sports Watch. */
-    BLE_APPEARANCE_GENERIC_CLOCK                       =  256, /**< Generic Clock. */
-    BLE_APPEARANCE_GENERIC_DISPLAY                     =  320, /**< Generic Display. */
-    BLE_APPEARANCE_GENERIC_REMOTE_CONTROL              =  384, /**< Generic Remote Control. */
-    BLE_APPEARANCE_GENERIC_EYE_GLASSES                 =  448, /**< Generic Eye-glasses. */
-    BLE_APPEARANCE_GENERIC_TAG                         =  512, /**< Generic Tag. */
-    BLE_APPEARANCE_GENERIC_KEYRING                     =  576, /**< Generic Keyring. */
-    BLE_APPEARANCE_GENERIC_MEDIA_PLAYER                =  640, /**< Generic Media Player. */
-    BLE_APPEARANCE_GENERIC_BARCODE_SCANNER             =  704, /**< Generic Barcode Scanner. */
-    BLE_APPEARANCE_GENERIC_THERMOMETER                 =  768, /**< Generic Thermometer. */
-    BLE_APPEARANCE_THERMOMETER_EAR                     =  769, /**< Thermometer: Ear. */
-    BLE_APPEARANCE_GENERIC_HEART_RATE_SENSOR           =  832, /**< Generic Heart Rate Sensor. */
-    BLE_APPEARANCE_HEART_RATE_SENSOR_HEART_RATE_BELT   =  833, /**< Heart Rate Sensor: Heart Rate Belt. */
-    BLE_APPEARANCE_GENERIC_BLOOD_PRESSURE              =  896, /**< Generic Blood Pressure. */
-    BLE_APPEARANCE_BLOOD_PRESSURE_ARM                  =  897, /**< Blood Pressure: Arm. */
-    BLE_APPEARANCE_BLOOD_PRESSURE_WRIST                =  898, /**< Blood Pressure: Wrist. */
-    BLE_APPEARANCE_GENERIC_HID                         =  960, /**< Human Interface Device (HID). */
-    BLE_APPEARANCE_HID_KEYBOARD                        =  961, /**< Keyboard (HID subtype). */
-    BLE_APPEARANCE_HID_MOUSE                           =  962, /**< Mouse (HID subtype). */
-    BLE_APPEARANCE_HID_JOYSTICK                        =  963, /**< Joystick (HID subtype). */
-    BLE_APPEARANCE_HID_GAMEPAD                         =  964, /**< Gamepad (HID subtype). */
-    BLE_APPEARANCE_HID_DIGITIZERSUBTYPE                =  965, /**< Digitizer Tablet (HID subtype). */
-    BLE_APPEARANCE_HID_CARD_READER                     =  966, /**< Card Reader (HID subtype). */
-    BLE_APPEARANCE_HID_DIGITAL_PEN                     =  967, /**< Digital Pen (HID subtype). */
-    BLE_APPEARANCE_HID_BARCODE                         =  968, /**< Barcode Scanner (HID subtype). */
-    BLE_APPEARANCE_GENERIC_GLUCOSE_METER               = 1024, /**< Generic Glucose Meter. */
-    BLE_APPEARANCE_GENERIC_RUNNING_WALKING_SENSOR      = 1088, /**< Generic Running Walking Sensor. */
-    BLE_APPEARANCE_RUNNING_WALKING_SENSOR_IN_SHOE      = 1089, /**< Running Walking Sensor: In-Shoe. */
-    BLE_APPEARANCE_RUNNING_WALKING_SENSOR_ON_SHOE      = 1090, /**< Running Walking Sensor: On-Shoe. */
-    BLE_APPEARANCE_RUNNING_WALKING_SENSOR_ON_HIP       = 1091, /**< Running Walking Sensor: On-Hip. */
-    BLE_APPEARANCE_GENERIC_CYCLING                     = 1152, /**< Generic Cycling. */
-    BLE_APPEARANCE_CYCLING_CYCLING_COMPUTER            = 1153, /**< Cycling: Cycling Computer. */
-    BLE_APPEARANCE_CYCLING_SPEED_SENSOR                = 1154, /**< Cycling: Speed Sensor. */
-    BLE_APPEARANCE_CYCLING_CADENCE_SENSOR              = 1155, /**< Cycling: Cadence Sensor. */
-    BLE_APPEARANCE_CYCLING_POWER_SENSOR                = 1156, /**< Cycling: Power Sensor. */
-    BLE_APPEARANCE_CYCLING_SPEED_CADENCE_SENSOR        = 1157, /**< Cycling: Speed and Cadence Sensor. */
-    BLE_APPEARANCE_GENERIC_PULSE_OXIMETER              = 3136, /**< Generic Pulse Oximeter. */
-    BLE_APPEARANCE_PULSE_OXIMETER_FINGERTIP            = 3137, /**< Fingertip (Pulse Oximeter subtype). */
-    BLE_APPEARANCE_PULSE_OXIMETER_WRIST_WORN           = 3138, /**< Wrist Worn (Pulse Oximeter subtype). */
-    BLE_APPEARANCE_GENERIC_WEIGHT_SCALE                = 3200, /**< Generic Weight Scale. */
-    BLE_APPEARANCE_GENERIC_OUTDOOR_SPORTS_ACT          = 5184, /**< Generic Outdoor Sports Activity. */
-    BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_DISP         = 5185, /**< Location Display Device (Outdoor Sports Activity subtype). */
-    BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_AND_NAV_DISP = 5186, /**< Location and Navigation Display Device (Outdoor Sports Activity subtype). */
-    BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_POD          = 5187, /**< Location Pod (Outdoor Sports Activity subtype). */
-    BLE_APPEARANCE_OUTDOOR_SPORTS_ACT_LOC_AND_NAV_POD  = 5188, /**< Location and Navigation Pod (Outdoor Sports Activity subtype). */
-};
-
-
 /*! @brief Error codes for the BLE API. */
 enum ble_error_t {
     BLE_ERROR_NONE                      = 0, /**< No error. */
@@ -119,6 +63,7 @@ enum ble_error_t {
     BLE_ERROR_INITIALIZATION_INCOMPLETE = 9,
     BLE_ERROR_ALREADY_INITIALIZED       = 10,
     BLE_ERROR_UNSPECIFIED               = 11, /**< Unknown error. */
+    BLE_ERROR_INTERNAL_STACK_FAILURE    = 12, /**< The platform-specific stack failed */
 };
 
 /** @brief Default MTU size. */
