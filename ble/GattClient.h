@@ -351,7 +351,7 @@ public:
 
     /**
      * @brief Terminate an ongoing characteristic descriptor discovery.
-     * @detail This should result in an invocation of the TerminationCallback if
+     * @details This should result in an invocation of the TerminationCallback if
      * the characteristic descriptor discovery is active.
      * @param characteristic[in] The characteristic on which the running descriptors
      * discovery should be stopped.
