@@ -28,7 +28,7 @@
 class BatteryService {
 public:
     /**
-     * @param[ref] _ble
+     * @param[in] _ble
      *               BLE object for the underlying controller.
      * @param[in] level
      *               8bit batterly level. Usually used to represent percentage of batterly charge remaining.
