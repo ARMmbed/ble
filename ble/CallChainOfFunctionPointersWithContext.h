@@ -106,26 +106,26 @@ public:
         return common_add(new FunctionPointerWithContext<ContextType>(func));
     }
 
-    /** 
+    /**
      * Detach a function pointer from a callchain
-     * 
+     *
      * @oaram toDetach FunctionPointerWithContext to detach from this callchain
-     * 
+     *
      * @return true if a function pointer has been detached and false otherwise
-     */ 
-    bool detach(const FunctionPointerWithContext<ContextType>& toDetach) { 
+     */
+    bool detach(const FunctionPointerWithContext<ContextType>& toDetach) {
         pFunctionPointerWithContext_t current = chainHead;
         pFunctionPointerWithContext_t previous = NULL;
 
         while (current) {
-            if(*current == toDetach) { 
+            if(*current == toDetach) {
                 if(previous == NULL) {
-                    if(currentCalled == current) { 
+                    if(currentCalled == current) {
                         currentCalled = NULL;
                     }
                     chainHead = current->getNext();
                 } else {
-                    if(currentCalled == current) { 
+                    if(currentCalled == current) {
                         currentCalled = previous;
                     }
                     previous->chainAsNext(current->getNext());
@@ -165,15 +165,15 @@ public:
     }
 
     /**
-     * @brief same as above but const 
+     * @brief same as above but const
      */
     void call(ContextType context) const {
         currentCalled = chainHead;
 
-        while(currentCalled) { 
+        while(currentCalled) {
             currentCalled->call(context);
             // if this was the head and the call removed the head
-            if(currentCalled == NULL) { 
+            if(currentCalled == NULL) {
                 currentCalled = chainHead;
             } else {
                 currentCalled = currentCalled->getNext();
@@ -184,18 +184,18 @@ public:
     /**
      * @brief same as above but with function call operator
      * \code
-     * 
+     *
      * void first(bool);
      * void second(bool);
-     * 
+     *
      * CallChainOfFunctionPointerWithContext<bool> foo;
-     * 
+     *
      * foo.attach(first);
      * foo.attach(second);
-     * 
+     *
      * // call the callchain like a function
      * foo(true);
-     * 
+     *
      * \endcode
      */
     void operator()(ContextType context) const {
