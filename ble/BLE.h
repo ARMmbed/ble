@@ -40,7 +40,7 @@ class BLEInstanceBase;
 class BLE
 {
 public:
-    typedef unsigned InstanceID_t; /** The type returned by BLE::getInstanceID(). */
+    typedef unsigned InstanceID_t; /**< The type returned by BLE::getInstanceID(). */
 
     /**
      * The context provided to init-completion-callbacks (see init() below).
@@ -53,8 +53,8 @@ public:
      *             the error value is implementation specific.
      */
     struct InitializationCompleteCallbackContext {
-        BLE&        ble;   /* Reference to the BLE object that has been initialized */
-        ble_error_t error; /* Error status of the initialization. It is set to BLE_ERROR_NONE if initialization completed successfully. */
+        BLE&        ble;   /**< Reference to the BLE object that has been initialized */
+        ble_error_t error; /**< Error status of the initialization. It is set to BLE_ERROR_NONE if initialization completed successfully. */
     };
 
     /**
@@ -138,7 +138,8 @@ public:
      * This call allows the application to get the BLE stack version information.
      *
      * @return  A pointer to a const string representing the version.
-     *          Note: The string is owned by BLE_API.
+     *
+     * @note: The string returned is owned by BLE_API.
      */
     const char *getVersion(void);
 
@@ -192,7 +193,7 @@ public:
      * Get a reference to the BLE singleton corresponding to a given interface.
      * There is a static array of BLE singletons.
      *
-     * @Note: Calling Instance() is preferred over constructing a BLE object
+     * @note: Calling Instance() is preferred over constructing a BLE object
      * directly, as it returns references to singletons.
      *
      * @param[in] id
@@ -584,7 +585,7 @@ public:
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
      *
-     * @Note: The scan interval and window are recommendations to the BLE stack.
+     * @note: The scan interval and window are recommendations to the BLE stack.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
@@ -661,7 +662,7 @@ public:
      * Once the scanning parameters have been configured, scanning can be
      * enabled by using startScan().
      *
-     * @Note: The scan interval and window are recommendations to the BLE stack.
+     * @note: The scan interval and window are recommendations to the BLE stack.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
      * You should use the parallel API from Gap directly. A former call to
@@ -1227,11 +1228,11 @@ public:
      * Add a callback for the GATT event DATA_SENT (which is triggered when
      * updates are sent out by GATT in the form of notifications).
      *
-     * @Note: It is possible to chain together multiple onDataSent callbacks
+     * @note: It is possible to chain together multiple onDataSent callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics.
      *
-     * @Note: It is also possible to set up a callback into a member function of
+     * @note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1253,12 +1254,12 @@ public:
      * For a Central, this callback is triggered when a response is received for
      * a write request.
      *
-     * @Note: It is possible to chain together multiple onDataWritten callbacks
+     * @note: It is possible to chain together multiple onDataWritten callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics. Many services, such as DFU and UART, add their own
      * onDataWritten callbacks behind the scenes to trap interesting events.
      *
-     * @Note: It is also possible to set up a callback into a member function of
+     * @note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @note: This API is now *deprecated* and will be dropped in the future.
@@ -1277,16 +1278,16 @@ public:
      * Set up a callback to be invoked on the peripheral when an attribute is
      * being read by a remote client.
      *
-     * @Note: This functionality may not be available on all underlying stacks.
+     * @note: This functionality may not be available on all underlying stacks.
      * You could use GattCharacteristic::setReadAuthorizationCallback() as an
      * alternative.
      *
-     * @Note: It is possible to chain together multiple onDataRead callbacks
+     * @note: It is possible to chain together multiple onDataRead callbacks
      * (potentially from different modules of an application) to receive updates
      * to characteristics. Services may add their own onDataRead callbacks
      * behind the scenes to trap interesting events.
      *
-     * @Note: It is also possible to set up a callback into a member function of
+     * @note: It is also possible to set up a callback into a member function of
      * some object.
      *
      * @return BLE_ERROR_NOT_IMPLEMENTED if this functionality isn't available;
