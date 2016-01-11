@@ -28,7 +28,7 @@
 class DeviceInformationService {
 public:
     /**
-     * @brief Device Information Service Constructor: copies device-specific information 
+     * @brief Device Information Service Constructor: copies device-specific information
      * into the BLE stack.
      *
      * @param[ref] _ble
@@ -38,11 +38,11 @@ public:
      * @param[in] modelNumber
      *                The model number that is assigned by the device vendor.
      * @param[in] serialNumber
-     *                The serial number for a particular instance of the device. 
+     *                The serial number for a particular instance of the device.
      * @param[in] hardwareRevision
      *                The hardware revision for the hardware within the device.
      * @param[in] firmwareRevision
-     *                The device's firmware version. 
+     *                The device's firmware version.
      * @param[in] softwareRevision
      *                The device's software version.
      */
