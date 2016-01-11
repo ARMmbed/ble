@@ -45,7 +45,7 @@ public:
     }
 
     /**
-     * @brief Update the battery level with a new value. [Valid values lie between 0 and 100];
+     * @brief Update the battery level with a new value. Valid values lie between 0 and 100,
      * anything outside this range will be ignored.
      *
      * @param newLevel
@@ -57,9 +57,20 @@ public:
     }
 
 protected:
+    /**
+     * A reference to the underlying @ref BLE instance that this object is attached to.
+     * The services and characteristics will be registered in this BLE instance.
+     */
     BLE &ble;
 
+    /**
+     * The current battery level represented as an integer from 0% to 100%.
+     */
     uint8_t    batteryLevel;
+    /**
+     * A @ref ReadOnlyGattCharacteristic that allows access to the peer device to the
+     * @ref batteryLevel value through BLE.
+     */
     ReadOnlyGattCharacteristic<uint8_t> batteryLevelCharacteristic;
 };
 
