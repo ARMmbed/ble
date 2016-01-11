@@ -21,7 +21,7 @@
 
 namespace SafeBool_ {
 /**
- * @brief Base class for all intances of SafeBool, 
+ * @brief Base class for all intances of SafeBool,
  * This base class reduce instantiation of trueTag function
  */
 class base {
@@ -32,7 +32,7 @@ protected:
     //the bool type is a pointer to method which can be used in boolean context
   typedef void (base::*BoolType_t)() const;
 
-  // non implemented call, use to disallow conversion between unrelated types 
+  // non implemented call, use to disallow conversion between unrelated types
   void invalidTag() const;
 
   // member function which indicate true value
@@ -44,51 +44,51 @@ protected:
 
 /**
  * @brief template class SafeBool use CRTP to made boolean conversion easy and correct.
- * Derived class should implement the function bool toBool() const to make this work. Inheritance 
+ * Derived class should implement the function bool toBool() const to make this work. Inheritance
  * should be public.
  *
  * @tparam T Type of the derived class
- * 
- * \code 
- * 
- * class A : public SafeBool<A> { 
+ *
+ * \code
+ *
+ * class A : public SafeBool<A> {
  * public:
- * 
+ *
  *      // boolean conversion
- *      bool toBool() { 
- *      
- *      }  
+ *      bool toBool() {
+ *
+ *      }
  * };
- * 
- * class B : public SafeBool<B> { 
+ *
+ * class B : public SafeBool<B> {
  * public:
- * 
+ *
  *      // boolean conversion
- *      bool toBool() const { 
- *      
- *      }  
+ *      bool toBool() const {
+ *
+ *      }
  * };
- * 
+ *
  * A a;
  * B b;
- * 
- * // will compile 
- * if(a) { 
- * 
+ *
+ * // will compile
+ * if(a) {
+ *
  * }
- * 
- * // compilation error 
- * if(a == b) { 
- * 
+ *
+ * // compilation error
+ * if(a == b) {
+ *
  * }
- * 
- * 
+ *
+ *
  * \endcode
  */
-template <typename T> 
+template <typename T>
 class SafeBool : public SafeBool_::base {
 public:
-  /** 
+  /**
    * bool operator implementation, derived class has to provide bool toBool() const function.
    */
   operator BoolType_t() const {
