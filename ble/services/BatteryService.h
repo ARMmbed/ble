@@ -58,7 +58,7 @@ public:
 
 protected:
     /**
-     * A reference to the underlying @ref BLE instance that this object is attached to.
+     * A reference to the underlying BLE instance that this object is attached to.
      * The services and characteristics will be registered in this BLE instance.
      */
     BLE &ble;
@@ -68,8 +68,8 @@ protected:
      */
     uint8_t    batteryLevel;
     /**
-     * A @ref ReadOnlyGattCharacteristic that allows access to the peer device to the
-     * @ref batteryLevel value through BLE.
+     * A ReadOnlyGattCharacteristic that allows access to the peer device to the
+     * batteryLevel value through BLE.
      */
     ReadOnlyGattCharacteristic<uint8_t> batteryLevelCharacteristic;
 };
