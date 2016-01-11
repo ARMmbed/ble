@@ -109,6 +109,7 @@ public:
 template <typename T, typename U>
 void operator==(const SafeBool<T>& lhs,const SafeBool<U>& rhs) {
     lhs.invalidTag();
+    // return false;
 }
 
 /**
@@ -117,6 +118,7 @@ void operator==(const SafeBool<T>& lhs,const SafeBool<U>& rhs) {
 template <typename T,typename U>
 void operator!=(const SafeBool<T>& lhs,const SafeBool<U>& rhs) {
     lhs.invalidTag();
+    // return false;
 }
 
 #endif /* BLE_API_SAFE_BOOL_H_ */
