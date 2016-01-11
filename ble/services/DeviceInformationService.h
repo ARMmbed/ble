@@ -31,8 +31,8 @@ public:
      * @brief Device Information Service Constructor: copies device-specific information
      * into the BLE stack.
      *
-     * @param[ref] _ble
-     *                BLE object for the underlying controller.
+     * @param[in] _ble
+     *                A reference to a BLE object for the underlying controller.
      * @param[in] manufacturersName
      *                The name of the manufacturer of the device.
      * @param[in] modelNumber
@@ -104,12 +104,34 @@ public:
     }
 
 protected:
+    /**
+     * A reference to the BLE instance object to which the services and
+     * characteristics will be added.
+     */
     BLE                &ble;
+    /**
+     * BLE characterising to allow BLE peers access to the manufacturer's name.
+     */
     GattCharacteristic  manufacturersNameStringCharacteristic;
+    /**
+     * BLE characterising to allow BLE peers access to the model number.
+     */
     GattCharacteristic  modelNumberStringCharacteristic;
+    /**
+     * BLE characterising to allow BLE peers access to the serial number.
+     */
     GattCharacteristic  serialNumberStringCharacteristic;
+    /**
+     * BLE characterising to allow BLE peers access to the hardware revision string.
+     */
     GattCharacteristic  hardwareRevisionStringCharacteristic;
+    /**
+     * BLE characterising to allow BLE peers access to the firmware revision string.
+     */
     GattCharacteristic  firmwareRevisionStringCharacteristic;
+    /**
+     * BLE characterising to allow BLE peers access to the software revision string.
+     */
     GattCharacteristic  softwareRevisionStringCharacteristic;
 };
 
