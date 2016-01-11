@@ -28,7 +28,7 @@
  * @brief Representation of a characteristic discovered during a GattClient
  * discovery procedure (see GattClient::launchServiceDiscovery ).
  *
- * @detail Provide detailed informations about a discovered characteristic like:
+ * @details Provide detailed informations about a discovered characteristic like:
  *     - Its UUID (see #getUUID).
  *     - The most important handles of the characteristic definition
  *       (see #getDeclHandle, #getValueHandle, #getLastHandle )
