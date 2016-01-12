@@ -163,6 +163,28 @@ public:
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if security is supported. */
     }
 
+    /**
+     * Get a list of addresses from all peers in the bond table.
+     *
+     * @param[in/out]   addresses
+     *                  (on input) addresses.capacity contains the maximum
+     *                  number of addresses to be returned.
+     *                  (on output) The populated table with copies of the
+     *                  addresses in the implementation's whitelist.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization or
+     *                                    application registration.
+     *
+     * @experimental
+     */
+    virtual ble_error_t getAddressesFromBondTable(Gap::Whitelist_t &addresses) const {
+        /* Avoid compiler warnings about unused variables */
+        (void) addresses;
+
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if security is supported. */
+    }
+
     /* Event callback handlers. */
 public:
     /**
