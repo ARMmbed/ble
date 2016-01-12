@@ -52,19 +52,88 @@ public:
         uint8_t _authSignedWrite :1; /**< Writing the value with Signed Write Command permitted. */
 
     public:
-        bool broadcast(void)       const {return _broadcast;      }
-        bool read(void)            const {return _read;           }
-        bool writeWoResp(void)     const {return _writeWoResp;    }
-        bool write(void)           const {return _write;          }
-        bool notify(void)          const {return _notify;         }
-        bool indicate(void)        const {return _indicate;       }
-        bool authSignedWrite(void) const {return _authSignedWrite;}
+        /**
+         * @brief   Check the value of the Properties_t::_broadcast property
+         *          of the discovered characteristic.
+         *
+         * @return  true if broadcasting the value is permitted, and false
+         *          otherwise.
+         */
+        bool broadcast(void) const {
+            return _broadcast;
+        }
+
+        /**
+         * @brief   Check the value of the Properties_t::_read property of the
+         *          discovered characteristic.
+         *
+         * @return  true if reading the value is permitted, and false
+         *          otherwise.
+         */
+        bool read(void) const {
+            return _read;
+        }
+
+        /**
+         * @brief   Check the value of the Properties_t::_writeWoResp property
+         *          of the discovered characteristic.
+         *
+         * @return  true if writing the value with Write Command is permitted,
+         *          false otherwise.
+         */
+        bool writeWoResp(void) const {
+            return _writeWoResp;
+        }
+
+        /**
+         * @brief   Check the value of the Properties_t::_write property of the
+         *          discovered characteristic.
+         *
+         * @return  true if writing the value with Write Request is permitted,
+         *          false otherwise.
+         */
+        bool write(void) const {
+            return _write;
+        }
+
+        /**
+         * @brief   Check the value of the Properties_t::_notify property of the
+         *          discovered characteristic.
+         *
+         * @return  true if notifications of the value are permitted, false
+         *          otherwise.
+         */
+        bool notify(void) const {
+            return _notify;
+        }
+
+        /**
+         * @brief   Check the value of the Properties_t::_indicate property of
+         *          the discovered characteristic.
+         *
+         * @return  true if indications of the value are permitted, false
+         *          otherwise.
+         */
+        bool indicate(void) const {
+            return _indicate;
+        }
+
+        /**
+         * @brief   Check the value of the Properties_t::_authSignedWrite
+         *          property of the discovered characteristic.
+         *
+         * @return  true if writing the value with Signed Write Command is
+         *          permitted, false otherwise.
+         */
+        bool authSignedWrite(void) const {
+            return _authSignedWrite;
+        }
 
         /**
          * @brief "Equal to" operator for DiscoveredCharacteristic::Properties_t
          *
-         * @param lhs[in] The left hand side of the equality expression
-         * @param rhs[in] The right hand side of the equality expression
+         * @param[in] lhs The left hand side of the equality expression
+         * @param[in] rhs The right hand side of the equality expression
          *
          * @return true if operands are equals, false otherwise.
          */
@@ -101,8 +170,9 @@ public:
      * than ATT_MTU - 1, this function must be called multiple times with
      * appropriate offset to read the complete value.
      *
-     * @param offset[in] The position - in the characteristic value bytes stream - where
-     * the read operation begin.
+     * @param[in] offset
+     *              The position - in the characteristic value bytes stream - where
+     *              the read operation begin.
      *
      * @return BLE_ERROR_NONE if a read has been initiated, or
      *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
@@ -115,9 +185,11 @@ public:
      * @brief Same as #read(uint16_t) const but allow the user to register a callback
      * which will be fired once the read is done.
      *
-     * @param offset[in] The position - in the characteristic value bytes stream - where
-     * the read operation begin.
-     * @param onRead[in] Continuation of the read operation
+     * @param[in] offset
+     *              The position - in the characteristic value bytes stream - where
+     *              the read operation begin.
+     * @param[in] onRead
+     *              Continuation of the read operation
      */
     ble_error_t read(uint16_t offset, const GattClient::ReadCallback_t& onRead) const;
 
@@ -174,12 +246,21 @@ public:
     ble_error_t write(uint16_t length, const uint8_t *value) const;
 
     /**
-     * Same as #write(uint16_t, const uint8_t *) const but register a callback
+     * Same as write(uint16_t, const uint8_t *) const but register a callback
      * which will be called once the data has been written.
      *
-     * @param[in] length The amount of bytes to write.
-     * @param[in] value The bytes to write.
-     * @param[in] onRead Continuation callback for the write operation
+     * @param[in] length
+     *              The amount of bytes to write.
+     * @param[in] value
+     *              The bytes to write.
+     * @param[in] onWrite
+     *              Continuation callback for the write operation
+     *
+     * @retval BLE_ERROR_NONE Successfully started the Write procedure, or
+     *         BLE_ERROR_INVALID_STATE if some internal state about the connection is invalid, or
+     *         BLE_STACK_BUSY if some client procedure is already in progress, or
+     *         BLE_ERROR_NO_MEM if there are no available buffers left to process the request, or
+     *         BLE_ERROR_OPERATION_NOT_PERMITTED due to the characteristic's properties.
      */
     ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& onWrite) const;
 
@@ -206,7 +287,7 @@ public:
 
     /**
      * @brief Get the declaration handle of this characteristic.
-     * @detail The declaration handle is the first handle of a characteristic
+     * @details The declaration handle is the first handle of a characteristic
      * definition. The value accessible at this handle contains the following
      * informations:
      *    - The characteristics properties (see Properties_t). This value can
@@ -275,8 +356,10 @@ public:
     /**
      * @brief "Equal to" operator for DiscoveredCharacteristic
      *
-     * @param lhs[in] The left hand side of the equality expression
-     * @param rhs[in] The right hand side of the equality expression
+     * @param[in] lhs
+     *              The left hand side of the equality expression
+     * @param[in] rhs
+     *              The right hand side of the equality expression
      *
      * @return true if operands are equals, false otherwise.
      */
@@ -293,10 +376,12 @@ public:
     /**
      * @brief "Not equal to" operator for DiscoveredCharacteristic
      *
-     * @param lhs[in] The right hand side of the expression
-     * @param rhs[in] The left hand side of the expression
+     * @param[in] lhs
+     *              The right hand side of the expression
+     * @param[in] rhs
+     *              The left hand side of the expression
      *
-     * @return true if operands are not equals, false otherwise.
+     * @return true if operands are not equal, false otherwise.
      */
     friend bool operator !=(const DiscoveredCharacteristic& lhs, const DiscoveredCharacteristic& rhs) {
         return !(lhs == rhs);
@@ -314,15 +399,37 @@ public:
     }
 
 protected:
+    /**
+     * Pointer to the underlying GattClient for this DiscoveredCharacteristic object.
+     */
     GattClient              *gattc;
 
 protected:
+    /**
+     * Discovered characteristic's UUID.
+     */
     UUID                     uuid;
+    /**
+     * Hold the configured properties of the discovered characteristic.
+     * For more information refer to Properties_t.
+     */
     Properties_t             props;
+    /**
+     * Value handle of the discovered characteristic's declaration attribute.
+     */
     GattAttribute::Handle_t  declHandle;
+    /**
+     * Value handle of the discovered characteristic's value attribute.
+     */
     GattAttribute::Handle_t  valueHandle;
+    /**
+     * Value handle of the discovered characteristic's last attribute.
+     */
     GattAttribute::Handle_t  lastHandle;
 
+    /**
+     * Handle for the connection where the characteristic was discovered.
+     */
     Gap::Handle_t            connHandle;
 };
 
