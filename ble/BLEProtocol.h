@@ -57,6 +57,14 @@ namespace BLEProtocol {
         AddressType_t  type;    /**< @ref AddressType_t */
         AddressBytes_t address; /**< @ref AddressBytes_t */
 
+        /**
+         * Construct an Address_t object with the supplied type and address.
+         *
+         * @param[in] typeIn
+         *              The BLE address type.
+         * @param[in] addressIn
+         *              The BLE address.
+         */
         Address_t(AddressType_t typeIn, const AddressBytes_t& addressIn) : type(typeIn) {
             std::copy(addressIn, addressIn + ADDR_LEN, address);
         }
