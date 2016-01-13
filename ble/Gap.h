@@ -1327,7 +1327,7 @@ public:
     }
 
     /**
-     * Same Gap::startScan(), but allows the possibility to add an object
+     * Same as Gap::startScan(), but allows the possibility to add an object
      * reference and member function as handler for advertisement event
      * callbacks.
      *
@@ -1486,7 +1486,7 @@ public:
     }
 
     /**
-     * Same Gap::onConnection(), but allows the possibility to add an object
+     * Same as Gap::onConnection(), but allows the possibility to add an object
      * reference and member function as handler for connection event
      * callbacks.
      *
@@ -1528,7 +1528,7 @@ public:
     }
 
     /**
-     * Same Gap::onDisconnection(), but allows the possibility to add an object
+     * Same as Gap::onDisconnection(), but allows the possibility to add an object
      * reference and member function as handler for disconnection event
      * callbacks.
      *
