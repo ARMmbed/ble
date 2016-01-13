@@ -29,19 +29,23 @@
  * discovery procedure (see GattClient::launchServiceDiscovery ).
  *
  * @details Provide detailed informations about a discovered characteristic like:
- *     - Its UUID (see #getUUID).
+ *     - Its UUID (see getUUID()).
  *     - The most important handles of the characteristic definition
- *       (see #getDeclHandle, #getValueHandle, #getLastHandle )
- *     - Its properties (see #getProperties).
+ *       (see getDeclHandle(), getValueHandle(), getLastHandle())
+ *     - Its properties (see getProperties()).
  * This class also provide functions to operate on the characteristic:
- *     - Read the characteristic value (see #read)
- *     - Writing a characteristic value (see #write or #writeWoResponse)
+ *     - Read the characteristic value (see read())
+ *     - Writing a characteristic value (see write() or writeWoResponse())
  *     - Discover descriptors inside the characteristic definition. These descriptors
  *       extends the characteristic. More information about descriptor usage is
  *       available in DiscoveredCharacteristicDescriptor class.
  */
 class DiscoveredCharacteristic {
 public:
+    /**
+     * Enumeration that encapsulates the properties of a discovered
+     * characteristic.
+     */
     struct Properties_t {
         uint8_t _broadcast       :1; /**< Broadcasting the value permitted. */
         uint8_t _read            :1; /**< Reading the value permitted. */
