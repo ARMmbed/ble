@@ -166,7 +166,7 @@ public:
     /**
      * Get a list of addresses from all peers in the bond table.
      *
-     * @param[in/out]   addresses
+     * @param[in,out]   addresses
      *                  (on input) addresses.capacity contains the maximum
      *                  number of addresses to be returned.
      *                  (on output) The populated table with copies of the
@@ -192,14 +192,14 @@ public:
      * SecurityManager instance is about to shutdown (possibly as a result of a call
      * to BLE::shutdown()).
      *
-     * @Note: It is possible to chain together multiple onShutdown callbacks
+     * @note  It is possible to chain together multiple onShutdown callbacks
      * (potentially from different modules of an application) to be notified
      * before the SecurityManager is shutdown.
      *
-     * @Note: It is also possible to set up a callback into a member function of
+     * @note  It is also possible to set up a callback into a member function of
      * some object.
      *
-     * @Note It is possible to unregister a callback using onShutdown().detach(callback)
+     * @note It is possible to unregister a callback using onShutdown().detach(callback)
      */
     void onShutdown(const SecurityManagerShutdownCallback_t& callback) {
         shutdownCallChain.add(callback);
