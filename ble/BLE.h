@@ -89,11 +89,6 @@ public:
      * @note If init() returns BLE_ERROR_NONE, the underlying stack must invoke
      *     the initialization completion callback at some point.
      *
-     * @note In some cases, initialization is instantaneous (or blocking); if
-     *     so, it is acceptable for the stack-specific implementation of init()
-     *     to invoke the completion callback directly (within its own
-     *     context).
-     *
      * @note Nearly all BLE APIs would return
      *     BLE_ERROR_INITIALIZATION_INCOMPLETE if used on an instance before the
      *     corresponding transport is initialized.
