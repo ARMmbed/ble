@@ -43,7 +43,7 @@
 class DiscoveredCharacteristic {
 public:
     /**
-     * Enumeration that encapsulates the properties of a discovered
+     * Structure that encapsulates the properties of a discovered
      * characteristic.
      */
     struct Properties_t {
@@ -57,8 +57,7 @@ public:
 
     public:
         /**
-         * @brief   Check the value of the Properties_t::_broadcast property
-         *          of the discovered characteristic.
+         * @brief   Check if broadcasting is permitted.
          *
          * @return  true if broadcasting the value is permitted, and false
          *          otherwise.
@@ -68,8 +67,7 @@ public:
         }
 
         /**
-         * @brief   Check the value of the Properties_t::_read property of the
-         *          discovered characteristic.
+         * @brief   Check reading is permitted.
          *
          * @return  true if reading the value is permitted, and false
          *          otherwise.
@@ -79,8 +77,7 @@ public:
         }
 
         /**
-         * @brief   Check the value of the Properties_t::_writeWoResp property
-         *          of the discovered characteristic.
+         * @brief   Check if writing with Write Command is permitted.
          *
          * @return  true if writing the value with Write Command is permitted,
          *          false otherwise.
@@ -90,8 +87,7 @@ public:
         }
 
         /**
-         * @brief   Check the value of the Properties_t::_write property of the
-         *          discovered characteristic.
+         * @brief   Check if writing with Write Request is permitted.
          *
          * @return  true if writing the value with Write Request is permitted,
          *          false otherwise.
@@ -101,8 +97,7 @@ public:
         }
 
         /**
-         * @brief   Check the value of the Properties_t::_notify property of the
-         *          discovered characteristic.
+         * @brief   Check notifications are permitted.
          *
          * @return  true if notifications of the value are permitted, false
          *          otherwise.
@@ -112,8 +107,7 @@ public:
         }
 
         /**
-         * @brief   Check the value of the Properties_t::_indicate property of
-         *          the discovered characteristic.
+         * @brief   Check if indications are permitted.
          *
          * @return  true if indications of the value are permitted, false
          *          otherwise.
@@ -123,8 +117,7 @@ public:
         }
 
         /**
-         * @brief   Check the value of the Properties_t::_authSignedWrite
-         *          property of the discovered characteristic.
+         * @brief   Check if writing with Signed Write Command is permitted.
          *
          * @return  true if writing the value with Signed Write Command is
          *          permitted, false otherwise.

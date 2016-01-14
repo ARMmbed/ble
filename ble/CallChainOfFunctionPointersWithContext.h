@@ -121,6 +121,9 @@ public:
      *              FunctionPointerWithContext to detach from this callchain.
      *
      * @return true if a function pointer has been detached and false otherwise.
+     *
+     * @note It is safe to remove a function pointer while the chain is
+     *       traversed by call(ContextType).
      */
     bool detach(const FunctionPointerWithContext<ContextType>& toDetach) {
         pFunctionPointerWithContext_t current = chainHead;
