@@ -1367,6 +1367,10 @@ public:
     }
 
     void processTimeoutEvent(TimeoutSource_t source) {
+        if (source == TIMEOUT_SRC_ADVERTISING) {
+            /* Update gap state if the source is an advertising timeout */
+            state.advertising = 0;
+        }
         if (timeoutCallbackChain) {
             timeoutCallbackChain(source);
         }
