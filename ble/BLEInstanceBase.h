@@ -28,6 +28,10 @@ class GattClient;
 /**
  *  The interface for the transport object to be created by the target library's
  *  createBLEInstance().
+ *
+ * @note This class is part of the interface of BLE API with the implementation;
+ *       therefore, it is meant to be used only by porters rather than normal
+ *       BLE API users.
  */
 class BLEInstanceBase
 {
