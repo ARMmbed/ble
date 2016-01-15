@@ -28,7 +28,7 @@
  * discovery procedure (see GattClient::discoverCharacteristicDescriptors or
  * DiscoveredCharacteristic::discoverDescriptors ).
  *
- * @detail Provide detailed informations about a discovered characteristic descriptor
+ * @details Provide detailed informations about a discovered characteristic descriptor
  * like:
  *     - Its UUID (see #getUUID).
  *     - Its handle (see #getAttributeHandle)

@@ -51,16 +51,27 @@ namespace BLEProtocol {
     typedef uint8_t AddressBytes_t[ADDR_LEN]; /**< 48-bit address, in LSB format. */
 
     /**
-     * BLE address. It contains an address-type (@ref AddressType_t) and bytes (@ref AddressBytes_t).
+     * BLE address. It contains an address-type (AddressType_t) and bytes (AddressBytes_t).
      */
     struct Address_t {
-        AddressType_t  type;    /**< @ref AddressType_t */
-        AddressBytes_t address; /**< @ref AddressBytes_t */
+        AddressType_t  type;    /**< The type of the BLE address. */
+        AddressBytes_t address; /**< The BLE address. */
 
+        /**
+         * Construct an Address_t object with the supplied type and address.
+         *
+         * @param[in] typeIn
+         *              The BLE address type.
+         * @param[in] addressIn
+         *              The BLE address.
+         */
         Address_t(AddressType_t typeIn, const AddressBytes_t& addressIn) : type(typeIn) {
             std::copy(addressIn, addressIn + ADDR_LEN, address);
         }
 
+        /**
+         * Empty constructor.
+         */
         Address_t() : type(), address() {
         }
     };

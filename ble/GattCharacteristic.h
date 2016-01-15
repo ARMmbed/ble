@@ -99,15 +99,13 @@ public:
         UUID_RSC_MEASUREMENT_CHAR                         = 0x2A53
     };
 
-    /**************************************************************************/
-    /*!
-        \brief  Standard GATT characteristic presentation format unit types.
-                These unit types are used to describe what the raw numeric
-                data in a characteristic actually represents.
-
-        \note   See https://developer.bluetooth.org/gatt/units/Pages/default.aspx
-    */
-    /**************************************************************************/
+    /**
+     *  @brief  Standard GATT characteristic presentation format unit types.
+     *          These unit types are used to describe what the raw numeric
+     *          data in a characteristic actually represents.
+     *
+     *  @note   See https://developer.bluetooth.org/gatt/units/Pages/default.aspx
+     */
     enum {
         BLE_GATT_UNIT_NONE                                                   = 0x2700,      /**< No specified unit type. */
         BLE_GATT_UNIT_LENGTH_METRE                                           = 0x2701,      /**< Length, metre. */
@@ -220,14 +218,13 @@ public:
         BLE_GATT_UNIT_IRRADIANCE_WATT_PER_SQUARE_METRE                       = 0x27B6       /**<  */
     };
 
-    /**************************************************************************/
-    /*!
-        \brief  Standard GATT number types.
-
-        \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.2
-        \note   See http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-    */
-    /**************************************************************************/
+    /**
+     *  @brief  Standard GATT number types.
+     *
+     *  @note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.2.
+     *
+     *  @note   See http://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
+     */
     enum {
         BLE_GATT_FORMAT_RFU     = 0x00, /**< Reserved for future use. */
         BLE_GATT_FORMAT_BOOLEAN = 0x01, /**< Boolean. */
@@ -259,14 +256,12 @@ public:
         BLE_GATT_FORMAT_STRUCT  = 0x1B  /**< Opaque Structure. */
     };
 
-    /**************************************************************************/
     /*!
-        \brief  Standard GATT characteristic properties.
-
-        \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.1.1
-                and Section 3.3.3.1 for Extended Properties
-    */
-    /**************************************************************************/
+     *  @brief  Standard GATT characteristic properties.
+     *
+     *  @note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.1.1
+     *          and Section 3.3.3.1 for Extended Properties.
+     */
     enum Properties_t {
         BLE_GATT_CHAR_PROPERTIES_NONE                        = 0x00,
         BLE_GATT_CHAR_PROPERTIES_BROADCAST                   = 0x01, /**< Permits broadcasts of the characteristic value using the Server Characteristic Configuration descriptor. */
@@ -279,51 +274,50 @@ public:
         BLE_GATT_CHAR_PROPERTIES_EXTENDED_PROPERTIES         = 0x80  /**< Additional characteristic properties are defined in the Characteristic Extended Properties descriptor */
     };
 
-    /**************************************************************************/
-    /*!
-        \brief  GATT presentation format wrapper
-
-        \note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5
-        \note   See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
-    */
-    /**************************************************************************/
+    /**
+     *  @brief  GATT presentation format wrapper.
+     *
+     *  @note   See Bluetooth Specification 4.0 (Vol. 3), Part G, Section 3.3.3.5.
+     *
+     *  @note   See https://developer.bluetooth.org/gatt/descriptors/Pages/DescriptorViewer.aspx?u=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
+     */
     struct PresentationFormat_t {
-        uint8_t  gatt_format;    /**< Format of the value; see @ref ble_gatt_format_t. */
+        uint8_t  gatt_format;    /**< Format of the value. */
         int8_t   exponent;       /**< Exponent for integer data types. Example: if Exponent = -3 and the char value is 3892, the actual value is 3.892 */
-        uint16_t gatt_unit;      /**< UUID from Bluetooth Assigned Numbers; see @ref ble_gatt_unit_t. */
-        uint8_t  gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1'; see @ref BLE_GATT_CPF_NAMESPACES. */
-        uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0'; see @ref BLE_GATT_CPF_NAMESPACES. */
+        uint16_t gatt_unit;      /**< UUID from Bluetooth Assigned Numbers. */
+        uint8_t  gatt_namespace; /**< Namespace from Bluetooth Assigned Numbers, normally '1'. */
+        uint16_t gatt_nsdesc;    /**< Namespace description from Bluetooth Assigned Numbers, normally '0'. */
     };
 
     /**
-     *  @brief  Creates a new GattCharacteristic using the specified 16-bit
-     *          UUID, value length, and properties.
+     * @brief  Creates a new GattCharacteristic using the specified 16-bit
+     *         UUID, value length, and properties.
      *
-     *  @note   The UUID value must be unique in the service and is normally >1.
+     * @param[in]  uuid
+     *             The UUID to use for this characteristic.
+     * @param[in]  valuePtr
+     *             The memory holding the initial value. The value is copied
+     *             into the stack when the enclosing service is added, and
+     *             is thereafter maintained internally by the stack.
+     * @param[in]  len
+     *             The length in bytes of this characteristic's value.
+     * @param[in]  maxLen
+     *             The max length in bytes of this characteristic's value.
+     * @param[in]  props
+     *             The 8-bit field containing the characteristic's properties.
+     * @param[in]  descriptors
+     *             A pointer to an array of descriptors to be included within
+     *             this characteristic. The memory for the descriptor array is
+     *             owned by the caller, and should remain valid at least until
+     *             the enclosing service is added to the GATT table.
+     * @param[in]  numDescriptors
+     *             The number of descriptors in the previous array.
+     * @param[in]  hasVariableLen
+     *             Whether the attribute's value length changes over time.
      *
-     *  @param[in]  uuid
-     *              The UUID to use for this characteristic.
-     *  @param[in]  valuePtr
-     *              The memory holding the initial value. The value is copied
-     *              into the stack when the enclosing service is added, and
-     *              is thereafter maintained internally by the stack.
-     *  @param[in]  len
-     *              The length in bytes of this characteristic's value.
-     *  @param[in]  maxLen
-     *              The max length in bytes of this characteristic's value.
-     *  @param[in]  hasVariableLen
-     *              Whether the attribute's value length changes over time.
-     *  @param[in]  props
-     *              The 8-bit field containing the characteristic's properties.
-     *  @param[in]  descriptors
-     *              A pointer to an array of descriptors to be included within
-     *              this characteristic. The memory for the descriptor array is
-     *              owned by the caller, and should remain valid at least until
-     *              the enclosing service is added to the GATT table.
-     *  @param[in]  numDescriptors
-     *              The number of descriptors in the previous array.
+     * @note   The UUID value must be unique in the service and is normally >1.
      *
-     * @NOTE: If valuePtr == NULL, length == 0, and properties == READ
+     * @note  If valuePtr == NULL, length == 0, and properties == READ
      *        for the value attribute of a characteristic, then that particular
      *        characteristic may be considered optional and dropped while
      *        instantiating the service with the underlying BLE stack.
@@ -350,9 +344,12 @@ public:
 
 public:
     /**
-     * Set up the minimum security (mode and level) requirements for access to the characteristic's value attribute.
+     * Set up the minimum security (mode and level) requirements for access to
+     * the characteristic's value attribute.
      *
-     * @param securityMode Can be one of encryption or signing, with or without protection for man in the middle attacks (MITM).
+     * @param[in] securityMode
+     *              Can be one of encryption or signing, with or without
+     *              protection for man in the middle attacks (MITM).
      */
     void requireSecurity(SecurityManager::SecurityMode_t securityMode) {
         _requiredSecurity = securityMode;
@@ -360,21 +357,61 @@ public:
 
 public:
     /**
-     * Authorization.
+     * Set up callback that will be triggered before the GATT Client is allowed
+     * to write this characteristic. The handler will determine the
+     * authorization reply for the write.
+     *
+     * @param[in] callback
+     *      Event handler being registered.
      */
     void setWriteAuthorizationCallback(void (*callback)(GattWriteAuthCallbackParams *)) {
         writeAuthorizationCallback.attach(callback);
         enabledWriteAuthorization = true;
     }
+
+    /**
+     * Same as GattCharacrteristic::setWriteAuthorizationCallback(), but allows
+     * the possibility to add an object reference and member function as
+     * handler for connection event callbacks.
+     *
+     * @param[in] object
+     *              Pointer to the object of a class defining the member callback
+     *              function (@p member).
+     * @param[in] member
+     *              The member callback (within the context of an object) to be
+     *              invoked.
+     */
     template <typename T>
     void setWriteAuthorizationCallback(T *object, void (T::*member)(GattWriteAuthCallbackParams *)) {
         writeAuthorizationCallback.attach(object, member);
         enabledWriteAuthorization = true;
     }
+
+    /**
+     * Set up callback that will be triggered before the GATT Client is allowed
+     * to read this characteristic. The handler will determine the
+     * authorizaion reply for the read.
+     *
+     * @param[in] callback
+     *      Event handler being registered.
+     */
     void setReadAuthorizationCallback(void (*callback)(GattReadAuthCallbackParams *)) {
         readAuthorizationCallback.attach(callback);
         enabledReadAuthorization = true;
     }
+
+    /**
+     * Same as GattCharacrteristic::setReadAuthorizationCallback(), but allows
+     * the possibility to add an object reference and member function as
+     * handler for connection event callbacks.
+     *
+     * @param[in] object
+     *              Pointer to the object of a class defining the member callback
+     *              function (@p member).
+     * @param[in] member
+     *              The member callback (within the context of an object) to be
+     *              invoked.
+     */
     template <typename T>
     void setReadAuthorizationCallback(T *object, void (T::*member)(GattReadAuthCallbackParams *)) {
         readAuthorizationCallback.attach(object, member);
@@ -382,10 +419,16 @@ public:
     }
 
     /**
-     * Helper function meant to be called from the guts of the BLE stack to
-     * determine the authorization reply for a write request.
-     * @param  params To capture the context of the write-auth request. Also contains an out-parameter for reply.
-     * @return        true if the write is authorized to proceed.
+     * Helper that calls the registered handler to determine the authorization
+     * reply for a write request. This function is meant to be called from the
+     * BLE stack specific implementation.
+     *
+     * @param[in] params
+     *              To capture the context of the write-auth request. Also
+     *              contains an out-parameter for reply.
+     *
+     * @return A GattAuthCallbackReply_t value indicating whether authorization
+     *         is granted.
      */
     GattAuthCallbackReply_t authorizeWrite(GattWriteAuthCallbackParams *params) {
         if (!isWriteAuthorizationEnabled()) {
@@ -398,20 +441,24 @@ public:
     }
 
     /**
-     * Helper function meant to be called from the guts of the BLE stack to
-     * determine the authorization reply for a read request.
-     * @param  params To capture the context of the read-auth request.
+     * Helper that calls the registered handler to determine the authorization
+     * reply for a read request. This function is meant to be called from the
+     * BLE stack specific implementation.
      *
-     * @NOTE:  To authorize or deny the read the params->authorizationReply field
+     * @param[in] params
+     *              To capture the context of the read-auth request.
+     *
+     * @return A GattAuthCallbackReply_t value indicating whether authorization
+     *         is granted.
+     *
+     * @note   To authorize or deny the read the params->authorizationReply field
      *         should be set to true (authorize) or false (deny).
      *
-     *         If the read is approved and params->data is unchanged (NULL),
+     * @note   If the read is approved and params->data is unchanged (NULL),
      *         the current characteristic value will be used.
      *
-     *         If the read is approved, a new value can be provided by setting
+     * @note   If the read is approved, a new value can be provided by setting
      *         the params->data pointer and params->len fields.
-     *
-     * @return        true if the read is authorized to proceed.
      */
     GattAuthCallbackReply_t authorizeRead(GattReadAuthCallbackParams *params) {
         if (!isReadAuthorizationEnabled()) {
@@ -423,17 +470,96 @@ public:
         return params->authorizationReply;
     }
 
-    /* accessors */
 public:
-    GattAttribute&          getValueAttribute()                 {return _valueAttribute;                }
-    const GattAttribute&    getValueAttribute()           const {return _valueAttribute;                }
-    GattAttribute::Handle_t getValueHandle(void)          const {return getValueAttribute().getHandle();}
-    uint8_t                 getProperties(void)           const {return _properties;                    }
-    SecurityManager::SecurityMode_t getRequiredSecurity() const {return _requiredSecurity;              }
-    uint8_t                 getDescriptorCount(void)      const {return _descriptorCount;               }
-    bool                    isReadAuthorizationEnabled()  const {return enabledReadAuthorization;       }
-    bool                    isWriteAuthorizationEnabled() const {return enabledWriteAuthorization;      }
+    /**
+     * Get the characteristic's value attribute.
+     *
+     * @return A reference to the characteristic's value attribute.
+     */
+    GattAttribute& getValueAttribute() {
+        return _valueAttribute;
+    }
 
+    /**
+     * A const alternative to GattCharacteristic::getValueAttribute().
+     *
+     * @return A const reference to the characteristic's value attribute.
+     */
+    const GattAttribute& getValueAttribute() const {
+        return _valueAttribute;
+    }
+
+    /**
+     * Get the characteristic's value attribute handle in the ATT table.
+     *
+     * @return The value attribute handle.
+     *
+     * @note The attribute handle is typically assigned by the underlying BLE
+     *       stack.
+     */
+    GattAttribute::Handle_t getValueHandle(void) const {
+        return getValueAttribute().getHandle();
+    }
+
+    /**
+     * Get the characteristic's propertied. Refer to
+     * GattCharacteristic::Properties_t.
+     *
+     * @return The characteristic's properties.
+     */
+    uint8_t getProperties(void) const {
+        return _properties;
+    }
+
+    /**
+     * Get the characteristic's required security.
+     *
+     * @return The characteristic's required security.
+     */
+    SecurityManager::SecurityMode_t getRequiredSecurity() const {
+        return _requiredSecurity;
+    }
+
+    /**
+     * Get the total number of descriptors within this characteristic.
+     *
+     * @return The total number of descriptors.
+     */
+    uint8_t getDescriptorCount(void) const {
+        return _descriptorCount;
+    }
+
+    /**
+     * Check whether read authorization is enabled i.e. check whether a
+     * read authorization callback was previously registered. Refer to
+     * GattCharacteristic::setReadAuthorizationCallback().
+     *
+     * @return true if read authorization is enabled, false otherwise.
+     */
+    bool isReadAuthorizationEnabled() const {
+        return enabledReadAuthorization;
+    }
+
+    /**
+     * Check whether write authorization is enabled i.e. check whether a
+     * write authorization callback was previously registered. Refer to
+     * GattCharacteristic::setReadAuthorizationCallback().
+     *
+     * @return true if write authorization is enabled, false otherwise.
+     */
+    bool isWriteAuthorizationEnabled() const {
+        return enabledWriteAuthorization;
+    }
+
+    /**
+     * Get this characteristic's descriptor at a specific index.
+     *
+     * @param[in] index
+     *              The descriptor's index.
+     *
+     * @return A pointer the requested descriptor if @p index contains a valid
+     *         descriptor, or NULL otherwise.
+     */
     GattAttribute *getDescriptor(uint8_t index) {
         if (index >= _descriptorCount) {
             return NULL;
@@ -443,15 +569,45 @@ public:
     }
 
 private:
+    /**
+     * Attribute that contains the actual value of this characteristic.
+     */
     GattAttribute                     _valueAttribute;
+    /**
+     * The characteristic's properties. Refer to
+     * GattCharacteristic::Properties_t.
+     */
     uint8_t                           _properties;
+    /**
+     * The characteristic's required security.
+     */
     SecurityManager::SecurityMode_t   _requiredSecurity;
+    /**
+     * The characteristic's descriptor attributes.
+     */
     GattAttribute                   **_descriptors;
+    /**
+     * The number of descriptors in this characteristic.
+     */
     uint8_t                           _descriptorCount;
 
+    /**
+     * Whether read authorization is enabled i.e. whether there is a registered
+     * callback to determine read authorization reply.
+     */
     bool enabledReadAuthorization;
+    /**
+     * Whether write authorization is enabled i.e. whether there is a registered
+     * callback to determine write authorization reply.
+     */
     bool enabledWriteAuthorization;
+    /**
+     * The registered callback handler for read authorization reply.
+     */
     FunctionPointerWithContext<GattReadAuthCallbackParams *>  readAuthorizationCallback;
+    /**
+     * The registered callback handler for write authorization reply.
+     */
     FunctionPointerWithContext<GattWriteAuthCallbackParams *> writeAuthorizationCallback;
 
 private:
@@ -460,9 +616,33 @@ private:
     GattCharacteristic& operator=(const GattCharacteristic &);
 };
 
+/**
+ * Helper class to construct a read-only GattCharacteristic.
+ */
 template <typename T>
 class ReadOnlyGattCharacteristic : public GattCharacteristic {
 public:
+    /**
+     * Construct a ReadOnlyGattCharacteristic.
+     *
+     * @param[in] uuid
+     *              The characteristic's UUID.
+     * @param[in] valuePtr
+     *              Pointer to the characterisitic's initial value.
+     * @param[in] additionalProperties
+     *              Additional characterisitic properties. By default, the
+     *              properties are set to
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_READ.
+     * @param[in] descriptors
+     *              An array of pointers to descriptors to be added to the new
+     *              characteristic.
+     * @param[in] numDescriptors
+     *              The total number of descriptors in @p descriptors.
+     *
+     * @note Instances of ReadOnlyGattCharacteristic have a fixed length
+     *       attribute value that equals sizeof(T). For a variable length
+     *       alternative use GattCharacteristic directly.
+     */
     ReadOnlyGattCharacteristic<T>(const UUID    &uuid,
                                   T             *valuePtr,
                                   uint8_t        additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
@@ -474,9 +654,33 @@ public:
     }
 };
 
+/**
+ * Helper class to construct a write-only GattCharacteristic.
+ */
 template <typename T>
 class WriteOnlyGattCharacteristic : public GattCharacteristic {
 public:
+    /**
+     * Construct a WriteOnlyGattCharacteristic.
+     *
+     * @param[in] uuid
+     *              The characteristic's UUID.
+     * @param[in] valuePtr
+     *              Pointer to the characterisitic's initial value.
+     * @param[in] additionalProperties
+     *              Additional characterisitic properties. By default, the
+     *              properties are set to
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_WRITE.
+     * @param[in] descriptors
+     *              An array of pointers to descriptors to be added to the new
+     *              characteristic.
+     * @param[in] numDescriptors
+     *              The total number of descriptors in @p descriptors.
+     *
+     * @note Instances of WriteOnlyGattCharacteristic have variable length
+     *       attribute value with maximum size equal to sizeof(T). For a fixed length
+     *       alternative use GattCharacteristic directly.
+     */
     WriteOnlyGattCharacteristic<T>(const UUID     &uuid,
                                    T              *valuePtr,
                                    uint8_t        additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
@@ -488,9 +692,34 @@ public:
     }
 };
 
+/**
+ * Helper class to construct a readable and writable GattCharacteristic.
+ */
 template <typename T>
 class ReadWriteGattCharacteristic : public GattCharacteristic {
 public:
+    /**
+     * Construct a ReadWriteGattCharacteristic.
+     *
+     * @param[in] uuid
+     *              The characteristic's UUID.
+     * @param[in] valuePtr
+     *              Pointer to the characterisitic's initial value.
+     * @param[in] additionalProperties
+     *              Additional characterisitic properties. By default, the
+     *              properties are set to
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_WRITE |
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_READ.
+     * @param[in] descriptors
+     *              An array of pointers to descriptors to be added to the new
+     *              characteristic.
+     * @param[in] numDescriptors
+     *              The total number of descriptors in @p descriptors.
+     *
+     * @note Instances of ReadWriteGattCharacteristic have variable length
+     *       attribute value with maximum size equal to sizeof(T). For a fixed length
+     *       alternative use GattCharacteristic directly.
+     */
     ReadWriteGattCharacteristic<T>(const UUID    &uuid,
                                    T             *valuePtr,
                                    uint8_t        additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
@@ -502,9 +731,35 @@ public:
     }
 };
 
+/**
+ * Helper class to construct a write-only GattCharacteristic with an array
+ * value.
+ */
 template <typename T, unsigned NUM_ELEMENTS>
 class WriteOnlyArrayGattCharacteristic : public GattCharacteristic {
 public:
+    /**
+     * Construct a WriteOnlyGattCharacteristic.
+     *
+     * @param[in] uuid
+     *              The characteristic's UUID.
+     * @param[in] valuePtr
+     *              Pointer to an array of length NUM_ELEMENTS containing the
+     *              characteristic's intitial value.
+     * @param[in] additionalProperties
+     *              Additional characterisitic properties. By default, the
+     *              properties are set to
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_WRITE.
+     * @param[in] descriptors
+     *              An array of pointers to descriptors to be added to the new
+     *              characteristic.
+     * @param[in] numDescriptors
+     *              The total number of descriptors in @p descriptors.
+     *
+     * @note Instances of WriteOnlyGattCharacteristic have variable length
+     *       attribute value with maximum size equal to sizeof(T) * NUM_ELEMENTS.
+     *       For a fixed length alternative use GattCharacteristic directly.
+     */
     WriteOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const          UUID &uuid,
                                                       T              valuePtr[NUM_ELEMENTS],
                                                       uint8_t        additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
@@ -516,9 +771,35 @@ public:
     }
 };
 
+/**
+ * Helper class to construct a read-only GattCharacteristic with an array
+ * value.
+ */
 template <typename T, unsigned NUM_ELEMENTS>
 class ReadOnlyArrayGattCharacteristic : public GattCharacteristic {
 public:
+    /**
+     * Construct a ReadOnlyGattCharacteristic.
+     *
+     * @param[in] uuid
+     *              The characteristic's UUID.
+     * @param[in] valuePtr
+     *              Pointer to an array of length NUM_ELEMENTS containing the
+     *              characteristic's intitial value.
+     * @param[in] additionalProperties
+     *              Additional characterisitic properties. By default, the
+     *              properties are set to
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_READ.
+     * @param[in] descriptors
+     *              An array of pointers to descriptors to be added to the new
+     *              characteristic.
+     * @param[in] numDescriptors
+     *              The total number of descriptors in @p descriptors.
+     *
+     * @note Instances of ReadOnlyGattCharacteristic have fixed length
+     *       attribute value that equals sizeof(T) * NUM_ELEMENTS.
+     *       For a variable length alternative use GattCharacteristic directly.
+     */
     ReadOnlyArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID    &uuid,
                                                      T              valuePtr[NUM_ELEMENTS],
                                                      uint8_t        additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
@@ -530,9 +811,36 @@ public:
     }
 };
 
+/**
+ * Helper class to construct a readable and writable GattCharacteristic with an array
+ * value.
+ */
 template <typename T, unsigned NUM_ELEMENTS>
 class ReadWriteArrayGattCharacteristic : public GattCharacteristic {
 public:
+    /**
+     * Construct a ReadWriteGattCharacteristic.
+     *
+     * @param[in] uuid
+     *              The characteristic's UUID.
+     * @param[in] valuePtr
+     *              Pointer to an array of length NUM_ELEMENTS containing the
+     *              characteristic's intitial value.
+     * @param[in] additionalProperties
+     *              Additional characterisitic properties. By default, the
+     *              properties are set to
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_WRITE |
+     *              Properties_t::BLE_GATT_CHAR_PROPERTIES_READ.
+     * @param[in] descriptors
+     *              An array of pointers to descriptors to be added to the new
+     *              characteristic.
+     * @param[in] numDescriptors
+     *              The total number of descriptors in @p descriptors.
+     *
+     * @note Instances of ReadWriteGattCharacteristic have variable length
+     *       attribute value with maximum size equal to sizeof(T) * NUM_ELEMENTS.
+     *       For a fixed length alternative use GattCharacteristic directly.
+     */
     ReadWriteArrayGattCharacteristic<T, NUM_ELEMENTS>(const UUID    &uuid,
                                                       T              valuePtr[NUM_ELEMENTS],
                                                       uint8_t        additionalProperties = BLE_GATT_CHAR_PROPERTIES_NONE,
@@ -544,4 +852,4 @@ public:
     }
 };
 
-#endif // ifndef __GATT_CHARACTERISTIC_H__
+#endif /* ifndef __GATT_CHARACTERISTIC_H__ */

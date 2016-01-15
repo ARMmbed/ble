@@ -18,6 +18,9 @@
 #define __GATT_CALLBACK_PARAM_TYPES_H__
 
 struct GattWriteCallbackParams {
+    /**
+     * Enumeration for write operations.
+     */
     enum WriteOp_t {
         OP_INVALID               = 0x00,  /**< Invalid operation. */
         OP_WRITE_REQ             = 0x01,  /**< Write request. */
@@ -28,20 +31,32 @@ struct GattWriteCallbackParams {
         OP_EXEC_WRITE_REQ_NOW    = 0x06,  /**< Execute write request: immediately execute all prepared writes. */
     };
 
-    Gap::Handle_t            connHandle;
-    GattAttribute::Handle_t  handle;
-    WriteOp_t                writeOp; /**< Type of write operation. */
-    uint16_t                 offset;  /**< Offset for the write operation. */
-    uint16_t                 len;
-    const uint8_t           *data;    /* @note: Data might not persist beyond the callback; make a local copy if needed. */
+    Gap::Handle_t            connHandle; /**< The handle of the connection that triggered the event */
+    GattAttribute::Handle_t  handle;     /**< Attribute Handle to which the write operation applies. */
+    WriteOp_t                writeOp;    /**< Type of write operation. */
+    uint16_t                 offset;     /**< Offset for the write operation. */
+    uint16_t                 len;        /**< Length (in bytes) of the data to write. */
+    /**
+     * Pointer to the data to write.
+     *
+     * @note Data might not persist beyond the callback; make a local copy if
+     *       needed.
+     */
+    const uint8_t           *data;
 };
 
 struct GattReadCallbackParams {
-    Gap::Handle_t            connHandle;
-    GattAttribute::Handle_t  handle;
-    uint16_t                 offset;  /**< Offset for the read operation. */
-    uint16_t                 len;
-    const uint8_t           *data;    /* @note: Data might not persist beyond the callback; make a local copy if needed. */
+    Gap::Handle_t            connHandle; /**< The handle of the connection that triggered the event */
+    GattAttribute::Handle_t  handle;     /**< Attribute Handle to which the read operation applies. */
+    uint16_t                 offset;     /**< Offset for the read operation. */
+    uint16_t                 len;        /**< Length (in bytes) of the data to read. */
+    /**
+     * Pointer to the data read.
+     *
+     * @note Data might not persist beyond the callback; make a local copy if
+     *       needed.
+     */
+    const uint8_t           *data;
 };
 
 enum GattAuthCallbackReply_t {
@@ -60,34 +75,41 @@ enum GattAuthCallbackReply_t {
 };
 
 struct GattWriteAuthCallbackParams {
-    Gap::Handle_t            connHandle;
-    GattAttribute::Handle_t  handle;
-    uint16_t                 offset; /**< Offset for the write operation. */
-    uint16_t                 len;    /**< Length of the incoming data. */
-    const uint8_t           *data;   /**< Incoming data, variable length. */
-    GattAuthCallbackReply_t  authorizationReply; /* This is the out parameter that the callback 
-                                                  * needs to set to AUTH_CALLBACK_REPLY_SUCCESS 
-                                                  * for the request to proceed. */
+    Gap::Handle_t            connHandle; /**< The handle of the connection that triggered the event */
+    GattAttribute::Handle_t  handle;     /**< Attribute Handle to which the write operation applies. */
+    uint16_t                 offset;     /**< Offset for the write operation. */
+    uint16_t                 len;        /**< Length of the incoming data. */
+    const uint8_t           *data;       /**< Incoming data, variable length. */
+    /**
+     * This is the out parameter that the callback needs to set to
+     * AUTH_CALLBACK_REPLY_SUCCESS for the request to proceed.
+     */
+    GattAuthCallbackReply_t  authorizationReply;
 };
 
 struct GattReadAuthCallbackParams {
-    Gap::Handle_t            connHandle;
-    GattAttribute::Handle_t  handle;
-    uint16_t                 offset; /**< Offset for the read operation. */
-    uint16_t                 len;    /**< Optional: new length of the outgoing data. */
-    uint8_t                 *data;   /**< Optional: new outgoing data. Leave at NULL if data is unchanged. */
-    GattAuthCallbackReply_t  authorizationReply; /* This is the out parameter that the callback
-                                                  * needs to set to AUTH_CALLBACK_REPLY_SUCCESS
-                                                  * for the request to proceed. */
+    Gap::Handle_t            connHandle; /**< The handle of the connection that triggered the event */
+    GattAttribute::Handle_t  handle;     /**< Attribute Handle to which the read operation applies. */
+    uint16_t                 offset;     /**< Offset for the read operation. */
+    uint16_t                 len;        /**< Optional: new length of the outgoing data. */
+    uint8_t                 *data;       /**< Optional: new outgoing data. Leave at NULL if data is unchanged. */
+    /**
+     * This is the out parameter that the callback needs to set to
+     * AUTH_CALLBACK_REPLY_SUCCESS for the request to proceed.
+     */
+    GattAuthCallbackReply_t  authorizationReply;
 };
 
-/* For encapsulating handle-value update events (notifications or indications) generated at the remote server. */
+/**
+ * For encapsulating handle-value update events (notifications or indications)
+ * generated at the remote server.
+ */
 struct GattHVXCallbackParams {
-  Gap::Handle_t            connHandle;
-  GattAttribute::Handle_t  handle; /**< Attribute Handle to which the HVx operation applies. */
-  HVXType_t                type;   /**< Indication or Notification, see @ref HVXType_t. */
-  uint16_t                 len;    /**< Attribute data length. */
-  const uint8_t           *data;   /**< Attribute data, variable length. */
+  Gap::Handle_t            connHandle; /**< The handle of the connection that triggered the event */
+  GattAttribute::Handle_t  handle;     /**< Attribute Handle to which the HVx operation applies. */
+  HVXType_t                type;       /**< Indication or Notification, see HVXType_t. */
+  uint16_t                 len;        /**< Attribute data length. */
+  const uint8_t           *data;       /**< Attribute data, variable length. */
 };
 
 #endif /*__GATT_CALLBACK_PARAM_TYPES_H__*/

@@ -28,7 +28,7 @@
 class BatteryService {
 public:
     /**
-     * @param[ref] _ble
+     * @param[in] _ble
      *               BLE object for the underlying controller.
      * @param[in] level
      *               8bit batterly level. Usually used to represent percentage of batterly charge remaining.
@@ -45,7 +45,7 @@ public:
     }
 
     /**
-     * @brief Update the battery level with a new value. [Valid values lie between 0 and 100];
+     * @brief Update the battery level with a new value. Valid values lie between 0 and 100,
      * anything outside this range will be ignored.
      *
      * @param newLevel
@@ -57,9 +57,20 @@ public:
     }
 
 protected:
+    /**
+     * A reference to the underlying BLE instance that this object is attached to.
+     * The services and characteristics will be registered in this BLE instance.
+     */
     BLE &ble;
 
+    /**
+     * The current battery level represented as an integer from 0% to 100%.
+     */
     uint8_t    batteryLevel;
+    /**
+     * A ReadOnlyGattCharacteristic that allows access to the peer device to the
+     * batteryLevel value through BLE.
+     */
     ReadOnlyGattCharacteristic<uint8_t> batteryLevelCharacteristic;
 };
 
