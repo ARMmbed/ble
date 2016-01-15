@@ -1672,6 +1672,7 @@ public:
         /* Clear Gap state */
         state.advertising = 0;
         state.connected   = 0;
+        connectionCount   = 0;
 
         /* Clear scanning state */
         scanningActive = false;
@@ -1699,6 +1700,7 @@ protected:
         _advPayload(),
         _scanningParams(),
         _scanResponse(),
+        connectionCount(0),
         state(),
         scanningActive(false),
         timeoutCallbackChain(),
@@ -1739,7 +1741,11 @@ public:
                                 BLEProtocol::AddressType_t         ownAddrType,
                                 const BLEProtocol::AddressBytes_t  ownAddr,
                                 const ConnectionParams_t          *connectionParams) {
-        state.connected = 1;
+        /* Update Gap state */
+        state.advertising = 0;
+        state.connected   = 1;
+        ++connectionCount;
+
         ConnectionCallbackParams_t callbackParams(handle, role, peerAddrType, peerAddr, ownAddrType, ownAddr, connectionParams);
         connectionCallChain.call(&callbackParams);
     }
@@ -1755,7 +1761,12 @@ public:
      *              The reason for disconnection.
      */
     void processDisconnectionEvent(Handle_t handle, DisconnectionReason_t reason) {
-        state.connected = 0;
+        /* Update Gap state */
+        --connectionCount;
+        if (!connectionCount) {
+            state.connected = 0;
+        }
+
         DisconnectionCallbackParams_t callbackParams(handle, reason);
         disconnectionCallChain.call(&callbackParams);
     }
@@ -1803,6 +1814,10 @@ public:
      *              The source of the timout event.
      */
     void processTimeoutEvent(TimeoutSource_t source) {
+        if (source == TIMEOUT_SRC_ADVERTISING) {
+            /* Update gap state if the source is an advertising timeout */
+            state.advertising = 0;
+        }
         if (timeoutCallbackChain) {
             timeoutCallbackChain(source);
         }
@@ -1826,6 +1841,10 @@ protected:
      */
     GapAdvertisingData               _scanResponse;
 
+    /**
+     * Total number of open connections.
+     */
+    uint8_t                          connectionCount;
     /**
      * The current GAP state.
      */
