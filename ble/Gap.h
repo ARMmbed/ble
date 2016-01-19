@@ -938,7 +938,11 @@ public:
      * @return BLE_ERROR_NONE if the device started advertising successfully.
      */
     ble_error_t startAdvertising(void) {
-        return startAdvertising(_advParams);
+        ble_error_t rc;
+        if ((rc = startAdvertising(_advParams)) == BLE_ERROR_NONE) {
+            state.advertising = 1;
+        }
+        return rc;
     }
 
     /**
@@ -1117,7 +1121,7 @@ public:
      *         set.
      */
     ble_error_t setAdvertisingPayload(const GapAdvertisingData &payload) {
-        ble_error_t rc = setAdvertisingData(_advPayload, _scanResponse);
+        ble_error_t rc = setAdvertisingData(payload, _scanResponse);
         if (rc == BLE_ERROR_NONE) {
             _advPayload = payload;
         }
