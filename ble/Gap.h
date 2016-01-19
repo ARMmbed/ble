@@ -1118,12 +1118,11 @@ public:
      */
     ble_error_t setAdvertisingPayload(const GapAdvertisingData &payload) {
         ble_error_t rc = setAdvertisingData(_advPayload, _scanResponse);
-        if (rc != BLE_ERROR_NONE) {
-            /* The payload has a problem, do not store it */
-            return rc;
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = payload;
         }
-        _advPayload = payload;
-        return BLE_ERROR_NONE;
+
+        return rc;
     }
 
     /**
