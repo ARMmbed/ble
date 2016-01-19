@@ -1020,16 +1020,18 @@ public:
      *         advertising payload.
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
-        if (power < -100 || power > 20) {
-            return BLE_ERROR_PARAM_OUT_OF_RANGE;
-        }
-
+        GapAdvertisingData advPayloadCopy = _advPayload;
         ble_error_t rc;
-        if ((rc = _advPayload.addTxPower(power)) != BLE_ERROR_NONE) {
+        if ((rc = advPayloadCopy.addTxPower(power)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData(_advPayload, _scanResponse);
+        rc = setAdvertisingData(advPayloadCopy, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = advPayloadCopy;
+        }
+
+        return rc;
     }
 
     /**
