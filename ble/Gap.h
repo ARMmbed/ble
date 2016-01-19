@@ -848,7 +848,6 @@ public:
         return INIT_POLICY_IGNORE_WHITELIST;
     }
 
-
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
 
