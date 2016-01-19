@@ -939,8 +939,12 @@ public:
      * @return BLE_ERROR_NONE if the device started advertising successfully.
      */
     ble_error_t startAdvertising(void) {
+        ble_error_t rc;
         setAdvertisingData(); /* Update the underlying stack. */
-        return startAdvertising(_advParams);
+        if ((rc = startAdvertising(_advParams)) == BLE_ERROR_NONE) {
+            state.advertising = 1;
+        }
+        return rc;
     }
 
     /**
