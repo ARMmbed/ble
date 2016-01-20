@@ -22,6 +22,7 @@
 #include "GattAttribute.h"
 #include "GattClient.h"
 #include "CharacteristicDescriptorDiscovery.h"
+#include "OneShotWriteCallback.h"
 
 /**
  * @brief Representation of a descriptor discovered during a GattClient
@@ -99,6 +100,34 @@ public:
      */
     GattAttribute::Handle_t getAttributeHandle() const {
         return _gattHandle;
+    }
+
+    /**
+     * @brief Initiate the write procedure of this characteristic descriptor.
+     *
+     * @param[in] lenght
+     *              Length in bytes of the data to write.
+     * @param[in] value
+     *              Pointer to the data to write.
+     * @param[in] callback
+     *              The callback executed at the end of the write procedure.
+     *
+     * @return BLE_ERROR_NONE if the write procedure was successfully started.
+     */
+    ble_error_t write(uint16_t length, const uint8_t *value, const GattClient::WriteCallback_t& callback) const {
+        ble_error_t error = _client->write(
+            GattClient::GATT_OP_WRITE_REQ,
+            _connectionHandle,
+            _gattHandle,
+            length,
+            value
+        );
+
+        if (error == BLE_ERROR_NONE) {
+            OneShotWriteCallback::launch(_client, _connectionHandle, _gattHandle, callback);
+        }
+
+        return error;
     }
 
 private:
