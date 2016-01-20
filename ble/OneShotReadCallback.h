@@ -2,8 +2,8 @@
 #include "Gap.h"
 #include "GattAttribute.h"
 
-#ifndef __ONE_SHOT_READ_CALLBACK_H__
-#define __ONE_SHOT_READ_CALLBACK_H__
+#ifndef __ONESHOTREADCALLBACK_H__
+#define __ONESHOTREADCALLBACK_H__
 
 class OneShotReadCallback {
 public:
@@ -41,4 +41,4 @@ private:
     GattClient::ReadCallback_t _callback;
 };
 
-#endif /* __ONE_SHOT_READ_CALLBACK_H__ */
+#endif /* __ONESHOTREADCALLBACK_H__ */
