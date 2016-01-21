@@ -35,7 +35,7 @@ public:
     TxPowerService(BLE &bleIn, int8_t txPower) :
         ble(bleIn),
         TxPowerChar(GattCharacteristic::UUID_TX_POWER_LEVEL_CHAR, reinterpret_cast<uint8_t *>(&txPower)) {
-        static bool serviceAdded = false; /* We should only ever add one LinkLoss service. */
+        static bool serviceAdded = false; /* We should only ever add one TxPower service. */
         if (serviceAdded) {
             return;
         }
