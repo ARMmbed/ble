@@ -56,11 +56,21 @@ private:
     }
 
     void disconnectionCallback(const Gap::DisconnectionCallbackParams_t *params) {
-        /*
-         * Free resources allocated to this object. Pending write callbacks
-         * will no longer be executed.
-         */
         if (params->handle == _connHandle) {
+            /* Tell the user that the operation failed */
+            GattWriteCallbackParams callbackParams;
+            callbackParams.connHandle = _connHandle;
+            callbackParams.handle     = _handle;
+            callbackParams.writeOp    = GattWriteCallbackParams::OP_INVALID;
+            callbackParams.offset     = 0;
+            callbackParams.len        = 0;
+            callbackParams.data       = NULL;
+            _callback(&callbackParams);
+
+            /*
+             * Free resources allocated to this object. Pending write callbacks
+             * will no longer be executed.
+             */
             _client->onDataWritten().detach(makeFunctionPointer(this, &OneShotWriteCallback::call));
             _client->onShutdown().detach(makeFunctionPointer(this, &OneShotWriteCallback::shutdownCallback));
             BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotWriteCallback::disconnectionCallback));
