@@ -205,7 +205,7 @@ public:
         shutdownCallChain.add(callback);
     }
     template <typename T>
-    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+    void onShutdown(T *objPtr, void (T::*memberPtr)(const SecurityManager *)) {
         shutdownCallChain.add(objPtr, memberPtr);
     }
 

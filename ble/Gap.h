@@ -1635,7 +1635,7 @@ public:
      *              invoked in response to a shutdown event.
      */
     template <typename T>
-    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+    void onShutdown(T *objPtr, void (T::*memberPtr)(const Gap *)) {
         shutdownCallChain.add(objPtr, memberPtr);
     }
 
