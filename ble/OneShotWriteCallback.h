@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "BLE.h"
 #include "GattClient.h"
 #include "Gap.h"
 #include "GattAttribute.h"
@@ -40,6 +41,31 @@ private:
 
     void attach() {
         _client->onDataWritten(makeFunctionPointer(this, &OneShotWriteCallback::call));
+        _client->onShutdown(this, &OneShotWriteCallback::shutdownCallback);
+        BLE::Instance().gap().onDisconnection(this, &OneShotWriteCallback::disconnectionCallback);
+    }
+
+    void shutdownCallback(const GattClient *client) {
+        /* Avoid compiler warnings */
+        (void) client;
+        /*
+         * Free resources allocated to this object. Pending write callbacks
+         * will no longer be executed.
+         */
+        delete this;
+    }
+
+    void disconnectionCallback(const Gap::DisconnectionCallbackParams_t *params) {
+        /* Avoid compiler warnings */
+        (void) params;
+        /*
+         * Free resources allocated to this object. Pending write callbacks
+         * will no longer be executed.
+         */
+        _client->onDataWritten().detach(makeFunctionPointer(this, &OneShotWriteCallback::call));
+        _client->onShutdown().detach(makeFunctionPointer(this, &OneShotWriteCallback::shutdownCallback));
+        BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotWriteCallback::disconnectionCallback));
+        delete this;
     }
 
     void call(const GattWriteCallbackParams* params) {
@@ -47,6 +73,8 @@ private:
         if (params->connHandle == _connHandle && params->handle == _handle) {
             _callback(params);
             _client->onDataWritten().detach(makeFunctionPointer(this, &OneShotWriteCallback::call));
+            _client->onShutdown().detach(makeFunctionPointer(this, &OneShotWriteCallback::shutdownCallback));
+            BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotWriteCallback::disconnectionCallback));
             delete this;
         }
     }
