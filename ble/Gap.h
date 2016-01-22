@@ -848,7 +848,6 @@ public:
         return INIT_POLICY_IGNORE_WHITELIST;
     }
 
-
 protected:
     /* Override the following in the underlying adaptation layer to provide the functionality of scanning. */
 
@@ -940,7 +939,6 @@ public:
      */
     ble_error_t startAdvertising(void) {
         ble_error_t rc;
-        setAdvertisingData(); /* Update the underlying stack. */
         if ((rc = startAdvertising(_advParams)) == BLE_ERROR_NONE) {
             state.advertising = 1;
         }
@@ -954,7 +952,7 @@ public:
      */
     void clearAdvertisingPayload(void) {
         _advPayload.clear();
-        setAdvertisingData();
+        setAdvertisingData(_advPayload, _scanResponse);
     }
 
     /**
@@ -972,12 +970,18 @@ public:
      *         advertising payload.
      */
     ble_error_t accumulateAdvertisingPayload(uint8_t flags) {
+        GapAdvertisingData advPayloadCopy = _advPayload;
         ble_error_t rc;
-        if ((rc = _advPayload.addFlags(flags)) != BLE_ERROR_NONE) {
+        if ((rc = advPayloadCopy.addFlags(flags)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData();
+        rc = setAdvertisingData(advPayloadCopy, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = advPayloadCopy;
+        }
+
+        return rc;
     }
 
     /**
@@ -993,14 +997,18 @@ public:
      *         advertising payload.
      */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::Appearance app) {
-        setAppearance(app);
-
+        GapAdvertisingData advPayloadCopy = _advPayload;
         ble_error_t rc;
-        if ((rc = _advPayload.addAppearance(app)) != BLE_ERROR_NONE) {
+        if ((rc = advPayloadCopy.addAppearance(app)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData();
+        rc = setAdvertisingData(advPayloadCopy, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = advPayloadCopy;
+        }
+
+        return rc;
     }
 
     /**
@@ -1016,12 +1024,18 @@ public:
      *         advertising payload.
      */
     ble_error_t accumulateAdvertisingPayloadTxPower(int8_t power) {
+        GapAdvertisingData advPayloadCopy = _advPayload;
         ble_error_t rc;
-        if ((rc = _advPayload.addTxPower(power)) != BLE_ERROR_NONE) {
+        if ((rc = advPayloadCopy.addTxPower(power)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData();
+        rc = setAdvertisingData(advPayloadCopy, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = advPayloadCopy;
+        }
+
+        return rc;
     }
 
     /**
@@ -1048,16 +1062,18 @@ public:
      *       payload.
      */
     ble_error_t accumulateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
-        if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
-            setDeviceName(data);
-        }
-
+        GapAdvertisingData advPayloadCopy = _advPayload;
         ble_error_t rc;
-        if ((rc = _advPayload.addData(type, data, len)) != BLE_ERROR_NONE) {
+        if ((rc = advPayloadCopy.addData(type, data, len)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData();
+        rc = setAdvertisingData(advPayloadCopy, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = advPayloadCopy;
+        }
+
+        return rc;
     }
 
     /**
@@ -1077,16 +1093,18 @@ public:
      *         matching AD type; otherwise, an appropriate error.
      */
     ble_error_t updateAdvertisingPayload(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
-        if (type == GapAdvertisingData::COMPLETE_LOCAL_NAME) {
-            setDeviceName(data);
-        }
-
+        GapAdvertisingData advPayloadCopy = _advPayload;
         ble_error_t rc;
-        if ((rc = _advPayload.updateData(type, data, len)) != BLE_ERROR_NONE) {
+        if ((rc = advPayloadCopy.updateData(type, data, len)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData();
+        rc = setAdvertisingData(advPayloadCopy, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = advPayloadCopy;
+        }
+
+        return rc;
     }
 
     /**
@@ -1103,8 +1121,12 @@ public:
      *         set.
      */
     ble_error_t setAdvertisingPayload(const GapAdvertisingData &payload) {
-        _advPayload = payload;
-        return setAdvertisingData();
+        ble_error_t rc = setAdvertisingData(payload, _scanResponse);
+        if (rc == BLE_ERROR_NONE) {
+            _advPayload = payload;
+        }
+
+        return rc;
     }
 
     /**
@@ -1133,12 +1155,18 @@ public:
      *         response payload.
      */
     ble_error_t accumulateScanResponse(GapAdvertisingData::DataType type, const uint8_t *data, uint8_t len) {
+        GapAdvertisingData scanResponseCopy = _scanResponse;
         ble_error_t rc;
-        if ((rc = _scanResponse.addData(type, data, len)) != BLE_ERROR_NONE) {
+        if ((rc = scanResponseCopy.addData(type, data, len)) != BLE_ERROR_NONE) {
             return rc;
         }
 
-        return setAdvertisingData();
+        rc = setAdvertisingData(_advPayload, scanResponseCopy);
+        if (rc == BLE_ERROR_NONE) {
+            _scanResponse = scanResponseCopy;
+        }
+
+        return rc;
     }
 
     /**
@@ -1150,7 +1178,7 @@ public:
      */
     void clearScanResponse(void) {
         _scanResponse.clear();
-        setAdvertisingData();
+        setAdvertisingData(_advPayload, _scanResponse);
     }
 
     /**
@@ -1377,16 +1405,6 @@ public:
      */
     virtual ble_error_t initRadioNotification(void) {
         return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porter(s): override this API if this capability is supported. */
-    }
-
-private:
-    /**
-     * Helper function used to set the advertising data in the underlying BLE stack.
-     *
-     * @return BLE_ERROR_NONE if the advertising data was successfully set.
-     */
-    ble_error_t setAdvertisingData(void) {
-        return setAdvertisingData(_advPayload, _scanResponse);
     }
 
 private:
