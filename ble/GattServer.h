@@ -481,7 +481,7 @@ public:
      *              invoked.
      */
     template <typename T>
-    void onShutdown(T *objPtr, void (T::*memberPtr)(void)) {
+    void onShutdown(T *objPtr, void (T::*memberPtr)(const GattServer *)) {
         shutdownCallChain.add(objPtr, memberPtr);
     }
 
