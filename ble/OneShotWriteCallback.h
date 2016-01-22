@@ -56,16 +56,16 @@ private:
     }
 
     void disconnectionCallback(const Gap::DisconnectionCallbackParams_t *params) {
-        /* Avoid compiler warnings */
-        (void) params;
         /*
          * Free resources allocated to this object. Pending write callbacks
          * will no longer be executed.
          */
-        _client->onDataWritten().detach(makeFunctionPointer(this, &OneShotWriteCallback::call));
-        _client->onShutdown().detach(makeFunctionPointer(this, &OneShotWriteCallback::shutdownCallback));
-        BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotWriteCallback::disconnectionCallback));
-        delete this;
+        if (params->handle == _connHandle) {
+            _client->onDataWritten().detach(makeFunctionPointer(this, &OneShotWriteCallback::call));
+            _client->onShutdown().detach(makeFunctionPointer(this, &OneShotWriteCallback::shutdownCallback));
+            BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotWriteCallback::disconnectionCallback));
+            delete this;
+        }
     }
 
     void call(const GattWriteCallbackParams* params) {

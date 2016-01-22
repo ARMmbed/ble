@@ -56,16 +56,16 @@ private:
     }
 
     void disconnectionCallback(const Gap::DisconnectionCallbackParams_t *params) {
-        /* Avoid compiler warnings */
-        (void) params;
         /*
          * Free resources allocated to this object. Pending read callbacks
          * will no longer be executed.
          */
-        _client->onDataRead().detach(makeFunctionPointer(this, &OneShotReadCallback::call));
-        _client->onShutdown().detach(makeFunctionPointer(this, &OneShotReadCallback::shutdownCallback));
-        BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotReadCallback::disconnectionCallback));
-        delete this;
+        if (params->handle == _connHandle) {
+            _client->onDataRead().detach(makeFunctionPointer(this, &OneShotReadCallback::call));
+            _client->onShutdown().detach(makeFunctionPointer(this, &OneShotReadCallback::shutdownCallback));
+            BLE::Instance().gap().onDisconnection().detach(makeFunctionPointer(this, &OneShotReadCallback::disconnectionCallback));
+            delete this;
+        }
     }
 
     void call(const GattReadCallbackParams* params) {
