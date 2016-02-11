@@ -29,7 +29,7 @@
       "ble-nrf51822": "^2.2.8"
     },
     "nrf52832": {
-      "ble-nrf51822": "ARMmbed/ble-nrf52832"
+      "ble-nrf52832": "ARMmbed/ble-nrf52832"
     },
     "cordio": {
       "ble-wicentric": "~0.0.4"
