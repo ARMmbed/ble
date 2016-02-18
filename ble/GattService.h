@@ -59,15 +59,58 @@ public:
      *              The number of characteristics.
      */
     GattService(const UUID &uuid, GattCharacteristic *characteristics[], unsigned numCharacteristics) :
-        _primaryServiceID(uuid), _characteristicCount(numCharacteristics), _characteristics(characteristics), _handle(0) {
+        _primaryServiceID(uuid),
+        _characteristicCount(numCharacteristics),
+        _characteristics(characteristics),
+        _handle(0) {
         /* empty */
     }
 
-    const UUID &getUUID(void)                const {return _primaryServiceID;   }
-    uint16_t    getHandle(void)              const {return _handle;             }
-    uint8_t     getCharacteristicCount(void) const {return _characteristicCount;}
-    void setHandle(uint16_t handle) {_handle = handle;}
+    /**
+     * Get this service's UUID.
+     *
+     * @return A reference to the service's UUID.
+     */
+    const UUID &getUUID(void) const {
+        return _primaryServiceID;
+    }
 
+    /**
+     * Get handle of the service declaration attribute in the ATT table.
+     *
+     * @return The service's handle.
+     */
+    uint16_t getHandle(void) const {
+        return _handle;
+    }
+
+    /**
+     * Get the total number of characteristics within this service.
+     *
+     * @return The total number of characteristics within this service.
+     */
+    uint8_t getCharacteristicCount(void) const {
+        return _characteristicCount;
+    }
+
+    /**
+     * Set the handle of the service declaration attribute in the ATT table.
+     *
+     * @param[in] handle
+     *              The service's handle.
+     */
+    void setHandle(uint16_t handle) {
+        _handle = handle;
+    }
+
+    /**
+     * Get this service's characteristic at a specific index.
+     *
+     * @param[in] index
+     *              The index of the characteristic.
+     *
+     * @return A pointer to the characterisitic at index @p index.
+     */
     GattCharacteristic *getCharacteristic(uint8_t index) {
         if (index >= _characteristicCount) {
             return NULL;
@@ -77,10 +120,25 @@ public:
     }
 
 private:
+    /**
+     * This service's UUID.
+     */
     UUID                 _primaryServiceID;
+    /**
+     * Total number of characteristics within this service.
+     */
     uint8_t              _characteristicCount;
+    /**
+     * An array with pointers to the characteristics added to this service.
+     */
     GattCharacteristic **_characteristics;
+    /**
+     * Handle of the service declaration attribute in the ATT table.
+     *
+     * @note This handle is generally assigned by the underlying BLE stack when the
+     *       service is added to the ATT table.
+     */
     uint16_t             _handle;
 };
 
-#endif // ifndef __GATT_SERVICE_H__
+#endif /* ifndef __GATT_SERVICE_H__ */

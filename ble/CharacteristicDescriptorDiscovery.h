@@ -36,7 +36,7 @@ class CharacteristicDescriptorDiscovery {
 public:
     /**
      * @brief Parameter type of CharacteristicDescriptorDiscovery::DiscoveryCallback_t.
-     * @detail Every time a characteristic descriptor has been discovered, the callback
+     * @details Every time a characteristic descriptor has been discovered, the callback
      * registered for the discovery operation through GattClient::discoverCharacteristicDescriptors
      * or DiscoveredCharacteristic::discoverDescriptors will be called with this parameter.
      *

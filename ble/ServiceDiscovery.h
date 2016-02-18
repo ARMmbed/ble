@@ -117,7 +117,7 @@ public:
                                const UUID               &matchingCharacteristicUUIDIn = UUID::ShortUUIDBytes_t(BLE_UUID_UNKNOWN)) = 0;
 
     /**
-     * Is service-discovery currently active?
+     * Check whether service-discovery is currently active.
      */
     virtual bool        isActive(void) const = 0;
 
@@ -154,11 +154,30 @@ public:
     }
 
 protected:
-    Gap::Handle_t            connHandle; /**< Connection handle as provided by the SoftDevice. */
+    /**
+     * Connection handle as provided by the SoftDevice.
+     */
+    Gap::Handle_t            connHandle;
+    /**
+     * UUID-based filter that specifies the service that the application is
+     * interested in.
+     */
     UUID                     matchingServiceUUID;
+    /**
+     * The registered callback handle for when a matching service is found
+     * during service-discovery.
+     */
     ServiceCallback_t        serviceCallback;
+    /**
+     * UUID-based filter that specifies the characteristic that the
+     * application is interested in.
+     */
     UUID                     matchingCharacteristicUUID;
+    /**
+     * The registered callback handler for when a matching characteristic is
+     * found during service-discovery.
+     */
     CharacteristicCallback_t characteristicCallback;
 };
 
-#endif // ifndef __SERVICE_DISOVERY_H__
+#endif /* ifndef __SERVICE_DISOVERY_H__ */
