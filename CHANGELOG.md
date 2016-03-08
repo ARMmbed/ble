@@ -1,5 +1,12 @@
 # Change Log
 
+## [v2.5.2](https://github.com/ARMmbed/ble/tree/v2.5.2) (2016-03-02)
+[Full Changelog](https://github.com/ARMmbed/ble/compare/v2.5.1...v2.5.2)
+
+**Closed issues:**
+
+- Infinite busy [\#69](https://github.com/ARMmbed/ble/issues/69)
+
 ## [v2.5.1](https://github.com/ARMmbed/ble/tree/v2.5.1) (2016-01-27)
 [Full Changelog](https://github.com/ARMmbed/ble/compare/v2.5.0...v2.5.1)
 
