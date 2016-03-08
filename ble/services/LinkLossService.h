@@ -36,8 +36,11 @@ public:
     typedef void (* callback_t)(AlertLevel_t level);
 
     /**
-     * @param[ref] ble
-     *               BLE object for the underlying controller.
+     * Constructor for handlig a callback function. 
+     *
+     * @param ble BLE object for the underlying controller.
+     * @param callbackIn pointer to the function to be called after the link is loss.
+     * @param levelIn default Alert Level to be sent to the callback function.
      */
     LinkLossService(BLE &bleIn, callback_t callbackIn, AlertLevel_t levelIn = NO_ALERT) :
         ble(bleIn),
@@ -60,17 +63,73 @@ public:
     }
 
     /**
-     * Update the callback.
+     * Constructor for handling a callback inside a C++ object.
+     *
+     * @param ble BLE object for the underlying controller.
+     * @param objPtr pointer to the object that contains the callback function.
+     * @param onLinkLossCallback pointer to the function to be called after the link is loss.
+     * @param levelIn default Alert Level to be sent to the callback function.
      */
-    void setCallback(callback_t newCallback) {
-        callback = newCallback;
+    template <typename T> 
+    LinkLossService(BLE &bleIn, T *objPtr, void (T::*onLinkLossCallback)(void), AlertLevel_t levelIn = NO_ALERT) :
+        ble(bleIn),
+        alertLevel(levelIn),
+        alertLevelChar(GattCharacteristic::UUID_ALERT_LEVEL_CHAR, reinterpret_cast<uint8_t *>(&alertLevel)) {
+        static bool serviceAdded = false; /* We should only ever add one LinkLoss service. */
+        if (serviceAdded) {
+            return;
+        }
+
+        GattCharacteristic *charTable[] = {&alertLevelChar};
+        GattService         linkLossService(GattService::UUID_LINK_LOSS_SERVICE, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
+
+        ble.gattServer().addService(linkLossService);
+        serviceAdded = true;
+
+        ble.gap().onDisconnection(this, &LinkLossService::onDisconnectionFilter);
+        ble.gattServer().onDataWritten(this, &LinkLossService::onDataWritten);
+
+        onLinkLoss.attach(objPtr, onLinkLossCallback);
     }
 
     /**
      * Update alertness level.
+     *
+     * @param   new_level New alert level.
      */
     void setAlertLevel(AlertLevel_t newLevel) {
         alertLevel = newLevel;
+        ble.gattServer().write(alertLevelChar.getValueHandle(), (uint8_t *) &alertLevel, 1);
+    }
+
+    /**
+     * @brief   Get current alert level. This is used because we can't pass arguments to callbacks.
+     */    
+    int8_t getAlertLevel()
+    {
+        return alertLevel;
+    }
+
+    /**
+     * Update the callback with an object's method.
+     *
+     * @param objPtr pointer to the object that contains the callback function.
+     * @param onLinkLossCallback pointer to the function to be called after the link is loss.     
+     */
+    template <typename T> 
+    void setCallback(T *objPtr, void (T::*onLinkLossCallback)(void)) {
+        if (callback != NULL) callback = NULL;
+        onLinkLoss.attach(objPtr, onLinkLossCallback);
+    }
+
+    /**
+     * Update the callback function.
+     *
+     * @param callbackIn pointer to the function to be called after the link is loss.
+     */
+    void setCallback(callback_t newCallback) {
+        if (onLinkLoss != NULL) onLinkLoss = NULL;
+        callback = newCallback;
     }
 
 protected:
@@ -88,13 +147,16 @@ protected:
 
     void onDisconnectionFilter(const Gap::DisconnectionCallbackParams_t *params) {
         if (alertLevel != NO_ALERT) {
-            callback(alertLevel);
+            if(onLinkLoss != NULL) onLinkLoss.call();
+            else callback(alertLevel);
         }
     }
 
 protected:
     BLE          &ble;
     AlertLevel_t  alertLevel;
+
+    FunctionPointer onLinkLoss;
     callback_t    callback;
 
     ReadWriteGattCharacteristic<uint8_t> alertLevelChar;
