@@ -1,6 +1,6 @@
 {
   "name": "ble",
-  "version": "2.5.2",
+  "version": "2.6.0",
   "description": "The BLE module offers a high level abstraction for using Bluetooth Low Energy on multiple platforms.",
   "keywords": [
     "Bluetooth",
