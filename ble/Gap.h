@@ -198,6 +198,7 @@ public:
      */
     struct AdvertisementCallbackParams_t {
         BLEProtocol::AddressBytes_t              peerAddr;           /**< The peer's BLE address. */
+        BLEProtocol::AddressType_t               peerAddrType;       /**< The peer's BLE address type. */
         int8_t                                   rssi;               /**< The advertisement packet RSSI value. */
         bool                                     isScanResponse;     /**< Whether this packet is the response to a scan request. */
         GapAdvertisingParams::AdvertisingType_t  type;               /**< The type of advertisement. */
@@ -1800,6 +1801,8 @@ public:
      *
      * @param[in] peerAddr
      *              The peer's BLE address.
+     * @param[in] peerAddrType
+     *              The peer's BLE address type.
      * @param[in] rssi
      *              The advertisement packet RSSI value.
      * @param[in] isScanReponse
@@ -1812,6 +1815,7 @@ public:
      *              Pointer to the advertisement packet's data.
      */
     void processAdvertisementReport(const BLEProtocol::AddressBytes_t        peerAddr,
+                                    BLEProtocol::AddressType_t               peerAddrType,
                                     int8_t                                   rssi,
                                     bool                                     isScanResponse,
                                     GapAdvertisingParams::AdvertisingType_t  type,
@@ -1819,6 +1823,7 @@ public:
                                     const uint8_t                           *advertisingData) {
         AdvertisementCallbackParams_t params;
         memcpy(params.peerAddr, peerAddr, ADDR_LEN);
+        params.peerAddrType       = peerAddrType;
         params.rssi               = rssi;
         params.isScanResponse     = isScanResponse;
         params.type               = type;
