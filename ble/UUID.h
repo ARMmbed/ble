@@ -298,6 +298,37 @@ public:
             return true;
         }
 
+        /*
+         * If one UUID is short and the other long check whether the short
+         * can be expanded to equal the long one.
+         */
+        if (((this->type == UUID_TYPE_LONG) && (other.type == UUID_TYPE_SHORT)) ||
+            ((this->type == UUID_TYPE_SHORT) && (other.type == UUID_TYPE_LONG))) {
+            const uint8_t *thisExpandedUUID;
+            const uint8_t *otherExpandedUUID;
+            UUID expandedUUID;
+
+            if (this->type == UUID_TYPE_SHORT) {
+                expandedUUID = *this;
+                expandedUUID.from16To128BitUUID();
+                thisExpandedUUID = expandedUUID.baseUUID;
+            } else {
+                thisExpandedUUID = this->baseUUID;
+            }
+
+            if (other.type == UUID_TYPE_SHORT) {
+                expandedUUID = other;
+                expandedUUID.from16To128BitUUID();
+                otherExpandedUUID = expandedUUID.baseUUID;
+            } else {
+                otherExpandedUUID = other.baseUUID;
+            }
+
+            if (memcmp(thisExpandedUUID, otherExpandedUUID, LENGTH_OF_LONG_UUID) == 0) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -311,6 +342,28 @@ public:
      */
     bool operator!= (const UUID &other) const {
         return !(*this == other);
+    }
+
+private:
+    /**
+     * @brief Expand a 16-bit UUID into a 128-bit UUID.
+     *
+     * @details To reconstruct the full 128-bit UUID from the shortened version, insert
+     * the 16-bit short value (indicated by xxxx, including leading zeros) into
+     * the Bluetooth Base UUID (in MSB format):
+     *
+     *  0000xxxx-0000-1000-8000-00805F9B34FB
+     */
+    void from16To128BitUUID(void) {
+        if (type == UUID_TYPE_LONG) {
+            return;
+        }
+        uint8_t sig[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
+                          0x80, 0x00, 0x00, 0x80, 0x5F, 0x9B, 0x34, 0xFB };
+        sig[2] = (shortUUID >> 8) & 0x00FF;
+        sig[3] = shortUUID & 0x00FF;
+        setupLong(sig, UUID::MSB);
+        type = UUID_TYPE_LONG;
     }
 
 private:

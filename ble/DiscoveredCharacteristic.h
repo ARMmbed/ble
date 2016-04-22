@@ -265,6 +265,26 @@ public:
         uuid.setupLong(longUUID, order);
     }
 
+    /**
+     * Write the characteristic's Client Characteristic Configuration Descriptor
+     * (CCCD) to enable/disable indications and notifications.
+     *
+     * @param[in] indicationValue
+     *              The new value for the indications bit.
+     * @param[in] notificationValue
+     *              The new value for the notifications bit.
+     * @param[in] writeCallback
+     *              Callback executed at the end of the procedure.
+     *
+     * @retval BLE_ERROR_NONE if the procedure was correctly started.
+     * @retval BLE_ERROR_OPERATION_NOT_PERMITTED if the indication
+     *         characteristic does not allow updates to the notification or
+     *         indications value. In the case that one of them is locked setting
+     *         the respective parameter (i.e. @p indicationValue or
+     *         @p notificationValue) to false clears this error.
+     */
+    ble_error_t setCCCD(bool indicationValue, bool notificationValue, const GattClient::WriteCallback_t &writeCallback) const;
+
 public:
     /**
      * @brief Get the UUID of the discovered characteristic
