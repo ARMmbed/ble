@@ -110,7 +110,7 @@ public:
                              bool                     requireMITM   = true,
                              SecurityIOCapabilities_t iocaps        = IO_CAPS_NONE,
                              const Passkey_t          passkey       = NULL,
-							 bool                     oob 			= false) {
+                             bool                     oob           = false) {
         /* Avoid compiler warnings about unused variables. */
         (void)enableBonding;
         (void)requireMITM;
@@ -332,16 +332,17 @@ private:
 
 public:
     /**
-	 * Function for generate Temporary Key value.
-	 *
-	 * @param[out] tk   Generated Temporary Key.
-	 *
-	 * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
-	 * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization or
-	 *                                    application registration.
-	 */
+     * Function for generate Temporary Key value.
+     *
+     * @param[out] tk   Generated Temporary Key.
+     *
+     * @retval BLE_ERROR_NONE             On success, else an error code indicating reason for failure.
+     * @retval BLE_ERROR_INVALID_STATE    If the API is called without module initialization or
+     *                                    application registration.
+     */
      virtual ble_error_t generateTk(Gap::Temporarykey_t &tk) {
-    	 return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if OOB pairing is supported. */
+        (void)tk;
+        return BLE_ERROR_NOT_IMPLEMENTED; /* Requesting action from porters: override this API if OOB pairing is supported. */
      }
 };
 
