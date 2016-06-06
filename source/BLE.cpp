@@ -21,8 +21,12 @@
 #include "ble/services/DFUService.h"
 #endif
 
+#ifdef YOTTA_CFG_MBED_OS
+#include <minar/minar.h>
+#endif
+
 ble_error_t
-BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback)
+BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext*> callback)
 {
     ble_error_t err = transport->init(instanceID, callback);
     if (err != BLE_ERROR_NONE) {
@@ -106,7 +110,17 @@ BLE::Instance(InstanceID_t id)
     return badSingleton;
 }
 
-BLE::BLE(InstanceID_t instanceIDIn) : instanceID(instanceIDIn), transport()
+#ifdef YOTTA_CFG_MBED_OS
+void defaultSchedulingCallback(BLE::OnEventsToProcessCallbackContext* params) {
+    minar::Scheduler::postCallback(&params->ble, &BLE::processEvents);
+}
+#else
+#define defaultSchedulingCallback NULL
+#endif
+
+
+BLE::BLE(InstanceID_t instanceIDIn) : instanceID(instanceIDIn), transport(),
+    whenEventsToProcess(defaultSchedulingCallback)
 {
     static BLEInstanceBase *transportInstances[NUM_INSTANCES];
 
@@ -226,4 +240,28 @@ void BLE::waitForEvent(void)
     }
 
     transport->waitForEvent();
+}
+
+void BLE::processEvents()
+{
+    if (!transport) {
+        error("bad handle to underlying transport");
+    }
+
+    transport->processEvents();
+}
+
+void BLE::onEventsToProcess(const BLE::OnEventsToProcessCallback_t& callback)
+{
+    whenEventsToProcess = callback;
+}
+
+void BLE::signalEventsToProcess()
+{
+    if (whenEventsToProcess) {
+        OnEventsToProcessCallbackContext params = {
+            *this
+        };
+        whenEventsToProcess(&params);
+    }
 }
