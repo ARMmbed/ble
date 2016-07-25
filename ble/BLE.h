@@ -1528,7 +1528,6 @@ public:
      * work.
      * By registering a callback, user code can know when event processing has to be
      * scheduled.
-     * Callback format is void (*)(BLE& ble);
      */
     void onEventsToProcess(const OnEventsToProcessCallback_t& callback);
 
