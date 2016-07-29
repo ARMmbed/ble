@@ -17,6 +17,8 @@
 #ifndef __GAP_ADVERTISING_PARAMS_H__
 #define __GAP_ADVERTISING_PARAMS_H__
 
+#include "ble/BLEProtocol.h"
+
 /**
  *  This class provides a wrapper for the core advertising parameters,
  *  including the advertising type (Connectable Undirected,
@@ -78,10 +80,7 @@ public:
                          uint16_t          interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON,
                          uint16_t          timeout  = 0) : _advType(advType), _interval(interval), _timeout(timeout) {
         /* Interval checks. */
-        if (_advType == ADV_CONNECTABLE_DIRECTED) {
-            /* Interval must be 0 in directed connectable mode. */
-            _interval = 0;
-        } else if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED) {
+        if (_advType == ADV_NON_CONNECTABLE_UNDIRECTED || _advType == ADV_SCANNABLE_UNDIRECTED) {
             /* Min interval is slightly larger than in other modes. */
             if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN_NONCON) {
                 _interval = GAP_ADV_PARAMS_INTERVAL_MIN_NONCON;
@@ -89,7 +88,7 @@ public:
             if (_interval > GAP_ADV_PARAMS_INTERVAL_MAX) {
                 _interval = GAP_ADV_PARAMS_INTERVAL_MAX;
             }
-        } else {
+        } else if (!(_advType == ADV_CONNECTABLE_DIRECTED && _interval == 0)) {
             /* Stay within interval limits. */
             if (_interval < GAP_ADV_PARAMS_INTERVAL_MIN) {
                 _interval = GAP_ADV_PARAMS_INTERVAL_MIN;
@@ -100,8 +99,11 @@ public:
         }
 
         /* Timeout checks. */
-        if (timeout) {
-            /* Stay within timeout limits. */
+        if (_timeout) {
+            /* Timeout must be 0 for high duty directed advertisements. */
+            if (_advType == ADV_CONNECTABLE_DIRECTED && _interval == 0) {
+                _timeout = 0;
+            }
             if (_timeout > GAP_ADV_PARAMS_TIMEOUT_MAX) {
                 _timeout = GAP_ADV_PARAMS_TIMEOUT_MAX;
             }
@@ -169,6 +171,16 @@ public:
     }
 
     /**
+     * Get the address for directed advertisements.
+     * This is only used if the advertising type is set to ADV_CONNECTABLE_DIRECTED.
+     *
+     * @return The address to include in directed advertisements.
+     */
+    BLEProtocol::Address_t getDirectAddress(void) const {
+        return _address;
+    }
+
+    /**
      * Set the advertising type.
      *
      * @param[in] newAdvType
@@ -198,10 +210,22 @@ public:
         _timeout = newTimeout;
     }
 
+    /**
+     * Set the address to connect to for directed advertisements.
+     * This is only used if the advertising type is set to ADV_CONNECTABLE_DIRECTED.
+     *
+     * @param[in] newAddress
+     *              The new address to connect to.
+     */
+    void setDirectedAddress(BLEProtocol::Address_t newAddress) {
+        _address = newAddress;
+    }
+
 private:
-    AdvertisingType_t _advType;  /**< The advertising type. */
-    uint16_t          _interval; /**< The advertising interval in ADV duration units (i.e. 0.625ms). */
-    uint16_t          _timeout;  /**< The advertising timeout in seconds. */
+    AdvertisingType_t      _advType;  /**< The advertising type. */
+    uint16_t               _interval; /**< The advertising interval in ADV duration units (i.e. 0.625ms). */
+    uint16_t               _timeout;  /**< The advertising timeout in seconds. */
+    BLEProtocol::Address_t _address;  /**< The address to connect to for directed advertisements. */
 };
 
 #endif /* ifndef __GAP_ADVERTISING_PARAMS_H__ */

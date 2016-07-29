@@ -898,8 +898,12 @@ public:
      *              value is used instead. This minimum value can be discovered
      *              using getMinAdvertisingInterval().
      *
-     *              This field must be set to 0 if connectionMode is equal
-     *              to ADV_CONNECTABLE_DIRECTED.
+     *              If the advertising type is equal to ADV_CONNECTABLE_DIRECTED
+     *              then setting this to 0 enables high duty advertising. Otherwise
+     *              the advertising interval may be set as normal. High duty mode
+	 *              sends advertisements at least every 3.75 ms. It is power and
+	 *              bandwidth intensive and is generally used for reconnections.
+	 *              See the BLE specification, Volume 6, Part B, Section 4.4.2.4.
      *
      * @note  Decreasing this value will allow central devices to detect a
      *        peripheral faster, at the expense of more power being used by the radio
@@ -927,9 +931,25 @@ public:
      * @param[in] timeout
      *              Advertising timeout (in seconds) between 0x1 and 0x3FFF (1
      *              and 16383). Use 0 to disable the advertising timeout.
+     *              This must be 0 if the advertising type is ADV_CONNECTABLE_DIRECTED
+     *              and the advertising interval is 0 (high duty).
      */
     void setAdvertisingTimeout(uint16_t timeout) {
         _advParams.setTimeout(timeout);
+    }
+
+    /**
+     * Set the peer address to advertise to when the advertising mode is
+     * ADV_CONNECTABLE_DIRECTED. Otherwise it is ignored.
+	 *
+	 * Directed advertising mode includes a peer address in the advertisement
+	 * packet. Only connection requests from that peer will be accepted.
+     *
+     * @param[in] address
+     *              The address of the peer to advertise to.
+     */
+    void setAdvertisingDirectAddress(BLEProtocol::Address_t address) {
+        _advParams.setDirectedAddress(address);
     }
 
     /**
