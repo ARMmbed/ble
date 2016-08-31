@@ -36,6 +36,13 @@ class GattClient;
 class BLEInstanceBase
 {
 public:
+    BLEInstanceBase() {}
+
+    /**
+     * Virtual destructor of the interface.
+     */
+    virtual ~BLEInstanceBase();
+
     /**
      * Initialize the underlying BLE stack. This should be called before
      * anything else in the BLE API.
@@ -135,6 +142,25 @@ public:
      * refer to BLE::waitForEvent().
      */
     virtual void                   waitForEvent(void)         = 0;
+
+    /**
+     * Process ALL pending events living in the BLE stack .
+     * Return once all events have been consumed.
+     */
+    virtual void processEvents() = 0;
+
+    /**
+     * This function allow the BLE stack to signal that their is work to do and
+     * event processing should be done (BLE::processEvent()).
+     * @param id: The ID of the BLE instance which does have events to process.
+     */
+    void signalEventsToProcess(BLE::InstanceID_t id);
+
+private:
+    // this class is not a value type.
+    // prohibit copy construction and copy assignement
+    BLEInstanceBase(const BLEInstanceBase&);
+    BLEInstanceBase& operator=(const BLEInstanceBase&);
 };
 
 /**

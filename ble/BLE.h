@@ -43,6 +43,22 @@ public:
     typedef unsigned InstanceID_t; /**< The type returned by BLE::getInstanceID(). */
 
     /**
+     * Parameters provided to the callback registered by onEventsToProcess
+     * when there is events to process.
+     */
+    struct OnEventsToProcessCallbackContext {
+        /**
+         * The ble instance which have events to process.
+         */
+        BLE& ble;
+    };
+
+    /**
+     * Callback type used by the onEventsToProcess function.
+     */
+    typedef FunctionPointerWithContext<OnEventsToProcessCallbackContext*> OnEventsToProcessCallback_t;
+
+    /**
      * The context provided to init-completion-callbacks (see init() below).
      *
      * @param  ble
@@ -1498,7 +1514,36 @@ public:
         return securityManager().onPasskeyDisplay(callback);
     }
 
+    /**
+     * Process ALL pending events living in the BLE stack .
+     * Return once all events have been consumed.
+     * This function is called by user in their while loop (mbed Classic)
+     * or automatically by Minar (mbed OS) when BLE event processing is scheduled.
+     * Internally, this function will call BLEInstanceBase::processEvent.
+     */
+    void processEvents();
+
+    /**
+     * Register a hook which will be called every time the BLE stack has pending
+     * work.
+     * By registering a callback, user code can know when event processing has to be
+     * scheduled.
+     * Callback format is void (*)(BLE& ble);
+     */
+    void onEventsToProcess(const OnEventsToProcessCallback_t& callback);
+
 private:
+
+    friend class BLEInstanceBase;
+
+    /**
+     * This function allow the BLE stack to signal that their is work to do and
+     * event processing should be done (BLE::processEvent()).
+     * This function should be called by the port of BLE_API, it shouldn't be
+     * accessible to end users.
+     */
+    void signalEventsToProcess();
+
     /**
      * Implementation of init() [internal to BLE_API].
      *
@@ -1514,6 +1559,7 @@ private:
 private:
     InstanceID_t     instanceID;
     BLEInstanceBase *transport; /* The device-specific backend */
+    OnEventsToProcessCallback_t whenEventsToProcess;
 };
 
 typedef BLE BLEDevice; /**< @deprecated This type alias is retained for the

@@ -21,8 +21,17 @@
 #include "ble/services/DFUService.h"
 #endif
 
+#ifdef YOTTA_CFG_MBED_OS
+#include <minar/minar.h>
+#endif
+
+#if !defined(YOTTA_CFG_MBED_OS)
+#include <mbed_error.h>
+#include <toolchain.h>
+#endif
+
 ble_error_t
-BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext *> callback)
+BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbackContext*> callback)
 {
     ble_error_t err = transport->init(instanceID, callback);
     if (err != BLE_ERROR_NONE) {
@@ -78,6 +87,20 @@ BLE::initImplementation(FunctionPointerWithContext<InitializationCompleteCallbac
  * This may be overridden.
  */
 #define INITIALIZER_LIST_FOR_INSTANCE_CONSTRUCTORS createBLEInstance
+
+// yotta unlike mbed-cli has proper dependency mechanisms
+// It is not required to defined a stub for createBLEInstance
+#if !defined(YOTTA_CFG_MBED_OS)
+
+// this stub is required by ARMCC otherwise link will systematically fail
+MBED_WEAK BLEInstanceBase* createBLEInstance() {
+    error("Please provide an implementation for mbed BLE");
+    return NULL;
+}
+
+#endif
+
+
 #endif /* YOTTA_CFG_BLE_INSTANCES_COUNT */
 
 typedef BLEInstanceBase *(*InstanceConstructor_t)(void);
@@ -106,7 +129,17 @@ BLE::Instance(InstanceID_t id)
     return badSingleton;
 }
 
-BLE::BLE(InstanceID_t instanceIDIn) : instanceID(instanceIDIn), transport()
+#ifdef YOTTA_CFG_MBED_OS
+void defaultSchedulingCallback(BLE::OnEventsToProcessCallbackContext* params) {
+    minar::Scheduler::postCallback(&params->ble, &BLE::processEvents);
+}
+#else
+#define defaultSchedulingCallback NULL
+#endif
+
+
+BLE::BLE(InstanceID_t instanceIDIn) : instanceID(instanceIDIn), transport(),
+    whenEventsToProcess(defaultSchedulingCallback)
 {
     static BLEInstanceBase *transportInstances[NUM_INSTANCES];
 
@@ -226,4 +259,28 @@ void BLE::waitForEvent(void)
     }
 
     transport->waitForEvent();
+}
+
+void BLE::processEvents()
+{
+    if (!transport) {
+        error("bad handle to underlying transport");
+    }
+
+    transport->processEvents();
+}
+
+void BLE::onEventsToProcess(const BLE::OnEventsToProcessCallback_t& callback)
+{
+    whenEventsToProcess = callback;
+}
+
+void BLE::signalEventsToProcess()
+{
+    if (whenEventsToProcess) {
+        OnEventsToProcessCallbackContext params = {
+            *this
+        };
+        whenEventsToProcess(&params);
+    }
 }
