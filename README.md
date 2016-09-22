@@ -16,7 +16,7 @@ Currently supported services include:
 * UriBeacon
 * iBeacon
 
-The [documentation](https://docs.mbed.com/docs/ble-intros/en/latest/AdvSamples/Overview/)
+The [documentation](https://docs.mbed.com/docs/ble-intros/en/master/Advanced/Overview/)
 contains an overview on how to create new, application-specific services.
 
 # Getting Started
